@@ -15,6 +15,8 @@ export default function AppLayout() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="todo/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="vehicle/log-service" />
+      <Stack.Screen name="vehicle/mark-done" />
     </Stack>
   );
 }
