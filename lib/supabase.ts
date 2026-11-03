@@ -3,10 +3,11 @@ import { createClient } from "@supabase/supabase-js";
 import { AppState, Platform } from "react-native";
 
 import { env } from "@/lib/env";
+import type { Database } from "@/types/database";
 
 const isWeb = Platform.OS === "web";
 
-export const supabase = createClient(env.supabaseUrl, env.supabaseAnonKey, {
+export const supabase = createClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,

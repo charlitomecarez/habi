@@ -2,21 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, isBefore, isSameDay, startOfDay, subDays } from "date-fns";
 
 import { supabase } from "@/lib/supabase";
+import type { Enums, Tables } from "@/types/database";
 
-export type TodoRepeat = "none" | "daily" | "weekly" | "monthly";
+export type TodoRepeat = Enums<"todo_repeat">;
 export type TodoPriority = 1 | 2 | 3;
 
-export type Todo = {
-  id: string;
-  title: string;
-  notes: string | null;
-  priority: TodoPriority;
-  due_at: string | null;
-  remind_at: string | null;
-  repeat: TodoRepeat;
-  completed_at: string | null;
-  created_at: string;
-};
+export type Todo = Pick<
+  Tables<"todos">,
+  "id" | "title" | "notes" | "due_at" | "remind_at" | "repeat" | "completed_at" | "created_at"
+> & { priority: TodoPriority };
 
 export type TodoInput = Pick<Todo, "title" | "notes" | "priority" | "due_at" | "remind_at" | "repeat">;
 
