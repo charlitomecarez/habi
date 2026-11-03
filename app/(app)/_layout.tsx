@@ -1,38 +1,20 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
-import type { ComponentProps } from "react";
+import { Stack } from "expo-router";
+import { useEffect } from "react";
 
-const ACCENT = "#0F766E";
-const INK_MUTED = "#5B6168";
+import { registerForPushNotifications } from "@/lib/push-notifications";
 
-function tabIcon(name: ComponentProps<typeof Ionicons>["name"]) {
-  return function TabIcon({ focused }: { focused: boolean }) {
-    return <Ionicons name={name} size={22} color={focused ? ACCENT : INK_MUTED} />;
-  };
-}
+export default function AppLayout() {
+  useEffect(() => {
+    registerForPushNotifications().catch((error: unknown) => {
+      console.warn("Push registration failed", error instanceof Error ? error.message : error);
+    });
+  }, []);
 
-export default function AppTabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: ACCENT,
-        tabBarInactiveTintColor: INK_MUTED,
-        tabBarStyle: {
-          height: 80,
-          paddingTop: 8,
-          paddingBottom: 16,
-          backgroundColor: "#FFFFFF",
-          borderTopColor: "#E3E5E0",
-        },
-        tabBarLabelStyle: { fontFamily: "PlusJakartaSans_500Medium", fontSize: 11 },
-      }}
-    >
-      <Tabs.Screen name="index" options={{ title: "Home", tabBarIcon: tabIcon("home-outline") }} />
-      <Tabs.Screen name="money" options={{ title: "Money", tabBarIcon: tabIcon("wallet-outline") }} />
-      <Tabs.Screen name="todos" options={{ title: "Todos", tabBarIcon: tabIcon("checkbox-outline") }} />
-      <Tabs.Screen name="vehicle" options={{ title: "Vehicle", tabBarIcon: tabIcon("bicycle-outline") }} />
-      <Tabs.Screen name="more" options={{ title: "More", tabBarIcon: tabIcon("ellipsis-horizontal") }} />
-    </Tabs>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="todo/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
+    </Stack>
   );
 }
