@@ -1,0 +1,57 @@
+// Values from the my-app design system tokens.
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  presets: [require("nativewind/preset")],
+  // Light only for now. "media" makes NativeWind throw on web when the router sets the color scheme.
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface-page": "#F6F6F3",
+        "surface-card": "#FFFFFF",
+        "surface-muted": "#E9EBE6",
+        border: "#E3E5E0",
+        "border-input": "#D6D8D3",
+        "border-dashed": "#C5C8C2",
+        divider: "#EEF0EC",
+        ink: "#1A1C1E",
+        "ink-muted": "#5B6168",
+        "on-accent": "#FFFFFF",
+        accent: "#0F766E",
+        "accent-strong": "#0B5D57",
+        "accent-tint": "#E6F2F0",
+        warning: "#A15C07",
+        "warning-tint": "#FDF3E2",
+        "warning-ink": "#7A4505",
+        danger: "#B42318",
+        "danger-tint": "#FDECEA",
+        scrim: "rgba(26,28,30,0.45)",
+      },
+      fontFamily: {
+        sans: ["PlusJakartaSans_400Regular"],
+        medium: ["PlusJakartaSans_500Medium"],
+        semibold: ["PlusJakartaSans_600SemiBold"],
+        bold: ["PlusJakartaSans_700Bold"],
+      },
+      fontSize: {
+        display: ["34px", { lineHeight: "40px", letterSpacing: "-0.02em" }],
+        "amount-input": ["32px", { lineHeight: "40px", letterSpacing: "-0.01em" }],
+        "title-lg": ["26px", { lineHeight: "32px", letterSpacing: "-0.01em" }],
+        title: ["20px", { lineHeight: "26px" }],
+        heading: ["16px", { lineHeight: "22px" }],
+        body: ["16px", { lineHeight: "24px" }],
+        "row-title": ["15px", { lineHeight: "21px" }],
+        label: ["14px", { lineHeight: "20px" }],
+        caption: ["13px", { lineHeight: "19px" }],
+        badge: ["12px", { lineHeight: "16px" }],
+        "tab-label": ["11px", { lineHeight: "14px" }],
+      },
+      spacing: { 1: "4px", 2: "8px", 3: "12px", 4: "16px", 5: "20px", 6: "24px", 8: "32px",
+                 chip: "40px", touch: "44px", input: "52px", button: "56px", amount: "72px", tabbar: "80px" },
+      borderRadius: { sm: "10px", md: "12px", input: "14px", card: "16px", fab: "18px",
+                      hero: "20px", sheet: "28px", pill: "999px" },
+    },
+  },
+  plugins: [],
+};
