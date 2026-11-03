@@ -1,9 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { colors } from "@/lib/colors";
 import { useAuth } from "@/providers/auth-provider";
 
 export default function MoreScreen() {
@@ -39,9 +42,26 @@ export default function MoreScreen() {
           </View>
         </View>
 
-        <View className="gap-1 rounded-card border border-border bg-surface-card p-4">
-          <Text className="font-semibold text-heading text-ink">Inventory, Vault and settings</Text>
-          <Text className="font-sans text-caption text-ink-muted">Coming in phases 4 and 6.</Text>
+        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push("/inventory")}
+            className="min-h-touch flex-row items-center gap-3 border-b border-divider px-4 py-3 active:bg-surface-muted"
+          >
+            <Ionicons name="cube-outline" size={20} color={colors.ink} />
+            <View className="flex-1 gap-1">
+              <Text className="font-semibold text-row-title text-ink">Inventory</Text>
+              <Text className="font-sans text-caption text-ink-muted">Things in your room and where they are</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
+          </Pressable>
+          <View className="min-h-touch flex-row items-center gap-3 px-4 py-3">
+            <Ionicons name="lock-closed-outline" size={20} color={colors.inkMuted} />
+            <View className="flex-1 gap-1">
+              <Text className="font-semibold text-row-title text-ink-muted">Vault and settings</Text>
+              <Text className="font-sans text-caption text-ink-muted">Coming in phase 6.</Text>
+            </View>
+          </View>
         </View>
 
         <Button

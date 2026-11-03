@@ -13,6 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
+import { QueryProvider } from "@/providers/query-provider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,8 +49,10 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <StatusBar style="dark" />
-      <RootNavigator />
+      <QueryProvider>
+        <StatusBar style="dark" />
+        <RootNavigator />
+      </QueryProvider>
     </AuthProvider>
   );
 }

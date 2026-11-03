@@ -18,7 +18,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -29,10 +30,27 @@
       "expo-router",
       "expo-status-bar",
       "expo-font",
-      "expo-splash-screen"
+      "expo-splash-screen",
+      "@react-native-community/datetimepicker",
+      "expo-notifications",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "my-app uses your photos to add pictures of your inventory items.",
+          "cameraPermission": "my-app uses the camera to take pictures of your inventory items.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fcfabf83-7cbd-4317-ba50-42daf9d6f6a7"
+      }
+    },
+    "owner": "javaplum"
   }
 }

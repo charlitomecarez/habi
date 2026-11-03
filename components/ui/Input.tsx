@@ -1,19 +1,29 @@
 import { Text, TextInput, View, type TextInputProps } from "react-native";
 
+import { colors } from "@/lib/colors";
+
 type InputProps = Omit<TextInputProps, "className" | "style"> & {
   label: string;
+  optional?: boolean;
+  error?: string;
 };
 
-export function Input({ label, ...props }: InputProps) {
+export function Input({ label, optional = false, error, multiline, ...props }: InputProps) {
   return (
     <View className="gap-2">
-      <Text className="font-medium text-label text-ink">{label}</Text>
+      <Text className="font-medium text-label text-ink">
+        {label}
+        {optional ? <Text className="font-sans text-ink-muted"> (optional)</Text> : null}
+      </Text>
       <TextInput
         accessibilityLabel={label}
-        placeholderTextColor="#5B6168"
-        className="h-input rounded-input border border-border-input bg-surface-card px-4 font-sans text-body text-ink"
+        placeholderTextColor={colors.inkMuted}
+        multiline={multiline}
+        textAlignVertical={multiline ? "top" : "center"}
+        className={`rounded-input border bg-surface-card px-4 font-sans text-body text-ink ${multiline ? "min-h-amount py-3" : "h-input"} ${error ? "border-danger" : "border-border-input"}`}
         {...props}
       />
+      {error ? <Text className="font-sans text-caption text-danger">{error}</Text> : null}
     </View>
   );
 }
