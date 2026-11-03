@@ -35,6 +35,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fcfabf83-7cbd-4317-ba50-42daf9d6f6a7"
+      }
+    },
+    "owner": "javaplum"
   }
 }
