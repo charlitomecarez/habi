@@ -17,6 +17,10 @@ export default function AppLayout() {
       <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="vehicle/log-service" />
       <Stack.Screen name="vehicle/mark-done" />
+      <Stack.Screen name="inventory/index" />
+      <Stack.Screen name="inventory/locations" />
+      <Stack.Screen name="inventory/item/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="inventory/item/[id]" options={{ presentation: "modal" }} />
     </Stack>
   );
 }
