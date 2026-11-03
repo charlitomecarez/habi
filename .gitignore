@@ -42,3 +42,6 @@ yarn-error.*
 
 # local env (holds Supabase and Google client IDs)
 .env
+
+# Firebase config for Android push (kept local; upload as an EAS file variable for cloud builds)
+/google-services.json
