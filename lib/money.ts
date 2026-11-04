@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMonths, differenceInCalendarDays, format, parseISO, startOfMonth } from "date-fns";
 
 import { supabase } from "@/lib/supabase";
@@ -77,6 +77,7 @@ const SUBSCRIPTIONS_KEY = [...MONEY_KEY, "subscriptions"] as const;
 const RATES_KEY = [...MONEY_KEY, "rates"] as const;
 const transactionsKey = (limit: number) => [...MONEY_KEY, "transactions", limit] as const;
 const monthKey = (month: string) => [...MONEY_KEY, "month", month] as const;
+const monthTransactionsKey = (month: string) => [...MONEY_KEY, "month-transactions", month] as const;
 
 const TRANSACTION_COLUMNS =
   "id, kind, account_id, to_account_id, category_id, subscription_id, amount, occurred_on, merchant, note";
@@ -88,6 +89,15 @@ function formatNumber(value: number): string {
 /** "₱1,234.50", or "−₱1,234.50" for a negative value. */
 export function formatPeso(value: number): string {
   return `${value < 0 ? "−" : ""}₱${formatNumber(value)}`;
+}
+
+/** A short amount for a calendar day: "850", "1.2k", "12k", "1.3M". No peso sign, to fit the cell. */
+export function compactAmount(value: number): string {
+  const v = Math.abs(value);
+  if (v < 1000) return String(Math.round(v));
+  if (v < 10_000) return `${(Math.floor(v / 100) / 10).toString()}k`;
+  if (v < 1_000_000) return `${Math.floor(v / 1000)}k`;
+  return `${(Math.floor(v / 100_000) / 10).toString()}M`;
 }
 
 /** "USD 9.99" for a foreign currency, "₱9.99" for PHP. */
@@ -251,6 +261,57 @@ export function useMonthSummary(now = new Date()) {
       return { spent, income, byCategory };
     },
   });
+}
+
+/** Every transaction in the calendar month that contains `month`, by date, newest first within a day. */
+export function useMonthTransactions(month: Date) {
+  const start = startOfMonth(month);
+  const from = toDateString(start);
+  return useQuery({
+    queryKey: monthTransactionsKey(from),
+    queryFn: async (): Promise<Transaction[]> => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select(TRANSACTION_COLUMNS)
+        .gte("occurred_on", from)
+        .lt("occurred_on", toDateString(addMonths(start, 1)))
+        .order("occurred_on")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    // Keep the last month on screen while the next one loads, so the calendar does not flash.
+    placeholderData: keepPreviousData,
+  });
+}
+
+export type DayTotals = { spent: number; income: number };
+
+/**
+ * Spending and income per day ("yyyy-MM-dd") and for the whole list. Transfers do not count,
+ * the same as the month summary.
+ */
+export function dayTotals(transactions: Pick<Transaction, "kind" | "amount" | "occurred_on">[]): {
+  byDay: Map<string, DayTotals>;
+  spent: number;
+  income: number;
+} {
+  const byDay = new Map<string, DayTotals>();
+  let spent = 0;
+  let income = 0;
+  for (const t of transactions) {
+    if (t.kind === "transfer") continue;
+    const day = byDay.get(t.occurred_on) ?? { spent: 0, income: 0 };
+    if (t.kind === "income") {
+      day.income += t.amount;
+      income += t.amount;
+    } else {
+      day.spent += t.amount;
+      spent += t.amount;
+    }
+    byDay.set(t.occurred_on, day);
+  }
+  return { byDay, spent, income };
 }
 
 /** Active subscriptions, soonest renewal first. */

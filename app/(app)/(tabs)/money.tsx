@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
+import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
@@ -172,6 +173,8 @@ export default function MoneyScreen() {
                 </Pressable>
               ))}
             </View>
+
+            <SpendingCalendar accountName={accountName} categoryName={categoryName} />
 
             <View className="gap-3">
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
