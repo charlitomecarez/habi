@@ -12,6 +12,20 @@ It has these modules:
 - **Money:** accounts, balances, transactions, subscriptions and exchange rates.
 - **Vault:** passwords, encrypted on the phone with a master password.
 
+## Install on Android
+
+The APK is on the [latest release](https://github.com/charlitomecarez/my-app/releases/latest). It is not on the Play Store.
+
+1. On the phone, open the latest release and download `my-app-<version>.apk`.
+2. Open the APK file.
+3. If Android asks, allow installs from that app.
+4. Tap **Install**.
+5. Open my-app and sign in with Google.
+
+To update, install the APK from a newer release over the current app. Your data stays in Supabase.
+
+The repo is private, so you must sign in to GitHub to download the APK.
+
 ## Stack
 
 - Expo SDK 58 with expo-router and a development build (not Expo Go).
@@ -123,7 +137,7 @@ The EAS profiles are in `eas.json`:
 
 - `development`: a development client for internal use.
 - `preview`: an APK for internal use.
-- `production`: a store build.
+- `production`: a release APK. Upload it to a GitHub release.
 
 ```sh
 eas build --platform android --profile preview
