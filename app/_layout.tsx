@@ -7,15 +7,33 @@ import {
   PlusJakartaSans_700Bold,
   useFonts,
 } from "@expo-google-fonts/plus-jakarta-sans";
-import { Stack } from "expo-router";
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { useColorScheme } from "react-native";
 
+import { useColors, type Palette } from "@/lib/colors";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 
 SplashScreen.preventAutoHideAsync();
+
+/** Navigation colours, so the area behind screens matches the app theme. */
+function navigationTheme(dark: boolean, colors: Palette): Theme {
+  const base = dark ? DarkTheme : DefaultTheme;
+  return {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary: colors.accent,
+      background: colors.surfacePage,
+      card: colors.surfaceCard,
+      text: colors.ink,
+      border: colors.border,
+    },
+  };
+}
 
 function RootNavigator() {
   const { session, isLoading } = useAuth();
@@ -47,12 +65,16 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+  const dark = useColorScheme() === "dark";
+  const colors = useColors();
   return (
-    <AuthProvider>
-      <QueryProvider>
-        <StatusBar style="dark" />
-        <RootNavigator />
-      </QueryProvider>
-    </AuthProvider>
+    <ThemeProvider value={navigationTheme(dark, colors)}>
+      <AuthProvider>
+        <QueryProvider>
+          <StatusBar style="auto" />
+          <RootNavigator />
+        </QueryProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

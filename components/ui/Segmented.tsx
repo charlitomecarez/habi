@@ -9,7 +9,11 @@ type SegmentedProps<T extends string> = {
 
 export function Segmented<T extends string>({ label, options, value, onChange }: SegmentedProps<T>) {
   return (
-    <View accessibilityRole="tablist" accessibilityLabel={label} className="flex-row gap-1 rounded-md bg-surface-muted p-1">
+    <View
+      accessibilityRole="tablist"
+      accessibilityLabel={label}
+      className="flex-row gap-1 rounded-md bg-surface-muted p-1"
+    >
       {options.map((option) => {
         const selected = option.value === value;
         return (

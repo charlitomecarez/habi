@@ -5,15 +5,27 @@ import { Text, View } from "react-native";
 
 import { ItemPhoto } from "@/components/inventory/ItemPhoto";
 import { Button } from "@/components/ui/Button";
-import { colors } from "@/lib/colors";
-import type { LocalPhoto } from "@/lib/inventory";
+import { DashedButton } from "@/components/ui/DashedButton";
+import { OptionSheet } from "@/components/ui/OptionSheet";
+import { useColors } from "@/lib/colors";
+import type { LocalPhoto } from "@/lib/photos";
+
+type Source = "camera" | "library";
 
 type PhotoFieldProps = {
+  label: string;
   /** What to show now: a picked photo's local URI or the saved photo's signed URL. */
   previewUri: string | null;
-  itemName: string;
+  /** What the photo shows, for screen readers. */
+  subject: string;
   onPick: (photo: LocalPhoto) => void;
   onRemove: () => void;
+  /**
+   * "tiles": two tall slots, Take photo and Choose photo.
+   * "single": one wide slot that asks where the photo comes from.
+   */
+  layout?: "tiles" | "single";
+  singleLabel?: string;
 };
 
 const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
@@ -22,10 +34,25 @@ const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   allowsEditing: false,
 };
 
-export function PhotoField({ previewUri, itemName, onPick, onRemove }: PhotoFieldProps) {
-  const [error, setError] = useState<string | null>(null);
+const SOURCE_OPTIONS = [
+  { value: "camera", label: "Take photo" },
+  { value: "library", label: "Choose photo" },
+] as const;
 
-  async function pick(source: "camera" | "library") {
+export function PhotoField({
+  label,
+  previewUri,
+  subject,
+  onPick,
+  onRemove,
+  layout = "tiles",
+  singleLabel = "Add photo",
+}: PhotoFieldProps) {
+  const colors = useColors();
+  const [error, setError] = useState<string | null>(null);
+  const [choosing, setChoosing] = useState(false);
+
+  async function pick(source: Source) {
     setError(null);
     try {
       if (source === "camera") {
@@ -48,34 +75,46 @@ export function PhotoField({ previewUri, itemName, onPick, onRemove }: PhotoFiel
 
   return (
     <View className="gap-2">
-      <Text className="font-medium text-label text-ink">
-        Photo<Text className="font-sans text-ink-muted"> (optional)</Text>
+      <Text className="font-semibold text-label text-ink">
+        {label}
+        <Text className="font-sans text-ink-muted"> (optional)</Text>
       </Text>
       {previewUri ? (
-        <ItemPhoto uri={previewUri} label={itemName || "this item"} className="aspect-video w-full rounded-card" />
-      ) : null}
-      <View className="flex-row gap-3">
-        <View className="min-w-0 flex-1">
-          <Button
-            label={previewUri ? "Retake" : "Take photo"}
-            variant="secondary"
-            size="input"
-            icon={<Ionicons name="camera-outline" size={18} color={colors.ink} />}
-            onPress={() => pick("camera")}
-          />
+        <>
+          <ItemPhoto uri={previewUri} label={subject} className="aspect-video w-full rounded-card" />
+          <View className="flex-row gap-3">
+            <View className="min-w-0 flex-1">
+              <Button
+                label="Retake"
+                variant="secondary"
+                size="input"
+                icon={<Ionicons name="camera-outline" size={18} color={colors.ink} />}
+                onPress={() => pick("camera")}
+              />
+            </View>
+            <View className="min-w-0 flex-1">
+              <Button label="Remove" variant="destructive" size="input" onPress={onRemove} />
+            </View>
+          </View>
+        </>
+      ) : layout === "tiles" ? (
+        <View className="flex-row gap-3">
+          <DashedButton shape="tall" icon="camera-outline" label="Take photo" onPress={() => pick("camera")} />
+          <DashedButton shape="tall" icon="image-outline" label="Choose photo" onPress={() => pick("library")} />
         </View>
-        <View className="min-w-0 flex-1">
-          <Button
-            label="Choose photo"
-            variant="secondary"
-            size="input"
-            icon={<Ionicons name="image-outline" size={18} color={colors.ink} />}
-            onPress={() => pick("library")}
-          />
-        </View>
-      </View>
-      {previewUri ? <Button label="Remove photo" variant="destructive" size="input" onPress={onRemove} /> : null}
+      ) : (
+        <DashedButton icon="camera-outline" label={singleLabel} onPress={() => setChoosing(true)} />
+      )}
       {error ? <Text className="font-sans text-caption text-danger">{error}</Text> : null}
+
+      <OptionSheet
+        visible={choosing}
+        onClose={() => setChoosing(false)}
+        title={singleLabel}
+        options={SOURCE_OPTIONS}
+        value={null}
+        onChange={(source) => pick(source)}
+      />
     </View>
   );
 }

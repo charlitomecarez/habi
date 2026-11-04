@@ -6,7 +6,7 @@
     "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
@@ -40,6 +40,17 @@
           "photosPermission": "my-app uses your photos to add pictures of your inventory items.",
           "cameraPermission": "my-app uses the camera to take pictures of your inventory items.",
           "microphonePermission": false
+        }
+      ],
+      "react-native-libsodium",
+      "expo-secure-store",
+      "expo-local-authentication",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "my-app uses the camera to scan the QR labels on your storage boxes.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ]
     ],

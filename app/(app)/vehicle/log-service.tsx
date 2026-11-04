@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { ActivityIndicator, KeyboardAvoidingView, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,10 +11,11 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
+import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
+import type { LocalPhoto } from "@/lib/photos";
 import {
-  formatKm,
   parseKm,
   useLogService,
   useServiceDue,
@@ -30,8 +32,16 @@ const schema = z
     serviceId: z.string().min(1, "Choose a service."),
     otherName: z.string(),
     odometer: z.string().refine((v) => parseKm(v) !== null, "Enter the reading in whole kilometres."),
-    date: z.date().nullable().refine((d) => d !== null, "Choose a date."),
-    cost: z.string().refine((v) => v.trim() === "" || /^\d+(\.\d{1,2})?$/.test(v.replace(/,/g, "").trim()), "Enter an amount such as 450 or 450.50."),
+    date: z
+      .date()
+      .nullable()
+      .refine((d) => d !== null, "Choose a date."),
+    cost: z
+      .string()
+      .refine(
+        (v) => v.trim() === "" || /^\d+(\.\d{1,2})?$/.test(v.replace(/,/g, "").trim()),
+        "Enter an amount such as 450 or 450.50.",
+      ),
     shop: z.string(),
     notes: z.string(),
   })
@@ -43,8 +53,17 @@ const schema = z
 type FormInput = z.input<typeof schema>;
 type FormOutput = z.output<typeof schema>;
 
-function LogServiceForm({ vehicle, services, serviceId }: { vehicle: Vehicle; services: ServiceDue[]; serviceId?: string }) {
+function LogServiceForm({
+  vehicle,
+  services,
+  serviceId,
+}: {
+  vehicle: Vehicle;
+  services: ServiceDue[];
+  serviceId?: string;
+}) {
   const logService = useLogService();
+  const [receipt, setReceipt] = useState<LocalPhoto | null>(null);
   const { control, handleSubmit, formState } = useForm<FormInput, unknown, FormOutput>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -74,6 +93,7 @@ function LogServiceForm({ vehicle, services, serviceId }: { vehicle: Vehicle; se
       cost: cost ? Number(cost) : null,
       shop: values.shop.trim() || null,
       notes: values.notes.trim() || null,
+      receipt,
     });
     router.back();
   });
@@ -133,7 +153,9 @@ function LogServiceForm({ vehicle, services, serviceId }: { vehicle: Vehicle; se
           <Controller
             control={control}
             name="date"
-            render={({ field }) => <DateTimeField label="Date" mode="date" value={field.value} onChange={field.onChange} />}
+            render={({ field }) => (
+              <DateTimeField label="Date" mode="date" value={field.value} onChange={field.onChange} />
+            )}
           />
         </View>
 
@@ -181,6 +203,16 @@ function LogServiceForm({ vehicle, services, serviceId }: { vehicle: Vehicle; se
             />
           )}
         />
+
+        <PhotoField
+          label="Receipt"
+          layout="single"
+          singleLabel="Add receipt photo"
+          previewUri={receipt?.uri ?? null}
+          subject="the receipt"
+          onPick={setReceipt}
+          onRemove={() => setReceipt(null)}
+        />
       </ScrollView>
 
       <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
@@ -192,6 +224,7 @@ function LogServiceForm({ vehicle, services, serviceId }: { vehicle: Vehicle; se
 }
 
 export default function LogServiceScreen() {
+  const colors = useColors();
   const { serviceId } = useLocalSearchParams<{ serviceId?: string }>();
   const vehicle = useVehicle();
   const due = useServiceDue(vehicle.data?.id);
@@ -214,8 +247,7 @@ export default function LogServiceScreen() {
             </Text>
             {vehicle.data ? (
               <Text className="font-sans text-caption text-ink-muted">
-                {vehicleName(vehicle.data)} · {vehicle.data.make} {vehicle.data.model} ·{" "}
-                {formatKm(vehicle.data.current_odometer_km)} km
+                {vehicleName(vehicle.data)} · {vehicle.data.make} {vehicle.data.model}
               </Text>
             ) : null}
           </View>

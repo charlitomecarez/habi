@@ -9,11 +9,7 @@ export type DigestInput = {
 type Section = { heading: string; lines: string[] };
 
 function escapeHtml(text: string): string {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+  return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }
 
 function formatDay(day: string): string {
@@ -49,9 +45,7 @@ export function buildDigest(input: DigestInput) {
   if (sections.length === 0) return null;
 
   const subject = `Your day: ${formatDay(input.today)}`;
-  const text = sections
-    .map((s) => [s.heading, ...s.lines.map((l) => `- ${l}`)].join("\n"))
-    .join("\n\n");
+  const text = sections.map((s) => [s.heading, ...s.lines.map((l) => `- ${l}`)].join("\n")).join("\n\n");
   const html = [
     `<div style="font-family:system-ui,sans-serif;color:#1A1C1E;max-width:560px">`,
     `<h1 style="font-size:20px">${escapeHtml(subject)}</h1>`,

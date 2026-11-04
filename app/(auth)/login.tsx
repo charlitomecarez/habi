@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useColors } from "@/lib/colors";
 import { signInWithGoogle } from "@/lib/google-sign-in";
 import { supabase } from "@/lib/supabase";
 
@@ -15,6 +16,7 @@ function errorMessage(error: unknown): string {
 }
 
 export default function LoginScreen() {
+  const colors = useColors();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
@@ -64,7 +66,7 @@ export default function LoginScreen() {
         >
           <View className="gap-5">
             <View className="h-14 w-14 items-center justify-center rounded-card bg-accent">
-              <Ionicons name="grid-outline" size={28} color="#FFFFFF" accessibilityElementsHidden />
+              <Ionicons name="grid-outline" size={28} color={colors.onAccent} accessibilityElementsHidden />
             </View>
             <View className="gap-2">
               <Text accessibilityRole="header" className="font-bold text-display text-ink">
@@ -80,7 +82,7 @@ export default function LoginScreen() {
             <Button
               label="Continue with Google"
               variant="secondary"
-              icon={<Ionicons name="logo-google" size={20} color="#1A1C1E" />}
+              icon={<Ionicons name="logo-google" size={20} color={colors.ink} />}
               loading={busy === "google"}
               disabled={busy !== null}
               onPress={onGoogle}
@@ -143,7 +145,10 @@ export default function LoginScreen() {
             )}
 
             {error ? (
-              <Text accessibilityRole="alert" className="rounded-md bg-danger-tint p-3 font-sans text-caption text-danger">
+              <Text
+                accessibilityRole="alert"
+                className="rounded-md bg-danger-tint p-3 font-sans text-caption text-danger"
+              >
                 {error}
               </Text>
             ) : null}

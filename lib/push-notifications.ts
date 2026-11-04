@@ -31,8 +31,7 @@ export async function registerForPushNotifications(): Promise<void> {
   }
   if (status !== "granted") return;
 
-  const projectId: string | undefined =
-    Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+  const projectId: string | undefined = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
   if (!projectId) {
     throw new Error("No EAS project ID. Run `npx eas init` to add it to app.json.");
   }

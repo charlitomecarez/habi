@@ -5,23 +5,27 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AddLocationSheet } from "@/components/inventory/AddLocationSheet";
+import { QrCode } from "@/components/inventory/QrCode";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import { useDeleteLocation, useItems, useLocations, type LocationWithPath } from "@/lib/inventory";
+import { locationLink } from "@/lib/qr";
 
 function countLabel(n: number): string {
   return `${n} ${n === 1 ? "item" : "items"}`;
 }
 
 export default function LocationsScreen() {
+  const colors = useColors();
   const locations = useLocations();
   const items = useItems();
   const remove = useDeleteLocation();
   const [adding, setAdding] = useState<{ parentId: string | null } | null>(null);
   const [selected, setSelected] = useState<LocationWithPath | null>(null);
+  const [label, setLabel] = useState<LocationWithPath | null>(null);
 
   const list = locations.data ?? [];
   const countById = new Map<string, number>();
@@ -126,11 +130,42 @@ export default function LocationsScreen() {
                 setAdding({ parentId });
               }}
             />
+            <Button
+              label="Show QR label"
+              variant="secondary"
+              size="input"
+              onPress={() => {
+                const location = selected;
+                setSelected(null);
+                setLabel(location);
+              }}
+            />
             <Notice tone="warning">
               Deleting keeps its items and the places inside it; they move to &quot;No location&quot;.
             </Notice>
             {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
-            <Button label="Delete location" variant="destructive" size="input" loading={remove.isPending} onPress={onDelete} />
+            <Button
+              label="Delete location"
+              variant="destructive"
+              size="input"
+              loading={remove.isPending}
+              onPress={onDelete}
+            />
+          </>
+        ) : null}
+      </Sheet>
+
+      <Sheet visible={label !== null} onClose={() => setLabel(null)} title="QR label" subtitle={label?.path}>
+        {label ? (
+          <>
+            <View className="w-3/4 self-center">
+              <QrCode value={locationLink(label.id)} label={`QR label for ${label.path}`} />
+            </View>
+            <Text className="text-center font-semibold text-heading text-ink">{label.name}</Text>
+            <Text className="font-sans text-caption text-ink-muted">
+              Print this or take a screenshot, and stick it on the box. Scan it from Inventory, or with the phone
+              camera, to see what is inside.
+            </Text>
           </>
         ) : null}
       </Sheet>

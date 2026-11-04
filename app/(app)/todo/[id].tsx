@@ -4,10 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TodoForm } from "@/components/todos/TodoForm";
 import { Button } from "@/components/ui/Button";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import { useTodo } from "@/lib/todos";
 
 export default function EditTodoScreen() {
+  const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: todo, isPending } = useTodo(id);
 

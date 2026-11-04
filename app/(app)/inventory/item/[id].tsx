@@ -4,10 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ItemForm } from "@/components/inventory/ItemForm";
 import { Button } from "@/components/ui/Button";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import { useItem } from "@/lib/inventory";
 
 export default function EditItemScreen() {
+  const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: item, isPending } = useItem(id);
 

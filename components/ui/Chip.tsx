@@ -12,10 +12,13 @@ type ChipProps = {
   selected: boolean;
   onPress: () => void;
   tone?: Tone;
+  /** "filter" narrows a list (dark when selected); "choice" picks a form value. */
+  variant?: "choice" | "filter";
 };
 
-export function Chip({ label, selected, onPress, tone = "accent" }: ChipProps) {
-  const style = selectedByTone[tone];
+export function Chip({ label, selected, onPress, tone = "accent", variant = "choice" }: ChipProps) {
+  const style =
+    variant === "filter" ? { container: "border-ink bg-ink", label: "text-surface-card" } : selectedByTone[tone];
   return (
     <Pressable
       accessibilityRole="radio"

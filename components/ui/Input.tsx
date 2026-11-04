@@ -1,6 +1,6 @@
 import { Text, TextInput, View, type TextInputProps } from "react-native";
 
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 
 type InputProps = Omit<TextInputProps, "className" | "style"> & {
   label: string;
@@ -9,9 +9,10 @@ type InputProps = Omit<TextInputProps, "className" | "style"> & {
 };
 
 export function Input({ label, optional = false, error, multiline, ...props }: InputProps) {
+  const colors = useColors();
   return (
     <View className="gap-2">
-      <Text className="font-medium text-label text-ink">
+      <Text className="font-semibold text-label text-ink">
         {label}
         {optional ? <Text className="font-sans text-ink-muted"> (optional)</Text> : null}
       </Text>

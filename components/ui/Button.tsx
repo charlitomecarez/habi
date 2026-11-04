@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
+import { useColors } from "@/lib/colors";
+
 type Variant = "primary" | "secondary" | "destructive";
 
 const containerByVariant: Record<Variant, string> = {
@@ -34,6 +36,7 @@ export function Button({
   loading = false,
   disabled = false,
 }: ButtonProps) {
+  const colors = useColors();
   const inactive = disabled || loading;
   return (
     <Pressable
@@ -42,10 +45,10 @@ export function Button({
       accessibilityState={{ disabled: inactive, busy: loading }}
       disabled={inactive}
       onPress={onPress}
-      className={`${size === "button" ? "h-button" : "h-input"} flex-row items-center justify-center gap-3 rounded-input px-5 ${containerByVariant[variant]} ${inactive ? "opacity-60" : ""}`}
+      className={`${size === "button" ? "h-button rounded-card" : "h-input rounded-input"} flex-row items-center justify-center gap-3 px-5 ${containerByVariant[variant]} ${inactive ? "opacity-60" : ""}`}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "primary" ? "#FFFFFF" : "#1A1C1E"} />
+        <ActivityIndicator color={variant === "primary" ? colors.onAccent : colors.ink} />
       ) : (
         <View className="flex-row items-center gap-3">
           {icon}

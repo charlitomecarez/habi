@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { KeyboardAvoidingView, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 
 type SheetProps = {
   visible: boolean;
@@ -15,6 +15,7 @@ type SheetProps = {
 
 /** Bottom sheet for a short form (one or two fields) or a list to pick from. */
 export function Sheet({ visible, onClose, title, subtitle, children }: SheetProps) {
+  const colors = useColors();
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior="padding" className="flex-1 justify-end bg-scrim">
