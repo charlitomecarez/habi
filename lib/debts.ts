@@ -25,7 +25,7 @@ export function useDebts() {
       const [debts, balances] = await Promise.all([
         supabase
           .from("debts")
-          .select("id, person_name, direction, amount, occurred_on, due_on, note, created_at")
+          .select("id, person_name, person_id, direction, amount, occurred_on, due_on, note, created_at")
           .order("occurred_on", { ascending: false }),
         supabase.from("debt_balances").select("debt_id, paid, balance"),
       ]);

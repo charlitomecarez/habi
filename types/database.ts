@@ -129,6 +129,7 @@ export type Database = {
           id: string;
           note: string | null;
           occurred_on: string;
+          person_id: string | null;
           person_name: string;
           updated_at: string;
           user_id: string;
@@ -141,6 +142,7 @@ export type Database = {
           id?: string;
           note?: string | null;
           occurred_on?: string;
+          person_id?: string | null;
           person_name: string;
           updated_at?: string;
           user_id?: string;
@@ -153,6 +155,7 @@ export type Database = {
           id?: string;
           note?: string | null;
           occurred_on?: string;
+          person_id?: string | null;
           person_name?: string;
           updated_at?: string;
           user_id?: string;
@@ -176,6 +179,39 @@ export type Database = {
           currency?: string;
           rate_to_php?: number;
           updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      gift_ideas: {
+        Row: {
+          bought_at: string | null;
+          created_at: string;
+          id: string;
+          person_id: string;
+          price: number | null;
+          title: string;
+          transaction_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          bought_at?: string | null;
+          created_at?: string;
+          id?: string;
+          person_id: string;
+          price?: number | null;
+          title: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          bought_at?: string | null;
+          created_at?: string;
+          id?: string;
+          person_id?: string;
+          price?: number | null;
+          title?: string;
+          transaction_id?: string | null;
           user_id?: string;
         };
         Relationships: [];
@@ -362,6 +398,69 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      people: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          note: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      person_dates: {
+        Row: {
+          created_at: string;
+          day: number;
+          id: string;
+          kind: Database["public"]["Enums"]["person_date_kind"];
+          label: string | null;
+          month: number;
+          person_id: string;
+          user_id: string;
+          year: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          day: number;
+          id?: string;
+          kind?: Database["public"]["Enums"]["person_date_kind"];
+          label?: string | null;
+          month: number;
+          person_id: string;
+          user_id?: string;
+          year?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          day?: number;
+          id?: string;
+          kind?: Database["public"]["Enums"]["person_date_kind"];
+          label?: string | null;
+          month?: number;
+          person_id?: string;
+          user_id?: string;
+          year?: number | null;
+        };
+        Relationships: [];
       };
       push_tokens: {
         Row: {
@@ -1085,6 +1184,10 @@ export type Database = {
         Args: { p_account_id: string; p_amount: number; p_debt_id: string; p_paid_on: string };
         Returns: string;
       };
+      buy_gift: {
+        Args: { p_account_id: string; p_amount: number; p_gift_id: string };
+        Returns: undefined;
+      };
       seed_money_defaults: { Args: never; Returns: undefined };
     };
     Enums: {
@@ -1094,7 +1197,8 @@ export type Database = {
       debt_direction: "owed_to_me" | "i_owe";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
-      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription" | "content" | "debt";
+      person_date_kind: "birthday" | "anniversary" | "other";
+      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription" | "content" | "debt" | "person_date";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1224,7 +1328,8 @@ export const Constants = {
       debt_direction: ["owed_to_me", "i_owe"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
-      reminder_source: ["todo", "vehicle_service", "custom", "subscription", "content", "debt"],
+      person_date_kind: ["birthday", "anniversary", "other"],
+      reminder_source: ["todo", "vehicle_service", "custom", "subscription", "content", "debt", "person_date"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],

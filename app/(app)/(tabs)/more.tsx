@@ -12,6 +12,7 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
 import { useDebts } from "@/lib/debts";
+import { usePeople } from "@/lib/people";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
@@ -76,6 +77,7 @@ export default function MoreScreen() {
   const items = useItems();
   const videos = useVideos();
   const debts = useDebts();
+  const people = usePeople();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -119,6 +121,16 @@ export default function MoreScreen() {
         <View className="gap-3">
           <SectionLabel>People</SectionLabel>
           <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <Row
+              icon="people-outline"
+              title="People and dates"
+              detail={
+                people.data
+                  ? `${people.data.people.length} ${people.data.people.length === 1 ? "person" : "people"}`
+                  : "Birthdays and anniversaries"
+              }
+              onPress={() => router.push("/people")}
+            />
             <Row
               icon="swap-horizontal-outline"
               title="Debts"

@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
 import { router } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
@@ -17,12 +18,16 @@ import { Segmented } from "@/components/ui/Segmented";
 import { useColors } from "@/lib/colors";
 import { DIRECTION_OPTIONS, useSaveDebt, type Debt, type DebtDirection } from "@/lib/debts";
 import { amountText, parseAmount } from "@/lib/money";
+import { usePeople } from "@/lib/people";
 
 const schema = z.object({
   direction: z.enum(["owed_to_me", "i_owe"]),
   personName: z.string().trim().min(1, "Enter a name.").max(80, "Use 80 characters or fewer."),
   amount: z.string().refine((v) => parseAmount(v) !== null, "Enter an amount, such as 500 or 1,250.00."),
-  occurredOn: z.date().nullable().refine((v) => Boolean(v), "Choose the date."),
+  occurredOn: z
+    .date()
+    .nullable()
+    .refine((v) => Boolean(v), "Choose the date."),
   dueOn: z.date().nullable(),
   note: z.string(),
 });
@@ -32,7 +37,8 @@ type FormValues = z.infer<typeof schema>;
 export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: string; direction?: DebtDirection }) {
   const colors = useColors();
   const save = useSaveDebt();
-  const { control, handleSubmit, formState } = useForm<FormValues>({
+  const people = usePeople();
+  const { control, handleSubmit, formState, setValue } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       direction: debt?.direction ?? direction ?? "owed_to_me",
@@ -43,6 +49,11 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
       note: debt?.note ?? "",
     },
   });
+
+  const typed = (useWatch({ control, name: "personName" }) ?? "").trim().toLowerCase();
+  const all = people.data?.people ?? [];
+  const exact = all.some((p) => p.name.toLowerCase() === typed);
+  const suggestions = exact ? [] : all.filter((p) => !typed || p.name.toLowerCase().includes(typed)).slice(0, 6);
 
   const onSubmit = handleSubmit(async (v) => {
     await save.mutateAsync({
@@ -99,6 +110,23 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
               />
             )}
           />
+          {suggestions.length > 0 ? (
+            <View className="gap-2">
+              <View className="flex-row flex-wrap gap-2">
+                {suggestions.map((p) => (
+                  <Chip
+                    key={p.id}
+                    label={p.name}
+                    selected={false}
+                    onPress={() => setValue("personName", p.name, { shouldValidate: true })}
+                  />
+                ))}
+              </View>
+              <Text className="font-sans text-caption text-ink-muted">
+                Pick someone from People and dates, or type a new name to add them.
+              </Text>
+            </View>
+          ) : null}
           <Controller
             control={control}
             name="amount"
