@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DoseRow } from "@/components/health/DoseRow";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
+import { TipCard } from "@/components/home/TipCard";
 import { Badge } from "@/components/ui/Badge";
 import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -172,6 +173,8 @@ export default function HomeScreen() {
             <Text className="font-semibold text-body text-ink">{initial}</Text>
           </Pressable>
         </View>
+
+        <TipCard />
 
         <View className="gap-3">
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">

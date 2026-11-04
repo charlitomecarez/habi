@@ -87,6 +87,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      daily_tips: {
+        Row: {
+          created_at: string;
+          id: string;
+          on_date: string;
+          tip: string;
+          topic: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          on_date: string;
+          tip: string;
+          topic: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          tip?: string;
+          topic?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       debt_payments: {
         Row: {
           account_id: string | null;

@@ -424,3 +424,7 @@ enabled = true
 # Called by pg_cron with the x-cron-secret header, not a user JWT.
 [functions.send-reminders]
 verify_jwt = false
+
+# Called by pg_cron with the x-cron-secret header, not a user JWT.
+[functions.daily-tip]
+verify_jwt = false

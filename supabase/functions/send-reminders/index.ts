@@ -170,7 +170,7 @@ async function loadDigestInput(
   timeZone: string,
   today: string,
 ): Promise<DigestInput> {
-  const [todos, services, renewals, doses] = await Promise.all([
+  const [todos, services, renewals, doses, tip] = await Promise.all([
     supabase
       .from("todos")
       .select("title, due_at, remind_at, priority")
@@ -198,8 +198,9 @@ async function loadDigestInput(
       .gte("scheduled_at", new Date(Date.now() - 36 * 3600 * 1000).toISOString())
       .lte("scheduled_at", new Date(Date.now() + 36 * 3600 * 1000).toISOString())
       .order("scheduled_at"),
+    supabase.from("daily_tips").select("tip").eq("user_id", userId).eq("on_date", today).maybeSingle(),
   ]);
-  for (const r of [todos, services, renewals, doses]) if (r.error) throw r.error;
+  for (const r of [todos, services, renewals, doses, tip]) if (r.error) throw r.error;
 
   // Due today or earlier, or a reminder set for today, in the user's time zone.
   const dayOf = (iso: string | null) => (iso ? localParts(new Date(iso), timeZone).day : null);
@@ -215,6 +216,7 @@ async function loadDigestInput(
       item: s.item,
       vehicle: s.nickname ?? `${s.make} ${s.model}`,
     })),
+    tip: tip.data?.tip ?? null,
     medicines: doses
       .data!.filter((d) => dayOf(d.scheduled_at) === today)
       .map((d) => ({

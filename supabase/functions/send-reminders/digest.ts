@@ -6,6 +6,8 @@ export type DigestInput = {
   renewals: { name: string; amount: string; on: string }[];
   /** Today's medicine doses, in time order, e.g. "8:00 AM". */
   medicines: { name: string; dose: string; time: string; status: "pending" | "taken" | "skipped" }[];
+  /** Today's tip from daily_tips. Added only to a digest that already has something in it. */
+  tip: string | null;
 };
 
 type Section = { heading: string; lines: string[] };
@@ -54,6 +56,7 @@ export function buildDigest(input: DigestInput) {
     });
   }
   if (sections.length === 0) return null;
+  if (input.tip) sections.push({ heading: "Tip for today", lines: [input.tip] });
 
   const subject = `Your day: ${formatDay(input.today)}`;
   const text = sections.map((s) => [s.heading, ...s.lines.map((l) => `- ${l}`)].join("\n")).join("\n\n");
