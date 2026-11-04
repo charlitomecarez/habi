@@ -412,6 +412,39 @@ export type Database = {
           },
         ];
       };
+      journal_entries: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          mood: Database["public"]["Enums"]["journal_mood"] | null;
+          on_date: string;
+          photo_path: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          mood?: Database["public"]["Enums"]["journal_mood"] | null;
+          on_date: string;
+          photo_path?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          mood?: Database["public"]["Enums"]["journal_mood"] | null;
+          on_date?: string;
+          photo_path?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       money_accounts: {
         Row: {
           created_at: string;
@@ -1504,6 +1537,7 @@ export type Database = {
       debt_direction: "owed_to_me" | "i_owe";
       document_type: "lto_registration" | "drivers_license" | "passport" | "insurance" | "philhealth" | "other";
       habit_schedule: "daily" | "weekdays" | "times_per_week";
+      journal_mood: "great" | "good" | "okay" | "low" | "bad";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
       person_date_kind: "birthday" | "anniversary" | "other";
@@ -1647,6 +1681,7 @@ export const Constants = {
       debt_direction: ["owed_to_me", "i_owe"],
       document_type: ["lto_registration", "drivers_license", "passport", "insurance", "philhealth", "other"],
       habit_schedule: ["daily", "weekdays", "times_per_week"],
+      journal_mood: ["great", "good", "okay", "low", "bad"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
       person_date_kind: ["birthday", "anniversary", "other"],

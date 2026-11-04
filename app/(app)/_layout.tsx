@@ -42,6 +42,8 @@ export default function AppLayout() {
       <Stack.Screen name="gym/plan/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="gym/plan/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="shopping/index" />
+      <Stack.Screen name="journal/index" />
+      <Stack.Screen name="journal/[date]" options={{ presentation: "modal" }} />
       <Stack.Screen name="people/index" />
       <Stack.Screen name="people/[id]" />
       <Stack.Screen name="debts/index" />

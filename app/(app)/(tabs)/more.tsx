@@ -15,6 +15,7 @@ import { useDebts } from "@/lib/debts";
 import { documentStatus, useDocuments } from "@/lib/documents";
 import { useGym } from "@/lib/gym";
 import { useHabits } from "@/lib/habits";
+import { useJournal } from "@/lib/journal";
 import { usePeople } from "@/lib/people";
 import { useShopping } from "@/lib/shopping";
 import { useItems } from "@/lib/inventory";
@@ -86,6 +87,7 @@ export default function MoreScreen() {
   const habits = useHabits();
   const gym = useGym();
   const shopping = useShopping();
+  const journal = useJournal();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -148,6 +150,16 @@ export default function MoreScreen() {
                   : "Your workout plan"
               }
               onPress={() => router.push("/gym")}
+            />
+            <Row
+              icon="book-outline"
+              title="Journal"
+              detail={
+                journal.data
+                  ? `${journal.data.length} ${journal.data.length === 1 ? "entry" : "entries"}`
+                  : "One entry a day"
+              }
+              onPress={() => router.push("/journal")}
               last
             />
           </View>

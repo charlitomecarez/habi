@@ -63,7 +63,7 @@ export async function currentUserId(): Promise<string> {
  * `<user_id>/<folder>/<baseName>-<time>.jpg`. Returns its storage path.
  */
 export async function uploadPhoto(
-  folder: "inventory" | "receipts",
+  folder: "inventory" | "receipts" | "journal",
   baseName: string,
   photo: LocalPhoto,
 ): Promise<string> {
