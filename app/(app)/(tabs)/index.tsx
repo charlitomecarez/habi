@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DoseRow } from "@/components/health/DoseRow";
+import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { Badge } from "@/components/ui/Badge";
 import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -200,6 +201,8 @@ export default function HomeScreen() {
             </View>
           </View>
         ) : null}
+
+        <ScreenTimeCard />
 
         <View className="gap-3">
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
