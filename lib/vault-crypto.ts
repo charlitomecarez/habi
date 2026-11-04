@@ -40,6 +40,10 @@ export type Sealed = { ciphertext: string; nonce: string };
 const b64 = (bytes: Uint8Array) => sodium.to_base64(bytes, sodium.base64_variants.ORIGINAL);
 const unb64 = (text: string) => sodium.from_base64(text, sodium.base64_variants.ORIGINAL);
 
+// No additional data. The native AEAD functions throw on null and accept only a
+// string; "" gives the same ciphertext as null on web.
+const NO_AD = "";
+
 async function deriveKey(password: string, salt: Uint8Array, opsLimit: number, memLimit: number): Promise<Uint8Array> {
   await sodium.ready;
   // On Android the derivation blocks the JS thread for about a second. Wait one frame so the spinner shows first.
@@ -56,7 +60,7 @@ async function deriveKey(password: string, salt: Uint8Array, opsLimit: number, m
 
 function seal(key: Uint8Array, plaintext: string): Sealed {
   const nonce = sodium.randombytes_buf(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
-  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, null, null, nonce, key);
+  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, NO_AD, null, nonce, key);
   return { ciphertext: b64(ciphertext), nonce: b64(nonce) };
 }
 
@@ -66,7 +70,7 @@ function open(key: Uint8Array, sealed: Sealed): string | null {
     const plaintext = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
       null,
       unb64(sealed.ciphertext),
-      null,
+      NO_AD,
       unb64(sealed.nonce),
       key,
     );
