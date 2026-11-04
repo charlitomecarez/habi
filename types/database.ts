@@ -421,9 +421,12 @@ export type Database = {
           name: string;
           notes: string | null;
           photo_path: string | null;
+          price: number | null;
           quantity: number;
+          receipt_path: string | null;
           updated_at: string;
           user_id: string;
+          warranty_ends_on: string | null;
         };
         Insert: {
           acquired_on?: string | null;
@@ -434,9 +437,12 @@ export type Database = {
           name: string;
           notes?: string | null;
           photo_path?: string | null;
+          price?: number | null;
           quantity?: number;
+          receipt_path?: string | null;
           updated_at?: string;
           user_id?: string;
+          warranty_ends_on?: string | null;
         };
         Update: {
           acquired_on?: string | null;
@@ -447,9 +453,12 @@ export type Database = {
           name?: string;
           notes?: string | null;
           photo_path?: string | null;
+          price?: number | null;
           quantity?: number;
+          receipt_path?: string | null;
           updated_at?: string;
           user_id?: string;
+          warranty_ends_on?: string | null;
         };
         Relationships: [
           {
@@ -1848,7 +1857,8 @@ export type Database = {
         | "habit"
         | "workout"
         | "medicine"
-        | "budget";
+        | "budget"
+        | "inventory";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -1997,6 +2007,7 @@ export const Constants = {
         "workout",
         "medicine",
         "budget",
+        "inventory",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
