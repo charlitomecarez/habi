@@ -13,6 +13,7 @@ import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
 import { useDebts } from "@/lib/debts";
 import { documentStatus, useDocuments } from "@/lib/documents";
+import { useGym } from "@/lib/gym";
 import { useHabits } from "@/lib/habits";
 import { usePeople } from "@/lib/people";
 import { useItems } from "@/lib/inventory";
@@ -82,6 +83,7 @@ export default function MoreScreen() {
   const people = usePeople();
   const documents = useDocuments();
   const habits = useHabits();
+  const gym = useGym();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -134,6 +136,16 @@ export default function MoreScreen() {
                   : "Streaks"
               }
               onPress={() => router.push("/habits")}
+            />
+            <Row
+              icon="barbell-outline"
+              title="Gym"
+              detail={
+                gym.data
+                  ? `${gym.data.plans.length} workout ${gym.data.plans.length === 1 ? "day" : "days"}`
+                  : "Your workout plan"
+              }
+              onPress={() => router.push("/gym")}
               last
             />
           </View>

@@ -1187,6 +1187,141 @@ export type Database = {
           },
         ];
       };
+      workout_exercises: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          plan_id: string;
+          reps: number;
+          sets: number;
+          sort_order: number;
+          user_id: string;
+          weight_kg: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          plan_id: string;
+          reps?: number;
+          sets?: number;
+          sort_order?: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          plan_id?: string;
+          reps?: number;
+          sets?: number;
+          sort_order?: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Relationships: [];
+      };
+      workout_plans: {
+        Row: {
+          archived: boolean;
+          created_at: string;
+          id: string;
+          name: string;
+          remind_time: string | null;
+          sort_order: number;
+          updated_at: string;
+          user_id: string;
+          weekdays: number[];
+        };
+        Insert: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name: string;
+          remind_time?: string | null;
+          sort_order?: number;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Update: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          remind_time?: string | null;
+          sort_order?: number;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Relationships: [];
+      };
+      workout_sessions: {
+        Row: {
+          created_at: string;
+          id: string;
+          on_date: string;
+          plan_id: string | null;
+          plan_name: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          on_date: string;
+          plan_id?: string | null;
+          plan_name: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          plan_id?: string | null;
+          plan_name?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      workout_sets: {
+        Row: {
+          created_at: string;
+          exercise_id: string | null;
+          exercise_name: string;
+          id: string;
+          reps: number;
+          session_id: string;
+          set_number: number;
+          user_id: string;
+          weight_kg: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          exercise_id?: string | null;
+          exercise_name: string;
+          id?: string;
+          reps: number;
+          session_id: string;
+          set_number: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          exercise_id?: string | null;
+          exercise_name?: string;
+          id?: string;
+          reps?: number;
+          session_id?: string;
+          set_number?: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       debt_balances: {
@@ -1320,7 +1455,8 @@ export type Database = {
         | "debt"
         | "person_date"
         | "document"
-        | "habit";
+        | "habit"
+        | "workout";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1463,6 +1599,7 @@ export const Constants = {
         "person_date",
         "document",
         "habit",
+        "workout",
       ],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],

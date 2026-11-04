@@ -36,6 +36,11 @@ export default function AppLayout() {
       <Stack.Screen name="habits/[id]" />
       <Stack.Screen name="habits/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="habits/edit/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="gym/index" />
+      <Stack.Screen name="gym/session/[planId]" />
+      <Stack.Screen name="gym/exercise/[id]" />
+      <Stack.Screen name="gym/plan/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="gym/plan/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="people/index" />
       <Stack.Screen name="people/[id]" />
       <Stack.Screen name="debts/index" />
