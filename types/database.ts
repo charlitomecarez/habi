@@ -264,6 +264,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      habit_checks: {
+        Row: {
+          created_at: string;
+          habit_id: string;
+          id: string;
+          on_date: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          habit_id: string;
+          id?: string;
+          on_date: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          habit_id?: string;
+          id?: string;
+          on_date?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      habits: {
+        Row: {
+          archived: boolean;
+          created_at: string;
+          id: string;
+          name: string;
+          remind_time: string | null;
+          schedule: Database["public"]["Enums"]["habit_schedule"];
+          times_per_week: number | null;
+          updated_at: string;
+          user_id: string;
+          weekdays: number[];
+        };
+        Insert: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name: string;
+          remind_time?: string | null;
+          schedule?: Database["public"]["Enums"]["habit_schedule"];
+          times_per_week?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Update: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          remind_time?: string | null;
+          schedule?: Database["public"]["Enums"]["habit_schedule"];
+          times_per_week?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Relationships: [];
+      };
       inventory_items: {
         Row: {
           acquired_on: string | null;
@@ -1244,11 +1307,20 @@ export type Database = {
       content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
       debt_direction: "owed_to_me" | "i_owe";
       document_type: "lto_registration" | "drivers_license" | "passport" | "insurance" | "philhealth" | "other";
+      habit_schedule: "daily" | "weekdays" | "times_per_week";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
       person_date_kind: "birthday" | "anniversary" | "other";
       reminder_source:
-        "todo" | "vehicle_service" | "custom" | "subscription" | "content" | "debt" | "person_date" | "document";
+        | "todo"
+        | "vehicle_service"
+        | "custom"
+        | "subscription"
+        | "content"
+        | "debt"
+        | "person_date"
+        | "document"
+        | "habit";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1377,6 +1449,7 @@ export const Constants = {
       content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
       debt_direction: ["owed_to_me", "i_owe"],
       document_type: ["lto_registration", "drivers_license", "passport", "insurance", "philhealth", "other"],
+      habit_schedule: ["daily", "weekdays", "times_per_week"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
       person_date_kind: ["birthday", "anniversary", "other"],
@@ -1389,6 +1462,7 @@ export const Constants = {
         "debt",
         "person_date",
         "document",
+        "habit",
       ],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],

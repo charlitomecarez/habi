@@ -32,6 +32,10 @@ export default function AppLayout() {
       <Stack.Screen name="vault/index" />
       <Stack.Screen name="vault/entry/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="vault/entry/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="habits/index" />
+      <Stack.Screen name="habits/[id]" />
+      <Stack.Screen name="habits/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="habits/edit/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="people/index" />
       <Stack.Screen name="people/[id]" />
       <Stack.Screen name="debts/index" />

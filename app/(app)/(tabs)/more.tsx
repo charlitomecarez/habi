@@ -13,6 +13,7 @@ import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
 import { useDebts } from "@/lib/debts";
 import { documentStatus, useDocuments } from "@/lib/documents";
+import { useHabits } from "@/lib/habits";
 import { usePeople } from "@/lib/people";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
@@ -80,6 +81,7 @@ export default function MoreScreen() {
   const debts = useDebts();
   const people = usePeople();
   const documents = useDocuments();
+  const habits = useHabits();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -120,6 +122,23 @@ export default function MoreScreen() {
         </View>
 
         {/* Modules in sections: Daily life, People, Home, Records, Work. A section shows once it has a module. */}
+        <View className="gap-3">
+          <SectionLabel>Daily life</SectionLabel>
+          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <Row
+              icon="repeat-outline"
+              title="Habits"
+              detail={
+                habits.data
+                  ? `${habits.data.habits.length} ${habits.data.habits.length === 1 ? "habit" : "habits"}`
+                  : "Streaks"
+              }
+              onPress={() => router.push("/habits")}
+              last
+            />
+          </View>
+        </View>
+
         <View className="gap-3">
           <SectionLabel>People</SectionLabel>
           <View className="overflow-hidden rounded-card border border-border bg-surface-card">
