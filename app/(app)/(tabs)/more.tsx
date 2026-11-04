@@ -16,6 +16,7 @@ import { documentStatus, useDocuments } from "@/lib/documents";
 import { useGym } from "@/lib/gym";
 import { useHabits } from "@/lib/habits";
 import { usePeople } from "@/lib/people";
+import { useShopping } from "@/lib/shopping";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
@@ -84,6 +85,7 @@ export default function MoreScreen() {
   const documents = useDocuments();
   const habits = useHabits();
   const gym = useGym();
+  const shopping = useShopping();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -184,6 +186,14 @@ export default function MoreScreen() {
               title="Inventory"
               detail={itemCount === undefined ? "Your things" : `${itemCount} ${itemCount === 1 ? "item" : "items"}`}
               onPress={() => router.push("/inventory")}
+            />
+            <Row
+              icon="cart-outline"
+              title="Shopping list"
+              detail={
+                shopping.data ? `${shopping.data.items.filter((i) => !i.ticked).length} to buy` : "Grocery and hardware"
+              }
+              onPress={() => router.push("/shopping")}
               last
             />
           </View>

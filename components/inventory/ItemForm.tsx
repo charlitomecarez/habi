@@ -34,7 +34,16 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 /** Full-screen form for a new item, or for editing one when `item` is set. */
-export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; defaultLocationId?: string }) {
+export function ItemForm({
+  item,
+  defaultLocationId,
+  defaultName,
+}: {
+  item?: InventoryItem;
+  defaultLocationId?: string;
+  /** Starts a new item with this name, e.g. from the shopping list. */
+  defaultName?: string;
+}) {
   const colors = useColors();
   const save = useSaveItem();
   const remove = useDeleteItem();
@@ -46,7 +55,7 @@ export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; de
   const { control, handleSubmit, formState, setValue } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: item?.name ?? "",
+      name: item?.name ?? defaultName ?? "",
       locationId: item?.location_id ?? defaultLocationId ?? NO_LOCATION,
       quantity: String(item?.quantity ?? 1),
       category: item?.category ?? "",

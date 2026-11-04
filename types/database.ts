@@ -741,6 +741,63 @@ export type Database = {
           },
         ];
       };
+      shopping_history: {
+        Row: {
+          id: string;
+          last_bought_at: string;
+          last_price: number | null;
+          name: string;
+          times: number;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          last_bought_at?: string;
+          last_price?: number | null;
+          name: string;
+          times?: number;
+          user_id?: string;
+        };
+        Update: {
+          id?: string;
+          last_bought_at?: string;
+          last_price?: number | null;
+          name?: string;
+          times?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      shopping_items: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          price: number | null;
+          quantity: string;
+          ticked: boolean;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          price?: number | null;
+          quantity?: string;
+          ticked?: boolean;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          price?: number | null;
+          quantity?: string;
+          ticked?: boolean;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       subscriptions: {
         Row: {
           account_id: string | null;
@@ -1433,6 +1490,10 @@ export type Database = {
       buy_gift: {
         Args: { p_account_id: string; p_amount: number; p_gift_id: string };
         Returns: undefined;
+      };
+      shopping_checkout: {
+        Args: { p_account_id: string; p_category_id: string | null; p_store: string };
+        Returns: number;
       };
       seed_money_defaults: { Args: never; Returns: undefined };
     };
