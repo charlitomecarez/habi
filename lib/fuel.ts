@@ -85,7 +85,8 @@ export function useLogFuel() {
         p_full_tank: f.fullTank,
         p_station: f.station,
         p_account_id: f.accountId,
-        p_category_id: f.categoryId,
+        // The SQL function takes null (no category); the generated types mark every argument non-null.
+        p_category_id: f.categoryId as string,
       });
       if (error) throw error;
     },

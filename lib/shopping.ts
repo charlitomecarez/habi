@@ -96,7 +96,8 @@ export function useCheckout() {
     mutationFn: async (c: { accountId: string; categoryId: string | null; store: string }) => {
       const { data, error } = await supabase.rpc("shopping_checkout", {
         p_account_id: c.accountId,
-        p_category_id: c.categoryId,
+        // The SQL function takes null (no category); the generated types mark every argument non-null.
+        p_category_id: c.categoryId as string,
         p_store: c.store,
       });
       if (error) throw error;

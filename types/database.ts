@@ -33,6 +33,35 @@ export type Database = {
   };
   public: {
     Tables: {
+      budget_alerts: {
+        Row: {
+          budget_id: string;
+          level: number;
+          month: string;
+          sent_at: string;
+        };
+        Insert: {
+          budget_id: string;
+          level: number;
+          month: string;
+          sent_at?: string;
+        };
+        Update: {
+          budget_id?: string;
+          level?: number;
+          month?: string;
+          sent_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "budget_alerts_budget_id_fkey";
+            columns: ["budget_id"];
+            isOneToOne: false;
+            referencedRelation: "money_budgets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       content_videos: {
         Row: {
           created_at: string;
@@ -145,7 +174,43 @@ export type Database = {
           transaction_id?: string | null;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "debt_payments_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_account_balances";
+            referencedColumns: ["account_id"];
+          },
+          {
+            foreignKeyName: "debt_payments_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "debt_payments_debt_id_fkey";
+            columns: ["debt_id"];
+            isOneToOne: false;
+            referencedRelation: "debt_balances";
+            referencedColumns: ["debt_id"];
+          },
+          {
+            foreignKeyName: "debt_payments_debt_id_fkey";
+            columns: ["debt_id"];
+            isOneToOne: false;
+            referencedRelation: "debts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "debt_payments_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       debts: {
         Row: {
@@ -187,7 +252,15 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "debts_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       documents: {
         Row: {
@@ -235,7 +308,15 @@ export type Database = {
           user_id?: string;
           vehicle_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "documents_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       exchange_rates: {
         Row: {
@@ -304,7 +385,29 @@ export type Database = {
           user_id?: string;
           vehicle_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "fuel_logs_odometer_log_id_fkey";
+            columns: ["odometer_log_id"];
+            isOneToOne: false;
+            referencedRelation: "odometer_logs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fuel_logs_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fuel_logs_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       gift_ideas: {
         Row: {
@@ -337,7 +440,22 @@ export type Database = {
           transaction_id?: string | null;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "gift_ideas_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "gift_ideas_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       habit_checks: {
         Row: {
@@ -361,7 +479,15 @@ export type Database = {
           on_date?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "habit_checks_habit_id_fkey";
+            columns: ["habit_id"];
+            isOneToOne: false;
+            referencedRelation: "habits";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       habits: {
         Row: {
@@ -599,7 +725,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["dose_status"];
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "medicine_doses_medicine_id_fkey";
+            columns: ["medicine_id"];
+            isOneToOne: false;
+            referencedRelation: "medicines";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       medicines: {
         Row: {
@@ -704,7 +838,15 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "money_budgets_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "money_categories";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       money_categories: {
         Row: {
@@ -829,7 +971,15 @@ export type Database = {
           user_id?: string;
           year?: number | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "person_dates_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       push_tokens: {
         Row: {
@@ -925,7 +1075,15 @@ export type Database = {
           on_date?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "savings_contributions_goal_id_fkey";
+            columns: ["goal_id"];
+            isOneToOne: false;
+            referencedRelation: "savings_goals";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       savings_goals: {
         Row: {
@@ -958,7 +1116,22 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "savings_goals_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_account_balances";
+            referencedColumns: ["account_id"];
+          },
+          {
+            foreignKeyName: "savings_goals_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_accounts";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       service_logs: {
         Row: {
@@ -1140,7 +1313,7 @@ export type Database = {
         };
         Insert: {
           account_id?: string | null;
-          amount: number | null;
+          amount?: number | null;
           auto_add?: boolean;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
@@ -1241,7 +1414,15 @@ export type Database = {
           user_id?: string;
           video_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "todos_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "content_videos";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       transactions: {
         Row: {
@@ -1629,7 +1810,15 @@ export type Database = {
           user_id?: string;
           weight_kg?: number | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "workout_exercises_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_plans";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       workout_plans: {
         Row: {
@@ -1692,7 +1881,15 @@ export type Database = {
           plan_name?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_plans";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       workout_sets: {
         Row: {
@@ -1728,7 +1925,22 @@ export type Database = {
           user_id?: string;
           weight_kg?: number | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "workout_sets_exercise_id_fkey";
+            columns: ["exercise_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_exercises";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "workout_sets_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_sessions";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
@@ -1758,15 +1970,15 @@ export type Database = {
       subscription_costs: {
         Row: {
           account_id: string | null;
-          auto_add: boolean | null;
-          kind: Database["public"]["Enums"]["subscription_kind"] | null;
           amount: number | null;
+          auto_add: boolean | null;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"] | null;
           category_id: string | null;
           created_at: string | null;
           currency: string | null;
           id: string | null;
           is_active: boolean | null;
+          kind: Database["public"]["Enums"]["subscription_kind"] | null;
           monthly_php: number | null;
           name: string | null;
           next_billing_on: string | null;
@@ -1833,24 +2045,29 @@ export type Database = {
       };
     };
     Functions: {
-      apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
       add_due_subscription_expenses: { Args: never; Returns: number };
-      record_debt_payment: {
-        Args: { p_account_id: string; p_amount: number; p_debt_id: string; p_paid_on: string };
-        Returns: string;
+      apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
+      budget_month: {
+        Args: { p_budget_id: string; p_month: string };
+        Returns: {
+          available: number;
+          carried: number;
+          spent: number;
+        }[];
       };
       buy_gift: {
         Args: { p_account_id: string; p_amount: number; p_gift_id: string };
         Returns: undefined;
       };
-      shopping_checkout: {
-        Args: { p_account_id: string; p_category_id: string | null; p_store: string };
-        Returns: number;
+      fill_all_medicine_doses: { Args: never; Returns: undefined };
+      fill_medicine_doses: {
+        Args: { p_medicine_id: string };
+        Returns: undefined;
       };
       log_fuel: {
         Args: {
           p_account_id: string;
-          p_category_id: string | null;
+          p_category_id: string;
           p_filled_on: string;
           p_full_tank: boolean;
           p_litres: number;
@@ -1861,8 +2078,45 @@ export type Database = {
         };
         Returns: string;
       };
-      weekly_review: { Args: { p_week_start?: string }; Returns: Json };
+      next_person_date: {
+        Args: { from_date: string; p_day: number; p_month: number };
+        Returns: string;
+      };
+      record_debt_payment: {
+        Args: {
+          p_account_id: string;
+          p_amount: number;
+          p_debt_id: string;
+          p_paid_on: string;
+        };
+        Returns: string;
+      };
       seed_money_defaults: { Args: never; Returns: undefined };
+      shopping_checkout: {
+        Args: { p_account_id: string; p_category_id: string; p_store: string };
+        Returns: number;
+      };
+      sync_debt_reminder_for: {
+        Args: { p_debt_id: string };
+        Returns: undefined;
+      };
+      sync_habit_reminder_for: {
+        Args: { p_habit_id: string };
+        Returns: undefined;
+      };
+      sync_person_date_reminder_for: {
+        Args: { from_date?: string; p_id: string };
+        Returns: undefined;
+      };
+      sync_workout_reminder_for: {
+        Args: { p_plan_id: string };
+        Returns: undefined;
+      };
+      weekly_review: { Args: { p_week_start?: string }; Returns: Json };
+      weekly_review_for: {
+        Args: { p_user_id: string; p_week_start: string };
+        Returns: Json;
+      };
     };
     Enums: {
       billing_cycle: "weekly" | "monthly" | "quarterly" | "yearly";
