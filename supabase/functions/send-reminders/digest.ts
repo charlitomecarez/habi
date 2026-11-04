@@ -8,9 +8,11 @@ export type DigestInput = {
   medicines: { name: string; dose: string; time: string; status: "pending" | "taken" | "skipped" }[];
   /** Today's tip from daily_tips. Added only to a digest that already has something in it. */
   tip: string | null;
+  /** On Sunday, the weekly review in short (the same numbers as the Home card). */
+  week: string[] | null;
 };
 
-type Section = { heading: string; lines: string[] };
+export type Section = { heading: string; lines: string[] };
 
 function escapeHtml(text: string): string {
   return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -61,14 +63,31 @@ export function buildDigest(input: DigestInput, appUrl: string | null = null) {
   if (sections.length === 0) return null;
   if (input.tip) sections.push({ heading: "Tip for today", lines: [input.tip] });
 
-  const subject = `Your day: ${formatDay(input.today)}`;
+  if (input.week) sections.push({ heading: "Your week", lines: input.week });
+  return renderEmail(`Your day: ${formatDay(input.today)}`, sections, appUrl);
+}
+
+/** The weekly review email, sent on Sunday: the same lines as the Home card. */
+export function buildWeeklyReview(today: string, sections: Section[], appUrl: string | null = null) {
+  return renderEmail(`Your week to ${formatDay(today)}`, sections, appUrl);
+}
+
+/** Subject, HTML and plain text in the my-app email look. */
+export function renderEmail(subject: string, sections: Section[], appUrl: string | null) {
   const text = [
     ...sections.map((s) => [s.heading, ...s.lines.map((l) => `- ${l}`)].join("\n")),
     "Sent by my-app. Turn off the digest in More > Settings.",
   ].join("\n\n");
 
   // Tables and inline styles only: Gmail removes <style> blocks and web fonts.
-  const C = { accent: "#0F766E", ink: "#1A1C1E", muted: "#5B6168", page: "#F6F6F3", card: "#FFFFFF", border: "#E3E5E0" };
+  const C = {
+    accent: "#0F766E",
+    ink: "#1A1C1E",
+    muted: "#5B6168",
+    page: "#F6F6F3",
+    card: "#FFFFFF",
+    border: "#E3E5E0",
+  };
   const font = "font-family:Arial,Helvetica,sans-serif;";
   const card = (s: Section) =>
     `<tr><td style="padding:0 0 12px;">` +

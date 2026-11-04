@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { DoseRow } from "@/components/health/DoseRow";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { TipCard } from "@/components/home/TipCard";
+import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
 import { Badge } from "@/components/ui/Badge";
 import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -173,6 +174,8 @@ export default function HomeScreen() {
             <Text className="font-semibold text-body text-ink">{initial}</Text>
           </Pressable>
         </View>
+
+        <WeeklyReviewCard />
 
         <TipCard />
 

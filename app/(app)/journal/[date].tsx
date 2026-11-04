@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,28 +12,32 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { useColors } from "@/lib/colors";
-import { MOODS, useDeleteEntry, useJournal, useSaveEntry, type Mood } from "@/lib/journal";
+import { MOODS, useDeleteEntry, useJournal, useSaveEntry, type JournalEntry, type Mood } from "@/lib/journal";
 import { usePhotoUrls, type PhotoChange } from "@/lib/photos";
 
 export default function JournalEntryScreen() {
   const { date } = useLocalSearchParams<{ date: string }>();
   const colors = useColors();
   const journal = useJournal();
+  if (journal.isPending) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-surface-page">
+        <ActivityIndicator color={colors.accent} />
+      </SafeAreaView>
+    );
+  }
+  // Mounted once the entries load, so the editor starts from the saved entry.
+  return <EntryEditor key={date} date={date} entry={journal.data?.find((e) => e.on_date === date)} />;
+}
+
+function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | undefined }) {
+  const colors = useColors();
   const save = useSaveEntry();
   const remove = useDeleteEntry();
-  const entry = journal.data?.find((e) => e.on_date === date);
   const photoUrls = usePhotoUrls([entry?.photo_path ?? null]);
-  const [mood, setMood] = useState<Mood | null>(null);
-  const [body, setBody] = useState("");
+  const [mood, setMood] = useState<Mood | null>(entry?.mood ?? null);
+  const [body, setBody] = useState(entry?.body ?? "");
   const [photo, setPhoto] = useState<PhotoChange>(undefined);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    if (loaded || journal.isPending) return;
-    setMood(entry?.mood ?? null);
-    setBody(entry?.body ?? "");
-    setLoaded(true);
-  }, [loaded, journal.isPending, entry]);
 
   const preview =
     photo === null ? null : photo ? photo.uri : entry?.photo_path ? (photoUrls.data?.[entry.photo_path] ?? null) : null;
@@ -60,15 +64,18 @@ export default function JournalEntryScreen() {
           </Text>
         </View>
 
-        {!loaded ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
-        ) : (
+        {
           <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
             <View className="gap-2">
               <Text className="font-semibold text-label text-ink">Mood (optional)</Text>
               <View className="flex-row flex-wrap gap-2">
                 {MOODS.map((m) => (
-                  <Chip key={m.value} label={m.label} selected={mood === m.value} onPress={() => setMood(mood === m.value ? null : m.value)} />
+                  <Chip
+                    key={m.value}
+                    label={m.label}
+                    selected={mood === m.value}
+                    onPress={() => setMood(mood === m.value ? null : m.value)}
+                  />
                 ))}
               </View>
             </View>
@@ -95,11 +102,11 @@ export default function JournalEntryScreen() {
               />
             ) : null}
           </ScrollView>
-        )}
+        }
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
-          {save.error ?? remove.error ? <Notice tone="danger">{(save.error ?? remove.error)!.message}</Notice> : null}
-          <Button label="Save entry" loading={save.isPending} disabled={!loaded} onPress={onSave} />
+          {(save.error ?? remove.error) ? <Notice tone="danger">{(save.error ?? remove.error)!.message}</Notice> : null}
+          <Button label="Save entry" loading={save.isPending} onPress={onSave} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

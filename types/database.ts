@@ -1356,6 +1356,7 @@ export type Database = {
           timezone: string;
           updated_at: string;
           user_id: string;
+          weekly_review_last_sent_on: string | null;
         };
         Insert: {
           created_at?: string;
@@ -1365,6 +1366,7 @@ export type Database = {
           timezone?: string;
           updated_at?: string;
           user_id?: string;
+          weekly_review_last_sent_on?: string | null;
         };
         Update: {
           created_at?: string;
@@ -1374,6 +1376,7 @@ export type Database = {
           timezone?: string;
           updated_at?: string;
           user_id?: string;
+          weekly_review_last_sent_on?: string | null;
         };
         Relationships: [];
       };
@@ -1858,6 +1861,7 @@ export type Database = {
         };
         Returns: string;
       };
+      weekly_review: { Args: { p_week_start?: string }; Returns: Json };
       seed_money_defaults: { Args: never; Returns: undefined };
     };
     Enums: {
