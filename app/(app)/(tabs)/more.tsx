@@ -19,6 +19,7 @@ import { todaysDoses, useHealth } from "@/lib/health";
 import { useJournal } from "@/lib/journal";
 import { usePeople } from "@/lib/people";
 import { useShopping } from "@/lib/shopping";
+import { THEME_OPTIONS, themeLabel, useThemeStore } from "@/lib/theme";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
@@ -78,7 +79,9 @@ export default function MoreScreen() {
   const colors = useColors();
   const { session, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
-  const [sheet, setSheet] = useState<"rate" | "timezone" | null>(null);
+  const [sheet, setSheet] = useState<"rate" | "timezone" | "theme" | null>(null);
+  const theme = useThemeStore((s) => s.preference);
+  const setTheme = useThemeStore((s) => s.setPreference);
 
   const items = useItems();
   const videos = useVideos();
@@ -266,6 +269,7 @@ export default function MoreScreen() {
         <View className="gap-3">
           <SectionLabel>Settings</SectionLabel>
           <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <Row icon="contrast-outline" title="Theme" detail={themeLabel(theme)} onPress={() => setSheet("theme")} />
             <Row
               title="Daily email digest"
               detail={prefs ? (prefs.digestEnabled ? hourLabel(prefs.digestHour) : "Off") : "Loading…"}
@@ -307,6 +311,18 @@ export default function MoreScreen() {
         onClose={() => setSheet(null)}
         currency={FOREIGN}
         rate={usd?.rateToPhp ?? null}
+      />
+      <OptionSheet
+        visible={sheet === "theme"}
+        onClose={() => setSheet(null)}
+        title="Theme"
+        subtitle="Light or dark on this device. Same as the phone follows your phone's setting."
+        options={THEME_OPTIONS}
+        value={theme}
+        onChange={(value) => {
+          setTheme(value);
+          setSheet(null);
+        }}
       />
       {prefs ? (
         <OptionSheet

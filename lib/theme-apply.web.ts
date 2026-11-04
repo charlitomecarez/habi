@@ -1,0 +1,60 @@
+import type { ThemePreference } from "@/lib/theme";
+
+// Web: the browser's prefers-color-scheme drives global.css, so a chosen theme sets the
+// same token variables inline on <html>, which wins over the media query. "system" removes
+// them again. Keep in sync with global.css.
+const TOKENS: Record<"light" | "dark", Record<string, string>> = {
+  light: {
+    "surface-page": "246 246 243",
+    "surface-card": "255 255 255",
+    "surface-muted": "233 235 230",
+    border: "227 229 224",
+    "border-input": "214 216 211",
+    "border-dashed": "197 200 194",
+    divider: "238 240 236",
+    ink: "26 28 30",
+    "ink-muted": "91 97 104",
+    "on-accent": "255 255 255",
+    accent: "15 118 110",
+    "accent-strong": "11 93 87",
+    "accent-tint": "230 242 240",
+    warning: "161 92 7",
+    "warning-tint": "253 243 226",
+    "warning-ink": "122 69 5",
+    danger: "180 35 24",
+    "danger-tint": "253 236 234",
+    scrim: "26 28 30",
+    "fab-shadow": "26 28 30",
+  },
+  dark: {
+    "surface-page": "18 21 20",
+    "surface-card": "26 30 29",
+    "surface-muted": "37 42 40",
+    border: "44 50 48",
+    "border-input": "58 65 62",
+    "border-dashed": "74 82 79",
+    divider: "36 41 39",
+    ink: "232 235 233",
+    "ink-muted": "162 170 167",
+    "on-accent": "11 21 20",
+    accent: "63 184 169",
+    "accent-strong": "108 211 197",
+    "accent-tint": "23 52 49",
+    warning: "231 166 75",
+    "warning-tint": "51 38 26",
+    "warning-ink": "242 194 126",
+    danger: "242 131 122",
+    "danger-tint": "58 30 28",
+    scrim: "0 0 0",
+    "fab-shadow": "0 0 0",
+  },
+};
+
+export function applyTheme(preference: ThemePreference) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  for (const name of Object.keys(TOKENS.light)) root.style.removeProperty(`--${name}`);
+  root.style.colorScheme = preference === "system" ? "" : preference;
+  if (preference === "system") return;
+  for (const [name, value] of Object.entries(TOKENS[preference])) root.style.setProperty(`--${name}`, value);
+}
