@@ -2,7 +2,7 @@
 //   1. Sends due rows from public.reminders to the Expo Push API.
 //   2. Sends one Resend digest email per user per day, after digest_hour.
 //
-// Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY.
+// Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY, optional APP_URL (adds a button to the digest).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by the platform.
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
@@ -140,7 +140,7 @@ async function sendDigests(supabase: SupabaseClient) {
     if (today.hour < s.digest_hour || s.digest_last_sent_on === today.day) continue;
 
     const input = await loadDigestInput(supabase, s.user_id, s.timezone, today.day);
-    const digest = buildDigest(input);
+    const digest = buildDigest(input, Deno.env.get("APP_URL") ?? null);
 
     if (digest) {
       const { data: user, error: userError } = await supabase.auth.admin.getUserById(s.user_id);
