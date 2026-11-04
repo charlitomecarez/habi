@@ -592,6 +592,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      money_budgets: {
+        Row: {
+          category_id: string;
+          created_at: string;
+          id: string;
+          monthly_limit: number;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          category_id: string;
+          created_at?: string;
+          id?: string;
+          monthly_limit: number;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          category_id?: string;
+          created_at?: string;
+          id?: string;
+          monthly_limit?: number;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       money_categories: {
         Row: {
           icon: string | null;
@@ -1692,7 +1722,8 @@ export type Database = {
         | "document"
         | "habit"
         | "workout"
-        | "medicine";
+        | "medicine"
+        | "budget";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -1840,6 +1871,7 @@ export const Constants = {
         "habit",
         "workout",
         "medicine",
+        "budget",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],

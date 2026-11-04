@@ -26,6 +26,7 @@ export default function AppLayout() {
       <Stack.Screen name="money/transactions" />
       <Stack.Screen name="money/subscriptions" />
       <Stack.Screen name="money/bills" />
+      <Stack.Screen name="money/budgets" />
       <Stack.Screen name="money/bill/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="money/transaction/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="money/transaction/[id]" options={{ presentation: "modal" }} />

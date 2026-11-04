@@ -6,11 +6,13 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
+import { BudgetRow } from "@/components/money/BudgetRow";
 import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import {
   daysUntil,
@@ -101,6 +103,7 @@ export default function MoneyScreen() {
   const month = useMonthSummary(now);
   const subscriptions = useSubscriptions();
   const recent = useTransactions("recent");
+  const budgets = useBudgetMonths(now);
 
   const accountList = accounts.data ?? [];
   const total = accountList.filter((a) => a.currency === "PHP").reduce((sum, a) => sum + a.balance, 0);
@@ -180,6 +183,32 @@ export default function MoneyScreen() {
             </View>
 
             <SpendingCalendar accountName={accountName} categoryName={categoryName} />
+
+            <View className="gap-2">
+              <SectionHeader
+                title="Budgets this month"
+                action={budgets?.length ? "Edit" : "Add budget"}
+                onAction={() => router.push("/money/budgets")}
+              />
+              {budgets?.length ? (
+                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                  {budgets.map((b, i) => (
+                    <BudgetRow
+                      key={b.budget.id}
+                      b={b}
+                      name={categoryName(b.budget.category_id) ?? "Category"}
+                      last={i === budgets.length - 1}
+                    />
+                  ))}
+                </View>
+              ) : (
+                <View className="rounded-card border border-border bg-surface-card px-4 py-3">
+                  <Text className="font-sans text-caption text-ink-muted">
+                    Set a monthly limit for a category, for example Food ₱8,000.
+                  </Text>
+                </View>
+              )}
+            </View>
 
             <View className="gap-3">
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
