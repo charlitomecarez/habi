@@ -15,6 +15,7 @@ import { useColorScheme } from "react-native";
 
 import { useColors, type Palette } from "@/lib/colors";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
+import { KeyboardProvider } from "@/providers/keyboard-provider";
 import { QueryProvider } from "@/providers/query-provider";
 
 SplashScreen.preventAutoHideAsync();
@@ -68,13 +69,15 @@ export default function RootLayout() {
   const dark = useColorScheme() === "dark";
   const colors = useColors();
   return (
-    <ThemeProvider value={navigationTheme(dark, colors)}>
-      <AuthProvider>
-        <QueryProvider>
-          <StatusBar style="auto" />
-          <RootNavigator />
-        </QueryProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <KeyboardProvider>
+      <ThemeProvider value={navigationTheme(dark, colors)}>
+        <AuthProvider>
+          <QueryProvider>
+            <StatusBar style="auto" />
+            <RootNavigator />
+          </QueryProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </KeyboardProvider>
   );
 }
