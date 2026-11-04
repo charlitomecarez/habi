@@ -170,7 +170,7 @@ async function loadDigestInput(
   timeZone: string,
   today: string,
 ): Promise<DigestInput> {
-  const [todos, services, renewals] = await Promise.all([
+  const [todos, services, renewals, doses] = await Promise.all([
     supabase
       .from("todos")
       .select("title, due_at, remind_at, priority")
@@ -190,8 +190,16 @@ async function loadDigestInput(
       .gte("next_billing_on", today)
       .lte("next_billing_on", addDays(today, 7))
       .order("next_billing_on"),
+    // Wide window; filtered to today in the user's time zone below.
+    supabase
+      .from("medicine_doses")
+      .select("medicine_name, dose, scheduled_at, status")
+      .eq("user_id", userId)
+      .gte("scheduled_at", new Date(Date.now() - 36 * 3600 * 1000).toISOString())
+      .lte("scheduled_at", new Date(Date.now() + 36 * 3600 * 1000).toISOString())
+      .order("scheduled_at"),
   ]);
-  for (const r of [todos, services, renewals]) if (r.error) throw r.error;
+  for (const r of [todos, services, renewals, doses]) if (r.error) throw r.error;
 
   // Due today or earlier, or a reminder set for today, in the user's time zone.
   const dayOf = (iso: string | null) => (iso ? localParts(new Date(iso), timeZone).day : null);
@@ -207,6 +215,14 @@ async function loadDigestInput(
       item: s.item,
       vehicle: s.nickname ?? `${s.make} ${s.model}`,
     })),
+    medicines: doses
+      .data!.filter((d) => dayOf(d.scheduled_at) === today)
+      .map((d) => ({
+        name: d.medicine_name,
+        dose: d.dose,
+        time: new Date(d.scheduled_at).toLocaleTimeString("en-US", { timeZone, hour: "numeric", minute: "2-digit" }),
+        status: d.status,
+      })),
     renewals: renewals.data!.map((r) => ({
       name: r.name,
       amount: `${r.currency} ${Number(r.amount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}`,

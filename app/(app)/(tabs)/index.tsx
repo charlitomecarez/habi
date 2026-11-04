@@ -5,10 +5,12 @@ import type { ComponentProps } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { DoseRow } from "@/components/health/DoseRow";
 import { Badge } from "@/components/ui/Badge";
 import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
+import { todaysDoses, useHealth } from "@/lib/health";
 import { useItems } from "@/lib/inventory";
 import { formatPeso, useAccounts } from "@/lib/money";
 import { groupTodos, isOverdue, useTodos, type Todo } from "@/lib/todos";
@@ -134,6 +136,8 @@ export default function HomeScreen() {
   const accounts = useAccounts();
   const items = useItems();
   const vaultUnlocked = useVaultStore((s) => s.key !== null);
+  const health = useHealth();
+  const doses = health.data ? todaysDoses(health.data.doses, now) : [];
 
   const todayTodos = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
   const services = (due.data ?? [])
@@ -183,6 +187,19 @@ export default function HomeScreen() {
             cards.map((card) => <AttentionCard key={`${card.title}-${card.detail}`} {...card} />)
           )}
         </View>
+
+        {doses.length > 0 ? (
+          <View className="gap-3">
+            <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+              Medicines today
+            </Text>
+            <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              {doses.map((d, i) => (
+                <DoseRow key={d.id} dose={d} last={i === doses.length - 1} />
+              ))}
+            </View>
+          </View>
+        ) : null}
 
         <View className="gap-3">
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">

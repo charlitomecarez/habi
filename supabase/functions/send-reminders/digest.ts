@@ -4,6 +4,8 @@ export type DigestInput = {
   todos: { title: string; overdue: boolean }[];
   services: { item: string; vehicle: string }[];
   renewals: { name: string; amount: string; on: string }[];
+  /** Today's medicine doses, in time order, e.g. "8:00 AM". */
+  medicines: { name: string; dose: string; time: string; status: "pending" | "taken" | "skipped" }[];
 };
 
 type Section = { heading: string; lines: string[] };
@@ -40,6 +42,15 @@ export function buildDigest(input: DigestInput) {
     sections.push({
       heading: "Renewing in the next 7 days",
       lines: input.renewals.map((r) => `${r.name}, ${r.amount}, ${formatDay(r.on)}`),
+    });
+  }
+  if (input.medicines.length > 0) {
+    sections.push({
+      heading: "Medicines today",
+      lines: input.medicines.map(
+        (m) =>
+          `${m.time}: ${m.name}${m.dose ? `, ${m.dose}` : ""}${m.status === "taken" ? " (Taken)" : m.status === "skipped" ? " (Skipped)" : ""}`,
+      ),
     });
   }
   if (sections.length === 0) return null;

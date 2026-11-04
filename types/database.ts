@@ -327,6 +327,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      health_visits: {
+        Row: {
+          created_at: string;
+          doctor: string;
+          id: string;
+          notes: string | null;
+          photo_paths: string[];
+          reason: string;
+          updated_at: string;
+          user_id: string;
+          visited_on: string;
+        };
+        Insert: {
+          created_at?: string;
+          doctor?: string;
+          id?: string;
+          notes?: string | null;
+          photo_paths?: string[];
+          reason?: string;
+          updated_at?: string;
+          user_id?: string;
+          visited_on?: string;
+        };
+        Update: {
+          created_at?: string;
+          doctor?: string;
+          id?: string;
+          notes?: string | null;
+          photo_paths?: string[];
+          reason?: string;
+          updated_at?: string;
+          user_id?: string;
+          visited_on?: string;
+        };
+        Relationships: [];
+      };
       inventory_items: {
         Row: {
           acquired_on: string | null;
@@ -440,6 +476,81 @@ export type Database = {
           mood?: Database["public"]["Enums"]["journal_mood"] | null;
           on_date?: string;
           photo_path?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      medicine_doses: {
+        Row: {
+          created_at: string;
+          dose: string;
+          id: string;
+          marked_at: string | null;
+          medicine_id: string;
+          medicine_name: string;
+          scheduled_at: string;
+          status: Database["public"]["Enums"]["dose_status"];
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          dose?: string;
+          id?: string;
+          marked_at?: string | null;
+          medicine_id: string;
+          medicine_name: string;
+          scheduled_at: string;
+          status?: Database["public"]["Enums"]["dose_status"];
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          dose?: string;
+          id?: string;
+          marked_at?: string | null;
+          medicine_id?: string;
+          medicine_name?: string;
+          scheduled_at?: string;
+          status?: Database["public"]["Enums"]["dose_status"];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      medicines: {
+        Row: {
+          created_at: string;
+          dose: string;
+          end_on: string | null;
+          id: string;
+          name: string;
+          note: string | null;
+          start_on: string;
+          times: string[];
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          dose?: string;
+          end_on?: string | null;
+          id?: string;
+          name: string;
+          note?: string | null;
+          start_on?: string;
+          times?: string[];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          dose?: string;
+          end_on?: string | null;
+          id?: string;
+          name?: string;
+          note?: string | null;
+          start_on?: string;
+          times?: string[];
           updated_at?: string;
           user_id?: string;
         };
@@ -1277,6 +1388,30 @@ export type Database = {
           },
         ];
       };
+      weight_logs: {
+        Row: {
+          created_at: string;
+          id: string;
+          on_date: string;
+          user_id: string;
+          weight_kg: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          user_id?: string;
+          weight_kg: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          user_id?: string;
+          weight_kg?: number;
+        };
+        Relationships: [];
+      };
       workout_exercises: {
         Row: {
           created_at: string;
@@ -1536,6 +1671,7 @@ export type Database = {
       content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
       debt_direction: "owed_to_me" | "i_owe";
       document_type: "lto_registration" | "drivers_license" | "passport" | "insurance" | "philhealth" | "other";
+      dose_status: "pending" | "taken" | "skipped";
       habit_schedule: "daily" | "weekdays" | "times_per_week";
       journal_mood: "great" | "good" | "okay" | "low" | "bad";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
@@ -1551,7 +1687,8 @@ export type Database = {
         | "person_date"
         | "document"
         | "habit"
-        | "workout";
+        | "workout"
+        | "medicine";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1680,6 +1817,7 @@ export const Constants = {
       content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
       debt_direction: ["owed_to_me", "i_owe"],
       document_type: ["lto_registration", "drivers_license", "passport", "insurance", "philhealth", "other"],
+      dose_status: ["pending", "taken", "skipped"],
       habit_schedule: ["daily", "weekdays", "times_per_week"],
       journal_mood: ["great", "good", "okay", "low", "bad"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
@@ -1696,6 +1834,7 @@ export const Constants = {
         "document",
         "habit",
         "workout",
+        "medicine",
       ],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],

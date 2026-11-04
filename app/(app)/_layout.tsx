@@ -44,6 +44,12 @@ export default function AppLayout() {
       <Stack.Screen name="shopping/index" />
       <Stack.Screen name="journal/index" />
       <Stack.Screen name="journal/[date]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="health/index" />
+      <Stack.Screen name="health/visit/[id]" />
+      <Stack.Screen name="health/visit/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="health/visit/edit/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="health/medicine/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="health/medicine/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="people/index" />
       <Stack.Screen name="people/[id]" />
       <Stack.Screen name="debts/index" />

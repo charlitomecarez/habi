@@ -15,6 +15,7 @@ import { useDebts } from "@/lib/debts";
 import { documentStatus, useDocuments } from "@/lib/documents";
 import { useGym } from "@/lib/gym";
 import { useHabits } from "@/lib/habits";
+import { todaysDoses, useHealth } from "@/lib/health";
 import { useJournal } from "@/lib/journal";
 import { usePeople } from "@/lib/people";
 import { useShopping } from "@/lib/shopping";
@@ -88,6 +89,7 @@ export default function MoreScreen() {
   const gym = useGym();
   const shopping = useShopping();
   const journal = useJournal();
+  const health = useHealth();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -160,6 +162,16 @@ export default function MoreScreen() {
                   : "One entry a day"
               }
               onPress={() => router.push("/journal")}
+            />
+            <Row
+              icon="medkit-outline"
+              title="Health"
+              detail={
+                health.data
+                  ? `${todaysDoses(health.data.doses).filter((d) => d.status === "pending").length} doses left today`
+                  : "Medicines, visits, weight"
+              }
+              onPress={() => router.push("/health")}
               last
             />
           </View>
