@@ -13,3 +13,8 @@ export async function copySecret(text: string, clearAfterMs: number): Promise<vo
     });
   }, clearAfterMs);
 }
+
+/** Copies text that is not secret, for example a Claude Code command. */
+export async function copyText(text: string): Promise<void> {
+  await Clipboard.setStringAsync(text);
+}

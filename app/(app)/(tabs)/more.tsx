@@ -10,6 +10,7 @@ import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
+import { useVideos } from "@/lib/content";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
@@ -72,6 +73,7 @@ export default function MoreScreen() {
   const [sheet, setSheet] = useState<"rate" | "timezone" | null>(null);
 
   const items = useItems();
+  const videos = useVideos();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -111,20 +113,45 @@ export default function MoreScreen() {
           </View>
         </View>
 
+        {/* Modules in sections: Daily life, People, Home, Records, Work. A section shows once it has a module. */}
         <View className="gap-3">
-          <SectionLabel>Modules</SectionLabel>
+          <SectionLabel>Home</SectionLabel>
           <View className="overflow-hidden rounded-card border border-border bg-surface-card">
             <Row
               icon="cube-outline"
               title="Inventory"
               detail={itemCount === undefined ? "Your things" : `${itemCount} ${itemCount === 1 ? "item" : "items"}`}
               onPress={() => router.push("/inventory")}
+              last
             />
+          </View>
+        </View>
+
+        <View className="gap-3">
+          <SectionLabel>Records</SectionLabel>
+          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
             <Row
               icon="lock-closed-outline"
               title="Vault"
               detail={vaultUnlocked ? "Unlocked" : "Locked"}
               onPress={() => router.push("/vault")}
+              last
+            />
+          </View>
+        </View>
+
+        <View className="gap-3">
+          <SectionLabel>Work</SectionLabel>
+          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <Row
+              icon="videocam-outline"
+              title="Content planner"
+              detail={
+                videos.data
+                  ? `${videos.data.filter((v) => v.stage !== "idea" && v.stage !== "published").length} in progress`
+                  : "Videos from idea to published"
+              }
+              onPress={() => router.push("/content")}
               last
             />
           </View>

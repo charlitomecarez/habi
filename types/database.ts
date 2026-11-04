@@ -33,6 +33,60 @@ export type Database = {
   };
   public: {
     Tables: {
+      content_videos: {
+        Row: {
+          created_at: string;
+          done_steps: string[];
+          format: Database["public"]["Enums"]["content_format"];
+          hook: string;
+          id: string;
+          notes: string;
+          platforms: string[];
+          posts: Json;
+          priority: number;
+          project_slug: string;
+          publish_on: string | null;
+          stage: Database["public"]["Enums"]["content_stage"];
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          done_steps?: string[];
+          format?: Database["public"]["Enums"]["content_format"];
+          hook?: string;
+          id?: string;
+          notes?: string;
+          platforms?: string[];
+          posts?: Json;
+          priority?: number;
+          project_slug?: string;
+          publish_on?: string | null;
+          stage?: Database["public"]["Enums"]["content_stage"];
+          title: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          done_steps?: string[];
+          format?: Database["public"]["Enums"]["content_format"];
+          hook?: string;
+          id?: string;
+          notes?: string;
+          platforms?: string[];
+          posts?: Json;
+          priority?: number;
+          project_slug?: string;
+          publish_on?: string | null;
+          stage?: Database["public"]["Enums"]["content_stage"];
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       exchange_rates: {
         Row: {
           currency: string;
@@ -494,6 +548,7 @@ export type Database = {
           title: string;
           updated_at: string;
           user_id: string;
+          video_id: string | null;
         };
         Insert: {
           completed_at?: string | null;
@@ -507,6 +562,7 @@ export type Database = {
           title: string;
           updated_at?: string;
           user_id?: string;
+          video_id?: string | null;
         };
         Update: {
           completed_at?: string | null;
@@ -520,6 +576,7 @@ export type Database = {
           title?: string;
           updated_at?: string;
           user_id?: string;
+          video_id?: string | null;
         };
         Relationships: [];
       };
@@ -946,9 +1003,11 @@ export type Database = {
     };
     Enums: {
       billing_cycle: "weekly" | "monthly" | "quarterly" | "yearly";
+      content_format: "long" | "short";
+      content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
-      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription";
+      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription" | "content";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1073,9 +1132,11 @@ export const Constants = {
   public: {
     Enums: {
       billing_cycle: ["weekly", "monthly", "quarterly", "yearly"],
+      content_format: ["long", "short"],
+      content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
-      reminder_source: ["todo", "vehicle_service", "custom", "subscription"],
+      reminder_source: ["todo", "vehicle_service", "custom", "subscription", "content"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],
