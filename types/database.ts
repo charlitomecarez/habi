@@ -408,6 +408,7 @@ export type Database = {
       subscriptions: {
         Row: {
           account_id: string | null;
+          auto_add: boolean;
           amount: number;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"];
           category_id: string | null;
@@ -424,6 +425,7 @@ export type Database = {
         };
         Insert: {
           account_id?: string | null;
+          auto_add?: boolean;
           amount: number;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
@@ -440,6 +442,7 @@ export type Database = {
         };
         Update: {
           account_id?: string | null;
+          auto_add?: boolean;
           amount?: number;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
@@ -863,6 +866,7 @@ export type Database = {
       subscription_costs: {
         Row: {
           account_id: string | null;
+          auto_add: boolean | null;
           amount: number | null;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"] | null;
           category_id: string | null;
@@ -937,6 +941,7 @@ export type Database = {
     };
     Functions: {
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
+      add_due_subscription_expenses: { Args: never; Returns: number };
       seed_money_defaults: { Args: never; Returns: undefined };
     };
     Enums: {

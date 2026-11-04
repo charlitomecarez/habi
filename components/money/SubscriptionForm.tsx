@@ -44,20 +44,31 @@ function remindLabel(days: number): string {
   return `${days} ${days === 1 ? "day" : "days"} before, 9:00 AM`;
 }
 
-const schema = z.object({
-  name: z.string().trim().min(1, "Enter a name.").max(80, "Use 80 characters or fewer."),
-  amount: z.string().refine((v) => parseAmount(v) !== null, "Enter an amount, such as 149 or 20.00."),
-  currency: z.enum(CURRENCIES),
-  billingCycle: z.enum(["weekly", "monthly", "quarterly", "yearly"]),
-  nextBillingOn: z
-    .date()
-    .nullable()
-    .refine((v) => Boolean(v), "Choose the next billing date."),
-  accountId: z.string(),
-  categoryId: z.string(),
-  remindDaysBefore: z.string(),
-  notes: z.string(),
-});
+const AUTO_ADD_OPTIONS = [
+  { value: "on", label: "On" },
+  { value: "off", label: "Off" },
+] as const;
+
+const schema = z
+  .object({
+    name: z.string().trim().min(1, "Enter a name.").max(80, "Use 80 characters or fewer."),
+    amount: z.string().refine((v) => parseAmount(v) !== null, "Enter an amount, such as 149 or 20.00."),
+    currency: z.enum(CURRENCIES),
+    billingCycle: z.enum(["weekly", "monthly", "quarterly", "yearly"]),
+    nextBillingOn: z
+      .date()
+      .nullable()
+      .refine((v) => Boolean(v), "Choose the next billing date."),
+    accountId: z.string(),
+    categoryId: z.string(),
+    remindDaysBefore: z.string(),
+    notes: z.string(),
+    autoAdd: z.enum(["on", "off"]),
+  })
+  .refine((v) => v.autoAdd === "off" || v.accountId !== NONE, {
+    path: ["accountId"],
+    message: "Choose the account it is charged to, or turn off auto-add.",
+  });
 
 type FormValues = z.infer<typeof schema>;
 
@@ -72,6 +83,8 @@ function defaults(subscription?: Subscription): FormValues {
     categoryId: subscription?.category_id ?? NONE,
     remindDaysBefore: String(subscription?.remind_days_before ?? 2),
     notes: subscription?.notes ?? "",
+    // On for new subscriptions; an existing one keeps its setting.
+    autoAdd: subscription ? (subscription.auto_add ? "on" : "off") : "on",
   };
 }
 
@@ -90,6 +103,7 @@ export function SubscriptionForm({ subscription }: { subscription?: Subscription
   });
   const currency = useWatch({ control, name: "currency" });
   const amount = parseAmount(useWatch({ control, name: "amount" }) ?? "");
+  const autoAdd = useWatch({ control, name: "autoAdd" });
 
   const defaultCategoryId = (categories.data ?? []).find(
     (c) => c.kind === "expense" && c.name === DEFAULT_CATEGORY,
@@ -135,6 +149,7 @@ export function SubscriptionForm({ subscription }: { subscription?: Subscription
         categoryId: values.categoryId === NONE ? null : values.categoryId,
         remindDaysBefore: Number(values.remindDaysBefore),
         notes: values.notes.trim() || null,
+        autoAdd: values.autoAdd === "on",
       },
     });
     router.back();
@@ -270,6 +285,32 @@ export function SubscriptionForm({ subscription }: { subscription?: Subscription
           {formState.errors.nextBillingOn ? (
             <Text className="font-sans text-caption text-danger">{formState.errors.nextBillingOn.message}</Text>
           ) : null}
+          {formState.errors.accountId ? (
+            <Text className="font-sans text-caption text-danger">{formState.errors.accountId.message}</Text>
+          ) : null}
+
+          <Controller
+            control={control}
+            name="autoAdd"
+            render={({ field }) => (
+              <View className="gap-2">
+                <Text className="font-semibold text-label text-ink">Add the expense on the billing day</Text>
+                <Segmented
+                  label="Add the expense on the billing day"
+                  options={AUTO_ADD_OPTIONS}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+                <Text className="font-sans text-caption text-ink-muted">
+                  {autoAdd === "on"
+                    ? currency === "PHP"
+                      ? "my-app adds the expense to the account on each billing day. You still get the reminder."
+                      : `my-app adds the expense in pesos at your ${currency} rate. With no rate set, it waits for you to log it.`
+                    : "You log each payment yourself with Log payment."}
+                </Text>
+              </View>
+            )}
+          />
 
           <Controller
             control={control}

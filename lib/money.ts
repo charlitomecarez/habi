@@ -43,6 +43,7 @@ export type Subscription = Pick<
   | "category_id"
   | "remind_days_before"
   | "notes"
+  | "auto_add"
 > & {
   /** Cost per month in PHP. Null when a foreign currency has no rate yet. */
   monthlyPhp: number | null;
@@ -261,7 +262,7 @@ export function useSubscriptions() {
       const { data, error } = await supabase
         .from("subscription_costs")
         .select(
-          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, monthly_php, rate_to_php",
+          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, auto_add, monthly_php, rate_to_php",
         )
         .eq("is_active", true)
         .order("next_billing_on");
@@ -278,6 +279,7 @@ export function useSubscriptions() {
         category_id: s.category_id,
         remind_days_before: s.remind_days_before!,
         notes: s.notes,
+        auto_add: s.auto_add!,
         monthlyPhp: s.monthly_php,
         rateToPhp: s.rate_to_php,
       }));
@@ -378,6 +380,8 @@ export type SubscriptionInput = {
   categoryId: string | null;
   remindDaysBefore: number;
   notes: string | null;
+  /** Add the expense to the account on each billing day. Needs an account. */
+  autoAdd: boolean;
 };
 
 export function useSaveSubscription() {
@@ -394,6 +398,7 @@ export function useSaveSubscription() {
         category_id: input.categoryId,
         remind_days_before: input.remindDaysBefore,
         notes: input.notes,
+        auto_add: input.autoAdd,
       };
       const { error } = id
         ? await supabase.from("subscriptions").update(fields).eq("id", id)
