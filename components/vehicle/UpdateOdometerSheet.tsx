@@ -34,7 +34,10 @@ function makeSchema(currentKm: number) {
       .string()
       .refine((v) => parseKm(v) !== null, "Enter the reading in whole kilometres.")
       .refine((v) => (parseKm(v) ?? 0) > currentKm, `Enter more than ${formatKm(currentKm)} km.`),
-    date: z.date({ error: "Choose a date." }).nullable().refine((d) => d !== null, "Choose a date."),
+    date: z
+      .date({ error: "Choose a date." })
+      .nullable()
+      .refine((d) => d !== null, "Choose a date."),
     note: z.string(),
   });
 }
@@ -76,7 +79,12 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
   });
 
   return (
-    <Sheet visible={visible} onClose={close} title="Update odometer" subtitle={`${vehicleName(vehicle)} · ${vehicle.make} ${vehicle.model}`}>
+    <Sheet
+      visible={visible}
+      onClose={close}
+      title="Update odometer"
+      subtitle={`${vehicleName(vehicle)} · ${vehicle.make} ${vehicle.model}`}
+    >
       <Controller
         control={control}
         name="reading"
@@ -99,7 +107,9 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
         <Controller
           control={control}
           name="date"
-          render={({ field }) => <DateTimeField label="Date" mode="date" value={field.value} onChange={field.onChange} />}
+          render={({ field }) => (
+            <DateTimeField label="Date" mode="date" value={field.value} onChange={field.onChange} />
+          )}
         />
         <View className="min-w-0 flex-1">
           <Controller
@@ -114,7 +124,7 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
 
       {newlyDue.length > 0 ? (
         <Notice tone="warning">
-          Saving this makes {newlyDue.map((s) => s.item).join(", ")} due.
+          Saving this makes {newlyDue.map((s) => s.item).join(", ")} due. You&apos;ll get a reminder.
         </Notice>
       ) : null}
       {logOdometer.error ? <Notice tone="danger">{logOdometer.error.message}</Notice> : null}

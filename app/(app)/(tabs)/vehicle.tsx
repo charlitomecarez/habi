@@ -10,7 +10,7 @@ import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { AddVehicleSheet } from "@/components/vehicle/AddVehicleSheet";
 import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import {
   dueText,
   formatKm,
@@ -28,12 +28,16 @@ function DueRow({ service }: { service: ServiceDue }) {
     <View className="flex-row items-center gap-3 rounded-card border border-border bg-surface-card px-4 py-3">
       <View className="flex-1 gap-1">
         <Text className="font-semibold text-row-title text-ink">{service.item}</Text>
-        <Text className={`font-medium text-caption ${overdue ? "text-danger" : "text-warning"}`}>{dueText(service)}</Text>
+        <Text className={`font-medium text-caption ${overdue ? "text-danger" : "text-warning"}`}>
+          {dueText(service)}
+        </Text>
       </View>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`Log service: ${service.item}`}
-        onPress={() => router.push({ pathname: "/vehicle/log-service", params: { serviceId: service.vehicleServiceId } })}
+        onPress={() =>
+          router.push({ pathname: "/vehicle/log-service", params: { serviceId: service.vehicleServiceId } })
+        }
         className="h-chip justify-center rounded-md border border-border-input bg-surface-card px-4 active:bg-surface-muted"
       >
         <Text className="font-semibold text-label text-ink">Log service</Text>
@@ -43,6 +47,7 @@ function DueRow({ service }: { service: ServiceDue }) {
 }
 
 export default function VehicleScreen() {
+  const colors = useColors();
   const [sheet, setSheet] = useState<"odometer" | "add" | null>(null);
   const vehicle = useVehicle();
   const vehicleId = vehicle.data?.id;
@@ -113,7 +118,12 @@ export default function VehicleScreen() {
               Last updated {format(parseISO(updatedAt), "MMM d")}
             </Text>
           </View>
-          <Button label="Update odometer" size="input" onPress={() => setSheet("odometer")} />
+          <Button
+            label="Update odometer"
+            size="input"
+            icon={<Ionicons name="add" size={20} color={colors.onAccent} />}
+            onPress={() => setSheet("odometer")}
+          />
         </View>
 
         {error ? <Notice tone="danger">Could not load services. {error.message}</Notice> : null}
@@ -151,7 +161,9 @@ export default function VehicleScreen() {
                       key={s.vehicleServiceId}
                       accessibilityRole="button"
                       accessibilityLabel={`Log service: ${s.item}, ${laterText(s)}`}
-                      onPress={() => router.push({ pathname: "/vehicle/log-service", params: { serviceId: s.vehicleServiceId } })}
+                      onPress={() =>
+                        router.push({ pathname: "/vehicle/log-service", params: { serviceId: s.vehicleServiceId } })
+                      }
                       className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${index < later.length - 1 ? "border-b border-divider" : ""}`}
                     >
                       <Text className="flex-1 font-medium text-row-title text-ink">{s.item}</Text>

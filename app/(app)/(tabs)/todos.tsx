@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Segmented } from "@/components/ui/Segmented";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import { groupTodos, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
 
 type Filter = "today" | "upcoming" | "done";
@@ -42,6 +42,7 @@ function TodoList({ todos, onToggle }: { todos: Todo[]; onToggle: (todo: Todo) =
 }
 
 export default function TodosScreen() {
+  const colors = useColors();
   const [filter, setFilter] = useState<Filter>("today");
   const { data, isPending, error, refetch } = useTodos();
   const toggle = useToggleTodo();
@@ -59,7 +60,7 @@ export default function TodosScreen() {
           <ScreenHeader title="Todos" />
           {data ? (
             <Text className="font-sans text-label text-ink-muted">
-              {openCount} open · {todayCount} for today
+              {openCount} open · {todayCount} due today
             </Text>
           ) : null}
         </View>

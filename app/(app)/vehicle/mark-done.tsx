@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import {
   dueText,
   laterText,
@@ -25,7 +25,10 @@ import {
 const schema = z.object({
   serviceIds: z.array(z.string()).min(1, "Check at least one service."),
   odometer: z.string().refine((v) => parseKm(v) !== null, "Enter the reading in whole kilometres."),
-  date: z.date().nullable().refine((d) => d !== null, "Choose a date."),
+  date: z
+    .date()
+    .nullable()
+    .refine((d) => d !== null, "Choose a date."),
 });
 
 type FormInput = z.input<typeof schema>;
@@ -36,6 +39,7 @@ function statusText(s: ServiceDue): string {
 }
 
 function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: ServiceDue[] }) {
+  const colors = useColors();
   const markDone = useMarkServicesDone();
   const { control, handleSubmit, setValue, formState } = useForm<FormInput, unknown, FormOutput>({
     resolver: zodResolver(schema),
@@ -87,7 +91,9 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
           <Controller
             control={control}
             name="date"
-            render={({ field }) => <DateTimeField label="Date" mode="date" value={field.value} onChange={field.onChange} />}
+            render={({ field }) => (
+              <DateTimeField label="Date" mode="date" value={field.value} onChange={field.onChange} />
+            )}
           />
         </View>
 
@@ -139,6 +145,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
 }
 
 export default function MarkDoneScreen() {
+  const colors = useColors();
   const vehicle = useVehicle();
   const due = useServiceDue(vehicle.data?.id);
 

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 
+import { uploadPhoto, type LocalPhoto } from "@/lib/photos";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -162,6 +163,7 @@ export type ServiceLogInput = {
   cost: number | null;
   shop: string | null;
   notes: string | null;
+  receipt: LocalPhoto | null;
 };
 
 export function useLogService() {
@@ -181,16 +183,29 @@ export function useLogService() {
         if (error) throw error;
         serviceId = data.id;
       }
-      const { error } = await supabase.from("service_logs").insert({
-        vehicle_id: input.vehicleId,
-        vehicle_service_id: serviceId,
-        odometer_km: input.odometerKm,
-        serviced_on: format(input.servicedOn, "yyyy-MM-dd"),
-        cost: input.cost,
-        shop: input.shop,
-        notes: input.notes,
-      });
+      const { data: log, error } = await supabase
+        .from("service_logs")
+        .insert({
+          vehicle_id: input.vehicleId,
+          vehicle_service_id: serviceId,
+          odometer_km: input.odometerKm,
+          serviced_on: format(input.servicedOn, "yyyy-MM-dd"),
+          cost: input.cost,
+          shop: input.shop,
+          notes: input.notes,
+        })
+        .select("id")
+        .single();
       if (error) throw error;
+
+      if (input.receipt) {
+        const path = await uploadPhoto("receipts", log.id, input.receipt);
+        const { error: receiptError } = await supabase
+          .from("service_logs")
+          .update({ receipt_path: path })
+          .eq("id", log.id);
+        if (receiptError) throw receiptError;
+      }
     },
     onSettled: invalidate,
   });

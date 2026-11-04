@@ -3,7 +3,7 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { Pressable, Text, View } from "react-native";
 
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 
 export type DateTimeFieldProps = {
   label: string;
@@ -18,6 +18,7 @@ export function formatFieldValue(value: Date, mode: DateTimeFieldProps["mode"]):
 
 /** Android: the system date dialog, then the time dialog for "datetime". */
 export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldProps) {
+  const colors = useColors();
   function pick() {
     const start = value ?? new Date();
     DateTimePickerAndroid.open({
@@ -34,9 +35,7 @@ export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldPro
           mode: "time",
           onChange: (timeEvent, time) => {
             if (timeEvent.type !== "set" || !time) return;
-            onChange(
-              new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes()),
-            );
+            onChange(new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes()));
           },
         });
       },
@@ -45,7 +44,7 @@ export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldPro
 
   return (
     <View className="min-w-0 flex-1 gap-2">
-      <Text className="font-medium text-label text-ink">{label}</Text>
+      <Text className="font-semibold text-label text-ink">{label}</Text>
       <View className="h-input flex-row items-center rounded-input border border-border-input bg-surface-card">
         <Pressable
           accessibilityRole="button"

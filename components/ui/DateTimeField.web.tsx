@@ -10,7 +10,7 @@ export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldPro
   const inputId = `field-${label.toLowerCase().replace(/\W+/g, "-")}`;
   return (
     <View className="min-w-0 flex-1 gap-2">
-      <Text className="font-medium text-label text-ink">
+      <Text className="font-semibold text-label text-ink">
         <label htmlFor={inputId}>{label}</label>
       </Text>
       <input

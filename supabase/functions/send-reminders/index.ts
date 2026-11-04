@@ -23,11 +23,9 @@ Deno.serve(async (req) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    { auth: { persistSession: false } },
-  );
+  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
 
   const reminders = await sendDueReminders(supabase);
   const digests = await sendDigests(supabase);
@@ -93,7 +91,10 @@ async function sendDueReminders(supabase: SupabaseClient) {
   const { error: updateError } = await supabase
     .from("reminders")
     .update({ sent_at: new Date().toISOString() })
-    .in("id", due.map((r: Reminder) => r.id));
+    .in(
+      "id",
+      due.map((r: Reminder) => r.id),
+    );
   if (updateError) throw updateError;
 
   return { sent: due.length, pushed: messages.length - deadTokens.length };
@@ -158,10 +159,7 @@ async function sendDigests(supabase: SupabaseClient) {
     }
 
     // An empty day sends nothing but still counts as done.
-    await supabase
-      .from("user_settings")
-      .update({ digest_last_sent_on: today.day })
-      .eq("user_id", s.user_id);
+    await supabase.from("user_settings").update({ digest_last_sent_on: today.day }).eq("user_id", s.user_id);
   }
   return { sent };
 }

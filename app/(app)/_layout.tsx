@@ -21,6 +21,17 @@ export default function AppLayout() {
       <Stack.Screen name="inventory/locations" />
       <Stack.Screen name="inventory/item/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="inventory/item/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="inventory/scan" options={{ presentation: "modal" }} />
+      <Stack.Screen name="money/accounts" />
+      <Stack.Screen name="money/transactions" />
+      <Stack.Screen name="money/subscriptions" />
+      <Stack.Screen name="money/transaction/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="money/transaction/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="money/subscription/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="money/subscription/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="vault/index" />
+      <Stack.Screen name="vault/entry/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="vault/entry/[id]" options={{ presentation: "modal" }} />
     </Stack>
   );
 }

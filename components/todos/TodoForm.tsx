@@ -11,7 +11,7 @@ import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { Segmented } from "@/components/ui/Segmented";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import { useDeleteTodo, useSaveTodo, type Todo } from "@/lib/todos";
 
 const REPEAT_OPTIONS = [
@@ -56,6 +56,7 @@ function defaults(todo?: Todo): FormValues {
 
 /** Full-screen form for a new todo, or for editing one when `todo` is set. */
 export function TodoForm({ todo }: { todo?: Todo }) {
+  const colors = useColors();
   const save = useSaveTodo();
   const remove = useDeleteTodo();
   const { control, handleSubmit, formState } = useForm<FormValues>({
@@ -158,7 +159,7 @@ export function TodoForm({ todo }: { todo?: Todo }) {
             name="repeat"
             render={({ field, fieldState }) => (
               <View className="gap-2">
-                <Text className="font-medium text-label text-ink">Repeat</Text>
+                <Text className="font-semibold text-label text-ink">Repeat</Text>
                 <Segmented label="Repeat" options={REPEAT_OPTIONS} value={field.value} onChange={field.onChange} />
                 {fieldState.error ? (
                   <Text className="font-sans text-caption text-danger">{fieldState.error.message}</Text>
@@ -172,7 +173,7 @@ export function TodoForm({ todo }: { todo?: Todo }) {
             name="priority"
             render={({ field }) => (
               <View className="gap-2">
-                <Text className="font-medium text-label text-ink">Priority</Text>
+                <Text className="font-semibold text-label text-ink">Priority</Text>
                 <View accessibilityRole="radiogroup" accessibilityLabel="Priority" className="flex-row gap-2">
                   {PRIORITY_OPTIONS.map((option) => (
                     <Chip
@@ -202,7 +203,10 @@ export function TodoForm({ todo }: { todo?: Todo }) {
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {failure ? (
-            <Text accessibilityRole="alert" className="rounded-md bg-danger-tint p-3 font-sans text-caption text-danger">
+            <Text
+              accessibilityRole="alert"
+              className="rounded-md bg-danger-tint p-3 font-sans text-caption text-danger"
+            >
               {failure.message}
             </Text>
           ) : null}

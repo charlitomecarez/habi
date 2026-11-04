@@ -15,12 +15,14 @@ type AddLocationSheetProps = {
   locations: LocationWithPath[];
   /** Pre-selects the parent, e.g. when adding a shelf from inside a room. */
   defaultParentId?: string | null;
+  /** Gets the new location's id, e.g. to select it in a form. */
+  onAdded?: (id: string) => void;
 };
 
 type FieldsProps = Omit<AddLocationSheetProps, "visible">;
 
 /** Mounted each time the sheet opens, so its fields always start empty. */
-function AddLocationFields({ onClose, locations, defaultParentId }: FieldsProps) {
+function AddLocationFields({ onClose, locations, defaultParentId, onAdded }: FieldsProps) {
   const add = useAddLocation();
   const [name, setName] = useState("");
   const [parent, setParent] = useState<string>(defaultParentId ?? TOP_LEVEL);
@@ -37,7 +39,8 @@ function AddLocationFields({ onClose, locations, defaultParentId }: FieldsProps)
       setNameError("Enter a name.");
       return;
     }
-    await add.mutateAsync({ name: trimmed, parentId: parent === TOP_LEVEL ? null : parent });
+    const id = await add.mutateAsync({ name: trimmed, parentId: parent === TOP_LEVEL ? null : parent });
+    onAdded?.(id);
     onClose();
   }
 

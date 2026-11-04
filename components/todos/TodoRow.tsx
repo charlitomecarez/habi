@@ -3,7 +3,7 @@ import { format, isToday, isTomorrow } from "date-fns";
 import { Pressable, Text, View } from "react-native";
 
 import { Badge } from "@/components/ui/Badge";
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 import { isOverdue, todoDate, type Todo } from "@/lib/todos";
 
 const REPEAT_LABEL = { daily: "Daily", weekly: "Weekly", monthly: "Monthly" } as const;
@@ -41,6 +41,7 @@ type TodoRowProps = {
 };
 
 export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) {
+  const colors = useColors();
   const done = todo.completed_at !== null;
   const overdue = isOverdue(todo);
   const date = todoDate(todo);

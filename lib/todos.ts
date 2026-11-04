@@ -80,9 +80,7 @@ export function useToggleTodo() {
       await client.cancelQueries({ queryKey: TODOS_KEY });
       const previous = client.getQueryData<Todo[]>(TODOS_KEY);
       client.setQueryData<Todo[]>(TODOS_KEY, (todos) =>
-        todos?.map((t) =>
-          t.id === id ? { ...t, completed_at: done ? new Date().toISOString() : null } : t,
-        ),
+        todos?.map((t) => (t.id === id ? { ...t, completed_at: done ? new Date().toISOString() : null } : t)),
       );
       return { previous };
     },

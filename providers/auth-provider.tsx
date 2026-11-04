@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 import { signOutOfGoogle } from "@/lib/google-sign-in";
 import { supabase } from "@/lib/supabase";
+import { lockVault } from "@/lib/vault";
 
 type AuthState = {
   session: Session | null;
@@ -13,6 +14,7 @@ type AuthState = {
 const AuthContext = createContext<AuthState | null>(null);
 
 async function signOut() {
+  lockVault();
   await signOutOfGoogle();
   await supabase.auth.signOut();
 }
@@ -42,9 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ session, isLoading, signOut }}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ session, isLoading, signOut }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthState {

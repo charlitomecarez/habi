@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, View } from "react-native";
 
-import { colors } from "@/lib/colors";
+import { useColors } from "@/lib/colors";
 
 type ItemPhotoProps = {
   uri: string | null | undefined;
@@ -14,6 +14,7 @@ type ItemPhotoProps = {
 
 /** A photo inside a bordered frame, or a placeholder icon when there is none. */
 export function ItemPhoto({ uri, className, label, iconSize = 20 }: ItemPhotoProps) {
+  const colors = useColors();
   return (
     <View
       accessibilityRole="image"
