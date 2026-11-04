@@ -2,6 +2,7 @@ import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
+import { BrandIcon } from "@/components/ui/BrandIcon";
 import { formatPeso, type Transaction } from "@/lib/money";
 
 type TransactionRowProps = {
@@ -29,6 +30,7 @@ export function TransactionRow({ transaction: t, accountName, categoryName, last
       onPress={() => router.push({ pathname: "/money/transaction/[id]", params: { id: t.id } })}
       className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
     >
+      <BrandIcon name={title} />
       <View className="min-w-0 flex-1 gap-1">
         <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
           {title}

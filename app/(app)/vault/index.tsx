@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
-import { LetterAvatar } from "@/components/ui/LetterAvatar";
+import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SetUpVault, UnlockVault } from "@/components/vault/VaultGate";
@@ -129,7 +129,7 @@ function UnlockedVault() {
                   onPress={() => router.push({ pathname: "/vault/entry/[id]", params: { id: entry.id } })}
                   className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3"
                 >
-                  <LetterAvatar name={title} />
+                  <BrandIcon name={title} hint={data?.url} />
                   <View className="min-w-0 flex-1 gap-1">
                     <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
                       {data ? title : "Cannot read this entry"}
