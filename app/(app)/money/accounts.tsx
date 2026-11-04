@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
+import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
@@ -47,6 +48,7 @@ export default function AccountsScreen() {
                 onPress={() => setEditing(a)}
                 className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b border-divider" : ""}`}
               >
+                <BrandIcon name={a.name} />
                 <View className="min-w-0 flex-1 gap-1">
                   <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
                     {a.name}

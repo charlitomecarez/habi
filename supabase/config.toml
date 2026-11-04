@@ -235,6 +235,33 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
+
+# Sign-in emails in the my-app look (supabase/templates). Paste the same HTML into
+# Dashboard > Authentication > Emails for the live project.
+[auth.email.template.magic_link]
+subject = "Your my-app sign-in code"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "Confirm your email for my-app"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.invite]
+subject = "You are invited to my-app"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Reset your my-app sign-in"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your new email for my-app"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.reauthentication]
+subject = "Your my-app code"
+content_path = "./supabase/templates/reauthentication.html"
+
 # Use a production-ready SMTP server
 # [auth.email.smtp]
 # enabled = true
@@ -423,4 +450,8 @@ enabled = true
 
 # Called by pg_cron with the x-cron-secret header, not a user JWT.
 [functions.send-reminders]
+verify_jwt = false
+
+# Called by pg_cron with the x-cron-secret header, not a user JWT.
+[functions.daily-tip]
 verify_jwt = false

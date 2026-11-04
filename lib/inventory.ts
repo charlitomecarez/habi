@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { differenceInCalendarDays, format, parseISO } from "date-fns";
 
 import { PHOTO_URLS_KEY, removePhoto, uploadPhoto, type PhotoChange } from "@/lib/photos";
 import { supabase } from "@/lib/supabase";
@@ -8,7 +9,18 @@ export type InventoryLocation = Pick<Tables<"inventory_locations">, "id" | "name
 
 export type InventoryItem = Pick<
   Tables<"inventory_items">,
-  "id" | "name" | "category" | "quantity" | "notes" | "photo_path" | "location_id" | "updated_at"
+  | "id"
+  | "name"
+  | "category"
+  | "quantity"
+  | "notes"
+  | "photo_path"
+  | "location_id"
+  | "updated_at"
+  | "acquired_on"
+  | "price"
+  | "receipt_path"
+  | "warranty_ends_on"
 >;
 
 /** A location with its full path, e.g. "Bedroom › Shelf › Blue box". */
@@ -82,7 +94,9 @@ export function useItems() {
     queryFn: async (): Promise<InventoryItem[]> => {
       const { data, error } = await supabase
         .from("inventory_items")
-        .select("id, name, category, quantity, notes, photo_path, location_id, updated_at")
+        .select(
+          "id, name, category, quantity, notes, photo_path, location_id, updated_at, acquired_on, price, receipt_path, warranty_ends_on",
+        )
         .order("name");
       if (error) throw error;
       return data;
@@ -111,18 +125,45 @@ export type ItemInput = {
   quantity: number;
   category: string | null;
   notes: string | null;
+  acquiredOn: Date | null;
+  price: number | null;
+  warrantyEndsOn: Date | null;
 };
+
+/** Always a word: "Warranty ends Dec 4" or "Warranty ended Mar 2". Null with no warranty date. */
+export function warrantyText(item: Pick<InventoryItem, "warranty_ends_on">, now = new Date()) {
+  if (!item.warranty_ends_on) return null;
+  const end = parseISO(item.warranty_ends_on);
+  const date = format(end, "MMM d, yyyy");
+  const days = differenceInCalendarDays(end, now);
+  if (days < 0) return { text: `Warranty ended ${date}`, tone: "neutral" as const };
+  if (days <= 31) return { text: `Warranty ends ${date}`, tone: "warning" as const };
+  return { text: `Warranty until ${date}`, tone: "neutral" as const };
+}
 
 export function useSaveItem() {
   const invalidate = useInvalidateInventory();
   return useMutation({
-    mutationFn: async ({ item, input, photo }: { item?: InventoryItem; input: ItemInput; photo: PhotoChange }) => {
+    mutationFn: async ({
+      item,
+      input,
+      photo,
+      receipt,
+    }: {
+      item?: InventoryItem;
+      input: ItemInput;
+      photo: PhotoChange;
+      receipt?: PhotoChange;
+    }) => {
       const fields = {
         name: input.name,
         location_id: input.locationId,
         quantity: input.quantity,
         category: input.category,
         notes: input.notes,
+        acquired_on: input.acquiredOn ? format(input.acquiredOn, "yyyy-MM-dd") : null,
+        price: input.price,
+        warranty_ends_on: input.warrantyEndsOn ? format(input.warrantyEndsOn, "yyyy-MM-dd") : null,
       };
 
       let id = item?.id;
@@ -133,6 +174,17 @@ export function useSaveItem() {
         const { data, error } = await supabase.from("inventory_items").insert(fields).select("id").single();
         if (error) throw error;
         id = data.id;
+      }
+
+      if (receipt !== undefined) {
+        const oldReceipt = item?.receipt_path ?? null;
+        const newReceipt = receipt ? await uploadPhoto("receipts", `item-${id}`, receipt) : null;
+        const { error } = await supabase.from("inventory_items").update({ receipt_path: newReceipt }).eq("id", id);
+        if (error) {
+          await removePhoto(newReceipt);
+          throw error;
+        }
+        await removePhoto(oldReceipt);
       }
 
       if (photo === undefined) return;
@@ -156,6 +208,7 @@ export function useDeleteItem() {
       const { error } = await supabase.from("inventory_items").delete().eq("id", item.id);
       if (error) throw error;
       await removePhoto(item.photo_path);
+      await removePhoto(item.receipt_path);
     },
     onSettled: invalidate,
   });

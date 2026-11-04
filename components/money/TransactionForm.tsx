@@ -4,7 +4,7 @@ import { parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { KeyboardAvoidingView, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
+import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
@@ -187,7 +188,7 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
 
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
+      <KeyboardAvoidingView className="flex-1">
         <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
           <Pressable
             accessibilityRole="button"

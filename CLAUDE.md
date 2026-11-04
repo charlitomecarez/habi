@@ -51,7 +51,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 ## Navigation
 
 - `app/(auth)/login.tsx` is the only public screen; `app/(app)/` is protected (Stack.Protected + onAuthStateChange).
-- Tabs: Home · Money · Todos · Vehicle · More. More holds Inventory, Vault and settings.
+- Tabs: Home · Money · Todos · Vehicle · More. More holds the other modules in sections (Daily life: Habits, Gym, Journal, Health · People: People and dates, Debts · Home: Inventory, Shopping list · Records: Documents, Vault · Work: Content planner) and settings.
 
 ## Phases
 

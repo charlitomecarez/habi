@@ -1,0 +1,104 @@
+import { Ionicons } from "@expo/vector-icons";
+import { format, parseISO } from "date-fns";
+import { router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { Button } from "@/components/ui/Button";
+import { Notice } from "@/components/ui/Notice";
+import { SecurePhotos } from "@/components/ui/SecurePhotos";
+import { useColors } from "@/lib/colors";
+import { useDeleteVisit, useHealth, useSetVisitPhotos } from "@/lib/health";
+import { removeEncryptedPhotos, uploadEncryptedPhoto } from "@/lib/secure-photos";
+
+export default function VisitScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const health = useHealth();
+  const setPhotos = useSetVisitPhotos();
+  const remove = useDeleteVisit();
+  const [confirm, setConfirm] = useState(false);
+  const v = health.data?.visits.find((x) => x.id === id);
+
+  if (!v) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-surface-page px-5">
+        {health.isPending ? (
+          <ActivityIndicator color={colors.accent} />
+        ) : (
+          <View className="w-full gap-3">
+            <Notice tone="danger">{health.error ? health.error.message : "This visit was deleted."}</Notice>
+            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+          </View>
+        )}
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
+      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          onPress={() => router.back()}
+          className="h-touch w-touch items-center justify-center"
+        >
+          <Ionicons name="chevron-back" size={22} color={colors.ink} />
+        </Pressable>
+        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
+          {v.doctor || v.reason || "Visit"}
+        </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Edit visit"
+          onPress={() => router.push({ pathname: "/health/visit/edit/[id]", params: { id: v.id } })}
+          className="h-touch w-touch items-center justify-center"
+        >
+          <Ionicons name="create-outline" size={22} color={colors.ink} />
+        </Pressable>
+      </View>
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+        <View className="gap-2 rounded-card border border-border bg-surface-card p-4">
+          <Text className="font-medium text-caption text-ink-muted">{format(parseISO(v.visited_on), "EEEE, MMMM d, yyyy")}</Text>
+          {v.reason ? <Text className="font-semibold text-heading text-ink">{v.reason}</Text> : null}
+          {v.notes ? <Text className="font-sans text-body text-ink">{v.notes}</Text> : null}
+        </View>
+        {setPhotos.error ? <Notice tone="danger">{setPhotos.error.message}</Notice> : null}
+        <SecurePhotos
+          label="Lab results"
+          subject="Lab result photo"
+          paths={v.photo_paths}
+          onAdd={async (photo, key) => {
+            const path = await uploadEncryptedPhoto("health", v.id, photo, key);
+            await setPhotos.mutateAsync({ id: v.id, paths: [...v.photo_paths, path] });
+          }}
+          onRemove={async (path) => {
+            await setPhotos.mutateAsync({ id: v.id, paths: v.photo_paths.filter((p) => p !== path) });
+            await removeEncryptedPhotos([path]);
+          }}
+        />
+        {confirm ? (
+          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
+            <Text className="font-sans text-body text-danger">Delete this visit and its lab photos?</Text>
+            <Button
+              label="Delete visit"
+              variant="destructive"
+              size="input"
+              loading={remove.isPending}
+              onPress={async () => {
+                await remove.mutateAsync(v.id);
+                await removeEncryptedPhotos(v.photo_paths);
+                router.back();
+              }}
+            />
+            <Button label="Keep visit" variant="secondary" size="input" onPress={() => setConfirm(false)} />
+          </View>
+        ) : (
+          <Button label="Delete visit" variant="destructive" size="input" onPress={() => setConfirm(true)} />
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

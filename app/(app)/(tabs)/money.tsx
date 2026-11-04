@@ -6,11 +6,16 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
+import { BudgetRow } from "@/components/money/BudgetRow";
+import { GoalCard } from "@/components/money/GoalCard";
+import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
+import { useGoals } from "@/lib/goals";
 import {
   daysUntil,
   formatMoney,
@@ -49,7 +54,9 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
     renewal.status === "overdue"
       ? `Overdue · ${date}, not logged`
       : renewal.status === "today"
-        ? "Renews today"
+        ? s.kind === "bill"
+          ? "Due today"
+          : "Renews today"
         : renewal.status === "soon"
           ? `${date} · in ${days} ${days === 1 ? "day" : "days"}`
           : [date, accountName].filter(Boolean).join(" · ");
@@ -59,12 +66,13 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
       : renewal.status === "later"
         ? "font-sans text-ink-muted"
         : "font-medium text-warning";
-  const inPesos = s.currency !== "PHP" && s.rateToPhp !== null ? s.amount * s.rateToPhp : null;
+  const inPesos = s.currency !== "PHP" && s.rateToPhp !== null && s.amount !== null ? s.amount * s.rateToPhp : null;
+  const amountLabel = s.amount === null ? "Amount when you pay" : formatMoney(s.amount, s.currency);
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${s.name}, ${formatMoney(s.amount, s.currency)}, ${caption}`}
+      accessibilityLabel={`${s.name}, ${amountLabel}, ${caption}`}
       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
       className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
     >
@@ -77,7 +85,9 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
         </Text>
       </View>
       <View className="items-end gap-1">
-        <Text className="font-semibold text-row-title text-ink">{formatMoney(s.amount, s.currency)}</Text>
+        <Text className={`font-semibold text-row-title ${s.amount === null ? "text-ink-muted" : "text-ink"}`}>
+          {amountLabel}
+        </Text>
         {inPesos !== null ? (
           <Text className="font-sans text-badge text-ink-muted">≈ {formatPeso(Math.round(inPesos))}</Text>
         ) : null}
@@ -95,6 +105,8 @@ export default function MoneyScreen() {
   const month = useMonthSummary(now);
   const subscriptions = useSubscriptions();
   const recent = useTransactions("recent");
+  const budgets = useBudgetMonths(now);
+  const goals = useGoals();
 
   const accountList = accounts.data ?? [];
   const total = accountList.filter((a) => a.currency === "PHP").reduce((sum, a) => sum + a.balance, 0);
@@ -173,6 +185,49 @@ export default function MoneyScreen() {
               ))}
             </View>
 
+            <SpendingCalendar accountName={accountName} categoryName={categoryName} />
+
+            <View className="gap-2">
+              <SectionHeader
+                title="Budgets this month"
+                action={budgets?.length ? "Edit" : "Add budget"}
+                onAction={() => router.push("/money/budgets")}
+              />
+              {budgets?.length ? (
+                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                  {budgets.map((b, i) => (
+                    <BudgetRow
+                      key={b.budget.id}
+                      b={b}
+                      name={categoryName(b.budget.category_id) ?? "Category"}
+                      last={i === budgets.length - 1}
+                    />
+                  ))}
+                </View>
+              ) : (
+                <View className="rounded-card border border-border bg-surface-card px-4 py-3">
+                  <Text className="font-sans text-caption text-ink-muted">
+                    Set a monthly limit for a category, for example Food ₱8,000.
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <View className="gap-2">
+              <SectionHeader title="Savings goals" action="Add goal" onAction={() => router.push("/money/goal/new")} />
+              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                {(goals.data?.goals ?? []).length === 0 ? (
+                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                    Set a goal, for example a new phone ₱30,000 by June.
+                  </Text>
+                ) : (
+                  goals.data?.goals.map((g, i) => (
+                    <GoalCard key={g.id} g={g} last={i === (goals.data?.goals.length ?? 0) - 1} />
+                  ))
+                )}
+              </View>
+            </View>
+
             <View className="gap-3">
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 Spending by category
@@ -202,15 +257,11 @@ export default function MoneyScreen() {
             </View>
 
             <View className="gap-2">
-              <SectionHeader
-                title="Renewing soon"
-                action="All subscriptions"
-                onAction={() => router.push("/money/subscriptions")}
-              />
+              <SectionHeader title="Renewing and due soon" />
               <View className="overflow-hidden rounded-card border border-border bg-surface-card">
                 {renewing.length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
-                    Nothing renews in the next {RENEWAL_LIST_DAYS} days.
+                    Nothing renews or is due in the next {RENEWAL_LIST_DAYS} days.
                   </Text>
                 ) : (
                   renewing.map((s, index) => (
@@ -222,6 +273,19 @@ export default function MoneyScreen() {
                     />
                   ))
                 )}
+              </View>
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Button
+                    label="Subscriptions"
+                    variant="secondary"
+                    size="input"
+                    onPress={() => router.push("/money/subscriptions")}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Button label="Bills" variant="secondary" size="input" onPress={() => router.push("/money/bills")} />
+                </View>
               </View>
             </View>
 

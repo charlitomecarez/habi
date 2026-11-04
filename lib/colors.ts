@@ -1,5 +1,7 @@
 import { useColorScheme } from "react-native";
 
+import { useThemeStore } from "@/lib/theme";
+
 // Token values for props that take a colour string (icons, spinners,
 // placeholders, navigation). Keep in sync with global.css.
 const light = {
@@ -30,7 +32,14 @@ const dark: Palette = {
 
 export type Palette = typeof light;
 
-/** The token colours for the phone's or browser's current theme. */
+/** True when the app shows its dark theme: the theme you picked, or the phone's when you left it on System. */
+export function useIsDark(): boolean {
+  const preference = useThemeStore((s) => s.preference);
+  const system = useColorScheme();
+  return preference === "system" ? system === "dark" : preference === "dark";
+}
+
+/** The token colours for the current theme. */
 export function useColors(): Palette {
-  return useColorScheme() === "dark" ? dark : light;
+  return useIsDark() ? dark : light;
 }

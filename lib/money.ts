@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMonths, differenceInCalendarDays, format, parseISO, startOfMonth } from "date-fns";
 
 import { supabase } from "@/lib/supabase";
@@ -7,6 +7,7 @@ import type { Enums, Tables } from "@/types/database";
 export type TransactionKind = Enums<"transaction_kind">;
 export type BillingCycle = Enums<"billing_cycle">;
 export type CategoryKind = Enums<"money_category_kind">;
+export type SubscriptionKind = Enums<"subscription_kind">;
 
 export type Account = Pick<
   Tables<"money_accounts">,
@@ -43,6 +44,8 @@ export type Subscription = Pick<
   | "category_id"
   | "remind_days_before"
   | "notes"
+  | "auto_add"
+  | "kind"
 > & {
   /** Cost per month in PHP. Null when a foreign currency has no rate yet. */
   monthlyPhp: number | null;
@@ -77,6 +80,7 @@ const SUBSCRIPTIONS_KEY = [...MONEY_KEY, "subscriptions"] as const;
 const RATES_KEY = [...MONEY_KEY, "rates"] as const;
 const transactionsKey = (limit: number) => [...MONEY_KEY, "transactions", limit] as const;
 const monthKey = (month: string) => [...MONEY_KEY, "month", month] as const;
+const monthTransactionsKey = (month: string) => [...MONEY_KEY, "month-transactions", month] as const;
 
 const TRANSACTION_COLUMNS =
   "id, kind, account_id, to_account_id, category_id, subscription_id, amount, occurred_on, merchant, note";
@@ -88,6 +92,15 @@ function formatNumber(value: number): string {
 /** "₱1,234.50", or "−₱1,234.50" for a negative value. */
 export function formatPeso(value: number): string {
   return `${value < 0 ? "−" : ""}₱${formatNumber(value)}`;
+}
+
+/** A short amount for a calendar day: "850", "1.2k", "12k", "1.3M". No peso sign, to fit the cell. */
+export function compactAmount(value: number): string {
+  const v = Math.abs(value);
+  if (v < 1000) return String(Math.round(v));
+  if (v < 10_000) return `${(Math.floor(v / 100) / 10).toString()}k`;
+  if (v < 1_000_000) return `${Math.floor(v / 1000)}k`;
+  return `${(Math.floor(v / 100_000) / 10).toString()}M`;
 }
 
 /** "USD 9.99" for a foreign currency, "₱9.99" for PHP. */
@@ -253,6 +266,57 @@ export function useMonthSummary(now = new Date()) {
   });
 }
 
+/** Every transaction in the calendar month that contains `month`, by date, newest first within a day. */
+export function useMonthTransactions(month: Date) {
+  const start = startOfMonth(month);
+  const from = toDateString(start);
+  return useQuery({
+    queryKey: monthTransactionsKey(from),
+    queryFn: async (): Promise<Transaction[]> => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select(TRANSACTION_COLUMNS)
+        .gte("occurred_on", from)
+        .lt("occurred_on", toDateString(addMonths(start, 1)))
+        .order("occurred_on")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    // Keep the last month on screen while the next one loads, so the calendar does not flash.
+    placeholderData: keepPreviousData,
+  });
+}
+
+export type DayTotals = { spent: number; income: number };
+
+/**
+ * Spending and income per day ("yyyy-MM-dd") and for the whole list. Transfers do not count,
+ * the same as the month summary.
+ */
+export function dayTotals(transactions: Pick<Transaction, "kind" | "amount" | "occurred_on">[]): {
+  byDay: Map<string, DayTotals>;
+  spent: number;
+  income: number;
+} {
+  const byDay = new Map<string, DayTotals>();
+  let spent = 0;
+  let income = 0;
+  for (const t of transactions) {
+    if (t.kind === "transfer") continue;
+    const day = byDay.get(t.occurred_on) ?? { spent: 0, income: 0 };
+    if (t.kind === "income") {
+      day.income += t.amount;
+      income += t.amount;
+    } else {
+      day.spent += t.amount;
+      spent += t.amount;
+    }
+    byDay.set(t.occurred_on, day);
+  }
+  return { byDay, spent, income };
+}
+
 /** Active subscriptions, soonest renewal first. */
 export function useSubscriptions() {
   return useQuery({
@@ -261,7 +325,7 @@ export function useSubscriptions() {
       const { data, error } = await supabase
         .from("subscription_costs")
         .select(
-          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, monthly_php, rate_to_php",
+          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, auto_add, kind, monthly_php, rate_to_php",
         )
         .eq("is_active", true)
         .order("next_billing_on");
@@ -270,7 +334,7 @@ export function useSubscriptions() {
       return data.map((s) => ({
         id: s.id!,
         name: s.name!,
-        amount: s.amount!,
+        amount: s.amount,
         currency: s.currency!,
         billing_cycle: s.billing_cycle!,
         next_billing_on: s.next_billing_on!,
@@ -278,6 +342,8 @@ export function useSubscriptions() {
         category_id: s.category_id,
         remind_days_before: s.remind_days_before!,
         notes: s.notes,
+        auto_add: s.auto_add!,
+        kind: s.kind!,
         monthlyPhp: s.monthly_php,
         rateToPhp: s.rate_to_php,
       }));
@@ -370,7 +436,9 @@ export function useSaveAccount() {
 
 export type SubscriptionInput = {
   name: string;
-  amount: number;
+  /** Null for a bill, whose amount changes each time. */
+  amount: number | null;
+  kind: SubscriptionKind;
   currency: Currency;
   billingCycle: BillingCycle;
   nextBillingOn: Date;
@@ -378,6 +446,8 @@ export type SubscriptionInput = {
   categoryId: string | null;
   remindDaysBefore: number;
   notes: string | null;
+  /** Add the expense to the account on each billing day. Needs an account. */
+  autoAdd: boolean;
 };
 
 export function useSaveSubscription() {
@@ -394,6 +464,8 @@ export function useSaveSubscription() {
         category_id: input.categoryId,
         remind_days_before: input.remindDaysBefore,
         notes: input.notes,
+        auto_add: input.kind === "bill" ? false : input.autoAdd,
+        kind: input.kind,
       };
       const { error } = id
         ? await supabase.from("subscriptions").update(fields).eq("id", id)

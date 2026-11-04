@@ -2,12 +2,13 @@
 //   1. Sends due rows from public.reminders to the Expo Push API.
 //   2. Sends one Resend digest email per user per day, after digest_hour.
 //
-// Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY.
+// Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY, optional APP_URL (adds a button to the digest).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by the platform.
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 
-import { buildDigest, type DigestInput } from "./digest.ts";
+import { reviewSections, reviewSummary, type WeeklyReview } from "../_shared/weekly.ts";
+import { buildDigest, buildWeeklyReview, type DigestInput } from "./digest.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 const EXPO_BATCH_SIZE = 100;
@@ -129,7 +130,7 @@ async function sendDigests(supabase: SupabaseClient) {
 
   const { data: settings, error } = await supabase
     .from("user_settings")
-    .select("user_id, timezone, digest_hour, digest_last_sent_on")
+    .select("user_id, timezone, digest_hour, digest_last_sent_on, weekly_review_last_sent_on")
     .eq("digest_enabled", true);
   if (error) throw error;
 
@@ -139,23 +140,52 @@ async function sendDigests(supabase: SupabaseClient) {
     const today = localParts(now, s.timezone);
     if (today.hour < s.digest_hour || s.digest_last_sent_on === today.day) continue;
 
-    const input = await loadDigestInput(supabase, s.user_id, s.timezone, today.day);
-    const digest = buildDigest(input);
+    const appUrl = Deno.env.get("APP_URL") ?? null;
+    // Sunday: the weekly review, from the same query as the Home card.
+    const sunday = new Date(`${today.day}T00:00:00Z`).getUTCDay() === 0;
+    let review: WeeklyReview | null = null;
+    if (sunday) {
+      const { data, error: reviewError } = await supabase.rpc("weekly_review_for", {
+        p_user_id: s.user_id,
+        p_week_start: today.day,
+      });
+      if (reviewError) console.error("weekly_review_for:", reviewError.message);
+      else review = data as WeeklyReview;
+    }
 
-    if (digest) {
+    const input = await loadDigestInput(supabase, s.user_id, s.timezone, today.day);
+    input.week = review ? reviewSummary(review) : null;
+    const digest = buildDigest(input, appUrl);
+    const emails = [
+      ...(digest ? [digest] : []),
+      ...(review && s.weekly_review_last_sent_on !== today.day
+        ? [buildWeeklyReview(today.day, reviewSections(review), appUrl)]
+        : []),
+    ];
+
+    if (emails.length) {
       const { data: user, error: userError } = await supabase.auth.admin.getUserById(s.user_id);
       if (userError || !user.user.email) continue;
 
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: DIGEST_FROM, to: [user.user.email], ...digest }),
-      });
-      if (!res.ok) {
-        console.error(`Resend returned ${res.status}: ${await res.text()}`);
-        continue;
+      let failed = false;
+      for (const email of emails) {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ from: DIGEST_FROM, to: [user.user.email], ...email }),
+        });
+        if (!res.ok) {
+          console.error(`Resend returned ${res.status}: ${await res.text()}`);
+          failed = true;
+          break;
+        }
+        sent += 1;
       }
-      sent += 1;
+      if (failed) continue;
+    }
+
+    if (review) {
+      await supabase.from("user_settings").update({ weekly_review_last_sent_on: today.day }).eq("user_id", s.user_id);
     }
 
     // An empty day sends nothing but still counts as done.
@@ -170,7 +200,7 @@ async function loadDigestInput(
   timeZone: string,
   today: string,
 ): Promise<DigestInput> {
-  const [todos, services, renewals] = await Promise.all([
+  const [todos, services, renewals, doses, tip] = await Promise.all([
     supabase
       .from("todos")
       .select("title, due_at, remind_at, priority")
@@ -190,8 +220,17 @@ async function loadDigestInput(
       .gte("next_billing_on", today)
       .lte("next_billing_on", addDays(today, 7))
       .order("next_billing_on"),
+    // Wide window; filtered to today in the user's time zone below.
+    supabase
+      .from("medicine_doses")
+      .select("medicine_name, dose, scheduled_at, status")
+      .eq("user_id", userId)
+      .gte("scheduled_at", new Date(Date.now() - 36 * 3600 * 1000).toISOString())
+      .lte("scheduled_at", new Date(Date.now() + 36 * 3600 * 1000).toISOString())
+      .order("scheduled_at"),
+    supabase.from("daily_tips").select("tip").eq("user_id", userId).eq("on_date", today).maybeSingle(),
   ]);
-  for (const r of [todos, services, renewals]) if (r.error) throw r.error;
+  for (const r of [todos, services, renewals, doses, tip]) if (r.error) throw r.error;
 
   // Due today or earlier, or a reminder set for today, in the user's time zone.
   const dayOf = (iso: string | null) => (iso ? localParts(new Date(iso), timeZone).day : null);
@@ -207,6 +246,16 @@ async function loadDigestInput(
       item: s.item,
       vehicle: s.nickname ?? `${s.make} ${s.model}`,
     })),
+    tip: tip.data?.tip ?? null,
+    week: null,
+    medicines: doses
+      .data!.filter((d) => dayOf(d.scheduled_at) === today)
+      .map((d) => ({
+        name: d.medicine_name,
+        dose: d.dose,
+        time: new Date(d.scheduled_at).toLocaleTimeString("en-US", { timeZone, hour: "numeric", minute: "2-digit" }),
+        status: d.status,
+      })),
     renewals: renewals.data!.map((r) => ({
       name: r.name,
       amount: `${r.currency} ${Number(r.amount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}`,

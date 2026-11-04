@@ -40,7 +40,18 @@ export function usePhotoUrls(paths: (string | null)[]) {
   });
 }
 
-async function currentUserId(): Promise<string> {
+/** Resizes a picked photo so its longest side is PHOTO_MAX_PX (never enlarging) and compresses it to JPEG. */
+export async function compressPhoto(photo: LocalPhoto): Promise<ArrayBuffer> {
+  const context = ImageManipulator.manipulate(photo.uri);
+  if (Math.max(photo.width, photo.height) > PHOTO_MAX_PX) {
+    context.resize(photo.width >= photo.height ? { width: PHOTO_MAX_PX } : { height: PHOTO_MAX_PX });
+  }
+  const image = await context.renderAsync();
+  const saved = await image.saveAsync({ compress: PHOTO_QUALITY, format: SaveFormat.JPEG });
+  return (await fetch(saved.uri)).arrayBuffer();
+}
+
+export async function currentUserId(): Promise<string> {
   const { data } = await supabase.auth.getSession();
   const id = data.session?.user.id;
   if (!id) throw new Error("You are signed out. Sign in again to save photos.");
@@ -52,19 +63,12 @@ async function currentUserId(): Promise<string> {
  * `<user_id>/<folder>/<baseName>-<time>.jpg`. Returns its storage path.
  */
 export async function uploadPhoto(
-  folder: "inventory" | "receipts",
+  folder: "inventory" | "receipts" | "journal",
   baseName: string,
   photo: LocalPhoto,
 ): Promise<string> {
   const userId = await currentUserId();
-  const context = ImageManipulator.manipulate(photo.uri);
-  // Shrink the longest side to PHOTO_MAX_PX; never enlarge a small photo.
-  if (Math.max(photo.width, photo.height) > PHOTO_MAX_PX) {
-    context.resize(photo.width >= photo.height ? { width: PHOTO_MAX_PX } : { height: PHOTO_MAX_PX });
-  }
-  const image = await context.renderAsync();
-  const saved = await image.saveAsync({ compress: PHOTO_QUALITY, format: SaveFormat.JPEG });
-  const body = await (await fetch(saved.uri)).arrayBuffer();
+  const body = await compressPhoto(photo);
 
   // A new name on every upload, so a cached signed URL never shows the old photo.
   const path = `${userId}/${folder}/${baseName}-${Date.now()}.jpg`;

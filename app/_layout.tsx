@@ -11,10 +11,10 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from "expo-
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { useColorScheme } from "react-native";
 
-import { useColors, type Palette } from "@/lib/colors";
+import { useColors, useIsDark, type Palette } from "@/lib/colors";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
+import { KeyboardProvider } from "@/providers/keyboard-provider";
 import { QueryProvider } from "@/providers/query-provider";
 
 SplashScreen.preventAutoHideAsync();
@@ -65,16 +65,18 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
-  const dark = useColorScheme() === "dark";
+  const dark = useIsDark();
   const colors = useColors();
   return (
-    <ThemeProvider value={navigationTheme(dark, colors)}>
-      <AuthProvider>
-        <QueryProvider>
-          <StatusBar style="auto" />
-          <RootNavigator />
-        </QueryProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <KeyboardProvider>
+      <ThemeProvider value={navigationTheme(dark, colors)}>
+        <AuthProvider>
+          <QueryProvider>
+            <StatusBar style="auto" />
+            <RootNavigator />
+          </QueryProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </KeyboardProvider>
   );
 }

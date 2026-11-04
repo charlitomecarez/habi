@@ -17,11 +17,12 @@ import {
   type VaultSettingsRow,
 } from "@/lib/vault-crypto";
 import {
-  canUseBiometrics,
-  isBiometricUnlockOn,
+  biometricMode,
+  biometricOptions,
   readBiometricKey,
   turnOffBiometricUnlock,
   turnOnBiometricUnlock,
+  type BiometricMode,
 } from "@/lib/vault-biometric";
 
 export type { VaultEntryData } from "@/lib/vault-crypto";
@@ -40,8 +41,8 @@ type VaultState = {
   /** The vault key. Only in memory; null while locked. */
   key: Uint8Array | null;
   /** How the vault was last unlocked, for the "Unlocked with fingerprint" line. */
-  unlockedWith: "password" | "fingerprint" | null;
-  setKey: (key: Uint8Array, unlockedWith?: "password" | "fingerprint") => void;
+  unlockedWith: "password" | BiometricMode | null;
+  setKey: (key: Uint8Array, unlockedWith?: "password" | BiometricMode) => void;
   lock: () => void;
 };
 
@@ -113,14 +114,17 @@ export function useUnlockVault() {
   });
 }
 
-/** Whether this device can use fingerprint unlock, and whether it is on. */
+export type { BiometricMode };
+
+/** What quick unlock this device offers (fingerprint, face) and which mode is on. */
 export function useBiometricUnlock() {
   return useQuery({
     queryKey: BIOMETRIC_KEY,
     queryFn: async () => {
-      const available = await canUseBiometrics();
-      const on = available && (await isBiometricUnlockOn(await currentUserId()));
-      return { available, on };
+      const options = await biometricOptions();
+      const mode = await biometricMode(await currentUserId());
+      const available = options.fingerprint || options.face;
+      return { available, fingerprint: options.fingerprint, face: options.face, mode, on: available && mode !== null };
     },
   });
 }
@@ -131,14 +135,15 @@ export function useUnlockWithFingerprint() {
   return useMutation({
     mutationFn: async (settings: VaultSettingsRow) => {
       const userId = await currentUserId();
+      const mode = await biometricMode(userId);
       const stored = await readBiometricKey(userId);
-      if (!stored) throw new Error("Fingerprint unlock is off. Use your master password.");
+      if (!stored || !mode) throw new Error("Quick unlock is off. Use your master password.");
       const key = keyFromBase64(stored);
       if (!isVaultKey(key, settings)) {
         await turnOffBiometricUnlock(userId);
         throw new Error("The saved key no longer opens the vault. Use your master password.");
       }
-      setKey(key, "fingerprint");
+      setKey(key, mode);
     },
     onSettled: () => client.invalidateQueries({ queryKey: BIOMETRIC_KEY }),
   });
@@ -147,12 +152,13 @@ export function useUnlockWithFingerprint() {
 export function useSetBiometricUnlock() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async (on: boolean) => {
+    /** null turns quick unlock off. */
+    mutationFn: async (mode: BiometricMode | null) => {
       const userId = await currentUserId();
       const key = useVaultStore.getState().key;
-      if (!on) return turnOffBiometricUnlock(userId);
+      if (!mode) return turnOffBiometricUnlock(userId);
       if (!key) throw new Error("Unlock the vault first.");
-      await turnOnBiometricUnlock(userId, keyToBase64(key));
+      await turnOnBiometricUnlock(userId, keyToBase64(key), mode);
     },
     onSettled: () => client.invalidateQueries({ queryKey: BIOMETRIC_KEY }),
   });

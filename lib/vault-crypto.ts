@@ -40,6 +40,10 @@ export type Sealed = { ciphertext: string; nonce: string };
 const b64 = (bytes: Uint8Array) => sodium.to_base64(bytes, sodium.base64_variants.ORIGINAL);
 const unb64 = (text: string) => sodium.from_base64(text, sodium.base64_variants.ORIGINAL);
 
+// No additional data. The native AEAD functions throw on null and accept only a
+// string; "" gives the same ciphertext as null on web.
+const NO_AD = "";
+
 async function deriveKey(password: string, salt: Uint8Array, opsLimit: number, memLimit: number): Promise<Uint8Array> {
   await sodium.ready;
   // On Android the derivation blocks the JS thread for about a second. Wait one frame so the spinner shows first.
@@ -56,7 +60,7 @@ async function deriveKey(password: string, salt: Uint8Array, opsLimit: number, m
 
 function seal(key: Uint8Array, plaintext: string): Sealed {
   const nonce = sodium.randombytes_buf(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
-  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, null, null, nonce, key);
+  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(plaintext, NO_AD, null, nonce, key);
   return { ciphertext: b64(ciphertext), nonce: b64(nonce) };
 }
 
@@ -66,7 +70,7 @@ function open(key: Uint8Array, sealed: Sealed): string | null {
     const plaintext = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
       null,
       unb64(sealed.ciphertext),
-      null,
+      NO_AD,
       unb64(sealed.nonce),
       key,
     );
@@ -131,4 +135,30 @@ export function keyToBase64(key: Uint8Array): string {
 
 export function keyFromBase64(text: string): Uint8Array {
   return unb64(text);
+}
+
+/**
+ * Encrypts file bytes (a photo) with the vault key. The result is nonce || ciphertext,
+ * ready to upload as one file. Used for document and lab result photos.
+ */
+export async function encryptBytes(key: Uint8Array, bytes: Uint8Array): Promise<Uint8Array> {
+  await sodium.ready;
+  const nonce = sodium.randombytes_buf(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
+  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(bytes, NO_AD, null, nonce, key);
+  const out = new Uint8Array(nonce.length + ciphertext.length);
+  out.set(nonce, 0);
+  out.set(ciphertext, nonce.length);
+  return out;
+}
+
+/** The photo bytes as base64, or null when the key is wrong or the file was changed. */
+export async function decryptBytesToBase64(key: Uint8Array, data: Uint8Array): Promise<string | null> {
+  await sodium.ready;
+  const n = sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES;
+  try {
+    const plain = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(null, data.slice(n), NO_AD, data.slice(0, n), key);
+    return b64(plain);
+  } catch {
+    return null;
+  }
 }

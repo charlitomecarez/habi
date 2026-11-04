@@ -33,6 +33,291 @@ export type Database = {
   };
   public: {
     Tables: {
+      budget_alerts: {
+        Row: {
+          budget_id: string;
+          level: number;
+          month: string;
+          sent_at: string;
+        };
+        Insert: {
+          budget_id: string;
+          level: number;
+          month: string;
+          sent_at?: string;
+        };
+        Update: {
+          budget_id?: string;
+          level?: number;
+          month?: string;
+          sent_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "budget_alerts_budget_id_fkey";
+            columns: ["budget_id"];
+            isOneToOne: false;
+            referencedRelation: "money_budgets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      content_videos: {
+        Row: {
+          created_at: string;
+          done_steps: string[];
+          format: Database["public"]["Enums"]["content_format"];
+          hook: string;
+          id: string;
+          notes: string;
+          platforms: string[];
+          posts: Json;
+          priority: number;
+          project_slug: string;
+          publish_on: string | null;
+          stage: Database["public"]["Enums"]["content_stage"];
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          done_steps?: string[];
+          format?: Database["public"]["Enums"]["content_format"];
+          hook?: string;
+          id?: string;
+          notes?: string;
+          platforms?: string[];
+          posts?: Json;
+          priority?: number;
+          project_slug?: string;
+          publish_on?: string | null;
+          stage?: Database["public"]["Enums"]["content_stage"];
+          title: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          done_steps?: string[];
+          format?: Database["public"]["Enums"]["content_format"];
+          hook?: string;
+          id?: string;
+          notes?: string;
+          platforms?: string[];
+          posts?: Json;
+          priority?: number;
+          project_slug?: string;
+          publish_on?: string | null;
+          stage?: Database["public"]["Enums"]["content_stage"];
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      daily_tips: {
+        Row: {
+          created_at: string;
+          id: string;
+          on_date: string;
+          tip: string;
+          topic: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          on_date: string;
+          tip: string;
+          topic: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          tip?: string;
+          topic?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      debt_payments: {
+        Row: {
+          account_id: string | null;
+          amount: number;
+          created_at: string;
+          debt_id: string;
+          id: string;
+          paid_on: string;
+          transaction_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          account_id?: string | null;
+          amount: number;
+          created_at?: string;
+          debt_id: string;
+          id?: string;
+          paid_on?: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          account_id?: string | null;
+          amount?: number;
+          created_at?: string;
+          debt_id?: string;
+          id?: string;
+          paid_on?: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "debt_payments_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_account_balances";
+            referencedColumns: ["account_id"];
+          },
+          {
+            foreignKeyName: "debt_payments_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "debt_payments_debt_id_fkey";
+            columns: ["debt_id"];
+            isOneToOne: false;
+            referencedRelation: "debt_balances";
+            referencedColumns: ["debt_id"];
+          },
+          {
+            foreignKeyName: "debt_payments_debt_id_fkey";
+            columns: ["debt_id"];
+            isOneToOne: false;
+            referencedRelation: "debts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "debt_payments_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      debts: {
+        Row: {
+          amount: number;
+          created_at: string;
+          direction: Database["public"]["Enums"]["debt_direction"];
+          due_on: string | null;
+          id: string;
+          note: string | null;
+          occurred_on: string;
+          person_id: string | null;
+          person_name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          direction: Database["public"]["Enums"]["debt_direction"];
+          due_on?: string | null;
+          id?: string;
+          note?: string | null;
+          occurred_on?: string;
+          person_id?: string | null;
+          person_name: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          direction?: Database["public"]["Enums"]["debt_direction"];
+          due_on?: string | null;
+          id?: string;
+          note?: string | null;
+          occurred_on?: string;
+          person_id?: string | null;
+          person_name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "debts_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      documents: {
+        Row: {
+          created_at: string;
+          expires_on: string | null;
+          id: string;
+          issued_on: string | null;
+          name: string;
+          note: string | null;
+          number: string | null;
+          photo_paths: string[];
+          remind_days_before: number;
+          type: Database["public"]["Enums"]["document_type"];
+          updated_at: string;
+          user_id: string;
+          vehicle_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          expires_on?: string | null;
+          id?: string;
+          issued_on?: string | null;
+          name: string;
+          note?: string | null;
+          number?: string | null;
+          photo_paths?: string[];
+          remind_days_before?: number;
+          type?: Database["public"]["Enums"]["document_type"];
+          updated_at?: string;
+          user_id?: string;
+          vehicle_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          expires_on?: string | null;
+          id?: string;
+          issued_on?: string | null;
+          name?: string;
+          note?: string | null;
+          number?: string | null;
+          photo_paths?: string[];
+          remind_days_before?: number;
+          type?: Database["public"]["Enums"]["document_type"];
+          updated_at?: string;
+          user_id?: string;
+          vehicle_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "documents_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       exchange_rates: {
         Row: {
           currency: string;
@@ -54,6 +339,231 @@ export type Database = {
         };
         Relationships: [];
       };
+      fuel_logs: {
+        Row: {
+          created_at: string;
+          filled_on: string;
+          full_tank: boolean;
+          id: string;
+          litres: number;
+          odometer_km: number;
+          odometer_log_id: string | null;
+          price_per_litre: number;
+          station: string | null;
+          total: number;
+          transaction_id: string | null;
+          user_id: string;
+          vehicle_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          filled_on?: string;
+          full_tank?: boolean;
+          id?: string;
+          litres: number;
+          odometer_km: number;
+          odometer_log_id?: string | null;
+          price_per_litre: number;
+          station?: string | null;
+          total: number;
+          transaction_id?: string | null;
+          user_id?: string;
+          vehicle_id: string;
+        };
+        Update: {
+          created_at?: string;
+          filled_on?: string;
+          full_tank?: boolean;
+          id?: string;
+          litres?: number;
+          odometer_km?: number;
+          odometer_log_id?: string | null;
+          price_per_litre?: number;
+          station?: string | null;
+          total?: number;
+          transaction_id?: string | null;
+          user_id?: string;
+          vehicle_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fuel_logs_odometer_log_id_fkey";
+            columns: ["odometer_log_id"];
+            isOneToOne: false;
+            referencedRelation: "odometer_logs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fuel_logs_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fuel_logs_vehicle_id_fkey";
+            columns: ["vehicle_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      gift_ideas: {
+        Row: {
+          bought_at: string | null;
+          created_at: string;
+          id: string;
+          person_id: string;
+          price: number | null;
+          title: string;
+          transaction_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          bought_at?: string | null;
+          created_at?: string;
+          id?: string;
+          person_id: string;
+          price?: number | null;
+          title: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          bought_at?: string | null;
+          created_at?: string;
+          id?: string;
+          person_id?: string;
+          price?: number | null;
+          title?: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "gift_ideas_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "gift_ideas_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      habit_checks: {
+        Row: {
+          created_at: string;
+          habit_id: string;
+          id: string;
+          on_date: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          habit_id: string;
+          id?: string;
+          on_date: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          habit_id?: string;
+          id?: string;
+          on_date?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "habit_checks_habit_id_fkey";
+            columns: ["habit_id"];
+            isOneToOne: false;
+            referencedRelation: "habits";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      habits: {
+        Row: {
+          archived: boolean;
+          created_at: string;
+          id: string;
+          name: string;
+          remind_time: string | null;
+          schedule: Database["public"]["Enums"]["habit_schedule"];
+          times_per_week: number | null;
+          updated_at: string;
+          user_id: string;
+          weekdays: number[];
+        };
+        Insert: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name: string;
+          remind_time?: string | null;
+          schedule?: Database["public"]["Enums"]["habit_schedule"];
+          times_per_week?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Update: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          remind_time?: string | null;
+          schedule?: Database["public"]["Enums"]["habit_schedule"];
+          times_per_week?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Relationships: [];
+      };
+      health_visits: {
+        Row: {
+          created_at: string;
+          doctor: string;
+          id: string;
+          notes: string | null;
+          photo_paths: string[];
+          reason: string;
+          updated_at: string;
+          user_id: string;
+          visited_on: string;
+        };
+        Insert: {
+          created_at?: string;
+          doctor?: string;
+          id?: string;
+          notes?: string | null;
+          photo_paths?: string[];
+          reason?: string;
+          updated_at?: string;
+          user_id?: string;
+          visited_on?: string;
+        };
+        Update: {
+          created_at?: string;
+          doctor?: string;
+          id?: string;
+          notes?: string | null;
+          photo_paths?: string[];
+          reason?: string;
+          updated_at?: string;
+          user_id?: string;
+          visited_on?: string;
+        };
+        Relationships: [];
+      };
       inventory_items: {
         Row: {
           acquired_on: string | null;
@@ -64,9 +574,12 @@ export type Database = {
           name: string;
           notes: string | null;
           photo_path: string | null;
+          price: number | null;
           quantity: number;
+          receipt_path: string | null;
           updated_at: string;
           user_id: string;
+          warranty_ends_on: string | null;
         };
         Insert: {
           acquired_on?: string | null;
@@ -77,9 +590,12 @@ export type Database = {
           name: string;
           notes?: string | null;
           photo_path?: string | null;
+          price?: number | null;
           quantity?: number;
+          receipt_path?: string | null;
           updated_at?: string;
           user_id?: string;
+          warranty_ends_on?: string | null;
         };
         Update: {
           acquired_on?: string | null;
@@ -90,9 +606,12 @@ export type Database = {
           name?: string;
           notes?: string | null;
           photo_path?: string | null;
+          price?: number | null;
           quantity?: number;
+          receipt_path?: string | null;
           updated_at?: string;
           user_id?: string;
+          warranty_ends_on?: string | null;
         };
         Relationships: [
           {
@@ -139,6 +658,122 @@ export type Database = {
           },
         ];
       };
+      journal_entries: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          mood: Database["public"]["Enums"]["journal_mood"] | null;
+          on_date: string;
+          photo_path: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          mood?: Database["public"]["Enums"]["journal_mood"] | null;
+          on_date: string;
+          photo_path?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          mood?: Database["public"]["Enums"]["journal_mood"] | null;
+          on_date?: string;
+          photo_path?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      medicine_doses: {
+        Row: {
+          created_at: string;
+          dose: string;
+          id: string;
+          marked_at: string | null;
+          medicine_id: string;
+          medicine_name: string;
+          scheduled_at: string;
+          status: Database["public"]["Enums"]["dose_status"];
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          dose?: string;
+          id?: string;
+          marked_at?: string | null;
+          medicine_id: string;
+          medicine_name: string;
+          scheduled_at: string;
+          status?: Database["public"]["Enums"]["dose_status"];
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          dose?: string;
+          id?: string;
+          marked_at?: string | null;
+          medicine_id?: string;
+          medicine_name?: string;
+          scheduled_at?: string;
+          status?: Database["public"]["Enums"]["dose_status"];
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "medicine_doses_medicine_id_fkey";
+            columns: ["medicine_id"];
+            isOneToOne: false;
+            referencedRelation: "medicines";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      medicines: {
+        Row: {
+          created_at: string;
+          dose: string;
+          end_on: string | null;
+          id: string;
+          name: string;
+          note: string | null;
+          start_on: string;
+          times: string[];
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          dose?: string;
+          end_on?: string | null;
+          id?: string;
+          name: string;
+          note?: string | null;
+          start_on?: string;
+          times?: string[];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          dose?: string;
+          end_on?: string | null;
+          id?: string;
+          name?: string;
+          note?: string | null;
+          start_on?: string;
+          times?: string[];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       money_accounts: {
         Row: {
           created_at: string;
@@ -174,6 +809,44 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      money_budgets: {
+        Row: {
+          category_id: string;
+          created_at: string;
+          id: string;
+          monthly_limit: number;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          category_id: string;
+          created_at?: string;
+          id?: string;
+          monthly_limit: number;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          category_id?: string;
+          created_at?: string;
+          id?: string;
+          monthly_limit?: number;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "money_budgets_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "money_categories";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       money_categories: {
         Row: {
@@ -233,6 +906,77 @@ export type Database = {
             columns: ["vehicle_id"];
             isOneToOne: false;
             referencedRelation: "vehicles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      people: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          note: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      person_dates: {
+        Row: {
+          created_at: string;
+          day: number;
+          id: string;
+          kind: Database["public"]["Enums"]["person_date_kind"];
+          label: string | null;
+          month: number;
+          person_id: string;
+          user_id: string;
+          year: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          day: number;
+          id?: string;
+          kind?: Database["public"]["Enums"]["person_date_kind"];
+          label?: string | null;
+          month: number;
+          person_id: string;
+          user_id?: string;
+          year?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          day?: number;
+          id?: string;
+          kind?: Database["public"]["Enums"]["person_date_kind"];
+          label?: string | null;
+          month?: number;
+          person_id?: string;
+          user_id?: string;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_dates_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
             referencedColumns: ["id"];
           },
         ];
@@ -302,6 +1046,92 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      savings_contributions: {
+        Row: {
+          amount: number;
+          created_at: string;
+          goal_id: string;
+          id: string;
+          note: string | null;
+          on_date: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          goal_id: string;
+          id?: string;
+          note?: string | null;
+          on_date?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          goal_id?: string;
+          id?: string;
+          note?: string | null;
+          on_date?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "savings_contributions_goal_id_fkey";
+            columns: ["goal_id"];
+            isOneToOne: false;
+            referencedRelation: "savings_goals";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      savings_goals: {
+        Row: {
+          account_id: string | null;
+          created_at: string;
+          id: string;
+          name: string;
+          target_amount: number;
+          target_date: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          account_id?: string | null;
+          created_at?: string;
+          id?: string;
+          name: string;
+          target_amount: number;
+          target_date?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          account_id?: string | null;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          target_amount?: number;
+          target_date?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "savings_goals_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_account_balances";
+            referencedColumns: ["account_id"];
+          },
+          {
+            foreignKeyName: "savings_goals_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_accounts";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       service_logs: {
         Row: {
@@ -405,16 +1235,75 @@ export type Database = {
           },
         ];
       };
+      shopping_history: {
+        Row: {
+          id: string;
+          last_bought_at: string;
+          last_price: number | null;
+          name: string;
+          times: number;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          last_bought_at?: string;
+          last_price?: number | null;
+          name: string;
+          times?: number;
+          user_id?: string;
+        };
+        Update: {
+          id?: string;
+          last_bought_at?: string;
+          last_price?: number | null;
+          name?: string;
+          times?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      shopping_items: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          price: number | null;
+          quantity: string;
+          ticked: boolean;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          price?: number | null;
+          quantity?: string;
+          ticked?: boolean;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          price?: number | null;
+          quantity?: string;
+          ticked?: boolean;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       subscriptions: {
         Row: {
           account_id: string | null;
-          amount: number;
+          amount: number | null;
+          auto_add: boolean;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"];
           category_id: string | null;
           created_at: string;
           currency: string;
           id: string;
           is_active: boolean;
+          kind: Database["public"]["Enums"]["subscription_kind"];
           name: string;
           next_billing_on: string;
           notes: string | null;
@@ -424,13 +1313,15 @@ export type Database = {
         };
         Insert: {
           account_id?: string | null;
-          amount: number;
+          amount?: number | null;
+          auto_add?: boolean;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
           created_at?: string;
           currency?: string;
           id?: string;
           is_active?: boolean;
+          kind?: Database["public"]["Enums"]["subscription_kind"];
           name: string;
           next_billing_on: string;
           notes?: string | null;
@@ -440,13 +1331,15 @@ export type Database = {
         };
         Update: {
           account_id?: string | null;
-          amount?: number;
+          amount?: number | null;
+          auto_add?: boolean;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
           created_at?: string;
           currency?: string;
           id?: string;
           is_active?: boolean;
+          kind?: Database["public"]["Enums"]["subscription_kind"];
           name?: string;
           next_billing_on?: string;
           notes?: string | null;
@@ -491,6 +1384,7 @@ export type Database = {
           title: string;
           updated_at: string;
           user_id: string;
+          video_id: string | null;
         };
         Insert: {
           completed_at?: string | null;
@@ -504,6 +1398,7 @@ export type Database = {
           title: string;
           updated_at?: string;
           user_id?: string;
+          video_id?: string | null;
         };
         Update: {
           completed_at?: string | null;
@@ -517,8 +1412,17 @@ export type Database = {
           title?: string;
           updated_at?: string;
           user_id?: string;
+          video_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "todos_video_id_fkey";
+            columns: ["video_id"];
+            isOneToOne: false;
+            referencedRelation: "content_videos";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       transactions: {
         Row: {
@@ -633,6 +1537,7 @@ export type Database = {
           timezone: string;
           updated_at: string;
           user_id: string;
+          weekly_review_last_sent_on: string | null;
         };
         Insert: {
           created_at?: string;
@@ -642,6 +1547,7 @@ export type Database = {
           timezone?: string;
           updated_at?: string;
           user_id?: string;
+          weekly_review_last_sent_on?: string | null;
         };
         Update: {
           created_at?: string;
@@ -651,6 +1557,7 @@ export type Database = {
           timezone?: string;
           updated_at?: string;
           user_id?: string;
+          weekly_review_last_sent_on?: string | null;
         };
         Relationships: [];
       };
@@ -845,8 +1752,208 @@ export type Database = {
           },
         ];
       };
+      weight_logs: {
+        Row: {
+          created_at: string;
+          id: string;
+          on_date: string;
+          user_id: string;
+          weight_kg: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          user_id?: string;
+          weight_kg: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          user_id?: string;
+          weight_kg?: number;
+        };
+        Relationships: [];
+      };
+      workout_exercises: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          plan_id: string;
+          reps: number;
+          sets: number;
+          sort_order: number;
+          user_id: string;
+          weight_kg: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          plan_id: string;
+          reps?: number;
+          sets?: number;
+          sort_order?: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          plan_id?: string;
+          reps?: number;
+          sets?: number;
+          sort_order?: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "workout_exercises_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      workout_plans: {
+        Row: {
+          archived: boolean;
+          created_at: string;
+          id: string;
+          name: string;
+          remind_time: string | null;
+          sort_order: number;
+          updated_at: string;
+          user_id: string;
+          weekdays: number[];
+        };
+        Insert: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name: string;
+          remind_time?: string | null;
+          sort_order?: number;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Update: {
+          archived?: boolean;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          remind_time?: string | null;
+          sort_order?: number;
+          updated_at?: string;
+          user_id?: string;
+          weekdays?: number[];
+        };
+        Relationships: [];
+      };
+      workout_sessions: {
+        Row: {
+          created_at: string;
+          id: string;
+          on_date: string;
+          plan_id: string | null;
+          plan_name: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          on_date: string;
+          plan_id?: string | null;
+          plan_name: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          on_date?: string;
+          plan_id?: string | null;
+          plan_name?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      workout_sets: {
+        Row: {
+          created_at: string;
+          exercise_id: string | null;
+          exercise_name: string;
+          id: string;
+          reps: number;
+          session_id: string;
+          set_number: number;
+          user_id: string;
+          weight_kg: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          exercise_id?: string | null;
+          exercise_name: string;
+          id?: string;
+          reps: number;
+          session_id: string;
+          set_number: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          exercise_id?: string | null;
+          exercise_name?: string;
+          id?: string;
+          reps?: number;
+          session_id?: string;
+          set_number?: number;
+          user_id?: string;
+          weight_kg?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "workout_sets_exercise_id_fkey";
+            columns: ["exercise_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_exercises";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "workout_sets_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "workout_sessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
+      debt_balances: {
+        Row: {
+          amount: number | null;
+          balance: number | null;
+          debt_id: string | null;
+          paid: number | null;
+          user_id: string | null;
+        };
+        Relationships: [];
+      };
       money_account_balances: {
         Row: {
           account_id: string | null;
@@ -864,12 +1971,14 @@ export type Database = {
         Row: {
           account_id: string | null;
           amount: number | null;
+          auto_add: boolean | null;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"] | null;
           category_id: string | null;
           created_at: string | null;
           currency: string | null;
           id: string | null;
           is_active: boolean | null;
+          kind: Database["public"]["Enums"]["subscription_kind"] | null;
           monthly_php: number | null;
           name: string | null;
           next_billing_on: string | null;
@@ -936,14 +2045,106 @@ export type Database = {
       };
     };
     Functions: {
+      add_due_subscription_expenses: { Args: never; Returns: number };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
+      budget_month: {
+        Args: { p_budget_id: string; p_month: string };
+        Returns: {
+          available: number;
+          carried: number;
+          spent: number;
+        }[];
+      };
+      buy_gift: {
+        Args: { p_account_id: string; p_amount: number; p_gift_id: string };
+        Returns: undefined;
+      };
+      fill_all_medicine_doses: { Args: never; Returns: undefined };
+      fill_medicine_doses: {
+        Args: { p_medicine_id: string };
+        Returns: undefined;
+      };
+      log_fuel: {
+        Args: {
+          p_account_id: string;
+          p_category_id: string;
+          p_filled_on: string;
+          p_full_tank: boolean;
+          p_litres: number;
+          p_odometer_km: number;
+          p_price_per_litre: number;
+          p_station: string;
+          p_vehicle_id: string;
+        };
+        Returns: string;
+      };
+      next_person_date: {
+        Args: { from_date: string; p_day: number; p_month: number };
+        Returns: string;
+      };
+      record_debt_payment: {
+        Args: {
+          p_account_id: string;
+          p_amount: number;
+          p_debt_id: string;
+          p_paid_on: string;
+        };
+        Returns: string;
+      };
       seed_money_defaults: { Args: never; Returns: undefined };
+      shopping_checkout: {
+        Args: { p_account_id: string; p_category_id: string; p_store: string };
+        Returns: number;
+      };
+      sync_debt_reminder_for: {
+        Args: { p_debt_id: string };
+        Returns: undefined;
+      };
+      sync_habit_reminder_for: {
+        Args: { p_habit_id: string };
+        Returns: undefined;
+      };
+      sync_person_date_reminder_for: {
+        Args: { from_date?: string; p_id: string };
+        Returns: undefined;
+      };
+      sync_workout_reminder_for: {
+        Args: { p_plan_id: string };
+        Returns: undefined;
+      };
+      weekly_review: { Args: { p_week_start?: string }; Returns: Json };
+      weekly_review_for: {
+        Args: { p_user_id: string; p_week_start: string };
+        Returns: Json;
+      };
     };
     Enums: {
       billing_cycle: "weekly" | "monthly" | "quarterly" | "yearly";
+      content_format: "long" | "short";
+      content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
+      debt_direction: "owed_to_me" | "i_owe";
+      document_type: "lto_registration" | "drivers_license" | "passport" | "insurance" | "philhealth" | "other";
+      dose_status: "pending" | "taken" | "skipped";
+      habit_schedule: "daily" | "weekdays" | "times_per_week";
+      journal_mood: "great" | "good" | "okay" | "low" | "bad";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
-      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription";
+      person_date_kind: "birthday" | "anniversary" | "other";
+      reminder_source:
+        | "todo"
+        | "vehicle_service"
+        | "custom"
+        | "subscription"
+        | "content"
+        | "debt"
+        | "person_date"
+        | "document"
+        | "habit"
+        | "workout"
+        | "medicine"
+        | "budget"
+        | "inventory";
+      subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1068,9 +2269,32 @@ export const Constants = {
   public: {
     Enums: {
       billing_cycle: ["weekly", "monthly", "quarterly", "yearly"],
+      content_format: ["long", "short"],
+      content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
+      debt_direction: ["owed_to_me", "i_owe"],
+      document_type: ["lto_registration", "drivers_license", "passport", "insurance", "philhealth", "other"],
+      dose_status: ["pending", "taken", "skipped"],
+      habit_schedule: ["daily", "weekdays", "times_per_week"],
+      journal_mood: ["great", "good", "okay", "low", "bad"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
-      reminder_source: ["todo", "vehicle_service", "custom", "subscription"],
+      person_date_kind: ["birthday", "anniversary", "other"],
+      reminder_source: [
+        "todo",
+        "vehicle_service",
+        "custom",
+        "subscription",
+        "content",
+        "debt",
+        "person_date",
+        "document",
+        "habit",
+        "workout",
+        "medicine",
+        "budget",
+        "inventory",
+      ],
+      subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],

@@ -33,6 +33,8 @@ module.exports = {
         // Printed labels stay black on white in both themes, so any camera can read them.
         "label-paper": "#FFFFFF",
         "label-ink": "#000000",
+        // Brand logos sit on white in both themes, so dark logos (Apple, GitHub, X) still show.
+        "brand-tile": "#FFFFFF",
       },
       fontFamily: {
         sans: ["PlusJakartaSans_400Regular"],

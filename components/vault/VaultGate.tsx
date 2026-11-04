@@ -100,7 +100,7 @@ export function SetUpVault() {
   );
 }
 
-/** Locked: master password, or fingerprint on Android when it is on. */
+/** Locked: master password, or fingerprint or face on Android when quick unlock is on. */
 export function UnlockVault({ settings }: { settings: VaultSettingsRow }) {
   const colors = useColors();
   const unlock = useUnlockVault();
@@ -138,9 +138,15 @@ export function UnlockVault({ settings }: { settings: VaultSettingsRow }) {
           <Button label="Unlock" loading={unlock.isPending} disabled={!password} onPress={onUnlock} />
           {biometric.data?.on ? (
             <Button
-              label="Use fingerprint"
+              label={biometric.data.mode === "face" ? "Use face or fingerprint" : "Use fingerprint"}
               variant="secondary"
-              icon={<Ionicons name="finger-print" size={20} color={colors.ink} />}
+              icon={
+                <Ionicons
+                  name={biometric.data.mode === "face" ? "happy-outline" : "finger-print"}
+                  size={20}
+                  color={colors.ink}
+                />
+              }
               loading={fingerprint.isPending}
               onPress={() => fingerprint.mutate(settings)}
             />

@@ -11,7 +11,14 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
-import { descendantIds, matchesSearch, useItems, useLocations, type InventoryItem } from "@/lib/inventory";
+import {
+  descendantIds,
+  matchesSearch,
+  useItems,
+  useLocations,
+  warrantyText,
+  type InventoryItem,
+} from "@/lib/inventory";
 import { usePhotoUrls } from "@/lib/photos";
 
 const ALL = "all";
@@ -30,7 +37,7 @@ function ItemRow({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${item.name}, ${path ?? "no location"}, quantity ${item.quantity}`}
+      accessibilityLabel={`${item.name}, ${path ?? "no location"}, quantity ${item.quantity}${warrantyText(item) ? `, ${warrantyText(item)!.text}` : ""}`}
       onPress={() => router.push({ pathname: "/inventory/item/[id]", params: { id: item.id } })}
       className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
     >
@@ -40,7 +47,7 @@ function ItemRow({
           {item.name}
         </Text>
         <Text numberOfLines={1} className="font-sans text-caption text-ink-muted">
-          {path ?? "No location"}
+          {[path ?? "No location", warrantyText(item)?.text].filter(Boolean).join(" · ")}
         </Text>
       </View>
       <Text className="font-sans text-caption text-ink-muted">×{item.quantity}</Text>

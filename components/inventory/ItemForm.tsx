@@ -1,21 +1,27 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { KeyboardAvoidingView, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { AddLocationSheet } from "@/components/inventory/AddLocationSheet";
+import { AmountInput } from "@/components/ui/AmountInput";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
+import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
 import { Stepper } from "@/components/ui/Stepper";
 import { useColors } from "@/lib/colors";
-import { useDeleteItem, useLocations, useSaveItem, type InventoryItem } from "@/lib/inventory";
+import { useDeleteItem, useLocations, useSaveItem, warrantyText, type InventoryItem } from "@/lib/inventory";
+import { amountText, parseBalance } from "@/lib/money";
 import { usePhotoUrls, type PhotoChange } from "@/lib/photos";
 
 const NO_LOCATION = "none";
@@ -33,19 +39,35 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 /** Full-screen form for a new item, or for editing one when `item` is set. */
-export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; defaultLocationId?: string }) {
+export function ItemForm({
+  item,
+  defaultLocationId,
+  defaultName,
+}: {
+  item?: InventoryItem;
+  defaultLocationId?: string;
+  /** Starts a new item with this name, e.g. from the shopping list. */
+  defaultName?: string;
+}) {
   const colors = useColors();
   const save = useSaveItem();
   const remove = useDeleteItem();
   const locations = useLocations();
-  const savedPhoto = usePhotoUrls([item?.photo_path ?? null]);
+  const savedPhoto = usePhotoUrls([item?.photo_path ?? null, item?.receipt_path ?? null]);
   const [photo, setPhoto] = useState<PhotoChange>(undefined);
+  const [receipt, setReceipt] = useState<PhotoChange>(undefined);
+  const [acquiredOn, setAcquiredOn] = useState<Date | null>(item?.acquired_on ? parseISO(item.acquired_on) : null);
+  const [price, setPrice] = useState(amountText(item?.price));
+  const [warrantyEndsOn, setWarrantyEndsOn] = useState<Date | null>(
+    item?.warranty_ends_on ? parseISO(item.warranty_ends_on) : null,
+  );
+  const [priceError, setPriceError] = useState<string | null>(null);
   const [addingLocation, setAddingLocation] = useState(false);
 
   const { control, handleSubmit, formState, setValue } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: item?.name ?? "",
+      name: item?.name ?? defaultName ?? "",
       locationId: item?.location_id ?? defaultLocationId ?? NO_LOCATION,
       quantity: String(item?.quantity ?? 1),
       category: item?.category ?? "",
@@ -63,8 +85,16 @@ export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; de
     { value: NEW_LOCATION, label: "+ New location…" },
   ];
 
+  const savedReceipt = item?.receipt_path ? (savedPhoto.data?.[item.receipt_path] ?? null) : null;
+  const receiptUri = receipt === undefined ? savedReceipt : (receipt?.uri ?? null);
+  const warranty = item ? warrantyText(item) : null;
+
   const onSubmit = handleSubmit(async (values) => {
+    const priceValue = price.trim() ? parseBalance(price) : null;
+    if (priceValue !== null && priceValue < 0) return setPriceError("Enter the price, such as 1,299.");
+    setPriceError(null);
     await save.mutateAsync({
+      receipt,
       item,
       input: {
         name: values.name,
@@ -72,6 +102,9 @@ export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; de
         quantity: Number(values.quantity.trim()),
         category: values.category.trim() || null,
         notes: values.notes.trim() || null,
+        acquiredOn,
+        price: priceValue,
+        warrantyEndsOn,
       },
       photo,
     });
@@ -88,7 +121,7 @@ export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; de
 
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
+      <KeyboardAvoidingView className="flex-1">
         <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
           <Pressable
             accessibilityRole="button"
@@ -188,6 +221,48 @@ export function ItemForm({ item, defaultLocationId }: { item?: InventoryItem; de
               />
             )}
           />
+
+          <View className="gap-4">
+            <View className="flex-row items-center gap-2">
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Purchase and warranty
+              </Text>
+              {warranty ? <Badge label={warranty.text} tone={warranty.tone} /> : null}
+            </View>
+            <View className="flex-row gap-3">
+              <DateTimeField label="Bought (optional)" mode="date" value={acquiredOn} onChange={setAcquiredOn} />
+              <DateTimeField
+                label="Warranty ends (optional)"
+                mode="date"
+                value={warrantyEndsOn}
+                onChange={setWarrantyEndsOn}
+              />
+            </View>
+            <AmountInput
+              label="Price (optional)"
+              unit="₱"
+              unitPosition="start"
+              value={price}
+              onChangeText={setPrice}
+              inputMode="decimal"
+              keyboardType="decimal-pad"
+              error={priceError ?? undefined}
+            />
+            <PhotoField
+              label="Receipt (optional)"
+              previewUri={receiptUri}
+              subject={`receipt for ${name || "this item"}`}
+              layout="single"
+              singleLabel="Add receipt photo"
+              onPick={setReceipt}
+              onRemove={() => setReceipt(item?.receipt_path ? null : undefined)}
+            />
+            {warrantyEndsOn ? (
+              <Text className="font-sans text-caption text-ink-muted">
+                You get a reminder one month before the warranty ends.
+              </Text>
+            ) : null}
+          </View>
 
           {item ? (
             <Button
