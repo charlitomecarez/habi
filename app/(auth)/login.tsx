@@ -1,10 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { useColors } from "@/lib/colors";
 import { signInWithGoogle } from "@/lib/google-sign-in";
 import { supabase } from "@/lib/supabase";
@@ -59,7 +60,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
+      <KeyboardAvoidingView className="flex-1">
         <ScrollView
           contentContainerClassName="min-h-full justify-between gap-8 px-6 pb-8 pt-16"
           keyboardShouldPersistTaps="handled"

@@ -3,13 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ActivityIndicator, KeyboardAvoidingView, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
+import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
@@ -231,7 +232,7 @@ export default function LogServiceScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
+      <KeyboardAvoidingView className="flex-1">
         <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
           <Pressable
             accessibilityRole="button"

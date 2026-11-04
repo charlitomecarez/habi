@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import type { ReactNode } from "react";
-import { KeyboardAvoidingView, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { useColors } from "@/lib/colors";
 
 type SheetProps = {
@@ -17,8 +18,15 @@ type SheetProps = {
 export function Sheet({ visible, onClose, title, subtitle, children }: SheetProps) {
   const colors = useColors();
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior="padding" className="flex-1 justify-end bg-scrim">
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+      statusBarTranslucent
+      navigationBarTranslucent
+    >
+      <KeyboardAvoidingView className="flex-1 justify-end bg-scrim">
         <Pressable accessibilityLabel="Close" onPress={onClose} className="flex-1" />
         <View className="max-h-full rounded-t-sheet bg-surface-card">
           <SafeAreaView edges={["bottom"]}>
