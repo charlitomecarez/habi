@@ -38,6 +38,10 @@ export default function AppLayout() {
       <Stack.Screen name="debts/[id]" />
       <Stack.Screen name="debts/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="debts/edit/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="documents/index" />
+      <Stack.Screen name="documents/[id]" />
+      <Stack.Screen name="documents/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="documents/edit/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="content/index" />
       <Stack.Screen name="content/video/[id]" />
       <Stack.Screen name="content/video/new" options={{ presentation: "modal" }} />

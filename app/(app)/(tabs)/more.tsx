@@ -12,6 +12,7 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
 import { useDebts } from "@/lib/debts";
+import { documentStatus, useDocuments } from "@/lib/documents";
 import { usePeople } from "@/lib/people";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
@@ -78,6 +79,7 @@ export default function MoreScreen() {
   const videos = useVideos();
   const debts = useDebts();
   const people = usePeople();
+  const documents = useDocuments();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -159,6 +161,16 @@ export default function MoreScreen() {
         <View className="gap-3">
           <SectionLabel>Records</SectionLabel>
           <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <Row
+              icon="document-text-outline"
+              title="Documents"
+              detail={
+                documents.data
+                  ? `${documents.data.filter((d) => documentStatus(d).tone !== "neutral").length} need attention`
+                  : "Renewals and expiry dates"
+              }
+              onPress={() => router.push("/documents")}
+            />
             <Row
               icon="lock-closed-outline"
               title="Vault"

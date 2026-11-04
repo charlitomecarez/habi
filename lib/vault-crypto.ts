@@ -136,3 +136,29 @@ export function keyToBase64(key: Uint8Array): string {
 export function keyFromBase64(text: string): Uint8Array {
   return unb64(text);
 }
+
+/**
+ * Encrypts file bytes (a photo) with the vault key. The result is nonce || ciphertext,
+ * ready to upload as one file. Used for document and lab result photos.
+ */
+export async function encryptBytes(key: Uint8Array, bytes: Uint8Array): Promise<Uint8Array> {
+  await sodium.ready;
+  const nonce = sodium.randombytes_buf(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
+  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(bytes, NO_AD, null, nonce, key);
+  const out = new Uint8Array(nonce.length + ciphertext.length);
+  out.set(nonce, 0);
+  out.set(ciphertext, nonce.length);
+  return out;
+}
+
+/** The photo bytes as base64, or null when the key is wrong or the file was changed. */
+export async function decryptBytesToBase64(key: Uint8Array, data: Uint8Array): Promise<string | null> {
+  await sodium.ready;
+  const n = sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES;
+  try {
+    const plain = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(null, data.slice(n), NO_AD, data.slice(0, n), key);
+    return b64(plain);
+  } catch {
+    return null;
+  }
+}

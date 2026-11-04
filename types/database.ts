@@ -162,6 +162,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      documents: {
+        Row: {
+          created_at: string;
+          expires_on: string | null;
+          id: string;
+          issued_on: string | null;
+          name: string;
+          note: string | null;
+          number: string | null;
+          photo_paths: string[];
+          remind_days_before: number;
+          type: Database["public"]["Enums"]["document_type"];
+          updated_at: string;
+          user_id: string;
+          vehicle_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          expires_on?: string | null;
+          id?: string;
+          issued_on?: string | null;
+          name: string;
+          note?: string | null;
+          number?: string | null;
+          photo_paths?: string[];
+          remind_days_before?: number;
+          type?: Database["public"]["Enums"]["document_type"];
+          updated_at?: string;
+          user_id?: string;
+          vehicle_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          expires_on?: string | null;
+          id?: string;
+          issued_on?: string | null;
+          name?: string;
+          note?: string | null;
+          number?: string | null;
+          photo_paths?: string[];
+          remind_days_before?: number;
+          type?: Database["public"]["Enums"]["document_type"];
+          updated_at?: string;
+          user_id?: string;
+          vehicle_id?: string | null;
+        };
+        Relationships: [];
+      };
       exchange_rates: {
         Row: {
           currency: string;
@@ -1195,10 +1243,12 @@ export type Database = {
       content_format: "long" | "short";
       content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
       debt_direction: "owed_to_me" | "i_owe";
+      document_type: "lto_registration" | "drivers_license" | "passport" | "insurance" | "philhealth" | "other";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
       person_date_kind: "birthday" | "anniversary" | "other";
-      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription" | "content" | "debt" | "person_date";
+      reminder_source:
+        "todo" | "vehicle_service" | "custom" | "subscription" | "content" | "debt" | "person_date" | "document";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1326,10 +1376,20 @@ export const Constants = {
       content_format: ["long", "short"],
       content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
       debt_direction: ["owed_to_me", "i_owe"],
+      document_type: ["lto_registration", "drivers_license", "passport", "insurance", "philhealth", "other"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
       person_date_kind: ["birthday", "anniversary", "other"],
-      reminder_source: ["todo", "vehicle_service", "custom", "subscription", "content", "debt", "person_date"],
+      reminder_source: [
+        "todo",
+        "vehicle_service",
+        "custom",
+        "subscription",
+        "content",
+        "debt",
+        "person_date",
+        "document",
+      ],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],
