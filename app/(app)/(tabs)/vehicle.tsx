@@ -11,6 +11,8 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { AddVehicleSheet } from "@/components/vehicle/AddVehicleSheet";
 import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
 import { useColors } from "@/lib/colors";
+import { economy, monthFuelCost, useFuelLogs } from "@/lib/fuel";
+import { formatPeso } from "@/lib/money";
 import {
   dueText,
   formatKm,
@@ -53,6 +55,9 @@ export default function VehicleScreen() {
   const vehicleId = vehicle.data?.id;
   const due = useServiceDue(vehicleId);
   const lastReading = useLastReading(vehicleId);
+  const fuel = useFuelLogs(vehicleId);
+  const fuelLatest = economy(fuel.data ?? []).at(-1);
+  const fuelMonth = monthFuelCost(fuel.data ?? []);
 
   const services = due.data ?? [];
   const dueNow = services
@@ -173,6 +178,23 @@ export default function VehicleScreen() {
                 </View>
               </View>
             ) : null}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Fuel. ${fuelLatest ? `${fuelLatest.kmPerLitre.toFixed(1)} km per litre. ` : ""}${formatPeso(fuelMonth)} this month. Open fuel log`}
+              onPress={() => router.push("/vehicle/fuel")}
+              className="flex-row items-center gap-3 rounded-card border border-border bg-surface-card px-4 py-3 active:bg-surface-muted"
+            >
+              <Ionicons name="water-outline" size={22} color={colors.accent} />
+              <View className="min-w-0 flex-1 gap-1">
+                <Text className="font-semibold text-row-title text-ink">Fuel</Text>
+                <Text className="font-sans text-caption text-ink-muted">
+                  {fuelLatest ? `${fuelLatest.kmPerLitre.toFixed(1)} km/L · ` : ""}
+                  {formatPeso(fuelMonth)} this month
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
+            </Pressable>
 
             <Button
               label="Mark services done"

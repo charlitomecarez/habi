@@ -231,6 +231,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      fuel_logs: {
+        Row: {
+          created_at: string;
+          filled_on: string;
+          full_tank: boolean;
+          id: string;
+          litres: number;
+          odometer_km: number;
+          odometer_log_id: string | null;
+          price_per_litre: number;
+          station: string | null;
+          total: number;
+          transaction_id: string | null;
+          user_id: string;
+          vehicle_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          filled_on?: string;
+          full_tank?: boolean;
+          id?: string;
+          litres: number;
+          odometer_km: number;
+          odometer_log_id?: string | null;
+          price_per_litre: number;
+          station?: string | null;
+          total: number;
+          transaction_id?: string | null;
+          user_id?: string;
+          vehicle_id: string;
+        };
+        Update: {
+          created_at?: string;
+          filled_on?: string;
+          full_tank?: boolean;
+          id?: string;
+          litres?: number;
+          odometer_km?: number;
+          odometer_log_id?: string | null;
+          price_per_litre?: number;
+          station?: string | null;
+          total?: number;
+          transaction_id?: string | null;
+          user_id?: string;
+          vehicle_id?: string;
+        };
+        Relationships: [];
+      };
       gift_ideas: {
         Row: {
           bought_at: string | null;
@@ -1759,6 +1807,20 @@ export type Database = {
       shopping_checkout: {
         Args: { p_account_id: string; p_category_id: string | null; p_store: string };
         Returns: number;
+      };
+      log_fuel: {
+        Args: {
+          p_account_id: string;
+          p_category_id: string | null;
+          p_filled_on: string;
+          p_full_tank: boolean;
+          p_litres: number;
+          p_odometer_km: number;
+          p_price_per_litre: number;
+          p_station: string;
+          p_vehicle_id: string;
+        };
+        Returns: string;
       };
       seed_money_defaults: { Args: never; Returns: undefined };
     };
