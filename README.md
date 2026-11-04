@@ -1,5 +1,7 @@
 # my-app
 
+![my-app on Android: the money, todos, home, vehicle and vault screens](docs/images/readme-banner.png)
+
 my-app is a personal app for one user. It runs on Android first and on the web second, from one codebase.
 
 It has these modules:
