@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
 import { BudgetRow } from "@/components/money/BudgetRow";
+import { GoalCard } from "@/components/money/GoalCard";
 import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
@@ -14,6 +15,7 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
+import { useGoals } from "@/lib/goals";
 import {
   daysUntil,
   formatMoney,
@@ -104,6 +106,7 @@ export default function MoneyScreen() {
   const subscriptions = useSubscriptions();
   const recent = useTransactions("recent");
   const budgets = useBudgetMonths(now);
+  const goals = useGoals();
 
   const accountList = accounts.data ?? [];
   const total = accountList.filter((a) => a.currency === "PHP").reduce((sum, a) => sum + a.balance, 0);
@@ -208,6 +211,21 @@ export default function MoneyScreen() {
                   </Text>
                 </View>
               )}
+            </View>
+
+            <View className="gap-2">
+              <SectionHeader title="Savings goals" action="Add goal" onAction={() => router.push("/money/goal/new")} />
+              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                {(goals.data?.goals ?? []).length === 0 ? (
+                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                    Set a goal, for example a new phone ₱30,000 by June.
+                  </Text>
+                ) : (
+                  goals.data?.goals.map((g, i) => (
+                    <GoalCard key={g.id} g={g} last={i === (goals.data?.goals.length ?? 0) - 1} />
+                  ))
+                )}
+              </View>
             </View>
 
             <View className="gap-3">

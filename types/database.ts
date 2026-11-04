@@ -813,6 +813,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      savings_contributions: {
+        Row: {
+          amount: number;
+          created_at: string;
+          goal_id: string;
+          id: string;
+          note: string | null;
+          on_date: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          goal_id: string;
+          id?: string;
+          note?: string | null;
+          on_date?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          goal_id?: string;
+          id?: string;
+          note?: string | null;
+          on_date?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      savings_goals: {
+        Row: {
+          account_id: string | null;
+          created_at: string;
+          id: string;
+          name: string;
+          target_amount: number;
+          target_date: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          account_id?: string | null;
+          created_at?: string;
+          id?: string;
+          name: string;
+          target_amount: number;
+          target_date?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          account_id?: string | null;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          target_amount?: number;
+          target_date?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       service_logs: {
         Row: {
           cost: number | null;
