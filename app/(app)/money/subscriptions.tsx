@@ -30,7 +30,7 @@ function costText(s: Subscription): string {
   if (s.currency !== "PHP") {
     return s.rateToPhp === null
       ? `${cycle} · no rate set`
-      : `${cycle} · ≈ ${formatPeso(Math.round(s.amount * s.rateToPhp))}`;
+      : `${cycle} · ≈ ${formatPeso(Math.round((s.amount ?? 0) * s.rateToPhp))}`;
   }
   if (s.billing_cycle !== "monthly" && s.monthlyPhp !== null) {
     return `${cycle} · ${formatPeso(Math.round(s.monthlyPhp))}/mo`;
@@ -45,7 +45,8 @@ export default function SubscriptionsScreen() {
   const rates = useExchangeRates();
   const accounts = useAccounts();
 
-  const list = subscriptions.data ?? [];
+  // Bills have their own screen.
+  const list = (subscriptions.data ?? []).filter((s) => s.kind === "subscription");
   const monthly = list.reduce((sum, s) => sum + (s.monthlyPhp ?? 0), 0);
   const missingRate = list.some((s) => s.monthlyPhp === null);
   const usd = rates.data?.find((r) => r.currency === FOREIGN) ?? null;
@@ -141,7 +142,7 @@ export default function SubscriptionsScreen() {
                     <Pressable
                       key={s.id}
                       accessibilityRole="button"
-                      accessibilityLabel={`${s.name}, ${formatMoney(s.amount, s.currency)} ${costText(s)}, ${caption}`}
+                      accessibilityLabel={`${s.name}, ${formatMoney(s.amount ?? 0, s.currency)} ${costText(s)}, ${caption}`}
                       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
                       className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b border-divider" : ""}`}
                     >
@@ -156,7 +157,7 @@ export default function SubscriptionsScreen() {
                       </View>
                       <View className="items-end gap-1">
                         <Text className="font-semibold text-row-title text-ink">
-                          {formatMoney(s.amount, s.currency)}
+                          {formatMoney(s.amount ?? 0, s.currency)}
                         </Text>
                         <Text className="font-sans text-badge text-ink-muted">{costText(s)}</Text>
                       </View>

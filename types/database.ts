@@ -945,14 +945,15 @@ export type Database = {
       subscriptions: {
         Row: {
           account_id: string | null;
+          amount: number | null;
           auto_add: boolean;
-          amount: number;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"];
           category_id: string | null;
           created_at: string;
           currency: string;
           id: string;
           is_active: boolean;
+          kind: Database["public"]["Enums"]["subscription_kind"];
           name: string;
           next_billing_on: string;
           notes: string | null;
@@ -962,14 +963,15 @@ export type Database = {
         };
         Insert: {
           account_id?: string | null;
+          amount: number | null;
           auto_add?: boolean;
-          amount: number;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
           created_at?: string;
           currency?: string;
           id?: string;
           is_active?: boolean;
+          kind?: Database["public"]["Enums"]["subscription_kind"];
           name: string;
           next_billing_on: string;
           notes?: string | null;
@@ -979,14 +981,15 @@ export type Database = {
         };
         Update: {
           account_id?: string | null;
+          amount?: number | null;
           auto_add?: boolean;
-          amount?: number;
           billing_cycle?: Database["public"]["Enums"]["billing_cycle"];
           category_id?: string | null;
           created_at?: string;
           currency?: string;
           id?: string;
           is_active?: boolean;
+          kind?: Database["public"]["Enums"]["subscription_kind"];
           name?: string;
           next_billing_on?: string;
           notes?: string | null;
@@ -1576,6 +1579,7 @@ export type Database = {
         Row: {
           account_id: string | null;
           auto_add: boolean | null;
+          kind: Database["public"]["Enums"]["subscription_kind"] | null;
           amount: number | null;
           billing_cycle: Database["public"]["Enums"]["billing_cycle"] | null;
           category_id: string | null;
@@ -1689,6 +1693,7 @@ export type Database = {
         | "habit"
         | "workout"
         | "medicine";
+      subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1836,6 +1841,7 @@ export const Constants = {
         "workout",
         "medicine",
       ],
+      subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],

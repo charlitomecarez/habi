@@ -50,7 +50,9 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
     renewal.status === "overdue"
       ? `Overdue · ${date}, not logged`
       : renewal.status === "today"
-        ? "Renews today"
+        ? s.kind === "bill"
+          ? "Due today"
+          : "Renews today"
         : renewal.status === "soon"
           ? `${date} · in ${days} ${days === 1 ? "day" : "days"}`
           : [date, accountName].filter(Boolean).join(" · ");
@@ -60,12 +62,13 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
       : renewal.status === "later"
         ? "font-sans text-ink-muted"
         : "font-medium text-warning";
-  const inPesos = s.currency !== "PHP" && s.rateToPhp !== null ? s.amount * s.rateToPhp : null;
+  const inPesos = s.currency !== "PHP" && s.rateToPhp !== null && s.amount !== null ? s.amount * s.rateToPhp : null;
+  const amountLabel = s.amount === null ? "Amount when you pay" : formatMoney(s.amount, s.currency);
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${s.name}, ${formatMoney(s.amount, s.currency)}, ${caption}`}
+      accessibilityLabel={`${s.name}, ${amountLabel}, ${caption}`}
       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
       className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
     >
@@ -78,7 +81,9 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
         </Text>
       </View>
       <View className="items-end gap-1">
-        <Text className="font-semibold text-row-title text-ink">{formatMoney(s.amount, s.currency)}</Text>
+        <Text className={`font-semibold text-row-title ${s.amount === null ? "text-ink-muted" : "text-ink"}`}>
+          {amountLabel}
+        </Text>
         {inPesos !== null ? (
           <Text className="font-sans text-badge text-ink-muted">≈ {formatPeso(Math.round(inPesos))}</Text>
         ) : null}
@@ -205,15 +210,11 @@ export default function MoneyScreen() {
             </View>
 
             <View className="gap-2">
-              <SectionHeader
-                title="Renewing soon"
-                action="All subscriptions"
-                onAction={() => router.push("/money/subscriptions")}
-              />
+              <SectionHeader title="Renewing and due soon" />
               <View className="overflow-hidden rounded-card border border-border bg-surface-card">
                 {renewing.length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
-                    Nothing renews in the next {RENEWAL_LIST_DAYS} days.
+                    Nothing renews or is due in the next {RENEWAL_LIST_DAYS} days.
                   </Text>
                 ) : (
                   renewing.map((s, index) => (
@@ -225,6 +226,19 @@ export default function MoneyScreen() {
                     />
                   ))
                 )}
+              </View>
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Button
+                    label="Subscriptions"
+                    variant="secondary"
+                    size="input"
+                    onPress={() => router.push("/money/subscriptions")}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Button label="Bills" variant="secondary" size="input" onPress={() => router.push("/money/bills")} />
+                </View>
               </View>
             </View>
 

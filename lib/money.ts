@@ -7,6 +7,7 @@ import type { Enums, Tables } from "@/types/database";
 export type TransactionKind = Enums<"transaction_kind">;
 export type BillingCycle = Enums<"billing_cycle">;
 export type CategoryKind = Enums<"money_category_kind">;
+export type SubscriptionKind = Enums<"subscription_kind">;
 
 export type Account = Pick<
   Tables<"money_accounts">,
@@ -44,6 +45,7 @@ export type Subscription = Pick<
   | "remind_days_before"
   | "notes"
   | "auto_add"
+  | "kind"
 > & {
   /** Cost per month in PHP. Null when a foreign currency has no rate yet. */
   monthlyPhp: number | null;
@@ -323,7 +325,7 @@ export function useSubscriptions() {
       const { data, error } = await supabase
         .from("subscription_costs")
         .select(
-          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, auto_add, monthly_php, rate_to_php",
+          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, auto_add, kind, monthly_php, rate_to_php",
         )
         .eq("is_active", true)
         .order("next_billing_on");
@@ -332,7 +334,7 @@ export function useSubscriptions() {
       return data.map((s) => ({
         id: s.id!,
         name: s.name!,
-        amount: s.amount!,
+        amount: s.amount,
         currency: s.currency!,
         billing_cycle: s.billing_cycle!,
         next_billing_on: s.next_billing_on!,
@@ -341,6 +343,7 @@ export function useSubscriptions() {
         remind_days_before: s.remind_days_before!,
         notes: s.notes,
         auto_add: s.auto_add!,
+        kind: s.kind!,
         monthlyPhp: s.monthly_php,
         rateToPhp: s.rate_to_php,
       }));
@@ -433,7 +436,9 @@ export function useSaveAccount() {
 
 export type SubscriptionInput = {
   name: string;
-  amount: number;
+  /** Null for a bill, whose amount changes each time. */
+  amount: number | null;
+  kind: SubscriptionKind;
   currency: Currency;
   billingCycle: BillingCycle;
   nextBillingOn: Date;
@@ -459,7 +464,8 @@ export function useSaveSubscription() {
         category_id: input.categoryId,
         remind_days_before: input.remindDaysBefore,
         notes: input.notes,
-        auto_add: input.autoAdd,
+        auto_add: input.kind === "bill" ? false : input.autoAdd,
+        kind: input.kind,
       };
       const { error } = id
         ? await supabase.from("subscriptions").update(fields).eq("id", id)
