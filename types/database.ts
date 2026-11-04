@@ -87,6 +87,78 @@ export type Database = {
         };
         Relationships: [];
       };
+      debt_payments: {
+        Row: {
+          account_id: string | null;
+          amount: number;
+          created_at: string;
+          debt_id: string;
+          id: string;
+          paid_on: string;
+          transaction_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          account_id?: string | null;
+          amount: number;
+          created_at?: string;
+          debt_id: string;
+          id?: string;
+          paid_on?: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          account_id?: string | null;
+          amount?: number;
+          created_at?: string;
+          debt_id?: string;
+          id?: string;
+          paid_on?: string;
+          transaction_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      debts: {
+        Row: {
+          amount: number;
+          created_at: string;
+          direction: Database["public"]["Enums"]["debt_direction"];
+          due_on: string | null;
+          id: string;
+          note: string | null;
+          occurred_on: string;
+          person_name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          direction: Database["public"]["Enums"]["debt_direction"];
+          due_on?: string | null;
+          id?: string;
+          note?: string | null;
+          occurred_on?: string;
+          person_name: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          direction?: Database["public"]["Enums"]["debt_direction"];
+          due_on?: string | null;
+          id?: string;
+          note?: string | null;
+          occurred_on?: string;
+          person_name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       exchange_rates: {
         Row: {
           currency: string;
@@ -907,6 +979,16 @@ export type Database = {
       };
     };
     Views: {
+      debt_balances: {
+        Row: {
+          amount: number | null;
+          balance: number | null;
+          debt_id: string | null;
+          paid: number | null;
+          user_id: string | null;
+        };
+        Relationships: [];
+      };
       money_account_balances: {
         Row: {
           account_id: string | null;
@@ -999,15 +1081,20 @@ export type Database = {
     Functions: {
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
       add_due_subscription_expenses: { Args: never; Returns: number };
+      record_debt_payment: {
+        Args: { p_account_id: string; p_amount: number; p_debt_id: string; p_paid_on: string };
+        Returns: string;
+      };
       seed_money_defaults: { Args: never; Returns: undefined };
     };
     Enums: {
       billing_cycle: "weekly" | "monthly" | "quarterly" | "yearly";
       content_format: "long" | "short";
       content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
+      debt_direction: "owed_to_me" | "i_owe";
       money_account_kind: "cash" | "ewallet" | "bank" | "credit_card" | "other";
       money_category_kind: "expense" | "income";
-      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription" | "content";
+      reminder_source: "todo" | "vehicle_service" | "custom" | "subscription" | "content" | "debt";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
@@ -1134,9 +1221,10 @@ export const Constants = {
       billing_cycle: ["weekly", "monthly", "quarterly", "yearly"],
       content_format: ["long", "short"],
       content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
+      debt_direction: ["owed_to_me", "i_owe"],
       money_account_kind: ["cash", "ewallet", "bank", "credit_card", "other"],
       money_category_kind: ["expense", "income"],
-      reminder_source: ["todo", "vehicle_service", "custom", "subscription", "content"],
+      reminder_source: ["todo", "vehicle_service", "custom", "subscription", "content", "debt"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],

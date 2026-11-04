@@ -11,6 +11,7 @@ import { OptionSheet } from "@/components/ui/OptionSheet";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
+import { useDebts } from "@/lib/debts";
 import { useItems } from "@/lib/inventory";
 import { useAccounts, useExchangeRates } from "@/lib/money";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
@@ -74,6 +75,7 @@ export default function MoreScreen() {
 
   const items = useItems();
   const videos = useVideos();
+  const debts = useDebts();
   const accounts = useAccounts();
   const rates = useExchangeRates();
   const settings = useUserSettings();
@@ -114,6 +116,21 @@ export default function MoreScreen() {
         </View>
 
         {/* Modules in sections: Daily life, People, Home, Records, Work. A section shows once it has a module. */}
+        <View className="gap-3">
+          <SectionLabel>People</SectionLabel>
+          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <Row
+              icon="swap-horizontal-outline"
+              title="Debts"
+              detail={
+                debts.data ? `${debts.data.filter((d) => d.balance > 0).length} open` : "Who owes you and who you owe"
+              }
+              onPress={() => router.push("/debts")}
+              last
+            />
+          </View>
+        </View>
+
         <View className="gap-3">
           <SectionLabel>Home</SectionLabel>
           <View className="overflow-hidden rounded-card border border-border bg-surface-card">
