@@ -1,6 +1,6 @@
 # my-app
 
-Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos with reminders, vehicle maintenance (Honda ADV 160 default), room inventory, money and subscriptions, password vault.
+Personal all-in-one app for two users (Charli, Philippines, Asia/Manila, and their partner, with fully separate data): todos with reminders, vehicle maintenance (Honda ADV 160 default), room inventory, money and subscriptions, password vault.
 
 - Display name: my-app
 - Android package: `com.charli.myapp` (app.json `android.package`; Google OAuth Android client IDs and FCM use it)

@@ -14,7 +14,10 @@ import { supabase } from "@/lib/supabase";
 type Busy = "google" | "send" | "verify" | null;
 
 function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Something went wrong. Try again.";
+  if (!(error instanceof Error)) return "Something went wrong. Try again.";
+  // Supabase Auth hides the allow list trigger's own message behind this one.
+  if (error.message.includes("Database error saving new user")) return "This account cannot use my-app.";
+  return error.message;
 }
 
 export default function LoginScreen() {

@@ -31,7 +31,7 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 
 ## Facts to know first
 
-- my-app has one user (Charli, Asia/Manila). Android is the first target. Web is the second. Both use one codebase.
+- my-app has two users: Charli (Asia/Manila) and their partner. Each account sees only its own data, and `allowed_emails` refuses any other sign-up. Android is the first target. Web is the second. Both use one codebase.
 - Expo SDK 58, expo-router, NativeWind 4, TypeScript.
 - Supabase holds all data. Every user-owned table has row-level security (RLS) on `user_id`.
 - The database does most of the business logic with triggers and views. The app reads and writes rows with `@supabase/supabase-js`.
