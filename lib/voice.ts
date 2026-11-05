@@ -33,12 +33,29 @@ export function canRetry(message: VoiceMessage, now = Date.now()): boolean {
   return message.status === "pending" && now - Date.parse(message.created_at) > STUCK_MS;
 }
 
-/** The pairing, or null. */
-export function useVoicePair() {
+/** Whether this account has voice, and who it can send to. */
+export function useVoiceAccess() {
   return useQuery({
-    queryKey: [...VOICE_KEY, "pair"],
+    queryKey: [...VOICE_KEY, "access"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("voice_pairs").select("partner_id").maybeSingle();
+      const [admin, access, contacts] = await Promise.all([
+        supabase.from("app_admins").select("user_id").maybeSingle(),
+        supabase.rpc("has_voice_access"),
+        supabase.rpc("voice_contacts"),
+      ]);
+      const error = admin.error ?? access.error ?? contacts.error;
+      if (error) throw error;
+      return { isAdmin: admin.data !== null, hasAccess: access.data === true, contacts: contacts.data ?? [] };
+    },
+  });
+}
+
+/** Every other account, for the admin's ticks. */
+export function useVoiceAccounts() {
+  return useQuery({
+    queryKey: [...VOICE_KEY, "accounts"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_voice_accounts");
       if (error) throw error;
       return data;
     },
@@ -83,35 +100,14 @@ function useInvalidateVoice() {
   return () => queryClient.invalidateQueries({ queryKey: VOICE_KEY });
 }
 
-export function useCreatePairCode() {
-  return useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.rpc("create_voice_pair_code");
-      if (error) throw error;
-      return data;
-    },
-  });
-}
-
-export function useRedeemPairCode() {
+export function useSetVoiceAccess() {
   const invalidate = useInvalidateVoice();
   return useMutation({
-    mutationFn: async (code: string) => {
-      const { error } = await supabase.rpc("redeem_voice_pair_code", { p_code: code });
+    mutationFn: async ({ userId, on }: { userId: string; on: boolean }) => {
+      const { error } = await supabase.rpc("set_voice_access", { p_user_id: userId, p_on: on });
       if (error) throw error;
     },
-    onSuccess: invalidate,
-  });
-}
-
-export function useUnpair() {
-  const invalidate = useInvalidateVoice();
-  return useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.rpc("unpair_voice");
-      if (error) throw error;
-    },
-    onSuccess: invalidate,
+    onSettled: invalidate,
   });
 }
 
@@ -148,6 +144,8 @@ export type Recording = {
   durationS: number;
 };
 
+export type VoiceSend = Recording & { recipientId: string };
+
 export function newRecordingId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -156,7 +154,7 @@ export function newRecordingId(): string {
 export function useSendVoice() {
   const invalidate = useInvalidateVoice();
   return useMutation({
-    mutationFn: async ({ id, uri, durationS }: Recording) => {
+    mutationFn: async ({ id, uri, durationS, recipientId }: VoiceSend) => {
       const web = !uri.endsWith(".m4a");
       const path = `${await currentUserId()}/${id}.${web ? "webm" : "m4a"}`;
       const body = await (await fetch(uri)).arrayBuffer();
@@ -165,7 +163,7 @@ export function useSendVoice() {
         .upload(path, body, { contentType: web ? "audio/webm" : "audio/mp4" });
       // The file is already there when an earlier try stopped after the upload.
       if (error && !/exists|duplicate/i.test(error.message)) throw error;
-      return callTranscribe({ path, durationS });
+      return callTranscribe({ path, durationS, recipientId });
     },
     onSettled: invalidate,
   });

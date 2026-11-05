@@ -3,14 +3,14 @@ import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
 import { useColors } from "@/lib/colors";
-import { unreadCount, useInbox, useVoicePair } from "@/lib/voice";
+import { unreadCount, useInbox, useVoiceAccess } from "@/lib/voice";
 
-/** One tap to record, for a paired account. An account with no partner sees nothing here. */
+/** One tap to record. An account with nobody to message sees nothing here. */
 export function InboxCard() {
   const colors = useColors();
-  const pair = useVoicePair();
+  const access = useVoiceAccess();
   const inbox = useInbox();
-  if (!pair.data) return null;
+  if (!access.data?.contacts.length) return null;
 
   const unread = unreadCount(inbox.data ?? []);
   return (

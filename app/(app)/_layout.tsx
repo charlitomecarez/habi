@@ -1,8 +1,8 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 
-import { registerForPushNotifications } from "@/lib/push-notifications";
+import { onInboxPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
 import { noteVaultActivity } from "@/lib/vault";
 
 export default function AppLayout() {
@@ -11,6 +11,8 @@ export default function AppLayout() {
       console.warn("Push registration failed", error instanceof Error ? error.message : error);
     });
   }, []);
+
+  useEffect(() => onInboxPushOpened(() => router.push("/inbox")), []);
 
   return (
     // Sees every touch without taking it, for the vault's idle lock.
@@ -83,6 +85,7 @@ export default function AppLayout() {
         <Stack.Screen name="people/index" />
         <Stack.Screen name="people/[id]" />
         <Stack.Screen name="inbox/index" />
+        <Stack.Screen name="inbox/access" />
         <Stack.Screen name="inbox/record" options={{ presentation: "modal" }} />
         <Stack.Screen name="debts/index" />
         <Stack.Screen name="debts/[id]" />

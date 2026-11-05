@@ -5,13 +5,10 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
-import { EnterCodeSheet, MakeCodeSheet } from "@/components/inbox/PairSheets";
-import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { Sheet } from "@/components/ui/Sheet";
 import { useColors } from "@/lib/colors";
 import {
   canRetry,
@@ -20,8 +17,7 @@ import {
   useRefreshVoice,
   useRetryVoice,
   useSent,
-  useUnpair,
-  useVoicePair,
+  useVoiceAccess,
   type VoiceMessage,
 } from "@/lib/voice";
 import { useVoicePlayer } from "@/lib/voice-audio";
@@ -41,15 +37,13 @@ function sentBadge(message: VoiceMessage) {
 
 export default function InboxScreen() {
   const colors = useColors();
-  const pair = useVoicePair();
+  const access = useVoiceAccess();
   const inbox = useInbox();
   const sent = useSent();
   const retry = useRetryVoice();
-  const unpair = useUnpair();
   const refresh = useRefreshVoice();
   const player = useVoicePlayer();
   const [tab, setTab] = useState<Tab>("inbox");
-  const [sheet, setSheet] = useState<"make" | "enter" | "options" | null>(null);
 
   // Opening the screen reads the inbox. New stays on the cards until you leave.
   useFocusEffect(
@@ -64,8 +58,10 @@ export default function InboxScreen() {
 
   const list = tab === "inbox" ? inbox : sent;
   const messages = list.data ?? [];
-  const paired = Boolean(pair.data);
-  const error = pair.error ?? list.error;
+  const isAdmin = access.data?.isAdmin ?? false;
+  const hasAccess = access.data?.hasAccess ?? false;
+  const canRecord = (access.data?.contacts.length ?? 0) > 0;
+  const error = access.error ?? list.error;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -81,14 +77,14 @@ export default function InboxScreen() {
         <Text accessibilityRole="header" className="flex-1 font-bold text-title text-ink">
           Inbox
         </Text>
-        {paired ? (
+        {isAdmin ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Inbox options"
-            onPress={() => setSheet("options")}
+            accessibilityLabel="Voice access"
+            onPress={() => router.push("/inbox/access")}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="options-outline" size={22} color={colors.ink} />
+            <Ionicons name="people-outline" size={22} color={colors.ink} />
           </Pressable>
         ) : null}
       </View>
@@ -98,76 +94,54 @@ export default function InboxScreen() {
         {retry.error ? <Notice tone="danger">{retry.error.message}</Notice> : null}
         {player.error ? <Notice tone="danger">{player.error}</Notice> : null}
 
-        {pair.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
+        <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 
-        {!pair.isPending && !paired ? (
-          <View className="gap-3">
+        {list.isPending || access.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
+        {!list.isPending && !access.isPending && messages.length === 0 ? (
+          isAdmin && !canRecord ? (
             <EmptyState
               drawing="list"
-              title="Pair with your partner"
-              body="Record a message, and your partner reads it as text. An outside service, Groq, makes the text."
+              title="Nobody has voice yet"
+              body="Tick an account, and you can message each other."
+              action={{ label: "Choose accounts", onPress: () => router.push("/inbox/access") }}
             />
-            <Button label="Make a pairing code" onPress={() => setSheet("make")} />
-            <Button label="Enter a pairing code" variant="secondary" onPress={() => setSheet("enter")} />
-          </View>
+          ) : !hasAccess ? (
+            <EmptyState drawing="list" title="Voice is off for this account" body="The admin can turn it on for you." />
+          ) : (
+            <EmptyState
+              drawing="list"
+              title={tab === "inbox" ? "No messages yet" : "Nothing sent yet"}
+              body={tab === "inbox" ? "Voice messages show here as text." : "Tap the microphone to record."}
+            />
+          )
         ) : null}
 
-        {paired ? <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} /> : null}
-
-        {paired && list.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
-        {paired && !list.isPending && messages.length === 0 ? (
-          <EmptyState
-            drawing="list"
-            title={tab === "inbox" ? "No messages yet" : "Nothing sent yet"}
-            body={tab === "inbox" ? "Messages from your partner show here as text." : "Tap the microphone to record."}
-          />
-        ) : null}
-
-        {paired
-          ? messages.map((message) =>
-              tab === "inbox" ? (
-                <MessageCard
-                  key={message.id}
-                  message={message}
-                  badge={message.read_at === null ? { label: "New", tone: "warning" } : undefined}
-                  playing={player.playingPath === message.audio_path}
-                  onPlay={(path) => void player.toggle(path)}
-                />
-              ) : (
-                <MessageCard
-                  key={message.id}
-                  message={message}
-                  badge={sentBadge(message)}
-                  fallback={message.status === "pending" ? "The text is on its way." : "The text could not be made."}
-                  playing={player.playingPath === message.audio_path}
-                  onPlay={(path) => void player.toggle(path)}
-                  onRetry={canRetry(message) ? () => retry.mutate(message.id) : undefined}
-                />
-              ),
-            )
-          : null}
+        {messages.map((message) =>
+          tab === "inbox" ? (
+            <MessageCard
+              key={message.id}
+              message={message}
+              badge={message.read_at === null ? { label: "New", tone: "warning" } : undefined}
+              playing={player.playingPath === message.audio_path}
+              onPlay={(path) => void player.toggle(path)}
+            />
+          ) : (
+            <MessageCard
+              key={message.id}
+              message={message}
+              badge={sentBadge(message)}
+              fallback={message.status === "pending" ? "The text is on its way." : "The text could not be made."}
+              playing={player.playingPath === message.audio_path}
+              onPlay={(path) => void player.toggle(path)}
+              onRetry={canRetry(message) ? () => retry.mutate(message.id) : undefined}
+            />
+          ),
+        )}
       </ScrollView>
 
-      {paired ? <Fab label="Record a voice message" icon="mic" onPress={() => router.push("/inbox/record")} /> : null}
-
-      <MakeCodeSheet visible={sheet === "make"} onClose={() => setSheet(null)} />
-      <EnterCodeSheet visible={sheet === "enter"} onClose={() => setSheet(null)} />
-      <Sheet
-        visible={sheet === "options"}
-        onClose={() => setSheet(null)}
-        title="Inbox options"
-        subtitle="Unpairing stops new messages for both of you. Past text stays."
-      >
-        <View className="gap-3 px-5 pb-5 pt-4">
-          {unpair.error ? <Notice tone="danger">{unpair.error.message}</Notice> : null}
-          <Button
-            label="Unpair accounts"
-            variant="destructive"
-            loading={unpair.isPending}
-            onPress={() => unpair.mutate(undefined, { onSuccess: () => setSheet(null) })}
-          />
-        </View>
-      </Sheet>
+      {canRecord ? (
+        <Fab label="Record a voice message" icon="mic" onPress={() => router.push("/inbox/record")} />
+      ) : null}
     </SafeAreaView>
   );
 }

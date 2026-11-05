@@ -28,11 +28,11 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [modules/alarms.md](modules/alarms.md)       | The native alarm, the ringing screen, the setup check          |
 | [modules/ulam.md](modules/ulam.md)           | The daily ulam, prices, backup dishes, the 7-day log           |
 | [modules/travel.md](modules/travel.md)       | Trips, items, budget, reminders, PDF export                    |
-| [modules/inbox.md](modules/inbox.md)         | Pairing, voice messages, Groq text, audio cleanup              |
+| [modules/inbox.md](modules/inbox.md)         | Voice access, voice messages, Groq text, audio cleanup         |
 
 ## Facts to know first
 
-- my-app has two users: Charli (Asia/Manila) and their partner. Each account sees only its own data, and `allowed_emails` refuses any other sign-up. Android is the first target. Web is the second. Both use one codebase.
+- my-app belongs to Charli (Asia/Manila), the admin. Anyone can create an account, and each account sees only its own data. Only the admin turns on voice messages for an account. Android is the first target. Web is the second. Both use one codebase.
 - Expo SDK 58, expo-router, NativeWind 4, TypeScript.
 - Supabase holds all data. Every user-owned table has row-level security (RLS) on `user_id`.
 - The database does most of the business logic with triggers and views. The app reads and writes rows with `@supabase/supabase-js`.

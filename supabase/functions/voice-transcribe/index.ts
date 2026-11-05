@@ -1,8 +1,11 @@
 // Turns one voice message into text for the signed-in sender. The app uploads the audio first,
-// then calls this with { path, durationS }, or with { messageId } to retry a failed message.
+// then calls this with { path, durationS, recipientId }, or with { messageId } to retry a failed message.
 // This function is the only writer of voice_messages, so the app cannot set a transcript or a recipient.
 //
-// Secrets (supabase secrets set ...): GROQ_API_KEY, optional GROQ_SPEECH_MODEL.
+// When the text is ready it asks send-reminders to run now, so the push arrives at once. If that
+// call fails, the 15-minute cron run still sends it.
+//
+// Secrets (supabase secrets set ...): GROQ_API_KEY, CRON_SECRET, optional GROQ_SPEECH_MODEL.
 // Log only the status and the length. Never log the audio or the text.
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
@@ -25,8 +28,15 @@ const CORS = {
 const reply = (body: unknown, status = 200) => Response.json(body, { status, headers: CORS });
 const fail = (error: string, status = 422) => reply({ error }, status);
 
-type Message = { id: string; audio_path: string | null; duration_s: number; status: string; created_at: string };
-const MESSAGE_COLUMNS = "id, audio_path, duration_s, status, created_at";
+type Message = {
+  id: string;
+  recipient_id: string;
+  audio_path: string | null;
+  duration_s: number;
+  status: string;
+  created_at: string;
+};
+const MESSAGE_COLUMNS = "id, recipient_id, audio_path, duration_s, status, created_at";
 
 async function transcribe(audio: Blob, path: string): Promise<string> {
   const key = Deno.env.get("GROQ_API_KEY");
@@ -49,6 +59,20 @@ async function transcribe(audio: Blob, path: string): Promise<string> {
   return text;
 }
 
+/** send-reminders stays the only sender of notifications. This only wakes it early. */
+async function pushNow() {
+  try {
+    const res = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-reminders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-cron-secret": Deno.env.get("CRON_SECRET") ?? "" },
+      body: JSON.stringify({ remindersOnly: true }),
+    });
+    if (!res.ok) console.error(`voice-transcribe: push run returned ${res.status}`);
+  } catch {
+    console.error("voice-transcribe: push run failed");
+  }
+}
+
 /** Runs the transcription and stores the result. A failure keeps the audio, so Retry works. */
 async function finish(admin: SupabaseClient, message: Message) {
   try {
@@ -61,6 +85,7 @@ async function finish(admin: SupabaseClient, message: Message) {
       .eq("id", message.id);
     if (saveError) throw new Error("Could not save the text");
     console.log(`voice-transcribe: ready, ${message.duration_s}s`);
+    await pushNow();
     return reply({ id: message.id, status: "ready" });
   } catch (error) {
     console.error(`voice-transcribe: failed, ${message.duration_s}s, ${(error as Error).message}`);
@@ -83,8 +108,10 @@ Deno.serve(async (req) => {
     auth: { persistSession: false },
   });
 
-  const { data: pair } = await admin.from("voice_pairs").select("partner_id").eq("user_id", userId).maybeSingle();
-  if (!pair) return fail("Pair with your partner first.", 403);
+  const canMessage = async (recipient: string) => {
+    const { data } = await admin.rpc("voice_can_message", { p_sender: userId, p_recipient: recipient });
+    return data === true;
+  };
 
   const body = await req.json().catch(() => null);
 
@@ -99,12 +126,17 @@ Deno.serve(async (req) => {
     const stuck = message.status === "pending" && Date.now() - Date.parse(message.created_at) > STUCK_MS;
     if (message.status !== "failed" && !stuck) return reply({ id: message.id, status: message.status });
     if (!message.audio_path) return fail("The audio for this message was deleted.");
+    if (!(await canMessage(message.recipient_id))) return fail("Voice is off for this account.", 403);
     await admin.from("voice_messages").update({ status: "pending" }).eq("id", message.id);
     return finish(admin, message);
   }
 
   const path: unknown = body?.path;
   const durationS: unknown = body?.durationS;
+  const recipientId: unknown = body?.recipientId;
+  if (typeof recipientId !== "string" || !(await canMessage(recipientId))) {
+    return fail("Voice is off for this account.", 403);
+  }
   if (typeof path !== "string" || !new RegExp(`^${userId}/[0-9a-z-]{8,40}\\.(m4a|webm)$`).test(path)) {
     return fail("This recording has a bad path.", 400);
   }
@@ -130,7 +162,7 @@ Deno.serve(async (req) => {
 
   const { data: message, error } = await admin
     .from("voice_messages")
-    .insert({ user_id: userId, recipient_id: pair.partner_id, audio_path: path, duration_s: durationS })
+    .insert({ user_id: userId, recipient_id: recipientId, audio_path: path, duration_s: durationS })
     .select(MESSAGE_COLUMNS)
     .single();
   if (error) return fail("Could not save this message.", 500);

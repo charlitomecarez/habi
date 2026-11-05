@@ -52,8 +52,6 @@ The URL scheme is `myapp`. A QR box label holds `myapp://inventory?location=<id>
 - On `SIGNED_IN`, it calls the `seed_money_defaults` RPC in a `setTimeout`. An `await` inside the callback deadlocks Supabase. The RPC adds default money accounts and categories only once.
 - `signOut()` locks the vault, signs out of Google, then signs out of Supabase.
 
-Only addresses in `public.allowed_emails` can create an account. A trigger on `auth.users` refuses the rest, and the login screen shows "This account cannot use my-app." Add an address in the SQL editor, never in the repo.
-
 Sign-in methods (`app/(auth)/login.tsx`):
 
 - **Google on Android:** `lib/google-sign-in.ts` opens the native account picker. It sends the Google ID token to `supabase.auth.signInWithIdToken`.

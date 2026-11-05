@@ -1,12 +1,17 @@
 -- =====================================================================
--- Voice Inbox: your partner records in the app, and you read plain text.
---   voice_pairs       the pairing. One row for each direction.
---   voice_pair_codes  a one-time code, good for 15 minutes.
---   voice_messages    the sender owns the row. The receiver can read it
---                     once the text is ready.
+-- Voice Inbox: one person records in the app, and the other reads plain text.
+--   app_admins      the admin. Add the row in the SQL editor, so no email
+--                   address goes in the repo:
+--                     insert into public.app_admins (user_id)
+--                     select id from auth.users where email = 'name@example.com';
+--   voice_access    the accounts the admin ticked. A ticked account and the
+--                   admin can message each other. Ticked accounts cannot
+--                   message each other.
+--   voice_messages  the sender owns the row. The receiver can read it once
+--                   the text is ready.
 -- All writes go through the RPCs below or the voice-transcribe Edge Function
--- (service role), so the app cannot pair itself to anyone, or set a
--- transcript, a status or a recipient.
+-- (service role), so the app cannot tick itself, or set a transcript, a
+-- status or a recipient.
 -- Audio lives in the private voice-audio bucket at <sender_id>/<id>.<ext>.
 -- At 1:00 AM PHT (17:00 UTC) pg_cron calls voice-cleanup, which deletes
 -- audio older than 7 days and keeps the text.
@@ -17,90 +22,120 @@
 alter type public.reminder_source add value if not exists 'inbox';
 
 -- ---------------------------------------------------------------------
--- Pairing
+-- Who has voice
 -- ---------------------------------------------------------------------
-create table public.voice_pairs (
+create table public.app_admins (
   user_id    uuid primary key default auth.uid() references auth.users (id) on delete cascade,
-  partner_id uuid not null unique references auth.users (id) on delete cascade,
-  created_at timestamptz not null default now(),
-  check (user_id <> partner_id)
+  created_at timestamptz not null default now()
 );
-select public.apply_owner_rls('public.voice_pairs');
-drop policy "owner_insert" on public.voice_pairs;
-drop policy "owner_update" on public.voice_pairs;
-drop policy "owner_delete" on public.voice_pairs;
+select public.apply_owner_rls('public.app_admins');
+drop policy "owner_insert" on public.app_admins;
+drop policy "owner_update" on public.app_admins;
+drop policy "owner_delete" on public.app_admins;
 
-create table public.voice_pair_codes (
+create table public.voice_access (
   user_id    uuid primary key default auth.uid() references auth.users (id) on delete cascade,
-  code       text not null unique,
-  expires_at timestamptz not null
+  created_at timestamptz not null default now()
 );
-select public.apply_owner_rls('public.voice_pair_codes');
-drop policy "owner_insert" on public.voice_pair_codes;
-drop policy "owner_update" on public.voice_pair_codes;
-drop policy "owner_delete" on public.voice_pair_codes;
+select public.apply_owner_rls('public.voice_access');
+drop policy "owner_insert" on public.voice_access;
+drop policy "owner_update" on public.voice_access;
+drop policy "owner_delete" on public.voice_access;
 
-create or replace function public.create_voice_pair_code()
-returns text
+-- The admin always has voice. Anyone else needs a tick.
+create or replace function public.has_voice_access()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from app_admins where user_id = (select auth.uid()))
+      or exists (select 1 from voice_access where user_id = (select auth.uid()));
+$$;
+
+-- Only the admin and a ticked account can message each other.
+create or replace function public.voice_can_message(p_sender uuid, p_recipient uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select (
+    exists (select 1 from app_admins where user_id = p_sender)
+    and exists (select 1 from voice_access where user_id = p_recipient)
+  ) or (
+    exists (select 1 from voice_access where user_id = p_sender)
+    and exists (select 1 from app_admins where user_id = p_recipient)
+  );
+$$;
+
+-- Who you can send to. Shows a name, and shows the admin's email to nobody.
+create or replace function public.voice_contacts()
+returns table (user_id uuid, name text)
 language plpgsql
+stable
 security definer
 set search_path = public
 as $$
 declare
   me uuid := auth.uid();
-  new_code text := upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8));
 begin
-  if me is null then
-    raise exception 'Sign in first.' using errcode = 'P0001';
+  if exists (select 1 from app_admins a where a.user_id = me) then
+    return query
+      select v.user_id, coalesce(u.raw_user_meta_data ->> 'full_name', u.email)::text
+        from voice_access v join auth.users u on u.id = v.user_id
+       where v.user_id <> me
+       order by 2;
+  elsif exists (select 1 from voice_access v where v.user_id = me) then
+    return query
+      select a.user_id, coalesce(u.raw_user_meta_data ->> 'full_name', 'Admin')::text
+        from app_admins a join auth.users u on u.id = a.user_id;
   end if;
-  if exists (select 1 from voice_pairs where user_id = me) then
-    raise exception 'You are already paired.' using errcode = 'P0001';
-  end if;
-  insert into voice_pair_codes (user_id, code, expires_at)
-  values (me, new_code, now() + interval '15 minutes')
-  on conflict (user_id) do update set code = excluded.code, expires_at = excluded.expires_at;
-  return new_code;
 end;
 $$;
 
-create or replace function public.redeem_voice_pair_code(p_code text)
-returns void
+-- The admin's list of accounts to tick.
+create or replace function public.admin_voice_accounts()
+returns table (user_id uuid, name text, email text, ticked boolean)
 language plpgsql
+stable
 security definer
 set search_path = public
 as $$
 declare
   me uuid := auth.uid();
-  owner_id uuid;
 begin
-  if me is null then
-    raise exception 'Sign in first.' using errcode = 'P0001';
+  if not exists (select 1 from app_admins a where a.user_id = me) then
+    raise exception 'Only the admin can see this.' using errcode = 'P0001';
   end if;
-  select user_id into owner_id from voice_pair_codes
-   where code = upper(trim(p_code)) and expires_at > now();
-  if owner_id is null then
-    raise exception 'This code is wrong or has expired.' using errcode = 'P0001';
-  end if;
-  if owner_id = me then
-    raise exception 'Enter this code on the other phone.' using errcode = 'P0001';
-  end if;
-  if exists (select 1 from voice_pairs where user_id in (me, owner_id)) then
-    raise exception 'One of these accounts is already paired.' using errcode = 'P0001';
-  end if;
-  insert into voice_pairs (user_id, partner_id) values (me, owner_id), (owner_id, me);
-  delete from voice_pair_codes where user_id = owner_id;
+  return query
+    select u.id,
+           coalesce(u.raw_user_meta_data ->> 'full_name', u.email)::text,
+           u.email::text,
+           exists (select 1 from voice_access v where v.user_id = u.id)
+      from auth.users u
+     where u.id <> me
+     order by u.created_at;
 end;
 $$;
 
--- Removes both directions. Past messages stay readable.
-create or replace function public.unpair_voice()
+create or replace function public.set_voice_access(p_user_id uuid, p_on boolean)
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
 begin
-  delete from voice_pairs where user_id = auth.uid() or partner_id = auth.uid();
+  if not exists (select 1 from app_admins where user_id = auth.uid()) then
+    raise exception 'Only the admin can change this.' using errcode = 'P0001';
+  end if;
+  if p_on then
+    insert into voice_access (user_id) values (p_user_id) on conflict (user_id) do nothing;
+  else
+    delete from voice_access where user_id = p_user_id;
+  end if;
 end;
 $$;
 
@@ -141,13 +176,17 @@ begin
 end;
 $$;
 
-revoke execute on function public.create_voice_pair_code() from public, anon;
-revoke execute on function public.redeem_voice_pair_code(text) from public, anon;
-revoke execute on function public.unpair_voice() from public, anon;
+revoke execute on function public.has_voice_access() from public, anon;
+revoke execute on function public.voice_can_message(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.voice_contacts() from public, anon;
+revoke execute on function public.admin_voice_accounts() from public, anon;
+revoke execute on function public.set_voice_access(uuid, boolean) from public, anon;
 revoke execute on function public.mark_voice_inbox_read() from public, anon;
-grant execute on function public.create_voice_pair_code() to authenticated;
-grant execute on function public.redeem_voice_pair_code(text) to authenticated;
-grant execute on function public.unpair_voice() to authenticated;
+grant execute on function public.has_voice_access() to authenticated;
+grant execute on function public.voice_can_message(uuid, uuid) to service_role;
+grant execute on function public.voice_contacts() to authenticated;
+grant execute on function public.admin_voice_accounts() to authenticated;
+grant execute on function public.set_voice_access(uuid, boolean) to authenticated;
 grant execute on function public.mark_voice_inbox_read() to authenticated;
 
 -- ---------------------------------------------------------------------
@@ -175,7 +214,7 @@ create trigger voice_messages_sync_reminder after insert or update of status on 
   for each row execute function public.sync_voice_message_reminder();
 
 -- ---------------------------------------------------------------------
--- Storage: a private bucket. Only a paired sender can upload, and only the
+-- Storage: a private bucket. Only an account with voice can upload, and only the
 -- sender and the receiver can read a file.
 -- ---------------------------------------------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -187,7 +226,7 @@ create policy "voice_audio_insert" on storage.objects for insert to authenticate
   with check (
     bucket_id = 'voice-audio'
     and (storage.foldername(name))[1] = (select auth.uid())::text
-    and exists (select 1 from public.voice_pairs p where p.user_id = (select auth.uid()))
+    and public.has_voice_access()
   );
 
 create policy "voice_audio_select" on storage.objects for select to authenticated

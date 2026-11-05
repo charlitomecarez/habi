@@ -2114,10 +2114,16 @@ export type Database = {
           },
         ];
       };
-      allowed_emails: {
-        Row: { created_at: string; email: string };
-        Insert: { created_at?: string; email: string };
-        Update: { created_at?: string; email?: string };
+      app_admins: {
+        Row: { created_at: string; user_id: string };
+        Insert: { created_at?: string; user_id?: string };
+        Update: { created_at?: string; user_id?: string };
+        Relationships: [];
+      };
+      voice_access: {
+        Row: { created_at: string; user_id: string };
+        Insert: { created_at?: string; user_id?: string };
+        Update: { created_at?: string; user_id?: string };
         Relationships: [];
       };
       voice_messages: {
@@ -2154,18 +2160,6 @@ export type Database = {
           transcript?: string | null;
           user_id?: string;
         };
-        Relationships: [];
-      };
-      voice_pair_codes: {
-        Row: { code: string; expires_at: string; user_id: string };
-        Insert: { code: string; expires_at: string; user_id?: string };
-        Update: { code?: string; expires_at?: string; user_id?: string };
-        Relationships: [];
-      };
-      voice_pairs: {
-        Row: { created_at: string; partner_id: string; user_id: string };
-        Insert: { created_at?: string; partner_id: string; user_id?: string };
-        Update: { created_at?: string; partner_id?: string; user_id?: string };
         Relationships: [];
       };
     };
@@ -2325,10 +2319,15 @@ export type Database = {
         };
         Returns: string;
       };
-      create_voice_pair_code: { Args: never; Returns: string };
+      admin_voice_accounts: {
+        Args: never;
+        Returns: { email: string; name: string; ticked: boolean; user_id: string }[];
+      };
+      has_voice_access: { Args: never; Returns: boolean };
       mark_voice_inbox_read: { Args: never; Returns: undefined };
-      redeem_voice_pair_code: { Args: { p_code: string }; Returns: undefined };
-      unpair_voice: { Args: never; Returns: undefined };
+      set_voice_access: { Args: { p_on: boolean; p_user_id: string }; Returns: undefined };
+      voice_can_message: { Args: { p_recipient: string; p_sender: string }; Returns: boolean };
+      voice_contacts: { Args: never; Returns: { name: string; user_id: string }[] };
       mark_trip_item_paid: {
         Args: { p_account_id: string; p_amount: number; p_item_id: string };
         Returns: undefined;

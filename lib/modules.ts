@@ -94,7 +94,7 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         href: "/inbox",
         icon: { name: "mic-outline" },
         tone: "people",
-        keywords: "voice message partner record taglish",
+        keywords: "voice message record taglish",
       },
     ],
   },
