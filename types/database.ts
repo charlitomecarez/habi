@@ -1589,7 +1589,29 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "trip_items_document_id_fkey";
+            columns: ["document_id"];
+            isOneToOne: false;
+            referencedRelation: "documents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "trip_items_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "trip_items_trip_id_fkey";
+            columns: ["trip_id"];
+            isOneToOne: false;
+            referencedRelation: "trips";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       trips: {
         Row: {
@@ -2215,10 +2237,6 @@ export type Database = {
       };
     };
     Functions: {
-      mark_trip_item_paid: {
-        Args: { p_account_id: string; p_amount: number; p_item_id: string };
-        Returns: undefined;
-      };
       add_due_subscription_expenses: { Args: never; Returns: number };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
       budget_month: {
@@ -2252,6 +2270,10 @@ export type Database = {
           p_vehicle_id: string;
         };
         Returns: string;
+      };
+      mark_trip_item_paid: {
+        Args: { p_account_id: string; p_amount: number; p_item_id: string };
+        Returns: undefined;
       };
       next_person_date: {
         Args: { from_date: string; p_day: number; p_month: number };
@@ -2294,7 +2316,6 @@ export type Database = {
       };
     };
     Enums: {
-      trip_item_kind: "go" | "stay" | "eat" | "transport" | "other";
       billing_cycle: "weekly" | "monthly" | "quarterly" | "yearly";
       content_format: "long" | "short";
       content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
@@ -2325,6 +2346,7 @@ export type Database = {
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
+      trip_item_kind: "go" | "stay" | "eat" | "transport" | "other";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -2445,7 +2467,6 @@ export const Constants = {
   },
   public: {
     Enums: {
-      trip_item_kind: ["go", "stay", "eat", "transport", "other"],
       billing_cycle: ["weekly", "monthly", "quarterly", "yearly"],
       content_format: ["long", "short"],
       content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
@@ -2477,6 +2498,7 @@ export const Constants = {
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],
+      trip_item_kind: ["go", "stay", "eat", "transport", "other"],
     },
   },
 } as const;
