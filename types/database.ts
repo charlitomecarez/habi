@@ -2084,7 +2084,7 @@ export type Database = {
       };
       record_debt_payment: {
         Args: {
-          p_account_id: string;
+          p_account_id?: string;
           p_amount: number;
           p_debt_id: string;
           p_paid_on: string;

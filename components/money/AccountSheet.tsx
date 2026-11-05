@@ -49,7 +49,7 @@ function AccountFields({ onClose, account }: FieldsProps) {
         error={errors.name}
       />
       <Input
-        label="Opening balance (₱)"
+        label="Balance (₱)"
         value={opening}
         onChangeText={(text) => {
           setOpening(text);
@@ -65,18 +65,14 @@ function AccountFields({ onClose, account }: FieldsProps) {
   );
 }
 
-/**
- * Two fields, so a sheet. The balance is the opening balance plus every
- * transaction, so set the opening balance to the real balance on the day
- * you start logging.
- */
+/** Two fields, so a sheet. The balance is the number set here. Logging does not change it. */
 export function AccountSheet({ visible, ...props }: AccountSheetProps) {
   return (
     <Sheet
       visible={visible}
       onClose={props.onClose}
       title={props.account ? "Edit account" : "Add account"}
-      subtitle="Opening balance is what the account held before your first logged transaction."
+      subtitle="You set this balance. Logging does not change it."
     >
       {visible ? <AccountFields {...props} /> : null}
     </Sheet>

@@ -25,8 +25,8 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 
 - `npx expo run:android` for development builds (not Expo Go).
 - `npx expo start --web` for web.
-- `supabase db reset` (local) / `supabase db push` (remote) for migrations.
-- `supabase gen types typescript --local > types/database.ts` after every migration.
+- `npx supabase db push` for migrations. Do not use Docker or a local Supabase server.
+- `npm run db:types` after every migration. It reads the linked live project, so it needs no Docker.
 
 ## Rules
 

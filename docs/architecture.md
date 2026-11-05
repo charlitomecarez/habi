@@ -80,7 +80,7 @@ Query keys:
 | `["vault-settings"]`, `["vault-entries"]`, `["vault-biometric"]`                   | `lib/vault.ts`     |
 | `["user-settings"]`                                                                | `lib/settings.ts`  |
 
-Every money mutation invalidates the whole `["money"]` prefix, because a transaction changes balances, the month summary and subscriptions.
+Every money mutation invalidates the whole `["money"]` prefix, because a transaction changes the month summary and subscriptions.
 
 ## Platform adapters
 

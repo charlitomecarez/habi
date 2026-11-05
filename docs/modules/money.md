@@ -13,8 +13,8 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
 ## Accounts and balances
 
 - `useAccounts()` reads the `money_account_balances` view.
-- Balance = opening balance + income − expenses − transfers out + transfers in.
-- `/money/accounts` adds accounts and sets the opening balance (`AccountSheet`). The More tab links to it.
+- Balance = the number you set in `opening_balance`. Transactions never change it.
+- `/money/accounts` adds accounts and sets the balance (`AccountSheet`). The More tab links to it.
 - Home and the Money hero show the total of PHP accounts only.
 
 ## Transactions
@@ -32,7 +32,6 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
   - A segmented control picks the kind.
   - Category chips toggle (a second tap clears the category).
   - The "Where / note" field saves to `merchant`, or to `note` for a transfer.
-  - The footer shows the account balance after the save (`balanceAfter`). For an edit, it removes the effect of the saved row first.
 - `useTransactions("recent")` loads 10 rows. `"history"` loads 200.
 - `useMonthSummary` totals spending and income for the current calendar month, and spending per category. Transfers do not count.
 

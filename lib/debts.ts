@@ -65,7 +65,7 @@ function useInvalidate() {
   const client = useQueryClient();
   return () => {
     client.invalidateQueries({ queryKey: DEBTS_KEY });
-    // Payments add and remove Money transactions.
+    // Deleting an old payment can remove its old Money transaction.
     client.invalidateQueries({ queryKey: ["money"] });
   };
 }
@@ -100,7 +100,7 @@ export function useSaveDebt() {
   });
 }
 
-/** Deleting a debt deletes its payments. Their Money transactions are deleted too. */
+/** Deleting a debt deletes its payments. Old payments also remove their old Money transactions. */
 export function useDeleteDebt() {
   const invalidate = useInvalidate();
   return useMutation({
@@ -112,16 +112,15 @@ export function useDeleteDebt() {
   });
 }
 
-/** Records a payment and adds its Money transaction in one step. */
+/** Records a payment. It adds nothing to Money. */
 export function useRecordPayment() {
   const invalidate = useInvalidate();
   return useMutation({
-    mutationFn: async (p: { debtId: string; amount: number; paidOn: Date; accountId: string }) => {
+    mutationFn: async (p: { debtId: string; amount: number; paidOn: Date }) => {
       const { error } = await supabase.rpc("record_debt_payment", {
         p_debt_id: p.debtId,
         p_amount: p.amount,
         p_paid_on: toDateString(p.paidOn),
-        p_account_id: p.accountId,
       });
       if (error) throw error;
     },
@@ -129,7 +128,7 @@ export function useRecordPayment() {
   });
 }
 
-/** Deleting a payment also deletes its Money transaction (database trigger). */
+/** Deleting an old payment also deletes its old Money transaction (database trigger). */
 export function useDeletePayment() {
   const invalidate = useInvalidate();
   return useMutation({
