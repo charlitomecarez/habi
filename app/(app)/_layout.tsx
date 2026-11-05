@@ -15,6 +15,12 @@ export default function AppLayout() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="alarms/index" />
       <Stack.Screen name="alarms/label" />
+      <Stack.Screen name="travel/index" />
+      <Stack.Screen name="travel/[id]" />
+      <Stack.Screen name="travel/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="travel/edit/[id]" options={{ presentation: "modal" }} />
+      <Stack.Screen name="travel/item/new" options={{ presentation: "modal" }} />
+      <Stack.Screen name="travel/item/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="ulam/index" />
       <Stack.Screen name="ulam/cook" />
       <Stack.Screen name="ulam/week" />

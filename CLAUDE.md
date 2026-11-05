@@ -56,7 +56,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 ## Navigation
 
 - `app/(auth)/login.tsx` and `app/alarm-ringing.tsx` are the only public screens; `app/(app)/` is protected (Stack.Protected + onAuthStateChange). The ringing screen opens over the lock screen, so it shows no personal data.
-- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms, Ulam · People: People, Debts · Home and plans: Inventory, Shopping · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them, and each tile shows how much is inside. Settings is laid out at the end of More.
+- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms, Ulam · People: People, Debts · Home and plans: Inventory, Shopping, Travel · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them, and each tile shows how much is inside. Settings is laid out at the end of More.
 
 ## Phases
 

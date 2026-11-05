@@ -109,6 +109,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "home",
         keywords: "grocery list",
       },
+      {
+        id: "travel",
+        label: "Travel",
+        href: "/travel",
+        icon: { name: "airplane-outline" },
+        tone: "home",
+        keywords: "trip plan itinerary",
+      },
     ],
   },
   {

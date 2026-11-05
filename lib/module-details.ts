@@ -10,6 +10,7 @@ import { useItems } from "@/lib/inventory";
 import { useJournal } from "@/lib/journal";
 import { usePeople } from "@/lib/people";
 import { useShopping } from "@/lib/shopping";
+import { useTrips } from "@/lib/travel";
 import { useUlamDays } from "@/lib/ulam";
 import { useVaultEntries, useVaultStore } from "@/lib/vault";
 
@@ -29,6 +30,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
   const debts = useDebts();
   const items = useItems();
   const shopping = useShopping();
+  const trips = useTrips();
   const documents = useDocuments();
   const videos = useVideos();
   const unlocked = useVaultStore((s) => s.key !== null);
@@ -46,6 +48,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
     debts: debts.data ? `${debts.data.filter((d) => d.balance > 0).length} open` : undefined,
     inventory: countText(items.data?.length, "item"),
     shopping: shopping.data ? `${shopping.data.items.filter((i) => !i.ticked).length} to buy` : undefined,
+    travel: countText(trips.data?.length, "trip"),
     documents: countText(documents.data?.length, "document"),
     vault: unlocked ? countText(vault.entries.length, "login") : "Locked",
     content: countText(videos.data?.length, "video"),

@@ -1528,6 +1528,111 @@ export type Database = {
           },
         ];
       };
+      trip_items: {
+        Row: {
+          booking_ref: string | null;
+          cost: number | null;
+          created_at: string;
+          currency: string;
+          day: string | null;
+          document_id: string | null;
+          done: boolean;
+          id: string;
+          kind: Database["public"]["Enums"]["trip_item_kind"];
+          map_url: string | null;
+          note: string | null;
+          place: string | null;
+          start_time: string | null;
+          title: string;
+          transaction_id: string | null;
+          trip_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          booking_ref?: string | null;
+          cost?: number | null;
+          created_at?: string;
+          currency?: string;
+          day?: string | null;
+          document_id?: string | null;
+          done?: boolean;
+          id?: string;
+          kind?: Database["public"]["Enums"]["trip_item_kind"];
+          map_url?: string | null;
+          note?: string | null;
+          place?: string | null;
+          start_time?: string | null;
+          title: string;
+          transaction_id?: string | null;
+          trip_id: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          booking_ref?: string | null;
+          cost?: number | null;
+          created_at?: string;
+          currency?: string;
+          day?: string | null;
+          document_id?: string | null;
+          done?: boolean;
+          id?: string;
+          kind?: Database["public"]["Enums"]["trip_item_kind"];
+          map_url?: string | null;
+          note?: string | null;
+          place?: string | null;
+          start_time?: string | null;
+          title?: string;
+          transaction_id?: string | null;
+          trip_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      trips: {
+        Row: {
+          budget_php: number | null;
+          created_at: string;
+          destination: string | null;
+          end_date: string;
+          id: string;
+          note: string | null;
+          start_date: string;
+          status: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          budget_php?: number | null;
+          created_at?: string;
+          destination?: string | null;
+          end_date: string;
+          id?: string;
+          note?: string | null;
+          start_date: string;
+          status?: string;
+          title: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          budget_php?: number | null;
+          created_at?: string;
+          destination?: string | null;
+          end_date?: string;
+          id?: string;
+          note?: string | null;
+          start_date?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       ulam_days: {
         Row: {
           created_at: string;
@@ -2110,6 +2215,10 @@ export type Database = {
       };
     };
     Functions: {
+      mark_trip_item_paid: {
+        Args: { p_account_id: string; p_amount: number; p_item_id: string };
+        Returns: undefined;
+      };
       add_due_subscription_expenses: { Args: never; Returns: number };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
       budget_month: {
@@ -2185,6 +2294,7 @@ export type Database = {
       };
     };
     Enums: {
+      trip_item_kind: "go" | "stay" | "eat" | "transport" | "other";
       billing_cycle: "weekly" | "monthly" | "quarterly" | "yearly";
       content_format: "long" | "short";
       content_stage: "idea" | "script" | "record" | "edit" | "polish" | "publish" | "published";
@@ -2209,7 +2319,8 @@ export type Database = {
         | "workout"
         | "medicine"
         | "budget"
-        | "inventory";
+        | "inventory"
+        | "trip_item";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -2334,6 +2445,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      trip_item_kind: ["go", "stay", "eat", "transport", "other"],
       billing_cycle: ["weekly", "monthly", "quarterly", "yearly"],
       content_format: ["long", "short"],
       content_stage: ["idea", "script", "record", "edit", "polish", "publish", "published"],
@@ -2359,6 +2471,7 @@ export const Constants = {
         "medicine",
         "budget",
         "inventory",
+        "trip_item",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
