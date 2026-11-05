@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AmountInput } from "@/components/ui/AmountInput";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { useColors } from "@/lib/colors";
@@ -60,7 +61,7 @@ export function GoalForm({ goal }: { goal?: Goal }) {
             {goal ? "Edit goal" : "Add savings goal"}
           </Text>
         </View>
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           <Input label="Goal" value={name} onChangeText={setName} placeholder="New phone" maxLength={80} />
           <AmountInput
             label="Target"
@@ -97,7 +98,7 @@ export function GoalForm({ goal }: { goal?: Goal }) {
               }}
             />
           ) : null}
-        </ScrollView>
+        </KeyboardScrollView>
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
           <Button label="Save goal" loading={save.isPending} onPress={onSave} />

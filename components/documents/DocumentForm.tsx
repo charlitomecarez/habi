@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
 import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
@@ -58,7 +59,10 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
   const v = vehicle.data;
   const remindOptions = REMIND_OPTIONS.some((o) => o.value === getValues("remindDaysBefore"))
     ? REMIND_OPTIONS
-    : [...REMIND_OPTIONS, { value: getValues("remindDaysBefore"), label: `${getValues("remindDaysBefore")} days before` }];
+    : [
+        ...REMIND_OPTIONS,
+        { value: getValues("remindDaysBefore"), label: `${getValues("remindDaysBefore")} days before` },
+      ];
 
   const onSubmit = handleSubmit(async (f) => {
     await save.mutateAsync({
@@ -94,7 +98,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
           </Text>
         </View>
 
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           <Controller
             control={control}
             name="type"
@@ -130,7 +134,13 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
             control={control}
             name="number"
             render={({ field }) => (
-              <Input label="Number" optional value={field.value} onChangeText={field.onChange} autoCapitalize="characters" />
+              <Input
+                label="Number"
+                optional
+                value={field.value}
+                onChangeText={field.onChange}
+                autoCapitalize="characters"
+              />
             )}
           />
           <View className="flex-row gap-3">
@@ -163,7 +173,12 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
               render={({ field }) => (
                 <View className="gap-2">
                   <Text className="font-semibold text-label text-ink">Vehicle: {vehicleName(v)}</Text>
-                  <Segmented label={`Link to ${vehicleName(v)}`} options={LINK_OPTIONS} value={field.value} onChange={field.onChange} />
+                  <Segmented
+                    label={`Link to ${vehicleName(v)}`}
+                    options={LINK_OPTIONS}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </View>
               )}
             />
@@ -171,10 +186,12 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
           <Controller
             control={control}
             name="note"
-            render={({ field }) => <Input label="Note" optional value={field.value} onChangeText={field.onChange} multiline />}
+            render={({ field }) => (
+              <Input label="Note" optional value={field.value} onChangeText={field.onChange} multiline />
+            )}
           />
           <Text className="font-sans text-caption text-ink-muted">Add photos of the document after you save it.</Text>
-        </ScrollView>
+        </KeyboardScrollView>
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}

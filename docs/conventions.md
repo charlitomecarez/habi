@@ -27,6 +27,7 @@ This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev serv
 - Do not send `user_id` from the app. The column default sets it.
 - Put business rules that other clients or the Edge Function also need in the database (trigger or view), not in the app.
 - Forms use react-hook-form with a zod v4 schema.
+- Full-screen forms use `KeyboardScrollView`, so the focused field stays above the keyboard. Bottom sheets use `Sheet`, which moves up with the keyboard.
 - Status text comes from helpers such as `dueText`, `renewalText` and `isOverdue`, so every screen uses the same words.
 - Prettier: print width 120, double quotes, semicolons, trailing commas, and `prettier-plugin-tailwindcss`.
 - Node 22 (`.nvmrc`). npm is the package manager.

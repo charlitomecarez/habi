@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
 import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -13,6 +13,7 @@ import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { useColors } from "@/lib/colors";
@@ -87,7 +88,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
           </Text>
         </View>
 
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           <Controller
             control={control}
             name="direction"
@@ -171,7 +172,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
               <Input label="Note" optional value={field.value} onChangeText={field.onChange} multiline />
             )}
           />
-        </ScrollView>
+        </KeyboardScrollView>
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
