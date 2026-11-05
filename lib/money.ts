@@ -82,6 +82,8 @@ const transactionsKey = (limit: number) => [...MONEY_KEY, "transactions", limit]
 const monthKey = (month: string) => [...MONEY_KEY, "month", month] as const;
 const monthTransactionsKey = (month: string) => [...MONEY_KEY, "month-transactions", month] as const;
 
+const namesKey = [...MONEY_KEY, "expense-names"] as const;
+
 const TRANSACTION_COLUMNS =
   "id, kind, account_id, to_account_id, category_id, subscription_id, amount, occurred_on, merchant, note";
 
@@ -383,6 +385,60 @@ export type TransactionInput = {
   merchant: string | null;
   note: string | null;
 };
+
+export type ExpenseName = { name: string; categoryId: string | null };
+
+/** Past expense names, newest first. Each saved expense adds to this list. */
+export function useExpenseNames() {
+  return useQuery({
+    queryKey: namesKey,
+    queryFn: async (): Promise<ExpenseName[]> => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("merchant, category_id")
+        .eq("kind", "expense")
+        .not("merchant", "is", null)
+        .order("occurred_on", { ascending: false })
+        .limit(2000);
+      if (error) throw error;
+      return data.map((t) => ({ name: t.merchant ?? "", categoryId: t.category_id }));
+    },
+  });
+}
+
+type SuggestionOptions = {
+  /** The text in the field. Empty shows the most used names. */
+  query: string;
+  categoryId: string | null;
+  /** Names to leave out, because a category already covers them. */
+  categoryNames: readonly string[];
+  limit?: number;
+};
+
+/** The names to suggest: the chosen category's names first, then the most used. */
+export function suggestExpenseNames(
+  history: readonly ExpenseName[],
+  { query, categoryId, categoryNames, limit = 5 }: SuggestionOptions,
+): string[] {
+  const typed = query.trim().toLowerCase();
+  const skip = new Set(categoryNames.map((c) => c.toLowerCase()));
+  const names = new Map<string, { name: string; uses: number; inCategory: number }>();
+
+  for (const row of history) {
+    const name = row.name.trim();
+    const key = name.toLowerCase();
+    if (!name || skip.has(key) || key === typed || !key.includes(typed)) continue;
+    const entry = names.get(key) ?? { name, uses: 0, inCategory: 0 };
+    entry.uses += 1;
+    if (categoryId && row.categoryId === categoryId) entry.inCategory += 1;
+    names.set(key, entry);
+  }
+
+  return [...names.values()]
+    .sort((a, b) => b.inCategory - a.inCategory || b.uses - a.uses)
+    .slice(0, limit)
+    .map((n) => n.name);
+}
 
 export function useSaveTransaction() {
   const invalidate = useInvalidateMoney();

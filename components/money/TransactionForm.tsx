@@ -21,9 +21,11 @@ import { useColors } from "@/lib/colors";
 import {
   amountText,
   parseAmount,
+  suggestExpenseNames,
   useAccounts,
   useCategories,
   useDeleteTransaction,
+  useExpenseNames,
   useSaveTransaction,
   useSubscriptions,
   type Transaction,
@@ -105,6 +107,7 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
   const accounts = useAccounts();
   const categories = useCategories();
   const subscriptions = useSubscriptions();
+  const expenseNames = useExpenseNames();
   const save = useSaveTransaction();
   const remove = useDeleteTransaction();
 
@@ -130,6 +133,14 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
     ...(subscriptions.data ?? []).map((s) => ({ value: s.id, label: s.name })),
   ];
   const toAccountOptions = accountOptions.filter((a) => a.value !== accountId);
+  const suggestions =
+    kind === "expense"
+      ? suggestExpenseNames(expenseNames.data ?? [], {
+          query: values.merchant,
+          categoryId: values.categoryId === NONE ? null : values.categoryId,
+          categoryNames: kindCategories.map((c) => c.name),
+        })
+      : [];
 
   const onSubmit = handleSubmit(async (v) => {
     await save.mutateAsync({
@@ -288,14 +299,23 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
             control={control}
             name={kind === "transfer" ? "note" : "merchant"}
             render={({ field }) => (
-              <Input
-                label="Where / note"
-                optional
-                value={field.value}
-                onChangeText={field.onChange}
-                placeholder={kind === "expense" ? "Jollibee" : kind === "income" ? "Employer or client" : "Why"}
-                maxLength={120}
-              />
+              <View className="gap-2">
+                <Input
+                  label="Where / note"
+                  optional
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  placeholder={kind === "expense" ? "Jollibee" : kind === "income" ? "Employer or client" : "Why"}
+                  maxLength={120}
+                />
+                {suggestions.length > 0 ? (
+                  <View accessibilityLabel="Suggested names" className="flex-row flex-wrap gap-2">
+                    {suggestions.map((name) => (
+                      <Chip key={name} label={name} selected={false} onPress={() => field.onChange(name)} />
+                    ))}
+                  </View>
+                ) : null}
+              </View>
             )}
           />
 

@@ -32,6 +32,7 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
   - A segmented control picks the kind.
   - Category chips toggle (a second tap clears the category).
   - The "Where / note" field saves to `merchant`, or to `note` for a transfer.
+  - For an expense, chips under the field show past names (`suggestExpenseNames`). The chosen category's names come first, then the most used.
 - `useTransactions("recent")` loads 10 rows. `"history"` loads 200.
 - `useMonthSummary` totals spending and income for the current calendar month, and spending per category. Transfers do not count.
 
