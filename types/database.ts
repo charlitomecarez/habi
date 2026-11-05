@@ -1534,6 +1534,7 @@ export type Database = {
           digest_enabled: boolean;
           digest_hour: number;
           digest_last_sent_on: string | null;
+          home_shortcuts: string[];
           timezone: string;
           updated_at: string;
           user_id: string;
@@ -1544,6 +1545,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          home_shortcuts?: string[];
           timezone?: string;
           updated_at?: string;
           user_id?: string;
@@ -1554,6 +1556,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          home_shortcuts?: string[];
           timezone?: string;
           updated_at?: string;
           user_id?: string;

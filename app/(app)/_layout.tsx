@@ -13,6 +13,7 @@ export default function AppLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="settings" />
       <Stack.Screen name="todo/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="vehicle/log-service" />

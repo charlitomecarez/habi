@@ -27,7 +27,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 - Build the APK only with Build from GitHub in expo.dev. Do not run `npx expo run:android`, `eas build` or any local Android build.
 - `npm run typecheck`, `npm run lint` and `npm test` before each PR. Run them one at a time.
 - This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish. For a web build check, use `npx expo export --platform web --max-workers 1`.
-- `npx supabase db push` for migrations. Do not use Docker or a local Supabase server.
+- `npx supabase db push --remote` for migrations. Do not use Docker or a local Supabase server. The CLI targets a local stack without `--remote`.
 - `npm run db:types` after every migration. It reads the linked live project, so it needs no Docker.
 
 ## Rules
@@ -55,7 +55,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 ## Navigation
 
 - `app/(auth)/login.tsx` is the only public screen; `app/(app)/` is protected (Stack.Protected + onAuthStateChange).
-- Tabs: Home · Money · Todos · Vehicle · More. More holds the other modules in sections (Daily life: Habits, Gym, Journal, Health · People: People and dates, Debts · Home: Inventory, Shopping list · Records: Documents, Vault · Work: Content planner) and settings.
+- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health · People: People, Debts · Home and plans: Inventory, Shopping · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them. Settings is its own page, `/settings`.
 
 ## Phases
 

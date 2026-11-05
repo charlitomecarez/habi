@@ -1,28 +1,34 @@
-import { Ionicons } from "@expo/vector-icons";
-import { format, isToday } from "date-fns";
-import { router, type Href } from "expo-router";
-import type { ComponentProps } from "react";
+import { format } from "date-fns";
+import { router } from "expo-router";
+import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { DoseRow } from "@/components/health/DoseRow";
+import { AttentionCard } from "@/components/home/AttentionCard";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
+import { ShortcutsSheet } from "@/components/home/ShortcutsSheet";
 import { TipCard } from "@/components/home/TipCard";
 import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
-import { Badge } from "@/components/ui/Badge";
+import { HeroCard } from "@/components/ui/HeroCard";
+import { ModuleTile } from "@/components/ui/ModuleTile";
+import { FadeIn } from "@/components/ui/Motion";
 import { Notice } from "@/components/ui/Notice";
 import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
+import { useDebts } from "@/lib/debts";
 import { todaysDoses, useHealth } from "@/lib/health";
-import { useItems } from "@/lib/inventory";
-import { formatPeso, useAccounts } from "@/lib/money";
-import { groupTodos, isOverdue, useTodos, type Todo } from "@/lib/todos";
-import { useVaultStore } from "@/lib/vault";
-import { dueText, formatKm, useServiceDue, useVehicle, vehicleName, type ServiceDue } from "@/lib/vehicles";
+import { billsThisWeek, buildAttention, todaySentence } from "@/lib/home";
+import { dayTotals, formatPeso, toDateString, useMonthTransactions, useSubscriptions } from "@/lib/money";
+import { shortcutModules } from "@/lib/modules";
+import { usePeople } from "@/lib/people";
+import { useUserSettings } from "@/lib/settings";
+import { groupTodos, useTodos } from "@/lib/todos";
+import { useServiceDue, useVehicle } from "@/lib/vehicles";
 import { useAuth } from "@/providers/auth-provider";
 
-type IconName = ComponentProps<typeof Ionicons>["name"];
+/** Needs attention shows this many, then "See all". */
+const ATTENTION_LIMIT = 5;
 
 function greeting(now: Date): string {
   const hour = now.getHours();
@@ -31,99 +37,12 @@ function greeting(now: Date): string {
   return "Good evening";
 }
 
-type AttentionCardProps = {
-  icon: IconName;
-  tone: "danger" | "warning";
-  title: string;
-  detail: string;
-  status: string;
-  onPress: () => void;
-};
-
-/** One thing that needs action today. The badge always says the status in words. */
-function AttentionCard({ icon, tone, title, detail, status, onPress }: AttentionCardProps) {
-  const colors = useColors();
+function SectionTitle({ children }: { children: string }) {
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${title}, ${detail}, ${status}`}
-      onPress={onPress}
-      className="flex-row items-center gap-3 rounded-card border border-border bg-surface-card p-4 active:bg-surface-muted"
-    >
-      <View
-        className={`h-touch w-touch items-center justify-center rounded-md ${tone === "danger" ? "bg-danger-tint" : "bg-warning-tint"}`}
-      >
-        <Ionicons name={icon} size={22} color={tone === "danger" ? colors.danger : colors.warning} />
-      </View>
-      <View className="min-w-0 flex-1 gap-1">
-        <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-          {title}
-        </Text>
-        <Text numberOfLines={1} className="font-sans text-caption text-ink-muted">
-          {detail}
-        </Text>
-      </View>
-      <Badge label={status} tone={tone} />
-    </Pressable>
+    <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+      {children}
+    </Text>
   );
-}
-
-type TileProps = {
-  icon: IconName;
-  label: string;
-  value: string;
-  href: Href;
-};
-
-function Tile({ icon, label, value, href }: TileProps) {
-  const colors = useColors();
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${label}, ${value}`}
-      onPress={() => router.push(href)}
-      className="min-h-touch min-w-0 grow basis-[45%] gap-3 rounded-card border border-border bg-surface-card p-4 active:bg-surface-muted"
-    >
-      <Ionicons name={icon} size={24} color={colors.accent} />
-      <View className="gap-1">
-        <Text className="font-semibold text-row-title text-ink">{label}</Text>
-        <Text numberOfLines={1} className="font-sans text-caption text-ink-muted">
-          {value}
-        </Text>
-      </View>
-    </Pressable>
-  );
-}
-
-function serviceCard(s: ServiceDue, vehicle: string, model: string): AttentionCardProps {
-  const overdue = s.status === "overdue";
-  return {
-    icon: "warning-outline",
-    tone: overdue ? "danger" : "warning",
-    title: `${s.item} ${overdue ? "overdue" : "due soon"}`,
-    detail: `${vehicle} · ${model} · ${dueText(s)}`,
-    status: overdue ? "Overdue" : "Due soon",
-    onPress: () => router.push({ pathname: "/vehicle/log-service", params: { serviceId: s.vehicleServiceId } }),
-  };
-}
-
-function todoCard(todo: Todo): AttentionCardProps {
-  const overdue = isOverdue(todo);
-  const remind = todo.remind_at ? new Date(todo.remind_at) : null;
-  const due = todo.due_at ? new Date(todo.due_at) : null;
-  const detail = remind
-    ? `reminder at ${format(remind, "h:mm a")}${isToday(remind) ? " today" : `, ${format(remind, "MMM d")}`}`
-    : due
-      ? `due ${isToday(due) ? "today" : format(due, "MMM d")}`
-      : "no date";
-  return {
-    icon: "time-outline",
-    tone: overdue ? "danger" : "warning",
-    title: todo.title,
-    detail: `Todo · ${detail}`,
-    status: overdue ? "Overdue" : "Today",
-    onPress: () => router.push({ pathname: "/todo/[id]", params: { id: todo.id } }),
-  };
 }
 
 export default function HomeScreen() {
@@ -134,29 +53,41 @@ export default function HomeScreen() {
   const firstName = fullName?.split(" ")[0];
   const initial = (firstName ?? session?.user.email ?? "?").charAt(0).toUpperCase();
 
+  const [showAll, setShowAll] = useState(false);
+  const [editing, setEditing] = useState(false);
+
   const todos = useTodos();
   const vehicle = useVehicle();
   const due = useServiceDue(vehicle.data?.id);
-  const accounts = useAccounts();
-  const items = useItems();
-  const vaultUnlocked = useVaultStore((s) => s.key !== null);
+  const subscriptions = useSubscriptions();
   const health = useHealth();
-  const doses = health.data ? todaysDoses(health.data.doses, now) : [];
+  const debts = useDebts();
+  const people = usePeople();
+  const month = useMonthTransactions(now);
+  const settings = useUserSettings();
 
-  const todayTodos = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
-  const services = (due.data ?? [])
-    .filter((s) => s.status === "overdue" || s.status === "due_soon")
-    .sort((a, b) => Number(b.status === "overdue") - Number(a.status === "overdue") || a.sortOrder - b.sortOrder);
-  const cards = [
-    ...(vehicle.data ? services.map((s) => serviceCard(s, vehicleName(vehicle.data!), vehicle.data!.model)) : []),
-    ...todayTodos.map(todoCard),
-  ];
+  const openToday = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
+  const bills = subscriptions.data ?? [];
+  const items = buildAttention(
+    {
+      services: vehicle.data ? (due.data ?? []) : [],
+      todos: openToday,
+      bills,
+      doses: health.data ? todaysDoses(health.data.doses, now) : [],
+      debts: debts.data ?? [],
+      people: people.data?.people ?? [],
+      dates: people.data?.dates ?? [],
+    },
+    now,
+  );
+  const visible = showAll ? items : items.slice(0, ATTENTION_LIMIT);
+
+  const spentToday = dayTotals(month.data ?? []).byDay.get(toDateString(now))?.spent ?? 0;
+  const shortcutIds = settings.data?.homeShortcuts ?? [];
+  const shortcuts = shortcutModules(shortcutIds);
 
   const loading = todos.isPending || vehicle.isPending;
-  const error = todos.error ?? vehicle.error ?? due.error;
-
-  const total = (accounts.data ?? []).filter((a) => a.currency === "PHP").reduce((sum, a) => sum + a.balance, 0);
-  const itemCount = items.data?.length;
+  const error = todos.error ?? vehicle.error ?? due.error ?? subscriptions.error ?? debts.error ?? people.error;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -168,81 +99,92 @@ export default function HomeScreen() {
           </View>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Account"
-            onPress={() => router.push("/more")}
+            accessibilityLabel="Settings"
+            onPress={() => router.push("/settings")}
             className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border"
           >
             <ProfilePhoto letter={initial} letterClassName="font-semibold text-body text-ink" />
           </Pressable>
         </View>
 
-        <WeeklyReviewCard />
-
-        <TipCard />
+        <HeroCard
+          title={loading ? "Checking your day" : todaySentence(items)}
+          stats={[
+            { value: formatPeso(spentToday), label: "spent today" },
+            { value: String(openToday.length), label: openToday.length === 1 ? "todo left" : "todos left" },
+            { value: formatPeso(billsThisWeek(bills, now)), label: "bills this week" },
+          ]}
+        />
 
         <View className="gap-3">
-          <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-            Needs attention
-          </Text>
+          <SectionTitle>Needs attention</SectionTitle>
           {error ? <Notice tone="danger">Could not load everything. {error.message}</Notice> : null}
           {loading ? (
             <ActivityIndicator color={colors.accent} className="py-4" />
-          ) : cards.length === 0 ? (
+          ) : items.length === 0 ? (
             <View className="rounded-card border border-border bg-surface-card px-4 py-3">
               <Text className="font-sans text-caption text-ink-muted">Nothing is due today.</Text>
             </View>
           ) : (
-            cards.map((card) => <AttentionCard key={`${card.title}-${card.detail}`} {...card} />)
+            <FadeIn>
+              <View className="gap-3">
+                {visible.map((item) => (
+                  <AttentionCard key={item.key} item={item} />
+                ))}
+              </View>
+            </FadeIn>
+          )}
+          {items.length > ATTENTION_LIMIT ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => setShowAll(!showAll)}
+              className="h-touch items-center justify-center"
+            >
+              <Text className="font-semibold text-label text-accent">
+                {showAll ? "Show less" : `See all ${items.length}`}
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
+
+        <View className="gap-3">
+          <View className="flex-row items-center justify-between">
+            <SectionTitle>Shortcuts</SectionTitle>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Edit shortcuts"
+              onPress={() => setEditing(true)}
+              className="h-touch justify-center px-2"
+            >
+              <Text className="font-semibold text-label text-accent">Edit</Text>
+            </Pressable>
+          </View>
+          {shortcuts.length === 0 ? (
+            <Text className="font-sans text-caption text-ink-muted">Tap Edit to pin the modules you use most.</Text>
+          ) : (
+            <View className="flex-row flex-wrap gap-y-3">
+              {shortcuts.map((m) => (
+                <ModuleTile
+                  key={m.id}
+                  label={m.label}
+                  icon={m.icon}
+                  tone={m.tone}
+                  onPress={() => router.push(m.href)}
+                />
+              ))}
+            </View>
           )}
         </View>
 
-        {doses.length > 0 ? (
-          <View className="gap-3">
-            <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-              Medicines today
-            </Text>
-            <View className="overflow-hidden rounded-card border border-border bg-surface-card">
-              {doses.map((d, i) => (
-                <DoseRow key={d.id} dose={d} last={i === doses.length - 1} />
-              ))}
-            </View>
-          </View>
-        ) : null}
-
-        <ScreenTimeCard />
-
         <View className="gap-3">
-          <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-            Modules
-          </Text>
-          <View className="flex-row flex-wrap gap-3">
-            <Tile
-              icon="card-outline"
-              label="Money"
-              value={accounts.data ? `${formatPeso(total)} total` : "Balances"}
-              href="/money"
-            />
-            <Tile
-              icon="bicycle-outline"
-              label="Vehicle"
-              value={vehicle.data ? `${formatKm(vehicle.data.current_odometer_km)} km` : "Add your vehicle"}
-              href="/vehicle"
-            />
-            <Tile
-              icon="cube-outline"
-              label="Inventory"
-              value={itemCount === undefined ? "Your things" : `${itemCount} ${itemCount === 1 ? "item" : "items"}`}
-              href="/inventory"
-            />
-            <Tile
-              icon="lock-closed-outline"
-              label="Vault"
-              value={vaultUnlocked ? "Unlocked" : "Locked"}
-              href="/vault"
-            />
-          </View>
+          <SectionTitle>This week</SectionTitle>
+          <WeeklyReviewCard />
+          <TipCard />
+          <ScreenTimeCard />
         </View>
       </ScrollView>
+
+      <ShortcutsSheet visible={editing} onClose={() => setEditing(false)} selected={shortcutIds} />
     </SafeAreaView>
   );
 }

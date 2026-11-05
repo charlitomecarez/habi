@@ -34,6 +34,7 @@ export function ModuleTile({ label, icon, tone, onPress }: ModuleTileProps) {
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
+      wrapperStyle={{ width: "25%" }}
       className="min-h-touch items-center gap-1 py-1"
     >
       <View className={`h-button w-button items-center justify-center rounded-input ${TINT[tone]}`}>

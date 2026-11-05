@@ -52,8 +52,12 @@ export function ScreenTimeCard() {
                 <Ionicons name="chevron-back" size={20} color={colors.ink} />
               </Pressable>
               <View className="min-w-0 flex-1 items-center gap-1">
-                <Text className="font-medium text-caption text-ink-muted">{isToday(day) ? "Today" : format(day, "EEEE, MMM d")}</Text>
-                <Text className="font-bold text-title text-ink">{usage.data ? duration(usage.data.day.totalMs) : "…"}</Text>
+                <Text className="font-medium text-caption text-ink-muted">
+                  {isToday(day) ? "Today" : format(day, "EEEE, MMM d")}
+                </Text>
+                <Text className="font-bold text-title text-ink">
+                  {usage.data ? duration(usage.data.day.totalMs) : "…"}
+                </Text>
               </View>
               <Pressable
                 accessibilityRole="button"
@@ -69,7 +73,9 @@ export function ScreenTimeCard() {
             {usage.isPending ? (
               <ActivityIndicator color={colors.accent} />
             ) : usage.error ? (
-              <Text className="font-sans text-caption text-danger">Could not read screen time. {usage.error.message}</Text>
+              <Text className="font-sans text-caption text-danger">
+                Could not read screen time. {usage.error.message}
+              </Text>
             ) : usage.data ? (
               <>
                 {usage.data.day.apps.slice(0, TOP_APPS).map((a) => (

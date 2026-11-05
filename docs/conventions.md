@@ -14,7 +14,7 @@
 | Format           | `npm run format`                                                  |
 | All three checks | `npm run check` (one at a time)                                   |
 | Web build check  | `npx expo export --platform web --max-workers 1`                  |
-| Apply migrations | `npx supabase db push`                                            |
+| Apply migrations | `npx supabase db push --remote`                                   |
 | Generate types   | `npm run db:types`                                                |
 
 ## Memory
@@ -36,7 +36,7 @@ Do not use Docker or a local Supabase server. That rule bans these commands, bec
 - `supabase db reset`
 - `supabase functions serve`
 
-`npx supabase db push` and `npm run db:types` work on the linked live project, so they need no Docker.
+`npx supabase db push --remote` and `npm run db:types` work on the linked live project, so they need no Docker. Without `--remote`, the CLI targets a local stack and fails.
 
 ## Tests
 
