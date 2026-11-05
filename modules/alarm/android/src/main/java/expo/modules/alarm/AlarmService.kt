@@ -13,7 +13,9 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.PowerManager
 import android.os.VibrationAttributes
 import android.os.VibrationEffect
@@ -25,6 +27,8 @@ class AlarmService : Service() {
   private var player: MediaPlayer? = null
   private var vibrator: Vibrator? = null
   private var wakeLock: PowerManager.WakeLock? = null
+  private var started = false
+  private val handler = Handler(Looper.getMainLooper())
 
   override fun onBind(intent: Intent?): IBinder? = null
 
@@ -90,7 +94,8 @@ class AlarmService : Service() {
   }
 
   private fun startRinging() {
-    if (player != null) return
+    if (started) return
+    started = true
 
     val power = getSystemService(Context.POWER_SERVICE) as PowerManager
     wakeLock = power.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "my-app:alarm").apply {
@@ -98,6 +103,15 @@ class AlarmService : Service() {
       acquire()
     }
 
+    // The awake check opens quietly. The sound starts only if nobody taps in time.
+    if (AlarmStore(this).ringingId == AWAKE_ID) {
+      handler.postDelayed({ startSound() }, AWAKE_WINDOW_MS)
+    } else {
+      startSound()
+    }
+  }
+
+  private fun startSound() {
     val sound = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM)
       ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
       ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
@@ -145,6 +159,7 @@ class AlarmService : Service() {
   }
 
   override fun onDestroy() {
+    handler.removeCallbacksAndMessages(null)
     player?.run {
       if (isPlaying) stop()
       release()
@@ -161,6 +176,9 @@ class AlarmService : Service() {
     const val ACTION_STOP = "expo.modules.alarm.STOP"
     const val EXTRA_RINGING = "alarmRinging"
     const val RINGING_LINK = "myapp://alarm-ringing"
+    /** Keep in sync with lib/alarm-rules.ts. */
+    const val AWAKE_ID = "awake-check"
+    const val AWAKE_WINDOW_MS = 60_000L
     private const val CHANNEL_ID = "alarm-ringing"
     private const val NOTIFICATION_ID = 7301
   }

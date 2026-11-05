@@ -3,7 +3,8 @@ import { Text, View } from "react-native";
 
 import type { DateTimeFieldProps } from "./DateTimeField";
 
-const FORMATS = { date: "yyyy-MM-dd", datetime: "yyyy-MM-dd'T'HH:mm" } as const;
+const FORMATS = { date: "yyyy-MM-dd", datetime: "yyyy-MM-dd'T'HH:mm", time: "HH:mm" } as const;
+const INPUT_TYPES = { date: "date", datetime: "datetime-local", time: "time" } as const;
 
 /** Web: the browser's own date or date-and-time input. */
 export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldProps) {
@@ -15,7 +16,7 @@ export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldPro
       </Text>
       <input
         id={inputId}
-        type={mode === "date" ? "date" : "datetime-local"}
+        type={INPUT_TYPES[mode]}
         value={value ? format(value, FORMATS[mode]) : ""}
         onChange={(event) => {
           const text = event.target.value;

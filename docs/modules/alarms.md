@@ -1,8 +1,6 @@
 # Alarms
 
-**Files:** `modules/alarm/`, `lib/alarm.ts`, `lib/alarm.web.ts`, `app/(app)/alarms/`, `app/alarm-ringing.tsx`.
-
-**Status:** first build. The native alarm, the setup check and a test ring exist. The alarm list, the stop task and the awake check come after the locked-phone test on the Galaxy A56.
+**Files:** `modules/alarm/`, `lib/alarm.ts`, `lib/alarm.web.ts`, `lib/alarm-rules.ts`, `app/(app)/alarms/`, `app/alarm-ringing.tsx`, `components/alarms/`.
 
 ## Why it is on the phone
 
@@ -15,6 +13,19 @@ A push can arrive late and needs internet, so it cannot ring like an alarm. The 
 3. `AlarmService` is a foreground service. It starts the sound on the alarm volume and the vibration, before any screen loads. A bad sound file cannot stop the vibration.
 4. The service's full-screen intent opens `myapp://alarm-ringing`. `AlarmActivityListener` shows the app over the lock screen only for that intent.
 5. `stopRinging` stops the service and takes the app off the lock screen. Nothing else stops it.
+
+## Stop task
+
+1. Scan the stop label. Its text is fixed (`STOP_LABEL`), so a printed label works in every build.
+2. Solve 3 easy sums (`makeSums`). A right answer moves on by itself.
+3. If the camera fails, "Camera not working?" gives 8 sums instead. This backup can be done from bed. It is a known gap, kept so a camera problem never traps you.
+
+## Awake check
+
+- After the task, `scheduleAwakeCheck` sets a one-time alarm 3 minutes later, with the id `awake-check`.
+- `AlarmService` opens the screen quietly for 60 seconds, and starts the sound only if nobody taps "I am awake".
+- If the time runs out, the full stop task runs, and then another awake check follows.
+- The test ring skips the awake check.
 
 ## Rules
 

@@ -48,7 +48,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "my-app uses the camera to scan the QR labels on your storage boxes.",
+          "cameraPermission": "my-app uses the camera to scan the QR labels on your storage boxes and your alarm stop label.",
           "microphonePermission": false,
           "recordAudioAndroid": false
         }
