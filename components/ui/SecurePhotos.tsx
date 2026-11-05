@@ -10,7 +10,14 @@ import { PhotoField } from "@/components/ui/PhotoField";
 import { useColors } from "@/lib/colors";
 import type { LocalPhoto } from "@/lib/photos";
 import { useDecryptedPhoto } from "@/lib/secure-photos";
+import { useSecureScreen } from "@/lib/secure-screen";
 import { useVaultStore } from "@/lib/vault";
+
+/** Blocks screenshots only while decrypted photos are on screen. */
+function ScreenGuard() {
+  useSecureScreen("secure-photos");
+  return null;
+}
 
 function SecureThumb({ path, subject, onRemove }: { path: string; subject: string; onRemove: () => void }) {
   const colors = useColors();
@@ -77,6 +84,7 @@ export function SecurePhotos({ label, subject, paths, onAdd, onRemove }: SecureP
 
   return (
     <View className="gap-3">
+      {paths.length > 0 ? <ScreenGuard /> : null}
       <Text className="font-semibold text-label text-ink">{label}</Text>
       {paths.length ? (
         <View className="flex-row flex-wrap gap-3">

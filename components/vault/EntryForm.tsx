@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -14,7 +15,13 @@ import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useColors } from "@/lib/colors";
 import { generatePassword, passwordStrength, type Strength } from "@/lib/password";
-import { useDeleteVaultEntry, useSaveVaultEntry, type VaultEntry, type VaultEntryData } from "@/lib/vault";
+import {
+  useDeleteVaultEntry,
+  useSaveVaultEntry,
+  type VaultEntry,
+  type VaultEntryData,
+  noteVaultActivity,
+} from "@/lib/vault";
 
 const schema = z.object({
   title: z.string().trim().min(1, "Enter a name, such as GitHub."),
@@ -54,6 +61,10 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
     resolver: zodResolver(schema),
     defaultValues: entry?.data ?? EMPTY,
   });
+
+  // Typing counts as activity, so the vault does not lock while you fill in the form.
+  const typed = useWatch({ control });
+  useEffect(() => noteVaultActivity(), [typed]);
 
   const onSubmit = handleSubmit(async (values) => {
     await save.mutateAsync({

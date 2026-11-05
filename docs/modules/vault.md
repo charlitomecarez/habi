@@ -1,6 +1,6 @@
 # Vault
 
-**Files:** `lib/vault-crypto.ts`, `lib/vault.ts`, `lib/vault-biometric.ts` (+ `.web.ts`), `lib/clipboard.ts` (+ `.web.ts`), `lib/password.ts`, `app/(app)/vault/`, `components/vault/`, migration `...0500_vault.sql`.
+**Files:** `lib/vault-crypto.ts`, `lib/vault.ts`, `lib/vault-biometric.ts` (+ `.web.ts`), `lib/clipboard.ts` (+ `.web.ts`), `lib/password.ts`, `lib/master-password.ts`, `lib/vault-backup.ts` (+ `.web.ts`), `lib/vault-backup-file.ts`, `lib/secure-screen.ts` (+ `.web.ts`), `modules/secure-clipboard/`, `app/(app)/vault/`, `components/vault/`, migration `...0500_vault.sql`.
 
 ## Security rules
 
@@ -22,12 +22,12 @@
 
 - The key lives only in memory, in the zustand store `useVaultStore` (`key`, `unlockedWith`).
 - `lockVault()` sets the key to null. Sign-out calls it.
-- Auto-lock: the vault locks when the app was in the background for 5 minutes (`AUTO_LOCK_MINUTES`).
+- Auto-lock: the vault locks after 1 minute in the background (`AUTO_LOCK_MINUTES`), and after 2 minutes with no touch or typing while the app is open (`IDLE_LOCK_MINUTES`). `app/(app)/_layout.tsx` sees every touch, and `EntryForm` counts typing. A touch inside a bottom sheet does not count, because a `Modal` is outside that view.
 - `useVaultEntries` loads the rows and decrypts them in a `useMemo` with the key. It loads nothing while locked. It sorts by title.
 
 ## Flows
 
-1. **Set up** (`SetUpVault`): the master password needs 12 or more characters and a match in the confirm field. `useSetUpVault` creates the salt, key and key check, inserts `vault_settings` and unlocks.
+1. **Set up** (`SetUpVault`): `checkMasterPassword` needs 16 or more characters and refuses common passwords. "Suggest a passphrase" gives 6 random words. A vault that already exists keeps its password, because the app cannot change it. `useSetUpVault` creates the salt, key and key check, inserts `vault_settings` and unlocks.
 2. **Unlock** (`UnlockVault`): `useUnlockVault` derives the key and checks it. A wrong password shows "That master password is not right."
 3. **Fingerprint unlock** (Android only):
    - Turn on: the switch on the vault screen stores the key in SecureStore with `requireAuthentication` (Android Keystore).
@@ -37,7 +37,18 @@
 
 ## Clipboard
 
-The copy button calls `copySecret(password, 30 s)`.
+The copy button calls `copySecret(password, 30 s)`. `modules/secure-clipboard/` marks the text as sensitive, and an exact alarm clears the clipboard, because Android freezes a background app and a timer stops. Android stops background apps from reading the clipboard, so it clears without a check. If you copy something else within the 30 seconds, that clears too. The sensitive mark only asks a keyboard not to keep the text. Web uses a timer.
+
+## Screen block
+
+`useSecureScreen` blocks screenshots, screen recording and the recent apps preview on the vault screens, and in `SecurePhotos` while decrypted photos show. Web does nothing.
+
+## Backup
+
+- "Export backup" saves `vault_settings` and `vault_entries` as Supabase stores them, so the file holds nothing readable. The app has no plain text export on purpose.
+- "Restore backup" shows on an empty vault only. `useRestoreBackup` refuses an account that has a vault, and checks the master password with `unlockVault` before it writes any row. Entries have no data tied to an account, so a backup opens in another account.
+- The file does not hold the encrypted photos from Documents and Health.
+- The backup protects against a lost Supabase project. It does not help if you forget the master password.
 
 - **Native:** it clears the clipboard after 30 seconds, but only if it still holds that password.
 - **Web:** it clears without a check, because reading the clipboard needs permission.

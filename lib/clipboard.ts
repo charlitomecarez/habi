@@ -1,14 +1,20 @@
 import * as Clipboard from "expo-clipboard";
 
-/** Copies text, then clears the clipboard after `clearAfterMs` if it still holds that text. */
+import { SecureClipboardModule } from "@/modules/secure-clipboard";
+
+/**
+ * Copies a secret, marked as sensitive, and clears the clipboard after `clearAfterMs`, also in the
+ * background. If you copy something else in that time, that clears too. Older builds with no
+ * native module fall back to a timer, which can stop in the background.
+ */
 export async function copySecret(text: string, clearAfterMs: number): Promise<void> {
+  if (SecureClipboardModule) {
+    SecureClipboardModule.copy(text, clearAfterMs);
+    return;
+  }
   await Clipboard.setStringAsync(text);
-  setTimeout(async () => {
-    try {
-      if ((await Clipboard.getStringAsync()) === text) await Clipboard.setStringAsync("");
-    } catch {
-      // The app may be in the background; the next copy replaces the value anyway.
-    }
+  setTimeout(() => {
+    Clipboard.setStringAsync("").catch(() => undefined);
   }, clearAfterMs);
 }
 

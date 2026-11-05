@@ -1,5 +1,7 @@
 import sodium, { loadSumoVersion } from "react-native-libsodium";
 
+import { PASSPHRASE_WORDS } from "@/lib/passphrase-words";
+
 // Same build as the vault (lib/vault-crypto.ts); both calls must run before libsodium loads.
 loadSumoVersion();
 
@@ -30,6 +32,16 @@ export async function generatePassword(length = GENERATED_LENGTH): Promise<strin
     [chars[i], chars[j]] = [chars[j], chars[i]];
   }
   return chars.join("");
+}
+
+const PASSPHRASE_LENGTH = 6;
+
+/** Six random words, which are easier to remember than random characters. */
+export async function suggestPassphrase(): Promise<string> {
+  await sodium.ready;
+  return Array.from({ length: PASSPHRASE_LENGTH }, () => PASSPHRASE_WORDS[randomIndex(PASSPHRASE_WORDS.length)]).join(
+    " ",
+  );
 }
 
 export type Strength = { score: 0 | 1 | 2 | 3 | 4; label: "Very weak" | "Weak" | "Fair" | "Good" | "Strong" };
