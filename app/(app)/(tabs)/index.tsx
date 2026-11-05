@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AttentionCard } from "@/components/home/AttentionCard";
+import { InboxCard } from "@/components/home/InboxCard";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { ShortcutsSheet } from "@/components/home/ShortcutsSheet";
 import { TipCard } from "@/components/home/TipCard";
@@ -115,6 +116,8 @@ export default function HomeScreen() {
             { value: formatPeso(billsThisWeek(bills, now)), label: "bills this week" },
           ]}
         />
+
+        <InboxCard />
 
         <View className="gap-3">
           <SectionTitle>Needs attention</SectionTitle>

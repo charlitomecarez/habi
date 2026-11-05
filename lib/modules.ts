@@ -88,6 +88,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "people",
         keywords: "utang owe",
       },
+      {
+        id: "inbox",
+        label: "Inbox",
+        href: "/inbox",
+        icon: { name: "mic-outline" },
+        tone: "people",
+        keywords: "voice message partner record taglish",
+      },
     ],
   },
   {

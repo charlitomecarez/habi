@@ -2114,6 +2114,60 @@ export type Database = {
           },
         ];
       };
+      allowed_emails: {
+        Row: { created_at: string; email: string };
+        Insert: { created_at?: string; email: string };
+        Update: { created_at?: string; email?: string };
+        Relationships: [];
+      };
+      voice_messages: {
+        Row: {
+          audio_path: string | null;
+          created_at: string;
+          duration_s: number;
+          id: string;
+          read_at: string | null;
+          recipient_id: string;
+          status: string;
+          transcript: string | null;
+          user_id: string;
+        };
+        Insert: {
+          audio_path?: string | null;
+          created_at?: string;
+          duration_s: number;
+          id?: string;
+          read_at?: string | null;
+          recipient_id: string;
+          status?: string;
+          transcript?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          audio_path?: string | null;
+          created_at?: string;
+          duration_s?: number;
+          id?: string;
+          read_at?: string | null;
+          recipient_id?: string;
+          status?: string;
+          transcript?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      voice_pair_codes: {
+        Row: { code: string; expires_at: string; user_id: string };
+        Insert: { code: string; expires_at: string; user_id?: string };
+        Update: { code?: string; expires_at?: string; user_id?: string };
+        Relationships: [];
+      };
+      voice_pairs: {
+        Row: { created_at: string; partner_id: string; user_id: string };
+        Insert: { created_at?: string; partner_id: string; user_id?: string };
+        Update: { created_at?: string; partner_id?: string; user_id?: string };
+        Relationships: [];
+      };
     };
     Views: {
       debt_balances: {
@@ -2271,6 +2325,10 @@ export type Database = {
         };
         Returns: string;
       };
+      create_voice_pair_code: { Args: never; Returns: string };
+      mark_voice_inbox_read: { Args: never; Returns: undefined };
+      redeem_voice_pair_code: { Args: { p_code: string }; Returns: undefined };
+      unpair_voice: { Args: never; Returns: undefined };
       mark_trip_item_paid: {
         Args: { p_account_id: string; p_amount: number; p_item_id: string };
         Returns: undefined;
@@ -2341,7 +2399,8 @@ export type Database = {
         | "medicine"
         | "budget"
         | "inventory"
-        | "trip_item";
+        | "trip_item"
+        | "inbox";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -2493,6 +2552,7 @@ export const Constants = {
         "budget",
         "inventory",
         "trip_item",
+        "inbox",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],

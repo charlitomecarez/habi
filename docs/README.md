@@ -28,6 +28,7 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [modules/alarms.md](modules/alarms.md)       | The native alarm, the ringing screen, the setup check          |
 | [modules/ulam.md](modules/ulam.md)           | The daily ulam, prices, backup dishes, the 7-day log           |
 | [modules/travel.md](modules/travel.md)       | Trips, items, budget, reminders, PDF export                    |
+| [modules/inbox.md](modules/inbox.md)         | Pairing, voice messages, Groq text, audio cleanup              |
 
 ## Facts to know first
 

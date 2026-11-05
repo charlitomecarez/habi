@@ -102,6 +102,8 @@ One private bucket: `user-files`. The limit is 5 MB per file. It accepts JPEG, P
 - Policies allow access only inside the user's own `<user_id>/` folder.
 - The app reads photos with signed URLs that last one hour.
 
+A second private bucket, `voice-audio`, holds voice messages. See [modules/inbox.md](modules/inbox.md).
+
 ## Types
 
 `types/database.ts` is generated. Generate it again after every migration:

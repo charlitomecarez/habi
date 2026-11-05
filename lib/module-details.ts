@@ -13,6 +13,7 @@ import { useShopping } from "@/lib/shopping";
 import { useTrips } from "@/lib/travel";
 import { useUlamDays } from "@/lib/ulam";
 import { useVaultEntries, useVaultStore } from "@/lib/vault";
+import { unreadCount, useInbox } from "@/lib/voice";
 
 /** "1 item", "2 items". Undefined while the count is loading. */
 export function countText(count: number | undefined, one: string, many = `${one}s`): string | undefined {
@@ -28,6 +29,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
   const ulam = useUlamDays();
   const people = usePeople();
   const debts = useDebts();
+  const inbox = useInbox();
   const items = useItems();
   const shopping = useShopping();
   const trips = useTrips();
@@ -46,6 +48,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
     ulam: eaten === undefined ? undefined : `${eaten} of 7 days`,
     people: countText(people.data?.people.length, "person", "people"),
     debts: debts.data ? `${debts.data.filter((d) => d.balance > 0).length} open` : undefined,
+    inbox: inbox.data ? `${unreadCount(inbox.data)} new` : undefined,
     inventory: countText(items.data?.length, "item"),
     shopping: shopping.data ? `${shopping.data.items.filter((i) => !i.ticked).length} to buy` : undefined,
     travel: countText(trips.data?.length, "trip"),

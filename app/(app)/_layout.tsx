@@ -82,6 +82,8 @@ export default function AppLayout() {
         <Stack.Screen name="health/medicine/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="people/index" />
         <Stack.Screen name="people/[id]" />
+        <Stack.Screen name="inbox/index" />
+        <Stack.Screen name="inbox/record" options={{ presentation: "modal" }} />
         <Stack.Screen name="debts/index" />
         <Stack.Screen name="debts/[id]" />
         <Stack.Screen name="debts/new" options={{ presentation: "modal" }} />

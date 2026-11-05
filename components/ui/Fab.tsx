@@ -4,7 +4,7 @@ import { Pressable } from "react-native";
 import { useColors } from "@/lib/colors";
 
 /** The screen's one primary action. The only component with a shadow. */
-export function Fab({ label, onPress }: { label: string; onPress: () => void }) {
+export function Fab({ label, onPress, icon = "add" }: { label: string; onPress: () => void; icon?: "add" | "mic" }) {
   const colors = useColors();
   return (
     <Pressable
@@ -13,7 +13,7 @@ export function Fab({ label, onPress }: { label: string; onPress: () => void }) 
       onPress={onPress}
       className="absolute bottom-5 right-5 h-button w-button items-center justify-center rounded-fab bg-accent shadow-lg shadow-fab-shadow/20 active:bg-accent-strong"
     >
-      <Ionicons name="add" size={28} color={colors.onAccent} />
+      <Ionicons name={icon} size={28} color={colors.onAccent} />
     </Pressable>
   );
 }
