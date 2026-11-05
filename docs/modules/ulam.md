@@ -6,7 +6,7 @@ One realistic ulam a day, for one person, with no calendar and no meal plan. Onl
 
 ## One Groq call a day
 
-- `pg_cron` runs `daily-ulam` at 12:05 AM PHT. It asks Groq for 3 ulam for each user, and stores one row in `ulam_days`.
+- `pg_cron` runs `daily-ulam` at 12:05 AM PHT. It asks Groq for 3 ulam for the admin and each ticked account (`app_admins`, `voice_access`), and stores one row in `ulam_days`. Other accounts see the bundled backup, so open sign-ups cannot use up the Groq free plan.
 - The app reads only that row and never calls Groq, so a refresh makes no call. "Show another" moves to the next of the 3.
 - `GROQ_API_KEY` lives only in Edge Function secrets. `GROQ_MODEL` is optional, and the default is `openai/gpt-oss-120b`.
 - The prompt holds the price limit, the last 7 names, the price list and the food you never eat. It holds no name, no email and no money data.

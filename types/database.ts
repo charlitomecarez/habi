@@ -33,6 +33,21 @@ export type Database = {
   };
   public: {
     Tables: {
+      app_admins: {
+        Row: {
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       budget_alerts: {
         Row: {
           budget_id: string;
@@ -1924,6 +1939,57 @@ export type Database = {
           },
         ];
       };
+      voice_access: {
+        Row: {
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      voice_messages: {
+        Row: {
+          audio_path: string | null;
+          created_at: string;
+          duration_s: number;
+          id: string;
+          read_at: string | null;
+          recipient_id: string;
+          status: string;
+          transcript: string | null;
+          user_id: string;
+        };
+        Insert: {
+          audio_path?: string | null;
+          created_at?: string;
+          duration_s: number;
+          id?: string;
+          read_at?: string | null;
+          recipient_id: string;
+          status?: string;
+          transcript?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          audio_path?: string | null;
+          created_at?: string;
+          duration_s?: number;
+          id?: string;
+          read_at?: string | null;
+          recipient_id?: string;
+          status?: string;
+          transcript?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       weight_logs: {
         Row: {
           created_at: string;
@@ -2114,54 +2180,6 @@ export type Database = {
           },
         ];
       };
-      app_admins: {
-        Row: { created_at: string; user_id: string };
-        Insert: { created_at?: string; user_id?: string };
-        Update: { created_at?: string; user_id?: string };
-        Relationships: [];
-      };
-      voice_access: {
-        Row: { created_at: string; user_id: string };
-        Insert: { created_at?: string; user_id?: string };
-        Update: { created_at?: string; user_id?: string };
-        Relationships: [];
-      };
-      voice_messages: {
-        Row: {
-          audio_path: string | null;
-          created_at: string;
-          duration_s: number;
-          id: string;
-          read_at: string | null;
-          recipient_id: string;
-          status: string;
-          transcript: string | null;
-          user_id: string;
-        };
-        Insert: {
-          audio_path?: string | null;
-          created_at?: string;
-          duration_s: number;
-          id?: string;
-          read_at?: string | null;
-          recipient_id: string;
-          status?: string;
-          transcript?: string | null;
-          user_id?: string;
-        };
-        Update: {
-          audio_path?: string | null;
-          created_at?: string;
-          duration_s?: number;
-          id?: string;
-          read_at?: string | null;
-          recipient_id?: string;
-          status?: string;
-          transcript?: string | null;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
     };
     Views: {
       debt_balances: {
@@ -2286,6 +2304,15 @@ export type Database = {
     };
     Functions: {
       add_due_subscription_expenses: { Args: never; Returns: number };
+      admin_voice_accounts: {
+        Args: never;
+        Returns: {
+          email: string;
+          name: string;
+          ticked: boolean;
+          user_id: string;
+        }[];
+      };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
       budget_month: {
         Args: { p_budget_id: string; p_month: string };
@@ -2304,6 +2331,7 @@ export type Database = {
         Args: { p_medicine_id: string };
         Returns: undefined;
       };
+      has_voice_access: { Args: never; Returns: boolean };
       import_transactions: { Args: { p_rows: Json }; Returns: number };
       log_fuel: {
         Args: {
@@ -2319,19 +2347,11 @@ export type Database = {
         };
         Returns: string;
       };
-      admin_voice_accounts: {
-        Args: never;
-        Returns: { email: string; name: string; ticked: boolean; user_id: string }[];
-      };
-      has_voice_access: { Args: never; Returns: boolean };
-      mark_voice_inbox_read: { Args: never; Returns: undefined };
-      set_voice_access: { Args: { p_on: boolean; p_user_id: string }; Returns: undefined };
-      voice_can_message: { Args: { p_recipient: string; p_sender: string }; Returns: boolean };
-      voice_contacts: { Args: never; Returns: { name: string; user_id: string }[] };
       mark_trip_item_paid: {
         Args: { p_account_id: string; p_amount: number; p_item_id: string };
         Returns: undefined;
       };
+      mark_voice_inbox_read: { Args: never; Returns: undefined };
       next_person_date: {
         Args: { from_date: string; p_day: number; p_month: number };
         Returns: string;
@@ -2346,6 +2366,10 @@ export type Database = {
         Returns: string;
       };
       seed_money_defaults: { Args: never; Returns: undefined };
+      set_voice_access: {
+        Args: { p_on: boolean; p_user_id: string };
+        Returns: undefined;
+      };
       shopping_checkout: {
         Args: { p_account_id: string; p_category_id: string; p_store: string };
         Returns: number;
@@ -2365,6 +2389,17 @@ export type Database = {
       sync_workout_reminder_for: {
         Args: { p_plan_id: string };
         Returns: undefined;
+      };
+      voice_can_message: {
+        Args: { p_recipient: string; p_sender: string };
+        Returns: boolean;
+      };
+      voice_contacts: {
+        Args: never;
+        Returns: {
+          name: string;
+          user_id: string;
+        }[];
       };
       weekly_review: { Args: { p_week_start?: string }; Returns: Json };
       weekly_review_for: {

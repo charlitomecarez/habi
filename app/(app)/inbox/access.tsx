@@ -33,7 +33,7 @@ export default function VoiceAccessScreen() {
 
       <ScrollView contentContainerClassName="gap-3 px-5 pb-8 pt-3">
         <Text className="font-sans text-label text-ink-muted">
-          A ticked account can send you voice messages, and you can send to it.
+          A ticked account can send you voice messages, and you can send to it. It also gets a fresh daily ulam.
         </Text>
         {accounts.error ? <Notice tone="danger">{accounts.error.message}</Notice> : null}
         {setAccess.error ? <Notice tone="danger">{setAccess.error.message}</Notice> : null}

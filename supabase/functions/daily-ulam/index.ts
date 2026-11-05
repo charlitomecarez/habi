@@ -1,7 +1,8 @@
 // Runs once a day at 12:05 AM PHT from pg_cron (see migration 20261105000400).
 // Asks Groq for today's 3 ulam for each user, checks them, and stores one row, so a refresh or
 // "Show another" makes no new call. The app never calls Groq. When this fails, the app shows a
-// bundled ulam.
+// bundled ulam. Only the admin and ticked accounts get a Groq ulam, so open sign-ups cannot use up
+// the free plan. Every other account sees the bundled ulam.
 //
 // Secrets (supabase secrets set ...): CRON_SECRET, GROQ_API_KEY, optional GROQ_MODEL.
 // The prompt has no name, no email and no money data.
@@ -62,7 +63,16 @@ Deno.serve(async (req) => {
     .select("user_id, timezone, ulam_limit, ulam_avoid");
   if (error) throw error;
 
+  const [admins, ticked] = await Promise.all([
+    supabase.from("app_admins").select("user_id"),
+    supabase.from("voice_access").select("user_id"),
+  ]);
+  if (admins.error) throw admins.error;
+  if (ticked.error) throw ticked.error;
+  const allowed = new Set([...admins.data, ...ticked.data].map((row) => row.user_id as string));
+
   let stored = 0;
+  let asked = 0;
   for (const user of users) {
     const timeZone = user.timezone ?? "Asia/Manila";
     const today = localDay(timeZone);
@@ -73,6 +83,9 @@ Deno.serve(async (req) => {
       .delete()
       .eq("user_id", user.user_id)
       .lt("on_date", localDay(timeZone, KEEP_DAYS - 1));
+
+    if (!allowed.has(user.user_id)) continue;
+    asked += 1;
 
     const { data: past } = await supabase
       .from("ulam_days")
@@ -102,5 +115,5 @@ Deno.serve(async (req) => {
       console.error("daily-ulam:", failure instanceof Error ? failure.message : failure);
     }
   }
-  return Response.json({ ok: stored === users.length, users: users.length, stored });
+  return Response.json({ ok: stored === asked, users: users.length, asked, stored });
 });
