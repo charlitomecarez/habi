@@ -4,16 +4,19 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { SettingsSection } from "@/components/settings/SettingsSection";
 import { ModuleTile } from "@/components/ui/ModuleTile";
 import { FadeIn } from "@/components/ui/Motion";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
+import { useModuleDetails } from "@/lib/module-details";
 import { searchModules } from "@/lib/modules";
 
 export default function MoreScreen() {
   const colors = useColors();
   const [query, setQuery] = useState("");
   const sections = searchModules(query);
+  const details = useModuleDetails();
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -61,6 +64,7 @@ export default function MoreScreen() {
                       label={m.label}
                       icon={m.icon}
                       tone={m.tone}
+                      detail={details[m.id]}
                       onPress={() => router.push(m.href)}
                     />
                   ))}
@@ -73,16 +77,7 @@ export default function MoreScreen() {
           </View>
         </FadeIn>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Settings"
-          onPress={() => router.push("/settings")}
-          className="min-h-touch flex-row items-center gap-3 rounded-card border border-border bg-surface-card px-4 py-3 active:bg-surface-muted"
-        >
-          <Ionicons name="settings-outline" size={22} color={colors.accent} />
-          <Text className="flex-1 font-semibold text-row-title text-ink">Settings</Text>
-          <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
-        </Pressable>
+        <SettingsSection />
       </ScrollView>
     </SafeAreaView>
   );

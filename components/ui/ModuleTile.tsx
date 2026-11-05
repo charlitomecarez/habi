@@ -24,15 +24,22 @@ export function TileGlyph({ icon, color, size }: { icon: TileIcon; color: string
   return <Ionicons name={icon.name} size={size} color={color} />;
 }
 
-type ModuleTileProps = { label: string; icon: TileIcon; tone: TileTone; onPress: () => void };
+type ModuleTileProps = {
+  label: string;
+  icon: TileIcon;
+  tone: TileTone;
+  onPress: () => void;
+  /** A short line under the name, such as "12 items". */
+  detail?: string;
+};
 
 /** A module in the More grid or the Home shortcuts: a soft section colour and a short name. */
-export function ModuleTile({ label, icon, tone, onPress }: ModuleTileProps) {
+export function ModuleTile({ label, icon, tone, onPress, detail }: ModuleTileProps) {
   const colors = useColors();
   return (
     <PressScale
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={detail ? `${label}, ${detail}` : label}
       onPress={onPress}
       wrapperStyle={{ width: "25%" }}
       className="min-h-touch items-center gap-1 py-1"
@@ -43,6 +50,11 @@ export function ModuleTile({ label, icon, tone, onPress }: ModuleTileProps) {
       <Text className="text-center font-medium text-badge text-ink" numberOfLines={1}>
         {label}
       </Text>
+      {detail ? (
+        <Text className="text-center font-sans text-badge text-ink-muted" numberOfLines={1}>
+          {detail}
+        </Text>
+      ) : null}
     </PressScale>
   );
 }

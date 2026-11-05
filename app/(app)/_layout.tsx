@@ -13,7 +13,6 @@ export default function AppLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="settings" />
       <Stack.Screen name="alarms/index" />
       <Stack.Screen name="alarms/label" />
       <Stack.Screen name="ulam/index" />

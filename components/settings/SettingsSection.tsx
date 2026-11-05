@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState, type ComponentProps, type ReactNode } from "react";
-import { Pressable, ScrollView, Switch, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Pressable, Switch, Text, View } from "react-native";
 
 import { ExchangeRateSheet } from "@/components/money/ExchangeRateSheet";
 import { Button } from "@/components/ui/Button";
@@ -56,7 +55,8 @@ function Row({ title, detail, icon, onPress, trailing, last = false }: RowProps)
   );
 }
 
-export default function SettingsScreen() {
+/** Your account and every setting, laid out at the end of More. */
+export function SettingsSection() {
   const colors = useColors();
   const { session, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
@@ -85,73 +85,60 @@ export default function SettingsScreen() {
   }
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Settings
-        </Text>
+    <View className="gap-5">
+      <Text accessibilityRole="header" className="font-semibold text-caption uppercase tracking-wide text-ink-muted">
+        Settings
+      </Text>
+
+      <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
+        <View className="h-12 w-12 items-center justify-center overflow-hidden rounded-pill bg-border">
+          <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
+        </View>
+        <View className="flex-1 gap-1">
+          <Text className="font-semibold text-heading text-ink" numberOfLines={1}>
+            {name}
+          </Text>
+          <Text className="font-sans text-caption text-ink-muted">{provider}</Text>
+        </View>
       </View>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-3">
-        <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
-          <View className="h-12 w-12 items-center justify-center overflow-hidden rounded-pill bg-border">
-            <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
-          </View>
-          <View className="flex-1 gap-1">
-            <Text className="font-semibold text-heading text-ink" numberOfLines={1}>
-              {name}
-            </Text>
-            <Text className="font-sans text-caption text-ink-muted">{provider}</Text>
-          </View>
+      <View className="gap-3">
+        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <Row icon="contrast-outline" title="Theme" detail={themeLabel(theme)} onPress={() => setSheet("theme")} />
+          <Row
+            title="Daily email digest"
+            detail={prefs ? (prefs.digestEnabled ? hourLabel(prefs.digestHour) : "Off") : "Loading…"}
+            trailing={
+              <Switch
+                accessibilityLabel="Daily email digest"
+                value={prefs?.digestEnabled ?? false}
+                disabled={!prefs}
+                onValueChange={(on) => saveSettings.mutate({ digestEnabled: on })}
+                trackColor={{ true: colors.accent }}
+              />
+            }
+          />
+          <Row
+            title="Money accounts"
+            detail={accounts.data ? accounts.data.map((a) => a.name).join(", ") : "Loading…"}
+            onPress={() => router.push("/money/accounts")}
+          />
+          <Row
+            title="Exchange rates"
+            detail={usd ? `${FOREIGN} ₱${usd.rateToPhp}` : `No ${FOREIGN} rate set`}
+            onPress={() => setSheet("rate")}
+          />
+          <Row
+            title="Time zone"
+            detail={prefs?.timezone ?? "Loading…"}
+            onPress={prefs ? () => setSheet("timezone") : undefined}
+            last
+          />
         </View>
+        {saveSettings.error ? <Notice tone="danger">{saveSettings.error.message}</Notice> : null}
+      </View>
 
-        <View className="gap-3">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
-            <Row icon="contrast-outline" title="Theme" detail={themeLabel(theme)} onPress={() => setSheet("theme")} />
-            <Row
-              title="Daily email digest"
-              detail={prefs ? (prefs.digestEnabled ? hourLabel(prefs.digestHour) : "Off") : "Loading…"}
-              trailing={
-                <Switch
-                  accessibilityLabel="Daily email digest"
-                  value={prefs?.digestEnabled ?? false}
-                  disabled={!prefs}
-                  onValueChange={(on) => saveSettings.mutate({ digestEnabled: on })}
-                  trackColor={{ true: colors.accent }}
-                />
-              }
-            />
-            <Row
-              title="Money accounts"
-              detail={accounts.data ? accounts.data.map((a) => a.name).join(", ") : "Loading…"}
-              onPress={() => router.push("/money/accounts")}
-            />
-            <Row
-              title="Exchange rates"
-              detail={usd ? `${FOREIGN} ₱${usd.rateToPhp}` : `No ${FOREIGN} rate set`}
-              onPress={() => setSheet("rate")}
-            />
-            <Row
-              title="Time zone"
-              detail={prefs?.timezone ?? "Loading…"}
-              onPress={prefs ? () => setSheet("timezone") : undefined}
-              last
-            />
-          </View>
-          {saveSettings.error ? <Notice tone="danger">{saveSettings.error.message}</Notice> : null}
-        </View>
-
-        <Button label="Sign out" variant="destructive" size="input" loading={signingOut} onPress={onSignOut} />
-      </ScrollView>
-
+      <Button label="Sign out" variant="destructive" size="input" loading={signingOut} onPress={onSignOut} />
       <ExchangeRateSheet
         visible={sheet === "rate"}
         onClose={() => setSheet(null)}
@@ -181,6 +168,6 @@ export default function SettingsScreen() {
           onChange={(timezone) => saveSettings.mutate({ timezone })}
         />
       ) : null}
-    </SafeAreaView>
+    </View>
   );
 }

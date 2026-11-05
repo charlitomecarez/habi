@@ -100,7 +100,7 @@ export default function HomeScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Settings"
-            onPress={() => router.push("/settings")}
+            onPress={() => router.push("/more")}
             className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border"
           >
             <ProfilePhoto letter={initial} letterClassName="font-semibold text-body text-ink" />
