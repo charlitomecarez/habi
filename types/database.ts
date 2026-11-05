@@ -1965,6 +1965,26 @@ export type Database = {
           sort_order: number | null;
           user_id: string | null;
         };
+        Insert: {
+          account_id?: string | null;
+          balance?: never;
+          currency?: string | null;
+          is_archived?: boolean | null;
+          kind?: Database["public"]["Enums"]["money_account_kind"] | null;
+          name?: string | null;
+          sort_order?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          account_id?: string | null;
+          balance?: never;
+          currency?: string | null;
+          is_archived?: boolean | null;
+          kind?: Database["public"]["Enums"]["money_account_kind"] | null;
+          name?: string | null;
+          sort_order?: number | null;
+          user_id?: string | null;
+        };
         Relationships: [];
       };
       subscription_costs: {
@@ -2047,7 +2067,6 @@ export type Database = {
     Functions: {
       add_due_subscription_expenses: { Args: never; Returns: number };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
-      import_transactions: { Args: { p_rows: Json }; Returns: number };
       budget_month: {
         Args: { p_budget_id: string; p_month: string };
         Returns: {
@@ -2065,6 +2084,7 @@ export type Database = {
         Args: { p_medicine_id: string };
         Returns: undefined;
       };
+      import_transactions: { Args: { p_rows: Json }; Returns: number };
       log_fuel: {
         Args: {
           p_account_id: string;
