@@ -63,7 +63,6 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo run:android",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",

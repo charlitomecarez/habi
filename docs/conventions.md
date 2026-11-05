@@ -13,12 +13,37 @@
 | Tests            | `npm test`                                                        |
 | Format check     | `npx prettier --check .`                                          |
 | Web build check  | `npx expo export --platform web --max-workers 1`                  |
-| Apply migrations | `supabase db push`                                                |
-| Generate types   | `supabase gen types typescript --linked > types/database.ts`      |
+| Apply migrations | `npx supabase db push`                                            |
+| Generate types   | `npm run db:types`                                                |
 
-Vitest runs the tests in `lib/**/*.test.ts`. The type check and the tests skip `supabase/functions`. To check parser code, use a short Node script in a scratch folder, not in the repository.
+## Memory
 
-This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish.
+This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish. `vitest.config.ts` sets one worker, so `npm test` is safe by default.
+
+| Command                     | Measured peak |
+| --------------------------- | ------------- |
+| `npm run typecheck`         | 503 MB        |
+| `npm run lint`              | 421 MB        |
+| `npm test`                  | 154 MB        |
+| Web build check (see above) | 595 MB        |
+
+## Docker
+
+Do not use Docker or a local Supabase server. That rule bans these commands, because each one needs Docker:
+
+- `supabase start`
+- `supabase db reset`
+- `supabase functions serve`
+
+`npx supabase db push` and `npm run db:types` work on the linked live project, so they need no Docker.
+
+## Tests
+
+- **What to test:** pure logic that protects data or money: parsers, date and status helpers, and anything a mistake would corrupt silently. Screens are checked on the phone.
+- **Where tests live:** next to the code, as `name.test.ts`. Vitest runs `lib/**/*.test.ts` and `supabase/functions/_shared/**/*.test.ts`.
+- **Files that import `lib/supabase`:** add `vi.mock("@/lib/supabase", () => ({ supabase: {} }))`, because it needs the React Native runtime.
+- **Fixtures:** made-up rows only. Never commit a real statement, and never paste a real statement row into a test.
+- **Type check:** `tsc` skips `supabase/functions`, so tests there run with no type check.
 
 ## Code rules
 

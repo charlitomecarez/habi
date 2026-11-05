@@ -16,6 +16,15 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [modules/inventory.md](modules/inventory.md) | Items, nested locations, photos, QR labels                     |
 | [modules/money.md](modules/money.md)         | Accounts, transactions, subscriptions, exchange rates          |
 | [modules/vault.md](modules/vault.md)         | Master password, encryption, fingerprint unlock                |
+| [modules/habits.md](modules/habits.md)       | Habit schedules, streaks, habit reminders                      |
+| [modules/gym.md](modules/gym.md)             | Workout plans, sessions, sets                                  |
+| [modules/journal.md](modules/journal.md)     | Daily entries, moods, photos                                   |
+| [modules/health.md](modules/health.md)       | Medicines, doses, visits, weight                               |
+| [modules/people.md](modules/people.md)       | Yearly dates, gift ideas, the debts link                       |
+| [modules/debts.md](modules/debts.md)         | Debts, payments, balances                                      |
+| [modules/shopping.md](modules/shopping.md)   | The shopping list, checkout, past items                        |
+| [modules/documents.md](modules/documents.md) | Documents, expiry dates, encrypted photos                      |
+| [modules/content.md](modules/content.md)     | Videos, stages, video tasks                                    |
 
 ## Facts to know first
 
@@ -39,7 +48,7 @@ components/<module>/    forms and parts for one module
 lib/                    data hooks and helpers, one file per module
 providers/              AuthProvider, QueryProvider
 supabase/migrations/    the schema and all database logic
-supabase/functions/     the send-reminders Edge Function
+supabase/functions/     Edge Functions: send-reminders, daily-tip, import-statement
 types/database.ts       generated Supabase types
 tailwind.config.js      design tokens
 global.css              light and dark colour values

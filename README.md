@@ -49,7 +49,7 @@ The repo is private, so you must sign in to GitHub to download the APK.
 - Node 22. The version is in `.nvmrc`.
 - An expo.dev account connected to this GitHub repository, for APK builds.
 
-The Supabase CLI is a dev dependency, so run it with `npx supabase`. Docker and a local Supabase server are not used.
+The Supabase CLI is a dev dependency, so run it with `npx supabase`. Docker and a local Supabase server are not used. See [docs/conventions.md](docs/conventions.md).
 
 ## Set up
 
