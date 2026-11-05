@@ -2047,6 +2047,7 @@ export type Database = {
     Functions: {
       add_due_subscription_expenses: { Args: never; Returns: number };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
+      import_transactions: { Args: { p_rows: Json }; Returns: number };
       budget_month: {
         Args: { p_budget_id: string; p_month: string };
         Returns: {

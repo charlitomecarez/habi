@@ -287,6 +287,12 @@ export default function MoneyScreen() {
                   <Button label="Bills" variant="secondary" size="input" onPress={() => router.push("/money/bills")} />
                 </View>
               </View>
+              <Button
+                label="Import statement"
+                variant="secondary"
+                size="input"
+                onPress={() => router.push("/money/import")}
+              />
             </View>
 
             <View className="gap-2">

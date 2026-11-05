@@ -56,6 +56,14 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
 - `formatPeso` → "₱1,234.50" or "−₱1,234.50". `formatMoney` → "USD 9.99" for a foreign currency.
 - `parseAmount` accepts a positive number with at most two decimals, with or without commas and ₱. `parseBalance` also accepts zero and negative values.
 
-## Future work
+## Not built
 
-Statement import is not built. `transactions.source` and `transactions.external_ref` (unique per account) are ready for it. Do not build it unless asked.
+Other banks and CSV files are not built.
+
+## Statement import
+
+- `/money/import` sends a PDF to the `import-statement` Edge Function. The function holds `GOTYME_KEY` and `GCASH_KEY` as secrets, so the keys never reach the phone.
+- `supabase/functions/_shared/statements.ts` finds the bank and parses the rows. A totals mismatch stops the import.
+- `buildReview` in `lib/import.ts` removes repeats, pairs own transfers, and unticks possible duplicates.
+- `import_transactions` saves the ticked rows with `source = 'import'`. `external_ref` stops repeats.
+- Import never changes account balances.

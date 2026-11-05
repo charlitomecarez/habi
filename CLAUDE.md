@@ -35,7 +35,8 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 - Only the reminder Edge Function sends notifications. Modules write rows to `reminders`.
 - Vault data is encrypted on the device (libsodium Argon2id + XChaCha20-Poly1305). Never send plaintext or the key to Supabase, never log them.
 - Android-only APIs live behind adapters: `name.ts` + `name.web.ts`. Screens never branch on `Platform.OS`.
-- Statement import is a future feature; don't build it unless asked.
+- Statement PDF keys live only in Edge Function secrets. Never give them the `EXPO_PUBLIC_` prefix.
+- Never commit a real statement, or put real statement rows in a fixture.
 
 ## Design system
 

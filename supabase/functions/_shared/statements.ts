@@ -118,7 +118,7 @@ function gcashName(details: string, kind: StatementRow["kind"]): string {
   }
   if (/^Buy Load/.test(details)) return "Buy load";
   const party = details.match(/^(?:Received GCash from|Sent GCash to|Bills Payment to|Payment to) (.+?)(?:,| with account| and invno|$)/);
-  return party ? party[1].replace(/\s+Inc$/, " Inc").trim() : details;
+  return party ? party[1].trim() : details;
 }
 
 function parseGcash(lines: Line[], text: string): Statement {
