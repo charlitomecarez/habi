@@ -11,6 +11,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 - Expo (expo-router, dev client) + TypeScript; Android first, web second, one codebase.
 - Supabase: Postgres with RLS, Auth, Storage, Edge Functions, pg_cron + pg_net.
 - Resend for email (Supabase SMTP sender + one daily digest). Expo Push for notifications.
+- Groq free plan for the daily ulam. Only the `daily-ulam` Edge Function calls it.
 - NativeWind for styling; Plus Jakarta Sans via @expo-google-fonts.
 - Data: @supabase/supabase-js, @tanstack/react-query, zustand, react-hook-form + zod, date-fns.
 - Everything must stay on free tiers.
@@ -18,7 +19,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 ## Environment
 
 - `.env` (gitignored): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`. These three are safe in the app bundle; nothing else is.
-- Never put the Google client secret, Resend API key or Supabase service-role key in the app or the repo. They live only in the Supabase dashboard / Edge Function secrets.
+- Never put the Google client secret, Resend API key, Groq API key or Supabase service-role key in the app or the repo. They live only in the Supabase dashboard / Edge Function secrets.
 - Email sender (Supabase SMTP via Resend): noreply@email.blabbun.com.
 
 ## Commands
@@ -55,7 +56,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 ## Navigation
 
 - `app/(auth)/login.tsx` and `app/alarm-ringing.tsx` are the only public screens; `app/(app)/` is protected (Stack.Protected + onAuthStateChange). The ringing screen opens over the lock screen, so it shows no personal data.
-- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms · People: People, Debts · Home and plans: Inventory, Shopping · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them. Settings is its own page, `/settings`.
+- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms, Ulam · People: People, Debts · Home and plans: Inventory, Shopping · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them. Settings is its own page, `/settings`.
 
 ## Phases
 

@@ -59,6 +59,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "daily",
         keywords: "wake clock gising",
       },
+      {
+        id: "ulam",
+        label: "Ulam",
+        href: "/ulam",
+        icon: { name: "restaurant-outline" },
+        tone: "daily",
+        keywords: "food meal cook recipe calories",
+      },
     ],
   },
   {

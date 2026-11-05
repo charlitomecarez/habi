@@ -8,6 +8,11 @@ module.exports = defineConfig([
     ignores: ["dist/*", "android/*", ".expo/*"],
   },
   {
+    // Edge Functions run on Deno, so their npm: imports do not resolve here.
+    files: ["supabase/functions/**/*.ts"],
+    rules: { "import/no-unresolved": "off" },
+  },
+  {
     // Screens: Android-only code lives behind name.ts + name.web.ts, and colours come from tokens.
     files: ["app/**/*.{ts,tsx}"],
     rules: {

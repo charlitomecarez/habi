@@ -1,0 +1,48 @@
+// One-person ingredient prices in PHP. Groq does not know local market prices, so the prompt gives
+// it this list, and the function adds up the total itself. To correct a price, change it here.
+// These are estimates. Check them against your local market before release.
+
+export type UlamPrice = { id: string; name: string; price: number };
+
+export const ULAM_PRICES: readonly UlamPrice[] = [
+  { id: "egg", name: "Egg, 1 piece", price: 9 },
+  { id: "mung-beans", name: "Mung beans, ¼ cup", price: 12 },
+  { id: "tofu", name: "Tofu, 1 small block", price: 15 },
+  { id: "tuyo", name: "Tuyo, 3 pieces", price: 15 },
+  { id: "dilis", name: "Dried dilis, 1 small pack", price: 15 },
+  { id: "sardines", name: "Canned sardines, 1 small can", price: 24 },
+  { id: "corned-beef", name: "Canned corned beef, 1 small can", price: 40 },
+  { id: "galunggong", name: "Galunggong, 2 small pieces", price: 35 },
+  { id: "tilapia", name: "Tilapia, 1 small piece", price: 40 },
+  { id: "bangus", name: "Bangus belly, 1 slice", price: 55 },
+  { id: "chicken-piece", name: "Chicken, 1 piece", price: 50 },
+  { id: "chicken-liver", name: "Chicken liver, 100 g", price: 25 },
+  { id: "ground-pork", name: "Ground pork, 100 g", price: 35 },
+  { id: "pork-slice", name: "Pork, 100 g", price: 45 },
+  { id: "kangkong", name: "Kangkong, 1 bunch", price: 15 },
+  { id: "pechay", name: "Pechay, 1 bunch", price: 15 },
+  { id: "malunggay", name: "Moringa leaves, 1 bunch", price: 5 },
+  { id: "sayote", name: "Chayote, 1 piece", price: 15 },
+  { id: "talong", name: "Eggplant, 1 piece", price: 12 },
+  { id: "ampalaya", name: "Bitter gourd, 1 small piece", price: 20 },
+  { id: "sitaw", name: "String beans, 1 small bunch", price: 15 },
+  { id: "kalabasa", name: "Squash, 1 slice", price: 15 },
+  { id: "repolyo", name: "Cabbage, ¼ head", price: 20 },
+  { id: "patatas", name: "Potato, 1 piece", price: 12 },
+  { id: "carrot", name: "Carrot, ½ piece", price: 10 },
+  { id: "tomato", name: "Tomato, 1 piece", price: 5 },
+  { id: "onion", name: "Onion, ½ piece", price: 5 },
+  { id: "garlic", name: "Garlic, 2 cloves", price: 2 },
+  { id: "ginger", name: "Ginger, 1 small piece", price: 3 },
+  { id: "chili", name: "Chili, 1 piece", price: 2 },
+  { id: "miswa", name: "Miswa, 1 small bundle", price: 10 },
+  { id: "bagoong", name: "Shrimp paste, 1 tablespoon", price: 5 },
+  { id: "coconut-milk", name: "Coconut milk, 1 small pack", price: 20 },
+  { id: "oil", name: "Cooking oil, 1 tablespoon", price: 2 },
+  { id: "salt", name: "Salt and pepper", price: 1 },
+  { id: "soy-sauce", name: "Soy sauce, 2 tablespoons", price: 2 },
+  { id: "vinegar", name: "Vinegar, 2 tablespoons", price: 2 },
+  { id: "fish-sauce", name: "Fish sauce, 1 tablespoon", price: 2 },
+  { id: "sugar", name: "Sugar, 1 teaspoon", price: 1 },
+  { id: "flour", name: "Flour, 2 tablespoons", price: 3 },
+];

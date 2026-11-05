@@ -26,6 +26,7 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [modules/documents.md](modules/documents.md) | Documents, expiry dates, encrypted photos                      |
 | [modules/content.md](modules/content.md)     | Videos, stages, video tasks                                    |
 | [modules/alarms.md](modules/alarms.md)       | The native alarm, the ringing screen, the setup check          |
+| [modules/ulam.md](modules/ulam.md)           | The daily ulam, prices, backup dishes, the 7-day log           |
 
 ## Facts to know first
 
@@ -50,7 +51,7 @@ components/<module>/    forms and parts for one module
 lib/                    data hooks and helpers, one file per module
 providers/              AuthProvider, QueryProvider
 supabase/migrations/    the schema and all database logic
-supabase/functions/     Edge Functions: send-reminders, daily-tip, import-statement
+supabase/functions/     Edge Functions: send-reminders, daily-tip, daily-ulam, import-statement
 types/database.ts       generated Supabase types
 tailwind.config.js      design tokens
 global.css              light and dark colour values

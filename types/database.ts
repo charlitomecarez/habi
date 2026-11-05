@@ -1528,6 +1528,42 @@ export type Database = {
           },
         ];
       };
+      ulam_days: {
+        Row: {
+          created_at: string;
+          custom: Json | null;
+          eaten: boolean;
+          id: string;
+          on_date: string;
+          options: Json;
+          picked: number;
+          source: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          custom?: Json | null;
+          eaten?: boolean;
+          id?: string;
+          on_date: string;
+          options?: Json;
+          picked?: number;
+          source?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          custom?: Json | null;
+          eaten?: boolean;
+          id?: string;
+          on_date?: string;
+          options?: Json;
+          picked?: number;
+          source?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_settings: {
         Row: {
           created_at: string;
@@ -1536,6 +1572,8 @@ export type Database = {
           digest_last_sent_on: string | null;
           home_shortcuts: string[];
           timezone: string;
+          ulam_avoid: string[];
+          ulam_limit: number;
           updated_at: string;
           user_id: string;
           weekly_review_last_sent_on: string | null;
@@ -1547,6 +1585,8 @@ export type Database = {
           digest_last_sent_on?: string | null;
           home_shortcuts?: string[];
           timezone?: string;
+          ulam_avoid?: string[];
+          ulam_limit?: number;
           updated_at?: string;
           user_id?: string;
           weekly_review_last_sent_on?: string | null;
@@ -1558,6 +1598,8 @@ export type Database = {
           digest_last_sent_on?: string | null;
           home_shortcuts?: string[];
           timezone?: string;
+          ulam_avoid?: string[];
+          ulam_limit?: number;
           updated_at?: string;
           user_id?: string;
           weekly_review_last_sent_on?: string | null;
