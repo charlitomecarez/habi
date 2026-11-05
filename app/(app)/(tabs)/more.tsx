@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState, type ComponentProps, type ReactNode } from "react";
 import { Pressable, ScrollView, Switch, Text, View } from "react-native";
@@ -9,6 +8,7 @@ import { ExchangeRateSheet } from "@/components/money/ExchangeRateSheet";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
+import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
@@ -102,12 +102,10 @@ export default function MoreScreen() {
 
   const user = session?.user;
   const name = (user?.user_metadata.full_name as string | undefined) ?? user?.email ?? "Signed in";
-  const photo = (user?.user_metadata.avatar_url ?? user?.user_metadata.picture) as string | undefined;
   const provider = user?.app_metadata.provider === "google" ? "Signed in with Google" : "Signed in with email";
   const itemCount = items.data?.length;
   const usd = rates.data?.find((r) => r.currency === FOREIGN) ?? null;
   const prefs = settings.data;
-  const [photoFailed, setPhotoFailed] = useState(false);
 
   async function onSignOut() {
     setSigningOut(true);
@@ -125,17 +123,7 @@ export default function MoreScreen() {
 
         <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
           <View className="h-12 w-12 items-center justify-center overflow-hidden rounded-pill bg-border">
-            {photo && !photoFailed ? (
-              <Image
-                source={{ uri: photo }}
-                accessibilityLabel="Your Google photo"
-                contentFit="cover"
-                onError={() => setPhotoFailed(true)}
-                style={{ width: "100%", height: "100%" }}
-              />
-            ) : (
-              <Text className="font-semibold text-title text-ink">{name.charAt(0).toUpperCase()}</Text>
-            )}
+            <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
           </View>
           <View className="flex-1 gap-1">
             <Text className="font-semibold text-heading text-ink" numberOfLines={1}>

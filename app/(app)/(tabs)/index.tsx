@@ -11,6 +11,7 @@ import { TipCard } from "@/components/home/TipCard";
 import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
 import { Badge } from "@/components/ui/Badge";
 import { Notice } from "@/components/ui/Notice";
+import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { todaysDoses, useHealth } from "@/lib/health";
@@ -169,9 +170,9 @@ export default function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel="Account"
             onPress={() => router.push("/more")}
-            className="h-touch w-touch items-center justify-center rounded-pill bg-border"
+            className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border"
           >
-            <Text className="font-semibold text-body text-ink">{initial}</Text>
+            <ProfilePhoto letter={initial} letterClassName="font-semibold text-body text-ink" />
           </Pressable>
         </View>
 
