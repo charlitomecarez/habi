@@ -23,8 +23,10 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 
 ## Commands
 
-- `npx expo run:android` for development builds (not Expo Go).
 - `npx expo start --web` for web.
+- Build the APK only with Build from GitHub in expo.dev. Do not run `npx expo run:android`, `eas build` or any local Android build.
+- `npm run typecheck`, `npm run lint` and `npm test` before each PR. Run them one at a time.
+- This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish. For a web build check, use `npx expo export --platform web --max-workers 1`.
 - `npx supabase db push` for migrations. Do not use Docker or a local Supabase server.
 - `npm run db:types` after every migration. It reads the linked live project, so it needs no Docker.
 

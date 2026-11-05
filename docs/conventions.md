@@ -4,18 +4,21 @@
 
 ## Commands
 
-| Task              | Command                                                      |
-| ----------------- | ------------------------------------------------------------ |
-| Android dev build | `npm run android` (`expo run:android`)                       |
-| Web               | `npm run web`                                                |
-| Type check        | `npm run typecheck`                                          |
-| Lint              | `npm run lint`                                               |
-| Format check      | `npx prettier --check .`                                     |
-| Web build check   | `npx expo export --platform web`                             |
-| Apply migrations  | `supabase db push`                                           |
-| Generate types    | `supabase gen types typescript --linked > types/database.ts` |
+| Task             | Command                                                           |
+| ---------------- | ----------------------------------------------------------------- |
+| Web              | `npm run web`                                                     |
+| Android build    | Build from GitHub in expo.dev. No local build and no `eas build`. |
+| Type check       | `npm run typecheck`                                               |
+| Lint             | `npm run lint`                                                    |
+| Tests            | `npm test`                                                        |
+| Format check     | `npx prettier --check .`                                          |
+| Web build check  | `npx expo export --platform web --max-workers 1`                  |
+| Apply migrations | `supabase db push`                                                |
+| Generate types   | `supabase gen types typescript --linked > types/database.ts`      |
 
-There is no test script. Check pure logic with a short Node script in a scratch folder, not in the repository.
+Vitest runs the tests in `lib/**/*.test.ts`. The type check and the tests skip `supabase/functions`. To check parser code, use a short Node script in a scratch folder, not in the repository.
+
+This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish.
 
 ## Code rules
 
@@ -36,7 +39,7 @@ There is no test script. Check pure logic with a short Node script in a scratch 
 - **Argon2id blocks the JS thread** for about one second on Android. `deriveKey` waits 50 ms first, so the spinner shows.
 - **NativeWind rem.** Native uses rem = 14 px. Use named spacing tokens, not `h-28` or `h-1.5`.
 - **NativeWind dark mode.** `darkMode` is `"class"` on purpose. `"media"` throws on web. Dark colours come from the CSS variables.
-- **Native packages need a new build.** After you add a package with native code (for example `expo-camera`), run `npx expo run:android` again.
+- **Native packages need a new build.** After you add a package with native code (for example `expo-camera`), start a new Build from GitHub in expo.dev. Do not build on this Mac.
 - **`set-state-in-effect` lint rule.** Derive state from route params instead of copying it into state in an effect. Use `router.setParams` to clear a param.
 
 ## Git
