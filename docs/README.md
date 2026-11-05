@@ -25,6 +25,7 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [modules/shopping.md](modules/shopping.md)   | The shopping list, checkout, past items                        |
 | [modules/documents.md](modules/documents.md) | Documents, expiry dates, encrypted photos                      |
 | [modules/content.md](modules/content.md)     | Videos, stages, video tasks                                    |
+| [modules/alarms.md](modules/alarms.md)       | The native alarm, the ringing screen, the setup check          |
 
 ## Facts to know first
 
@@ -33,14 +34,15 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 - Supabase holds all data. Every user-owned table has row-level security (RLS) on `user_id`.
 - The database does most of the business logic with triggers and views. The app reads and writes rows with `@supabase/supabase-js`.
 - Server state lives in @tanstack/react-query. Client-only state lives in zustand (only the vault key).
-- Only the `send-reminders` Edge Function sends notifications. Modules write rows to `public.reminders`.
+- Only the `send-reminders` Edge Function sends notifications. Modules write rows to `public.reminders`. Alarms are the one exception, because they ring from the phone.
 - The vault encrypts on the device. Supabase never gets the plaintext or the key.
 
 ## Where the code is
 
 ```
 app/                    expo-router screens
-  (auth)/login.tsx      the only public screen
+  (auth)/login.tsx      public sign-in screen
+  alarm-ringing.tsx     public screen, over the lock screen
   (app)/(tabs)/         Home, Money, Todos, Vehicle, More
   (app)/<module>/       pushed screens and modal forms
 components/ui/          shared UI components

@@ -34,7 +34,7 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 
 - Never write a migration without RLS: every user-owned table gets `user_id uuid not null default auth.uid()` and `select public.apply_owner_rls('public.<table>')`.
 - Schema changes are new files in `supabase/migrations/`; never edit an applied migration.
-- Only the reminder Edge Function sends notifications. Modules write rows to `reminders`.
+- Only the reminder Edge Function sends notifications. Modules write rows to `reminders`. One exception: Alarms ring from the phone, through `modules/alarm/`, because a push can arrive late and needs internet.
 - Vault data is encrypted on the device (libsodium Argon2id + XChaCha20-Poly1305). Never send plaintext or the key to Supabase, never log them.
 - Android-only APIs live behind adapters: `name.ts` + `name.web.ts`. Screens never branch on `Platform.OS`.
 - Statement PDF keys live only in Edge Function secrets. Never give them the `EXPO_PUBLIC_` prefix.
@@ -54,8 +54,8 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 
 ## Navigation
 
-- `app/(auth)/login.tsx` is the only public screen; `app/(app)/` is protected (Stack.Protected + onAuthStateChange).
-- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health · People: People, Debts · Home and plans: Inventory, Shopping · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them. Settings is its own page, `/settings`.
+- `app/(auth)/login.tsx` and `app/alarm-ringing.tsx` are the only public screens; `app/(app)/` is protected (Stack.Protected + onAuthStateChange). The ringing screen opens over the lock screen, so it shows no personal data.
+- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms · People: People, Debts · Home and plans: Inventory, Shopping · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them. Settings is its own page, `/settings`.
 
 ## Phases
 

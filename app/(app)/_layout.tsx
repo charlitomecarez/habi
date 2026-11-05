@@ -14,6 +14,7 @@ export default function AppLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="alarms/index" />
       <Stack.Screen name="todo/new" options={{ presentation: "modal" }} />
       <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
       <Stack.Screen name="vehicle/log-service" />

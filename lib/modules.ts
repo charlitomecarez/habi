@@ -51,6 +51,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "daily",
         keywords: "medicine doctor weight",
       },
+      {
+        id: "alarms",
+        label: "Alarms",
+        href: "/alarms",
+        icon: { name: "alarm-outline" },
+        tone: "daily",
+        keywords: "wake clock gising",
+      },
     ],
   },
   {
