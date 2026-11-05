@@ -28,6 +28,14 @@
   --danger-tint: 253 236 234;
   --scrim: 26 28 30;
   --fab-shadow: 26 28 30;
+  --daily: 173 79 7;
+  --daily-tint: 252 239 220;
+  --people: 184 53 106;
+  --people-tint: 251 232 239;
+  --home: 47 95 196;
+  --home-tint: 230 237 251;
+  --records: 109 75 195;
+  --records-tint: 238 233 250;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,5 +60,13 @@
     --danger-tint: 58 30 28;
     --scrim: 0 0 0;
     --fab-shadow: 0 0 0;
+    --daily: 233 168 92;
+    --daily-tint: 51 38 26;
+    --people: 240 141 176;
+    --people-tint: 58 31 42;
+    --home: 143 176 242;
+    --home-tint: 30 42 64;
+    --records: 185 163 240;
+    --records-tint: 42 35 64;
   }
 }

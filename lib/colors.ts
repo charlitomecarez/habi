@@ -15,6 +15,10 @@ const light = {
   warning: "#A15C07",
   warningInk: "#7A4505",
   danger: "#B42318",
+  daily: "#AD4F07",
+  people: "#B8356A",
+  home: "#2F5FC4",
+  records: "#6D4BC3",
 };
 
 const dark: Palette = {
@@ -28,6 +32,10 @@ const dark: Palette = {
   warning: "#E7A64B",
   warningInk: "#F2C27E",
   danger: "#F2837A",
+  daily: "#E9A85C",
+  people: "#F08DB0",
+  home: "#8FB0F2",
+  records: "#B9A3F0",
 };
 
 export type Palette = typeof light;

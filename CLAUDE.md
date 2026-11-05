@@ -43,8 +43,9 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 ## Design system
 
 - Use token classes only (see `tailwind.config.js`). No hex codes or bare px values in screens.
-- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Card, ListGroup, ListRow, Badge, Notice, Fab, TabBar, ScreenHeader, Sheet.
-- One primary action per screen. Accent (#0F766E) is never decoration.
+- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ScreenHeader, Sheet, HeroCard, ModuleTile, EmptyState, FadeIn, PressScale.
+- One primary action per screen. Accent (#0F766E) marks the primary action, the open tab and the one Today card on Home.
+- Section colours (`daily`, `people`, `home`, `records`) are for icons and tiles only, never for status.
 - Minimum touch target 44px; icon-only buttons need an accessibility label.
 - Status always includes a word (Overdue, Today, Due soon), not colour alone.
 - Sentence case; buttons name the action ("Save expense"). Optional fields say "(optional)".
