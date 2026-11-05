@@ -1,6 +1,7 @@
 // Runs every 15 minutes from pg_cron (see migration 20261103000800).
 //   1. Sends due rows from public.reminders to the Expo Push API.
 //   2. Sends one Resend digest email per user per day, after digest_hour.
+// voice-transcribe also calls it with { remindersOnly: true }, so a voice message pushes at once.
 //
 // Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY, optional APP_URL (adds a button to the digest).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by the platform.
@@ -15,7 +16,7 @@ const EXPO_BATCH_SIZE = 100;
 const MAX_REMINDERS_PER_RUN = 500;
 const DIGEST_FROM = "my-app <noreply@email.blabbun.com>";
 
-type Reminder = { id: string; user_id: string; title: string; body: string | null };
+type Reminder = { id: string; user_id: string; source_type: string; title: string; body: string | null };
 type PushTicket = { status: "ok" | "error"; details?: { error?: string } };
 
 Deno.serve(async (req) => {
@@ -28,7 +29,9 @@ Deno.serve(async (req) => {
     auth: { persistSession: false },
   });
 
+  const body = await req.json().catch(() => null);
   const reminders = await sendDueReminders(supabase);
+  if (body?.remindersOnly === true) return Response.json({ reminders });
   const digests = await sendDigests(supabase);
   return Response.json({ reminders, digests });
 });
@@ -36,7 +39,7 @@ Deno.serve(async (req) => {
 async function sendDueReminders(supabase: SupabaseClient) {
   const { data: due, error } = await supabase
     .from("reminders")
-    .select("id, user_id, title, body")
+    .select("id, user_id, source_type, title, body")
     .is("sent_at", null)
     .lte("remind_at", new Date().toISOString())
     .order("remind_at")
@@ -60,7 +63,7 @@ async function sendDueReminders(supabase: SupabaseClient) {
         body: r.body ?? undefined,
         sound: "default",
         channelId: "reminders",
-        data: { reminderId: r.id },
+        data: { reminderId: r.id, source: r.source_type },
       })),
   );
 

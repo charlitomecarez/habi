@@ -5,12 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { EntryForm } from "@/components/vault/EntryForm";
 import { Button } from "@/components/ui/Button";
 import { useColors } from "@/lib/colors";
+import { useSecureScreen } from "@/lib/secure-screen";
 import { useVaultEntry, useVaultStore } from "@/lib/vault";
 
 export default function EditEntryScreen() {
   const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const unlocked = useVaultStore((s) => s.key !== null);
+  useSecureScreen("vault-entry");
   const { entry, isPending } = useVaultEntry(id);
 
   if (!unlocked) return <Redirect href="/vault" />;

@@ -2,10 +2,27 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase";
 
-export type UserSettings = { timezone: string; digestEnabled: boolean; digestHour: number };
+export type UserSettings = {
+  timezone: string;
+  digestEnabled: boolean;
+  digestHour: number;
+  /** Module ids pinned to Home, from lib/modules.ts. */
+  homeShortcuts: string[];
+  /** The most one ulam can cost. */
+  ulamLimit: number;
+  /** Food you never eat, for the daily ulam. */
+  ulamAvoid: string[];
+};
 
 /** The database defaults, used until the first change creates the row. */
-const DEFAULTS: UserSettings = { timezone: "Asia/Manila", digestEnabled: true, digestHour: 7 };
+const DEFAULTS: UserSettings = {
+  timezone: "Asia/Manila",
+  digestEnabled: true,
+  digestHour: 7,
+  homeShortcuts: ["journal", "shopping", "inventory", "vault"],
+  ulamLimit: 99,
+  ulamAvoid: [],
+};
 
 const SETTINGS_KEY = ["user-settings"] as const;
 
@@ -15,11 +32,18 @@ export function useUserSettings() {
     queryFn: async (): Promise<UserSettings> => {
       const { data, error } = await supabase
         .from("user_settings")
-        .select("timezone, digest_enabled, digest_hour")
+        .select("timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid")
         .maybeSingle();
       if (error) throw error;
       if (!data) return DEFAULTS;
-      return { timezone: data.timezone, digestEnabled: data.digest_enabled, digestHour: data.digest_hour };
+      return {
+        timezone: data.timezone,
+        digestEnabled: data.digest_enabled,
+        digestHour: data.digest_hour,
+        homeShortcuts: data.home_shortcuts,
+        ulamLimit: data.ulam_limit,
+        ulamAvoid: data.ulam_avoid,
+      };
     },
   });
 }
@@ -35,6 +59,9 @@ export function useSaveUserSettings() {
         timezone: next.timezone,
         digest_enabled: next.digestEnabled,
         digest_hour: next.digestHour,
+        home_shortcuts: next.homeShortcuts,
+        ulam_limit: next.ulamLimit,
+        ulam_avoid: next.ulamAvoid,
       });
       if (error) throw error;
     },

@@ -13,8 +13,11 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SetUpVault, UnlockVault } from "@/components/vault/VaultGate";
 import { copySecret } from "@/lib/clipboard";
 import { useColors } from "@/lib/colors";
+import { useSecureScreen } from "@/lib/secure-screen";
 import {
   AUTO_LOCK_MINUTES,
+  IDLE_LOCK_MINUTES,
+  useExportBackup,
   useBiometricUnlock,
   useSetBiometricUnlock,
   useVaultEntries,
@@ -40,6 +43,7 @@ function UnlockedVault() {
   const { entries, isPending, error, refetch } = useVaultEntries();
   const biometric = useBiometricUnlock();
   const setBiometric = useSetBiometricUnlock();
+  const exportBackup = useExportBackup();
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
   const [choosingUnlock, setChoosingUnlock] = useState(false);
@@ -172,7 +176,8 @@ function UnlockedVault() {
         <Ionicons name="shield-checkmark-outline" size={16} color={colors.inkMuted} />
         <Text className="flex-1 font-sans text-caption text-ink-muted">
           Encrypted on this phone. The server only stores scrambled data, and copied passwords clear from the clipboard
-          after {CLEAR_CLIPBOARD_SECONDS} seconds. The vault locks after {AUTO_LOCK_MINUTES} minutes in the background.
+          after {CLEAR_CLIPBOARD_SECONDS} seconds. The vault locks after {AUTO_LOCK_MINUTES} minute in the background,
+          and after {IDLE_LOCK_MINUTES} minutes with no touch.
         </Text>
       </View>
 
@@ -225,6 +230,19 @@ function UnlockedVault() {
         </>
       ) : null}
       {setBiometric.error ? <Notice tone="danger">{setBiometric.error.message}</Notice> : null}
+
+      <Button
+        label="Export backup"
+        variant="secondary"
+        size="input"
+        loading={exportBackup.isPending}
+        onPress={() => exportBackup.mutate()}
+      />
+      <Text className="font-sans text-caption text-ink-muted">
+        The file stays encrypted and opens only with your master password. It does not hold encrypted photos, and it is
+        a copy from now.
+      </Text>
+      {exportBackup.error ? <Notice tone="danger">{exportBackup.error.message}</Notice> : null}
     </ScrollView>
   );
 }
@@ -237,6 +255,7 @@ export default function VaultScreen() {
   const colors = useColors();
   const key = useVaultStore((s) => s.key);
   const settings = useVaultSettings();
+  useSecureScreen("vault");
 
   return (
     <SafeAreaView className="flex-1 bg-surface-page">

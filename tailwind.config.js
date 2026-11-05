@@ -30,6 +30,15 @@ module.exports = {
         "danger-tint": "rgb(var(--danger-tint) / <alpha-value>)",
         "fab-shadow": "rgb(var(--fab-shadow) / <alpha-value>)",
         scrim: "rgb(var(--scrim) / 0.45)",
+        // Section colours: only icons and tiles use them, and never for status.
+        daily: "rgb(var(--daily) / <alpha-value>)",
+        "daily-tint": "rgb(var(--daily-tint) / <alpha-value>)",
+        people: "rgb(var(--people) / <alpha-value>)",
+        "people-tint": "rgb(var(--people-tint) / <alpha-value>)",
+        home: "rgb(var(--home) / <alpha-value>)",
+        "home-tint": "rgb(var(--home-tint) / <alpha-value>)",
+        records: "rgb(var(--records) / <alpha-value>)",
+        "records-tint": "rgb(var(--records-tint) / <alpha-value>)",
         // Printed labels stay black on white in both themes, so any camera can read them.
         "label-paper": "#FFFFFF",
         "label-ink": "#000000",
@@ -72,7 +81,6 @@ module.exports = {
         slot: "64px",
         tile: "112px",
         "field-sm": "110px",
-        tabbar: "80px",
       },
       borderRadius: {
         sm: "10px",

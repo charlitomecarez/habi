@@ -2,7 +2,7 @@
   "expo": {
     "name": "my-app",
     "slug": "my-app",
-    "version": "1.2.0",
+    "version": "1.2.2",
     "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -39,7 +39,14 @@
         {
           "photosPermission": "my-app uses your photos to add pictures of your inventory items.",
           "cameraPermission": "my-app uses the camera to take pictures of your inventory items.",
-          "microphonePermission": false
+          "microphonePermission": "my-app uses the microphone to record voice messages for your partner."
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "my-app uses the microphone to record voice messages for your partner.",
+          "enableBackgroundPlayback": false
         }
       ],
       "react-native-libsodium",
@@ -48,7 +55,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "my-app uses the camera to scan the QR labels on your storage boxes.",
+          "cameraPermission": "my-app uses the camera to scan the QR labels on your storage boxes and your alarm stop label.",
           "microphonePermission": false,
           "recordAudioAndroid": false
         }

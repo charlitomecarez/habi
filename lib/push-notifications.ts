@@ -22,6 +22,7 @@ export async function registerForPushNotifications(): Promise<void> {
 
   await Notifications.setNotificationChannelAsync("reminders", {
     name: "Reminders",
+    // eslint-disable-next-line import/namespace -- the enum reaches this namespace through a re-export ESLint cannot follow.
     importance: Notifications.AndroidImportance.HIGH,
   });
 
@@ -47,4 +48,17 @@ export async function registerForPushNotifications(): Promise<void> {
     { onConflict: "token" },
   );
   if (error) throw error;
+}
+
+/** Calls `open` when a tap on a voice message push opens the app. Returns the unsubscribe. */
+export function onInboxPushOpened(open: () => void): () => void {
+  const handle = (response: Notifications.NotificationResponse | null) => {
+    if (response?.notification.request.content.data?.source !== "inbox") return;
+    Notifications.clearLastNotificationResponse();
+    open();
+  };
+  // A tap that started the app came before this listener.
+  handle(Notifications.getLastNotificationResponse());
+  const subscription = Notifications.addNotificationResponseReceivedListener(handle);
+  return () => subscription.remove();
 }

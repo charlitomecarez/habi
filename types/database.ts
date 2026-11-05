@@ -33,6 +33,21 @@ export type Database = {
   };
   public: {
     Tables: {
+      app_admins: {
+        Row: {
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       budget_alerts: {
         Row: {
           budget_id: string;
@@ -1528,13 +1543,179 @@ export type Database = {
           },
         ];
       };
+      trip_items: {
+        Row: {
+          booking_ref: string | null;
+          cost: number | null;
+          created_at: string;
+          currency: string;
+          day: string | null;
+          document_id: string | null;
+          done: boolean;
+          id: string;
+          kind: Database["public"]["Enums"]["trip_item_kind"];
+          map_url: string | null;
+          note: string | null;
+          place: string | null;
+          start_time: string | null;
+          title: string;
+          transaction_id: string | null;
+          trip_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          booking_ref?: string | null;
+          cost?: number | null;
+          created_at?: string;
+          currency?: string;
+          day?: string | null;
+          document_id?: string | null;
+          done?: boolean;
+          id?: string;
+          kind?: Database["public"]["Enums"]["trip_item_kind"];
+          map_url?: string | null;
+          note?: string | null;
+          place?: string | null;
+          start_time?: string | null;
+          title: string;
+          transaction_id?: string | null;
+          trip_id: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          booking_ref?: string | null;
+          cost?: number | null;
+          created_at?: string;
+          currency?: string;
+          day?: string | null;
+          document_id?: string | null;
+          done?: boolean;
+          id?: string;
+          kind?: Database["public"]["Enums"]["trip_item_kind"];
+          map_url?: string | null;
+          note?: string | null;
+          place?: string | null;
+          start_time?: string | null;
+          title?: string;
+          transaction_id?: string | null;
+          trip_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "trip_items_document_id_fkey";
+            columns: ["document_id"];
+            isOneToOne: false;
+            referencedRelation: "documents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "trip_items_transaction_id_fkey";
+            columns: ["transaction_id"];
+            isOneToOne: false;
+            referencedRelation: "transactions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "trip_items_trip_id_fkey";
+            columns: ["trip_id"];
+            isOneToOne: false;
+            referencedRelation: "trips";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      trips: {
+        Row: {
+          budget_php: number | null;
+          created_at: string;
+          destination: string | null;
+          end_date: string;
+          id: string;
+          note: string | null;
+          start_date: string;
+          status: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          budget_php?: number | null;
+          created_at?: string;
+          destination?: string | null;
+          end_date: string;
+          id?: string;
+          note?: string | null;
+          start_date: string;
+          status?: string;
+          title: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          budget_php?: number | null;
+          created_at?: string;
+          destination?: string | null;
+          end_date?: string;
+          id?: string;
+          note?: string | null;
+          start_date?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      ulam_days: {
+        Row: {
+          created_at: string;
+          custom: Json | null;
+          eaten: boolean;
+          id: string;
+          on_date: string;
+          options: Json;
+          picked: number;
+          source: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          custom?: Json | null;
+          eaten?: boolean;
+          id?: string;
+          on_date: string;
+          options?: Json;
+          picked?: number;
+          source?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          custom?: Json | null;
+          eaten?: boolean;
+          id?: string;
+          on_date?: string;
+          options?: Json;
+          picked?: number;
+          source?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_settings: {
         Row: {
           created_at: string;
           digest_enabled: boolean;
           digest_hour: number;
           digest_last_sent_on: string | null;
+          home_shortcuts: string[];
           timezone: string;
+          ulam_avoid: string[];
+          ulam_limit: number;
           updated_at: string;
           user_id: string;
           weekly_review_last_sent_on: string | null;
@@ -1544,7 +1725,10 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          home_shortcuts?: string[];
           timezone?: string;
+          ulam_avoid?: string[];
+          ulam_limit?: number;
           updated_at?: string;
           user_id?: string;
           weekly_review_last_sent_on?: string | null;
@@ -1554,7 +1738,10 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          home_shortcuts?: string[];
           timezone?: string;
+          ulam_avoid?: string[];
+          ulam_limit?: number;
           updated_at?: string;
           user_id?: string;
           weekly_review_last_sent_on?: string | null;
@@ -1751,6 +1938,57 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      voice_access: {
+        Row: {
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      voice_messages: {
+        Row: {
+          audio_path: string | null;
+          created_at: string;
+          duration_s: number;
+          id: string;
+          read_at: string | null;
+          recipient_id: string;
+          status: string;
+          transcript: string | null;
+          user_id: string;
+        };
+        Insert: {
+          audio_path?: string | null;
+          created_at?: string;
+          duration_s: number;
+          id?: string;
+          read_at?: string | null;
+          recipient_id: string;
+          status?: string;
+          transcript?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          audio_path?: string | null;
+          created_at?: string;
+          duration_s?: number;
+          id?: string;
+          read_at?: string | null;
+          recipient_id?: string;
+          status?: string;
+          transcript?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
       };
       weight_logs: {
         Row: {
@@ -2066,6 +2304,15 @@ export type Database = {
     };
     Functions: {
       add_due_subscription_expenses: { Args: never; Returns: number };
+      admin_voice_accounts: {
+        Args: never;
+        Returns: {
+          email: string;
+          name: string;
+          ticked: boolean;
+          user_id: string;
+        }[];
+      };
       apply_owner_rls: { Args: { tbl: unknown }; Returns: undefined };
       budget_month: {
         Args: { p_budget_id: string; p_month: string };
@@ -2084,6 +2331,7 @@ export type Database = {
         Args: { p_medicine_id: string };
         Returns: undefined;
       };
+      has_voice_access: { Args: never; Returns: boolean };
       import_transactions: { Args: { p_rows: Json }; Returns: number };
       log_fuel: {
         Args: {
@@ -2099,6 +2347,11 @@ export type Database = {
         };
         Returns: string;
       };
+      mark_trip_item_paid: {
+        Args: { p_account_id: string; p_amount: number; p_item_id: string };
+        Returns: undefined;
+      };
+      mark_voice_inbox_read: { Args: never; Returns: undefined };
       next_person_date: {
         Args: { from_date: string; p_day: number; p_month: number };
         Returns: string;
@@ -2113,6 +2366,10 @@ export type Database = {
         Returns: string;
       };
       seed_money_defaults: { Args: never; Returns: undefined };
+      set_voice_access: {
+        Args: { p_on: boolean; p_user_id: string };
+        Returns: undefined;
+      };
       shopping_checkout: {
         Args: { p_account_id: string; p_category_id: string; p_store: string };
         Returns: number;
@@ -2132,6 +2389,17 @@ export type Database = {
       sync_workout_reminder_for: {
         Args: { p_plan_id: string };
         Returns: undefined;
+      };
+      voice_can_message: {
+        Args: { p_recipient: string; p_sender: string };
+        Returns: boolean;
+      };
+      voice_contacts: {
+        Args: never;
+        Returns: {
+          name: string;
+          user_id: string;
+        }[];
       };
       weekly_review: { Args: { p_week_start?: string }; Returns: Json };
       weekly_review_for: {
@@ -2164,11 +2432,14 @@ export type Database = {
         | "workout"
         | "medicine"
         | "budget"
-        | "inventory";
+        | "inventory"
+        | "trip_item"
+        | "inbox";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
       transaction_source: "manual" | "import";
+      trip_item_kind: "go" | "stay" | "eat" | "transport" | "other";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -2314,11 +2585,14 @@ export const Constants = {
         "medicine",
         "budget",
         "inventory",
+        "trip_item",
+        "inbox",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],
       transaction_kind: ["expense", "income", "transfer"],
       transaction_source: ["manual", "import"],
+      trip_item_kind: ["go", "stay", "eat", "transport", "other"],
     },
   },
 } as const;

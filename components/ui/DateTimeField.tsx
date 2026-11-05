@@ -7,20 +7,30 @@ import { useColors } from "@/lib/colors";
 
 export type DateTimeFieldProps = {
   label: string;
-  mode: "date" | "datetime";
+  mode: "date" | "datetime" | "time";
   value: Date | null;
   onChange: (value: Date | null) => void;
 };
 
 export function formatFieldValue(value: Date, mode: DateTimeFieldProps["mode"]): string {
-  return format(value, mode === "date" ? "MMM d, yyyy" : "MMM d, h:mm a");
+  return format(value, mode === "date" ? "MMM d, yyyy" : mode === "time" ? "h:mm a" : "MMM d, h:mm a");
 }
 
-/** Android: the system date dialog, then the time dialog for "datetime". */
+/** Android: the system date dialog, the time dialog, or both for "datetime". */
 export function DateTimeField({ label, mode, value, onChange }: DateTimeFieldProps) {
   const colors = useColors();
   function pick() {
     const start = value ?? new Date();
+    if (mode === "time") {
+      DateTimePickerAndroid.open({
+        value: start,
+        mode: "time",
+        onChange: (event, time) => {
+          if (event.type === "set" && time) onChange(time);
+        },
+      });
+      return;
+    }
     DateTimePickerAndroid.open({
       value: start,
       mode: "date",

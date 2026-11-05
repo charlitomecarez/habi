@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/Button";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { RestoreSheet } from "@/components/vault/RestoreSheet";
 import { useColors } from "@/lib/colors";
+import { checkMasterPassword } from "@/lib/master-password";
+import { suggestPassphrase } from "@/lib/password";
+import { pickBackupFile } from "@/lib/vault-backup";
+import { parseBackup, type VaultBackup } from "@/lib/vault-backup-file";
 import { useBiometricUnlock, useSetUpVault, useUnlockVault, useUnlockWithFingerprint } from "@/lib/vault";
 import type { VaultSettingsRow } from "@/lib/vault-crypto";
-
-const MIN_PASSWORD = 12;
 
 /** The shared layout: a centred lock, title and text, fields, then the actions at the bottom. */
 function GateLayout({
@@ -53,10 +56,26 @@ export function SetUpVault() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [backup, setBackup] = useState<VaultBackup | null>(null);
+  const [backupProblem, setBackupProblem] = useState<string | null>(null);
+
+  async function onPickBackup() {
+    setBackupProblem(null);
+    try {
+      const text = await pickBackupFile();
+      if (text === null) return;
+      const parsed = parseBackup(text);
+      if (parsed) setBackup(parsed);
+      else setBackupProblem("That file is not a my-app vault backup.");
+    } catch (error) {
+      setBackupProblem(error instanceof Error ? error.message : "Could not read that file.");
+    }
+  }
 
   function onSetUp() {
     const next = {
-      password: password.length < MIN_PASSWORD ? `Use at least ${MIN_PASSWORD} characters.` : undefined,
+      password: checkMasterPassword(password) ?? undefined,
       confirm: confirm !== password ? "The passwords do not match." : undefined,
     };
     setErrors(next);
@@ -92,11 +111,34 @@ export function SetUpVault() {
             error={errors.confirm}
             onSubmitEditing={onSetUp}
           />
-          <Notice tone="warning">Nobody can reset this password. If you forget it, the vault cannot be opened.</Notice>
+          <Button
+            label="Suggest a passphrase"
+            variant="secondary"
+            size="input"
+            onPress={() => {
+              suggestPassphrase().then(setSuggestion, () => setSuggestion(null));
+            }}
+          />
+          {suggestion ? (
+            <Text selectable className="text-center font-medium text-row-title text-ink">
+              {suggestion}
+            </Text>
+          ) : null}
+          <Notice tone="warning">
+            Nobody can reset this password. If you forget it, the vault cannot be opened. Keep it on paper in a safe
+            place.
+          </Notice>
           {setUp.error ? <Notice tone="danger">{setUp.error.message}</Notice> : null}
+          {backupProblem ? <Notice tone="danger">{backupProblem}</Notice> : null}
         </>
       }
-      actions={<Button label="Set up vault" loading={setUp.isPending} onPress={onSetUp} />}
+      actions={
+        <>
+          <Button label="Set up vault" loading={setUp.isPending} onPress={onSetUp} />
+          <Button label="Restore backup" variant="secondary" size="input" onPress={onPickBackup} />
+          {backup ? <RestoreSheet backup={backup} onClose={() => setBackup(null)} /> : null}
+        </>
+      }
     />
   );
 }

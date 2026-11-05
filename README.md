@@ -2,7 +2,7 @@
 
 ![my-app on Android: the money, todos, home, vehicle and vault screens](docs/images/readme-banner.png)
 
-my-app is a personal app for one user. It runs on Android first and on the web second, from one codebase.
+my-app is a personal app. Each account has fully separate data. It runs on Android first and on the web second, from one codebase.
 
 The tabs are Home, Money, Todos, Vehicle and More.
 
@@ -49,7 +49,7 @@ The repo is private, so you must sign in to GitHub to download the APK.
 - Node 22. The version is in `.nvmrc`.
 - An expo.dev account connected to this GitHub repository, for APK builds.
 
-The Supabase CLI is a dev dependency, so run it with `npx supabase`. Docker and a local Supabase server are not used.
+The Supabase CLI is a dev dependency, so run it with `npx supabase`. Docker and a local Supabase server are not used. See [docs/conventions.md](docs/conventions.md).
 
 ## Set up
 

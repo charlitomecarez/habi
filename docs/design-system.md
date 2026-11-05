@@ -4,7 +4,9 @@
 
 - Use token classes only. Do not put hex codes or bare pixel values in screens or components.
 - Build screens from `components/ui/`.
-- Use one primary action per screen. The accent colour is never decoration.
+- Use one primary action per screen. The accent colour marks the primary action, the open tab and the one Today card on Home.
+- Section colours are only for icons and tiles. They never show status.
+- Motion stays short and stops when the phone's reduce-motion setting is on. Use `FadeIn` and `PressScale`.
 - A touch target is at least 44 px (`h-touch`). An icon-only button needs an `accessibilityLabel`.
 - A status always has a word (Overdue, Today, Due soon), not only a colour.
 - Use sentence case. A button names its action ("Save expense"). An optional field says "(optional)" in its label.
@@ -17,10 +19,11 @@
 All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light and dark).
 
 - **Colours:** `surface-page`, `surface-card`, `surface-muted`, `border`, `border-input`, `border-dashed`, `divider`, `ink`, `ink-muted`, `on-accent`, `accent`, `accent-strong`, `accent-tint`, `warning`, `warning-tint`, `warning-ink`, `danger`, `danger-tint`, `fab-shadow`, `scrim`.
+- **Section colours:** `daily`, `people`, `home`, `records`, each with a `-tint`. The colour on its tint passes 4.5:1 in light and dark. They are in `global.css` and `lib/colors.ts`.
 - **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes.
 - **Font families:** `font-sans` (400), `font-medium` (500), `font-semibold` (600), `font-bold` (700).
 - **Font sizes:** `display` 34, `amount-input` 32, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 15, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
-- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 44, `input` 52, `button` 56, `slot` 64, `amount` 72, `field-sm` 110, `tile` 112, `tabbar` 80.
+- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 44, `input` 52, `button` 56, `slot` 64, `amount` 72, `field-sm` 110, `tile` 112.
 - **Radius:** `sm` 10, `md` 12, `input` 14, `card` 16, `fab` 18, `hero` 20, `sheet` 28, `pill` 999.
 
 Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28` or `h-1.5`. NativeWind uses rem = 14 px on native, so those classes give a different size on Android and web. Add a named token instead.
@@ -47,8 +50,14 @@ Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28
 | `Fab`           | Floating action button. The one primary action on a list screen.                                                |
 | `ScreenHeader`  | Screen title.                                                                                                   |
 | `Sheet`         | Bottom sheet.                                                                                                   |
+| `TabBar`        | The app's tab bar. The open tab has a filled icon on a tinted pill. Its height follows the bottom inset.        |
+| `HeroCard`      | The one solid accent card on a screen: a sentence and up to three numbers.                                      |
+| `ModuleTile`    | A module in a grid, with a section colour. Tones `accent`, `daily`, `people`, `home`, `records`.                |
+| `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                               |
+| `FadeIn`        | A short fade for a list or section.                                                                             |
+| `PressScale`    | A `Pressable` that shrinks a little on press.                                                                   |
 
-`CLAUDE.md` also names `Card`, `ListGroup`, `ListRow` and `TabBar`. These files do not exist. Screens build cards and rows with token classes (`rounded-card border border-border bg-surface-card`), and the tab bar is in `app/(app)/(tabs)/_layout.tsx`.
+Screens build cards and rows with token classes (`rounded-card border border-border bg-surface-card`). There is no `Card` or `ListRow` component.
 
 The source for the design is the Design canvas at https://claude.ai/artifact/7y38Um2ktJD5s9uatQ3yFy (9 screens, 8 forms).
 

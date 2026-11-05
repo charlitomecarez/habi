@@ -7,11 +7,22 @@ import {
   PlusJakartaSans_700Bold,
   useFonts,
 } from "@expo-google-fonts/plus-jakarta-sans";
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from "expo-router";
+import {
+  DarkTheme,
+  DefaultTheme,
+  router,
+  Stack,
+  ThemeProvider,
+  usePathname,
+  useRootNavigationState,
+  type Theme,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { AppState } from "react-native";
 
+import { ringingAlarmId } from "@/lib/alarm";
 import { useColors, useIsDark, type Palette } from "@/lib/colors";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { KeyboardProvider } from "@/providers/keyboard-provider";
@@ -49,6 +60,22 @@ function RootNavigator() {
     if (ready) SplashScreen.hideAsync();
   }, [ready]);
 
+  // A full-screen alarm only takes over a locked phone. When the app is open, or you come back
+  // to it, this brings the ringing screen up.
+  const pathname = usePathname();
+  const navigationReady = Boolean(useRootNavigationState()?.key);
+  useEffect(() => {
+    if (!ready || !navigationReady) return;
+    const check = () => {
+      if (ringingAlarmId() && pathname !== "/alarm-ringing") router.replace("/alarm-ringing");
+    };
+    check();
+    const sub = AppState.addEventListener("change", (s) => {
+      if (s === "active") check();
+    });
+    return () => sub.remove();
+  }, [ready, navigationReady, pathname]);
+
   if (!ready) return null;
 
   const signedIn = session !== null;
@@ -60,6 +87,7 @@ function RootNavigator() {
       <Stack.Protected guard={!signedIn} redirectTo="/">
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
+      <Stack.Screen name="alarm-ringing" options={{ gestureEnabled: false }} />
     </Stack>
   );
 }

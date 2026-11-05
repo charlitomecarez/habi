@@ -8,7 +8,7 @@ Only the `send-reminders` Edge Function sends notifications. A module never call
 
 `public.reminders` columns: `source_type`, `source_id`, `title`, `body`, `remind_at`, `sent_at`.
 
-- `source_type` is `todo`, `vehicle_service`, `subscription` or `custom`.
+- `source_type` is the module that wrote the row, such as `todo`, `vehicle_service` or `subscription`. Each module doc lists its own.
 - A partial unique index allows only one pending (`sent_at is null`) row per `(source_type, source_id)`. Triggers upsert on this index.
 - A sent row stays in the table as history.
 
