@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import {
@@ -67,7 +68,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
 
   return (
     <>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-3" keyboardShouldPersistTaps="handled">
+      <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-3" keyboardShouldPersistTaps="handled">
         <Text className="font-sans text-body text-ink-muted">
           Check the services that are already done. The next due point counts from this reading and date.
         </Text>
@@ -135,7 +136,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
             For a different reading, a cost or a shop, use Log service.
           </Text>
         </View>
-      </ScrollView>
+      </KeyboardScrollView>
 
       <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
         {markDone.error ? <Notice tone="danger">{markDone.error.message}</Notice> : null}

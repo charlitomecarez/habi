@@ -49,22 +49,16 @@ export default function AccountsScreen() {
                 className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b border-divider" : ""}`}
               >
                 <BrandIcon name={a.name} />
-                <View className="min-w-0 flex-1 gap-1">
-                  <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-                    {a.name}
-                  </Text>
-                  <Text className="font-sans text-caption text-ink-muted">
-                    Opening balance {formatMoney(a.opening_balance, a.currency)}
-                  </Text>
-                </View>
+                <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">
+                  {a.name}
+                </Text>
                 <Text className="font-semibold text-row-title text-ink">{formatMoney(a.balance, a.currency)}</Text>
               </Pressable>
             ))}
           </View>
         )}
         <Text className="font-sans text-caption text-ink-muted">
-          Balance is the opening balance plus every transaction. Set the opening balance to what the account held before
-          your first logged transaction.
+          You set each balance. Expenses, income, transfers and bills do not change it.
         </Text>
       </ScrollView>
 

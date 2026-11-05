@@ -10,24 +10,21 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Notice } from "@/components/ui/Notice";
-import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebt, useDebtPayments, useDeleteDebt, useDeletePayment, useRecordPayment } from "@/lib/debts";
-import { amountText, formatPeso, parseAmount, useAccounts } from "@/lib/money";
+import { amountText, formatPeso, parseAmount } from "@/lib/money";
 
 export default function DebtScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const debt = useDebt(id);
   const payments = useDebtPayments(id);
-  const accounts = useAccounts();
   const record = useRecordPayment();
   const removePayment = useDeletePayment();
   const remove = useDeleteDebt();
   const [paying, setPaying] = useState(false);
   const [amount, setAmount] = useState("");
-  const [accountId, setAccountId] = useState<string | null>(null);
   const [paidOn, setPaidOn] = useState<Date | null>(new Date());
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -50,14 +47,11 @@ export default function DebtScreen() {
 
   const status = debtStatus(d);
   const owedToMe = d.direction === "owed_to_me";
-  const accountOptions = (accounts.data ?? []).map((a) => ({ value: a.id, label: a.name }));
-  const accountName = (aid: string | null) => accounts.data?.find((a) => a.id === aid)?.name ?? "No account";
   const failure = record.error ?? removePayment.error ?? remove.error;
 
   function openPayment() {
     if (!d) return;
     setAmount(amountText(d.balance));
-    setAccountId(accountId ?? accounts.data?.[0]?.id ?? null);
     setPaidOn(new Date());
     setFormError(null);
     setPaying(true);
@@ -68,8 +62,7 @@ export default function DebtScreen() {
     const value = parseAmount(amount);
     if (value === null) return setFormError("Enter an amount, such as 500 or 1,250.00.");
     if (value > d.balance) return setFormError(`That is more than the ${formatPeso(d.balance)} left.`);
-    if (!accountId) return setFormError(owedToMe ? "Choose the account it went into." : "Choose the account you paid from.");
-    await record.mutateAsync({ debtId: d.id, amount: value, paidOn: paidOn ?? new Date(), accountId });
+    await record.mutateAsync({ debtId: d.id, amount: value, paidOn: paidOn ?? new Date() });
     setPaying(false);
   }
 
@@ -130,12 +123,12 @@ export default function DebtScreen() {
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">{formatPeso(p.amount)}</Text>
                     <Text className="font-sans text-caption text-ink-muted">
-                      {format(parseISO(p.paid_on), "MMM d, yyyy")} · {accountName(p.account_id)}
+                      {format(parseISO(p.paid_on), "MMM d, yyyy")}
                     </Text>
                   </View>
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`Delete payment of ${formatPeso(p.amount)} and its transaction`}
+                    accessibilityLabel={`Delete payment of ${formatPeso(p.amount)}`}
                     onPress={() => removePayment.mutate(p.id)}
                     className="h-touch w-touch items-center justify-center"
                   >
@@ -145,15 +138,12 @@ export default function DebtScreen() {
               ))
             )}
           </View>
-          <Text className="font-sans text-caption text-ink-muted">
-            Each payment adds {owedToMe ? "income" : "an expense"} in Money. Deleting a payment deletes it there too.
-          </Text>
         </View>
 
         {confirmDelete ? (
           <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
             <Text className="font-sans text-body text-danger">
-              Delete this debt? Its payments and their Money transactions are deleted too.
+              Delete this debt? Its payments are deleted too.
             </Text>
             <Button
               label="Delete debt"
@@ -186,12 +176,6 @@ export default function DebtScreen() {
           onChangeText={setAmount}
           inputMode="decimal"
           keyboardType="decimal-pad"
-        />
-        <Select
-          label={owedToMe ? "Into account" : "From account"}
-          options={accountOptions}
-          value={accountId}
-          onChange={setAccountId}
         />
         <DateTimeField label="Date" mode="date" value={paidOn} onChange={setPaidOn} />
         {formError ? <Notice tone="danger">{formError}</Notice> : null}

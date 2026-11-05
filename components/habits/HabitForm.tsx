@@ -1,13 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
@@ -65,7 +66,7 @@ export function HabitForm({ habit }: { habit?: Habit }) {
           </Text>
         </View>
 
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           <Input label="Habit" value={name} onChangeText={setName} placeholder="Read 20 pages" maxLength={80} />
           <View className="gap-2">
             <Text className="font-semibold text-label text-ink">How often</Text>
@@ -96,7 +97,7 @@ export function HabitForm({ habit }: { habit?: Habit }) {
           <Text className="font-sans text-caption text-ink-muted">
             A push notification on the days it is due, until you tick it.
           </Text>
-        </ScrollView>
+        </KeyboardScrollView>
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}

@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useColors } from "@/lib/colors";
@@ -97,7 +98,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
           </Text>
         </View>
 
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-3" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-3" keyboardShouldPersistTaps="handled">
           <Controller
             control={control}
             name="title"
@@ -197,7 +198,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
               onPress={onDelete}
             />
           ) : null}
-        </ScrollView>
+        </KeyboardScrollView>
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {failure ? <Notice tone="danger">{failure.message}</Notice> : null}

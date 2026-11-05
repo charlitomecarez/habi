@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AmountInput } from "@/components/ui/AmountInput";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
@@ -53,7 +54,8 @@ export default function LogFuelScreen() {
     if (!(l > 0 && l < 1000)) return setError("Enter the litres, such as 4.2.");
     if (!(p > 0 && p < 1000)) return setError("Enter the price per litre, such as 62.50.");
     if (km === null) return setError("Enter the odometer reading in km.");
-    if (km < v.current_odometer_km) return setError(`The odometer is lower than the last reading, ${formatKm(v.current_odometer_km)} km.`);
+    if (km < v.current_odometer_km)
+      return setError(`The odometer is lower than the last reading, ${formatKm(v.current_odometer_km)} km.`);
     if (!accountValue) return setError("Choose the account you paid from.");
     await log.mutateAsync({
       vehicleId: v.id,
@@ -85,21 +87,49 @@ export default function LogFuelScreen() {
             Log fill-up
           </Text>
         </View>
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
-          {v ? <Text className="font-sans text-caption text-ink-muted">{vehicleName(v)} · last reading {formatKm(v.current_odometer_km)} km</Text> : null}
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+          {v ? (
+            <Text className="font-sans text-caption text-ink-muted">
+              {vehicleName(v)} · last reading {formatKm(v.current_odometer_km)} km
+            </Text>
+          ) : null}
           <DateTimeField label="Date" mode="date" value={filledOn} onChange={setFilledOn} />
           <View className="flex-row gap-3">
             <View className="min-w-0 flex-1">
-              <AmountInput label="Litres" unit="L" value={litres} onChangeText={setLitres} inputMode="decimal" keyboardType="decimal-pad" />
+              <AmountInput
+                label="Litres"
+                unit="L"
+                value={litres}
+                onChangeText={setLitres}
+                inputMode="decimal"
+                keyboardType="decimal-pad"
+              />
             </View>
             <View className="min-w-0 flex-1">
-              <AmountInput label="Price per litre" unit="₱" unitPosition="start" value={price} onChangeText={setPrice} inputMode="decimal" keyboardType="decimal-pad" />
+              <AmountInput
+                label="Price per litre"
+                unit="₱"
+                unitPosition="start"
+                value={price}
+                onChangeText={setPrice}
+                inputMode="decimal"
+                keyboardType="decimal-pad"
+              />
             </View>
           </View>
           <Text className="font-semibold text-label text-ink">Total: {total === null ? "—" : formatPeso(total)}</Text>
-          <AmountInput label="Odometer" unit="km" value={odometer} onChangeText={setOdometer} inputMode="numeric" keyboardType="number-pad" />
+          <AmountInput
+            label="Odometer"
+            unit="km"
+            value={odometer}
+            onChangeText={setOdometer}
+            inputMode="numeric"
+            keyboardType="number-pad"
+          />
           <Segmented label="Tank" options={TANK} value={tank} onChange={setTank} />
-          <Text className="font-sans text-caption text-ink-muted">km per litre counts from one full tank to the next.</Text>
+          <Text className="font-sans text-caption text-ink-muted">
+            km per litre counts from one full tank to the next.
+          </Text>
           <Input label="Station" optional value={station} onChangeText={setStation} placeholder="Petron" />
           <Select
             label="Paid from"
@@ -107,7 +137,7 @@ export default function LogFuelScreen() {
             value={accountValue}
             onChange={setAccountId}
           />
-        </ScrollView>
+        </KeyboardScrollView>
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {error || log.error ? <Notice tone="danger">{error ?? log.error?.message}</Notice> : null}
           <Button label="Save fill-up" loading={log.isPending} onPress={onSave} />

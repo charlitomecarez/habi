@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState, type ReactNode } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useColors } from "@/lib/colors";
@@ -25,7 +26,7 @@ function GateLayout({
 }) {
   const colors = useColors();
   return (
-    <ScrollView
+    <KeyboardScrollView
       contentContainerClassName="min-h-full justify-between gap-6 px-5 pb-8 pt-2"
       keyboardShouldPersistTaps="handled"
     >
@@ -42,7 +43,7 @@ function GateLayout({
         <View className="w-full gap-4">{fields}</View>
       </View>
       <View className="gap-3">{actions}</View>
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 

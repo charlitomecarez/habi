@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
 import { BudgetRow } from "@/components/money/BudgetRow";
+import { CategorySpending } from "@/components/money/CategorySpending";
 import { GoalCard } from "@/components/money/GoalCard";
 import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
@@ -113,8 +114,6 @@ export default function MoneyScreen() {
   const accountName = (id: string | null) => accountList.find((a) => a.id === id)?.name ?? "Unknown account";
   const categoryName = (id: string | null) => categories.data?.find((c) => c.id === id)?.name;
 
-  const spending = month.data?.byCategory ?? [];
-  const largest = spending[0]?.total ?? 0;
   const renewing = (subscriptions.data ?? []).filter((s) => daysUntil(s.next_billing_on, now) <= RENEWAL_LIST_DAYS);
 
   const error = accounts.error ?? month.error ?? recent.error ?? subscriptions.error ?? categories.error;
@@ -228,33 +227,7 @@ export default function MoneyScreen() {
               </View>
             </View>
 
-            <View className="gap-3">
-              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-                Spending by category
-              </Text>
-              <View className="gap-3 rounded-card border border-border bg-surface-card p-4">
-                {spending.length === 0 ? (
-                  <Text className="font-sans text-caption text-ink-muted">No spending logged this month.</Text>
-                ) : (
-                  spending.map((row) => (
-                    <View key={row.categoryId ?? "none"} className="gap-2">
-                      <View className="flex-row justify-between gap-3">
-                        <Text numberOfLines={1} className="flex-1 font-medium text-label text-ink">
-                          {categoryName(row.categoryId) ?? "No category"}
-                        </Text>
-                        <Text className="font-semibold text-label text-ink">{formatPeso(row.total)}</Text>
-                      </View>
-                      <View className="h-bar overflow-hidden rounded-pill bg-divider">
-                        <View
-                          className="h-bar rounded-pill bg-accent"
-                          style={{ width: `${largest > 0 ? (row.total / largest) * 100 : 0}%` }}
-                        />
-                      </View>
-                    </View>
-                  ))
-                )}
-              </View>
-            </View>
+            <CategorySpending categoryName={categoryName} />
 
             <View className="gap-2">
               <SectionHeader title="Renewing and due soon" />
@@ -287,6 +260,12 @@ export default function MoneyScreen() {
                   <Button label="Bills" variant="secondary" size="input" onPress={() => router.push("/money/bills")} />
                 </View>
               </View>
+              <Button
+                label="Import statement"
+                variant="secondary"
+                size="input"
+                onPress={() => router.push("/money/import")}
+              />
             </View>
 
             <View className="gap-2">
@@ -296,7 +275,7 @@ export default function MoneyScreen() {
                   <View className="items-center gap-2 p-6">
                     <Ionicons name="wallet-outline" size={28} color={colors.accent} />
                     <Text className="text-center font-sans text-body text-ink-muted">
-                      Set each account&apos;s opening balance, then log what you spend and earn.
+                      Set each account&apos;s balance, then log what you spend and earn.
                     </Text>
                   </View>
                 ) : (

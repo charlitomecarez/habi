@@ -8,6 +8,7 @@ import { ExchangeRateSheet } from "@/components/money/ExchangeRateSheet";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
+import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { useVideos } from "@/lib/content";
@@ -121,8 +122,8 @@ export default function MoreScreen() {
         <ScreenHeader title="More" />
 
         <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
-          <View className="h-12 w-12 items-center justify-center rounded-pill bg-border">
-            <Text className="font-semibold text-title text-ink">{name.charAt(0).toUpperCase()}</Text>
+          <View className="h-12 w-12 items-center justify-center overflow-hidden rounded-pill bg-border">
+            <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
           </View>
           <View className="flex-1 gap-1">
             <Text className="font-semibold text-heading text-ink" numberOfLines={1}>

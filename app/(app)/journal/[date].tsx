@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { useColors } from "@/lib/colors";
@@ -65,7 +66,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
         </View>
 
         {
-          <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+          <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
             <View className="gap-2">
               <Text className="font-semibold text-label text-ink">Mood (optional)</Text>
               <View className="flex-row flex-wrap gap-2">
@@ -101,7 +102,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
                 }}
               />
             ) : null}
-          </ScrollView>
+          </KeyboardScrollView>
         }
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">

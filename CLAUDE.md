@@ -23,10 +23,12 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 
 ## Commands
 
-- `npx expo run:android` for development builds (not Expo Go).
 - `npx expo start --web` for web.
-- `supabase db reset` (local) / `supabase db push` (remote) for migrations.
-- `supabase gen types typescript --local > types/database.ts` after every migration.
+- Build the APK only with Build from GitHub in expo.dev. Do not run `npx expo run:android`, `eas build` or any local Android build.
+- `npm run typecheck`, `npm run lint` and `npm test` before each PR. Run them one at a time.
+- This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish. For a web build check, use `npx expo export --platform web --max-workers 1`.
+- `npx supabase db push` for migrations. Do not use Docker or a local Supabase server.
+- `npm run db:types` after every migration. It reads the linked live project, so it needs no Docker.
 
 ## Rules
 
@@ -35,7 +37,8 @@ Personal all-in-one app for one user (Charli, Philippines, Asia/Manila): todos w
 - Only the reminder Edge Function sends notifications. Modules write rows to `reminders`.
 - Vault data is encrypted on the device (libsodium Argon2id + XChaCha20-Poly1305). Never send plaintext or the key to Supabase, never log them.
 - Android-only APIs live behind adapters: `name.ts` + `name.web.ts`. Screens never branch on `Platform.OS`.
-- Statement import is a future feature; don't build it unless asked.
+- Statement PDF keys live only in Edge Function secrets. Never give them the `EXPO_PUBLIC_` prefix.
+- Never commit a real statement, or put real statement rows in a fixture.
 
 ## Design system
 

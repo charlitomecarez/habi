@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { Chip } from "@/components/ui/Chip";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { WEEKDAYS } from "@/lib/calendar";
@@ -61,7 +62,8 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
   );
   const [error, setError] = useState<string | null>(null);
 
-  const update = (key: string, patch: Partial<Row>) => setRows(rows.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+  const update = (key: string, patch: Partial<Row>) =>
+    setRows(rows.map((r) => (r.key === key ? { ...r, ...patch } : r)));
 
   async function onSave() {
     if (!name.trim()) return setError("Name the workout day, for example Upper body.");
@@ -72,7 +74,8 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
       const reps = Number(r.reps);
       if (!(sets >= 1 && sets <= 20)) return setError(`${r.name}: sets must be 1 to 20.`);
       if (!(reps >= 1 && reps <= 200)) return setError(`${r.name}: reps must be 1 to 200.`);
-      if (r.weight.trim() && !(Number(r.weight) >= 0)) return setError(`${r.name}: enter the weight in kg, or leave it empty.`);
+      if (r.weight.trim() && !(Number(r.weight) >= 0))
+        return setError(`${r.name}: enter the weight in kg, or leave it empty.`);
     }
     const keptIds = new Set(list.map((r) => r.id).filter(Boolean));
     const removedIds = exercises.map((e) => e.id).filter((eid) => !keptIds.has(eid));
@@ -112,7 +115,7 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
           </Text>
         </View>
 
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           <Input label="Name" value={name} onChangeText={setName} placeholder="Upper body" maxLength={80} />
           <View className="gap-2">
             <Text className="font-semibold text-label text-ink">Days</Text>
@@ -157,14 +160,20 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
                 <View className="flex-row gap-2">
                   <NumberField label="Sets" value={r.sets} onChange={(v) => update(r.key, { sets: v })} />
                   <NumberField label="Reps" value={r.reps} onChange={(v) => update(r.key, { reps: v })} />
-                  <NumberField label="Weight kg (optional)" value={r.weight} onChange={(v) => update(r.key, { weight: v })} />
+                  <NumberField
+                    label="Weight kg (optional)"
+                    value={r.weight}
+                    onChange={(v) => update(r.key, { weight: v })}
+                  />
                 </View>
               </View>
             ))}
             <DashedButton
               label="Add exercise"
               icon="add"
-              onPress={() => setRows([...rows, { key: `new-${Date.now()}`, name: "", sets: "3", reps: "10", weight: "" }])}
+              onPress={() =>
+                setRows([...rows, { key: `new-${Date.now()}`, name: "", sets: "3", reps: "10", weight: "" }])
+              }
             />
           </View>
 
@@ -180,7 +189,7 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
               }}
             />
           ) : null}
-        </ScrollView>
+        </KeyboardScrollView>
 
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}

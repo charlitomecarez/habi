@@ -1,13 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
@@ -44,7 +45,10 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
           color={item.ticked ? colors.accent : colors.inkMuted}
         />
         <View className="min-w-0 flex-1">
-          <Text numberOfLines={1} className={`font-medium text-row-title ${item.ticked ? "text-ink-muted line-through" : "text-ink"}`}>
+          <Text
+            numberOfLines={1}
+            className={`font-medium text-row-title ${item.ticked ? "text-ink-muted line-through" : "text-ink"}`}
+          >
             {item.name}
           </Text>
           {item.quantity ? <Text className="font-sans text-caption text-ink-muted">{item.quantity}</Text> : null}
@@ -107,7 +111,10 @@ export default function ShoppingScreen() {
     .filter((h) => !onList.has(h.name.toLowerCase()) && (!typed || h.name.toLowerCase().includes(typed)))
     .slice(0, 8);
   const expenseCategories = (categories.data ?? []).filter((c) => c.kind === "expense");
-  const categoryOptions = [{ value: NONE, label: "No category" }, ...expenseCategories.map((c) => ({ value: c.id, label: c.name }))];
+  const categoryOptions = [
+    { value: NONE, label: "No category" },
+    ...expenseCategories.map((c) => ({ value: c.id, label: c.name })),
+  ];
 
   async function addItem(itemName = name, price: number | null = null) {
     if (!itemName.trim()) return;
@@ -132,7 +139,11 @@ export default function ShoppingScreen() {
     const paid = await checkout.mutateAsync({ accountId, categoryId: categoryId === NONE ? null : categoryId, store });
     setPaying(false);
     setStore("");
-    setDone(paid > 0 ? `Saved an expense of ${formatPeso(paid)}.` : "Cleared the ticked items. They had no prices, so no expense was added.");
+    setDone(
+      paid > 0
+        ? `Saved an expense of ${formatPeso(paid)}.`
+        : "Cleared the ticked items. They had no prices, so no expense was added.",
+    );
   }
 
   return (
@@ -152,22 +163,32 @@ export default function ShoppingScreen() {
           </Text>
         </View>
 
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           {done ? <Notice tone="warning">{done}</Notice> : null}
-          {shopping.error || add.error ? (
-            <Notice tone="danger">{(shopping.error ?? add.error)!.message}</Notice>
-          ) : null}
+          {shopping.error || add.error ? <Notice tone="danger">{(shopping.error ?? add.error)!.message}</Notice> : null}
 
           <View className="gap-3">
             <View className="flex-row gap-3">
               <View className="min-w-0 flex-1">
-                <Input label="Item" value={name} onChangeText={setName} placeholder="Eggs" onSubmitEditing={() => addItem()} />
+                <Input
+                  label="Item"
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Eggs"
+                  onSubmitEditing={() => addItem()}
+                />
               </View>
               <View className="w-field-sm">
                 <Input label="How many" optional value={quantity} onChangeText={setQuantity} placeholder="1 dozen" />
               </View>
             </View>
-            <Button label="Add to list" variant="secondary" size="input" loading={add.isPending} onPress={() => addItem()} />
+            <Button
+              label="Add to list"
+              variant="secondary"
+              size="input"
+              loading={add.isPending}
+              onPress={() => addItem()}
+            />
             {suggestions.length ? (
               <View className="flex-row flex-wrap gap-2">
                 {suggestions.map((s) => (
@@ -207,17 +228,24 @@ export default function ShoppingScreen() {
               ) : null}
             </>
           )}
-        </ScrollView>
+        </KeyboardScrollView>
 
         <View className="gap-2 border-t border-border px-5 pb-6 pt-3">
           <Text className="font-sans text-caption text-ink-muted">
-            {inCart.length ? `${inCart.length} in the cart · ${formatPeso(total)}` : "Tick items as you put them in the cart."}
+            {inCart.length
+              ? `${inCart.length} in the cart · ${formatPeso(total)}`
+              : "Tick items as you put them in the cart."}
           </Text>
           <Button label="Check out" disabled={inCart.length === 0} onPress={openCheckout} />
         </View>
       </KeyboardAvoidingView>
 
-      <Sheet visible={paying} onClose={() => setPaying(false)} title={`Check out · ${formatPeso(total)}`} subtitle="Adds one expense in Money.">
+      <Sheet
+        visible={paying}
+        onClose={() => setPaying(false)}
+        title={`Check out · ${formatPeso(total)}`}
+        subtitle="Adds one expense in Money."
+      >
         <Select
           label="Paid from"
           options={(accounts.data ?? []).map((a) => ({ value: a.id, label: a.name }))}

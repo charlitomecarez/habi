@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { useSaveVisit, type Visit } from "@/lib/health";
@@ -50,12 +51,19 @@ export function VisitForm({ visit }: { visit?: Visit }) {
             {visit ? "Edit visit" : "Add visit"}
           </Text>
         </View>
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           <DateTimeField label="Date" mode="date" value={visitedOn} onChange={setVisitedOn} />
           <Input label="Doctor or clinic" value={doctor} onChangeText={setDoctor} placeholder="Dr. Santos" />
           <Input label="Reason" value={reason} onChangeText={setReason} placeholder="Annual check-up" />
-          <Input label="Notes" optional value={notes} onChangeText={setNotes} multiline placeholder="What the doctor said, results" />
-        </ScrollView>
+          <Input
+            label="Notes"
+            optional
+            value={notes}
+            onChangeText={setNotes}
+            multiline
+            placeholder="What the doctor said, results"
+          />
+        </KeyboardScrollView>
         <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
           {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
           <Button label="Save visit" loading={save.isPending} onPress={onSave} />
