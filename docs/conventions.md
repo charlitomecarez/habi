@@ -11,7 +11,8 @@
 | Type check       | `npm run typecheck`                                               |
 | Lint             | `npm run lint`                                                    |
 | Tests            | `npm test`                                                        |
-| Format check     | `npx prettier --check .`                                          |
+| Format           | `npm run format`                                                  |
+| All three checks | `npm run check` (one at a time)                                   |
 | Web build check  | `npx expo export --platform web --max-workers 1`                  |
 | Apply migrations | `npx supabase db push`                                            |
 | Generate types   | `npm run db:types`                                                |
@@ -59,7 +60,7 @@ Do not use Docker or a local Supabase server. That rule bans these commands, bec
 
 ## Known problems
 
-- **Typed routes go stale.** After you add a route, run `CI=1 npx expo start --port 8099`, wait for the types to generate, then stop it.
+- **Typed routes go stale.** After you add a route, run `npx expo customize tsconfig.json`. It needs no dev server.
 - **Supabase auth deadlock.** Do not `await` a Supabase call inside `onAuthStateChange`. Use `setTimeout(..., 0)`.
 - **libsodium on web.** `crypto_pwhash` is only in the sumo build. Files that use it call `loadSumoVersion()`.
 - **Argon2id blocks the JS thread** for about one second on Android. `deriveKey` waits 50 ms first, so the spinner shows.
@@ -67,6 +68,19 @@ Do not use Docker or a local Supabase server. That rule bans these commands, bec
 - **NativeWind dark mode.** `darkMode` is `"class"` on purpose. `"media"` throws on web. Dark colours come from the CSS variables.
 - **Native packages need a new build.** After you add a package with native code (for example `expo-camera`), start a new Build from GitHub in expo.dev. Do not build on this Mac.
 - **`set-state-in-effect` lint rule.** Derive state from route params instead of copying it into state in an effect. Use `router.setParams` to clear a param.
+
+## Hooks and CI
+
+| When           | What runs                                                                            |
+| -------------- | ------------------------------------------------------------------------------------ |
+| Pre-commit     | `scripts/check-staged.mjs`, then Prettier and ESLint on staged files only            |
+| Commit message | commitlint (Conventional Commits)                                                    |
+| Pre-push       | Stops a push to `main`, then runs the type check and the tests, one at a time        |
+| Each PR        | GitHub Actions runs the type check, lint and tests, so the full lint leaves this Mac |
+
+- `check-staged.mjs` stops `.env` files, PDF files and any `EXPO_PUBLIC_` name outside the three allowed values.
+- The `prepare` script is `husky || true`, so an install with no git folder, such as a build in expo.dev, does not fail.
+- ESLint bans `Platform.OS` and hex codes in `app/`.
 
 ## Git
 

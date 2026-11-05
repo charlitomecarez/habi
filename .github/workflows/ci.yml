@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # The route types are generated and ignored by git, and the type check needs them.
+      - name: Generate route types
+        run: npx expo customize tsconfig.json
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
