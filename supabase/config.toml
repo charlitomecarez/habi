@@ -455,3 +455,7 @@ verify_jwt = false
 # Called by pg_cron with the x-cron-secret header, not a user JWT.
 [functions.daily-tip]
 verify_jwt = false
+
+# Called by the app with the user's session.
+[functions.import-statement]
+verify_jwt = true

@@ -70,7 +70,7 @@ Deleting a location sets `parent_id` and `location_id` to null on the children. 
 
 Views:
 
-- `money_account_balances`: opening balance plus income, minus expenses, minus transfers out, plus transfers in.
+- `money_account_balances`: the opening balance only. Transactions do not change it.
 - `subscription_costs`: each subscription plus `rate_to_php` and `monthly_php`. `monthly_php` is null when a foreign currency has no rate.
 
 ## Triggers

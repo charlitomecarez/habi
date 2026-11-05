@@ -20,14 +20,14 @@ import { Select } from "@/components/ui/Select";
 import { useColors } from "@/lib/colors";
 import {
   amountText,
-  formatMoney,
   parseAmount,
+  suggestExpenseNames,
   useAccounts,
   useCategories,
   useDeleteTransaction,
+  useExpenseNames,
   useSaveTransaction,
   useSubscriptions,
-  type Account,
   type Transaction,
   type TransactionKind,
 } from "@/lib/money";
@@ -96,29 +96,6 @@ function defaults(
   };
 }
 
-/** How a transaction changes one account's balance. */
-function effectOn(accountId: string, t: Pick<Transaction, "kind" | "account_id" | "to_account_id" | "amount">): number {
-  if (t.kind === "income" && t.account_id === accountId) return t.amount;
-  if (t.kind === "expense" && t.account_id === accountId) return -t.amount;
-  if (t.kind === "transfer" && t.account_id === accountId) return -t.amount;
-  if (t.kind === "transfer" && t.to_account_id === accountId) return t.amount;
-  return 0;
-}
-
-/** The source account's balance once this form is saved. Null until the amount is valid. */
-function balanceAfter(account: Account | undefined, values: FormValues, saved: Transaction | undefined): number | null {
-  const amount = parseAmount(values.amount);
-  if (!account || amount === null) return null;
-  const draft = {
-    kind: values.kind,
-    account_id: values.accountId,
-    to_account_id: values.kind === "transfer" ? values.toAccountId : null,
-    amount,
-  };
-  // The balance already includes the saved version of this transaction; swap it for the draft.
-  return account.balance - (saved ? effectOn(account.id, saved) : 0) + effectOn(account.id, draft);
-}
-
 type TransactionFormProps = {
   transaction?: Transaction;
   prefill?: TransactionPrefill;
@@ -130,6 +107,7 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
   const accounts = useAccounts();
   const categories = useCategories();
   const subscriptions = useSubscriptions();
+  const expenseNames = useExpenseNames();
   const save = useSaveTransaction();
   const remove = useDeleteTransaction();
 
@@ -155,9 +133,14 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
     ...(subscriptions.data ?? []).map((s) => ({ value: s.id, label: s.name })),
   ];
   const toAccountOptions = accountOptions.filter((a) => a.value !== accountId);
-
-  const account = accounts.data?.find((a) => a.id === accountId);
-  const after = balanceAfter(account, values, transaction);
+  const suggestions =
+    kind === "expense"
+      ? suggestExpenseNames(expenseNames.data ?? [], {
+          query: values.merchant,
+          categoryId: values.categoryId === NONE ? null : values.categoryId,
+          categoryNames: kindCategories.map((c) => c.name),
+        })
+      : [];
 
   const onSubmit = handleSubmit(async (v) => {
     await save.mutateAsync({
@@ -316,14 +299,23 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
             control={control}
             name={kind === "transfer" ? "note" : "merchant"}
             render={({ field }) => (
-              <Input
-                label="Where / note"
-                optional
-                value={field.value}
-                onChangeText={field.onChange}
-                placeholder={kind === "expense" ? "Jollibee" : kind === "income" ? "Employer or client" : "Why"}
-                maxLength={120}
-              />
+              <View className="gap-2">
+                <Input
+                  label="Where / note"
+                  optional
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  placeholder={kind === "expense" ? "Jollibee" : kind === "income" ? "Employer or client" : "Why"}
+                  maxLength={120}
+                />
+                {suggestions.length > 0 ? (
+                  <View accessibilityLabel="Suggested names" className="flex-row flex-wrap gap-2">
+                    {suggestions.map((name) => (
+                      <Chip key={name} label={name} selected={false} onPress={() => field.onChange(name)} />
+                    ))}
+                  </View>
+                ) : null}
+              </View>
             )}
           />
 
@@ -362,11 +354,6 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
 
         <View className="gap-2 border-t border-border px-5 pb-6 pt-3">
           {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
-          {account && after !== null ? (
-            <Text className="text-center font-sans text-caption text-ink-muted">
-              {account.name} after this: {formatMoney(after, account.currency)}
-            </Text>
-          ) : null}
           <Button
             label={`Save ${noun}`}
             loading={formState.isSubmitting}

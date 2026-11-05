@@ -13,8 +13,8 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
 ## Accounts and balances
 
 - `useAccounts()` reads the `money_account_balances` view.
-- Balance = opening balance + income − expenses − transfers out + transfers in.
-- `/money/accounts` adds accounts and sets the opening balance (`AccountSheet`). The More tab links to it.
+- Balance = the number you set in `opening_balance`. Transactions never change it.
+- `/money/accounts` adds accounts and sets the balance (`AccountSheet`). The More tab links to it.
 - Home and the Money hero show the total of PHP accounts only.
 
 ## Transactions
@@ -32,7 +32,7 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
   - A segmented control picks the kind.
   - Category chips toggle (a second tap clears the category).
   - The "Where / note" field saves to `merchant`, or to `note` for a transfer.
-  - The footer shows the account balance after the save (`balanceAfter`). For an edit, it removes the effect of the saved row first.
+  - For an expense, chips under the field show past names (`suggestExpenseNames`). The chosen category's names come first, then the most used.
 - `useTransactions("recent")` loads 10 rows. `"history"` loads 200.
 - `useMonthSummary` totals spending and income for the current calendar month, and spending per category. Transfers do not count.
 
@@ -56,6 +56,14 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
 - `formatPeso` → "₱1,234.50" or "−₱1,234.50". `formatMoney` → "USD 9.99" for a foreign currency.
 - `parseAmount` accepts a positive number with at most two decimals, with or without commas and ₱. `parseBalance` also accepts zero and negative values.
 
-## Future work
+## Not built
 
-Statement import is not built. `transactions.source` and `transactions.external_ref` (unique per account) are ready for it. Do not build it unless asked.
+Other banks and CSV files are not built.
+
+## Statement import
+
+- `/money/import` sends a PDF to the `import-statement` Edge Function. The function holds `GOTYME_KEY` and `GCASH_KEY` as secrets, so the keys never reach the phone.
+- `supabase/functions/_shared/statements.ts` finds the bank and parses the rows. A totals mismatch stops the import.
+- `buildReview` in `lib/import.ts` removes repeats, pairs own transfers, and unticks possible duplicates.
+- `import_transactions` saves the ticked rows with `source = 'import'`. `external_ref` stops repeats.
+- Import never changes account balances.

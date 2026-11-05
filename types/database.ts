@@ -1965,6 +1965,26 @@ export type Database = {
           sort_order: number | null;
           user_id: string | null;
         };
+        Insert: {
+          account_id?: string | null;
+          balance?: never;
+          currency?: string | null;
+          is_archived?: boolean | null;
+          kind?: Database["public"]["Enums"]["money_account_kind"] | null;
+          name?: string | null;
+          sort_order?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          account_id?: string | null;
+          balance?: never;
+          currency?: string | null;
+          is_archived?: boolean | null;
+          kind?: Database["public"]["Enums"]["money_account_kind"] | null;
+          name?: string | null;
+          sort_order?: number | null;
+          user_id?: string | null;
+        };
         Relationships: [];
       };
       subscription_costs: {
@@ -2064,6 +2084,7 @@ export type Database = {
         Args: { p_medicine_id: string };
         Returns: undefined;
       };
+      import_transactions: { Args: { p_rows: Json }; Returns: number };
       log_fuel: {
         Args: {
           p_account_id: string;
@@ -2084,7 +2105,7 @@ export type Database = {
       };
       record_debt_payment: {
         Args: {
-          p_account_id: string;
+          p_account_id?: string;
           p_amount: number;
           p_debt_id: string;
           p_paid_on: string;

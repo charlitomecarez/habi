@@ -287,6 +287,12 @@ export default function MoneyScreen() {
                   <Button label="Bills" variant="secondary" size="input" onPress={() => router.push("/money/bills")} />
                 </View>
               </View>
+              <Button
+                label="Import statement"
+                variant="secondary"
+                size="input"
+                onPress={() => router.push("/money/import")}
+              />
             </View>
 
             <View className="gap-2">
@@ -296,7 +302,7 @@ export default function MoneyScreen() {
                   <View className="items-center gap-2 p-6">
                     <Ionicons name="wallet-outline" size={28} color={colors.accent} />
                     <Text className="text-center font-sans text-body text-ink-muted">
-                      Set each account&apos;s opening balance, then log what you spend and earn.
+                      Set each account&apos;s balance, then log what you spend and earn.
                     </Text>
                   </View>
                 ) : (
