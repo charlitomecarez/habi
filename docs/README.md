@@ -11,6 +11,8 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [reminders.md](reminders.md)                 | Push notifications, the reminder queue, the daily email digest |
 | [design-system.md](design-system.md)         | Tokens, shared UI components, layout rules                     |
 | [conventions.md](conventions.md)             | Project rules, commands, known problems                        |
+| [release-workflow.md](release-workflow.md)   | The four release steps, gates, artifact names                  |
+| [releases/index.md](releases/index.md)       | Past and current releases, and their artifacts                 |
 | [modules/todos.md](modules/todos.md)         | Todos, repeats, todo reminders                                 |
 | [modules/vehicle.md](modules/vehicle.md)     | Odometer, service schedule, service log                        |
 | [modules/inventory.md](modules/inventory.md) | Items, nested locations, photos, QR labels                     |

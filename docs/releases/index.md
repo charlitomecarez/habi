@@ -1,0 +1,14 @@
+# Releases
+
+This page lists every release and its artifacts. [release-workflow.md](../release-workflow.md) explains the steps.
+
+Before v1.3.0, one page often held the plan and the handoff. Some old artifact names have no version, so use this table to find them.
+
+| Release             | Status   | Released   | Plan                                                             | Handoff                                                             | Release notes                                                            |
+| ------------------- | -------- | ---------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [v1.3.0](v1.3.0.md) | Planning | Not yet    | Not yet                                                          | Not yet                                                             | Not yet                                                                  |
+| [v1.2.2](v1.2.2.md) | Released | 2026-11-06 | [v1.2.2 plan](https://claude.ai/artifact/Pgj6aMdVVFKq7myHSRisj5) | No separate page                                                    | GitHub release only                                                      |
+| [v1.2.1](v1.2.1.md) | Released | 2026-11-06 | Same page as the handoff                                         | [v1.2.1 handoff](https://claude.ai/artifact/S16DQaM6NWPNnMg2oNXPYe) | GitHub release only                                                      |
+| [v1.2.0](v1.2.0.md) | Released | 2026-11-05 | Same page as the handoff                                         | [v1.2.0 handoff](https://claude.ai/artifact/UFZThwwvdcztdnyvFiWHB7) | GitHub release only                                                      |
+| [v1.1.0](v1.1.0.md) | Released | 2026-11-05 | Same page as the handoff                                         | [v1.1.0 handoff](https://claude.ai/artifact/4wktQWhH8tdbiNopBvMyKm) | [my-app Next Release](https://claude.ai/artifact/ChHjbRDoj3FuWZdXXoVi74) |
+| [v1.0.0](v1.0.0.md) | Released | 2026-11-04 | Same page as the handoff                                         | [my-app Handoff](https://claude.ai/artifact/59Eo7fE6KJvC5xm1Uy82Bw) | GitHub release only                                                      |

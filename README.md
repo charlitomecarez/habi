@@ -22,17 +22,16 @@ The More tab holds the other modules:
 
 ## Install on Android
 
-The APK is on the [latest release](https://github.com/charlitomecarez/my-app/releases/latest). It is not on the Play Store.
+The APK comes from Build from GitHub in expo.dev. It is not on the Play Store. From v1.3.0, GitHub releases hold only the source code.
 
-1. On the phone, open the latest release and download `my-app-<version>.apk`.
-2. Open the APK file.
-3. If Android asks, allow installs from that app.
-4. Tap **Install**.
-5. Open my-app and sign in with Google.
+1. On the phone, sign in to expo.dev and open the latest `production` build.
+2. Download the APK.
+3. Open the APK file.
+4. If Android asks, allow installs from that app.
+5. Tap **Install**.
+6. Open my-app and sign in with Google.
 
-To update, install the APK from a newer release over the current app. Your data stays in Supabase.
-
-The repo is private, so you must sign in to GitHub to download the APK.
+To update, install the APK from a newer build over the current app. Your data stays in Supabase.
 
 ## Stack
 
@@ -151,7 +150,7 @@ The build profiles are in `eas.json`:
 
 - `development`: a development client for internal use.
 - `preview`: an APK for internal use.
-- `production`: a release APK. Upload it to a GitHub release.
+- `production`: a release APK. It stays in expo.dev. Do not attach it to a GitHub release.
 
 ## Project layout
 

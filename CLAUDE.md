@@ -58,6 +58,15 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Anyone
 - `app/(auth)/login.tsx` and `app/alarm-ringing.tsx` are the only public screens; `app/(app)/` is protected (Stack.Protected + onAuthStateChange). The ringing screen opens over the lock screen, so it shows no personal data.
 - Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms, Ulam · People: People, Debts, Inbox · Home and plans: Inventory, Shopping, Travel · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them, and each tile shows how much is inside. Settings is laid out at the end of More.
 
+## Releases
+
+- Every release has four steps: Planning → Handoff → Development → Farewell. `docs/release-workflow.md` has the full steps.
+- Charli gates each step. Stop at the end of a step, and start the next step only when Charli asks.
+- Each artifact name holds the version: `my-app v<version> plan`, `my-app v<version> handoff`, `my-app v<version> release notes`.
+- Link each artifact in `docs/releases/v<version>.md` and `docs/releases/index.md` as soon as you publish it.
+- A GitHub release holds only the source code archives. Never attach the APK.
+- Project skills and agents are in `.claude/`. `docs/conventions.md` lists them.
+
 ## Phases
 
 1 Foundation (sign in with Google on Android and web) → 2 Todo + reminders → 3 Vehicle → 4 Inventory → 5 Money → 6 Vault → 7 Release. Each phase has a "done when" check in the handoff page; finish it before moving on.
