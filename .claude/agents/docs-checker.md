@@ -22,6 +22,7 @@ You compare a my-app change with its docs. You change no files. Use Bash only to
 - A new Edge Function is in `README.md` and `docs/README.md`.
 - The record and the index have the same status and the same artifact links.
 - Each artifact name holds the version.
+- Each changed behaviour has a line in `docs/CHANGELOG.md`, and each released version has a section there.
 - Docs use Simplified Technical English.
 
 ## Report

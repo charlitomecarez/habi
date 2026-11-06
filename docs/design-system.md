@@ -18,7 +18,7 @@
 
 Every UI change consults [Impeccable](https://impeccable.style), so that AI slop does not reach the app. A UI change is a change to a screen, a component, a layout, a style, a token, an icon, motion or UI copy.
 
-1. Before you edit, follow the `ui-check` skill. A new screen starts with `/impeccable shape`.
+1. Before you edit, follow the `ui-check` skill. A new screen starts from its confirmed design. If it has none, it starts with `/impeccable shape`.
 2. After you edit, run `/impeccable audit` and `/impeccable critique` on the changed files.
 3. Fix each real finding.
 4. Before the PR, run `/impeccable polish`.

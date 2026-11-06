@@ -95,9 +95,10 @@ The repo holds these in `.claude/`, so each machine gets the same set.
 | Name                  | Type  | Use                                                   |
 | --------------------- | ----- | ----------------------------------------------------- |
 | `release-plan`        | Skill | Step 1 of [the release workflow](release-workflow.md) |
-| `release-handoff`     | Skill | Step 2 of the release workflow                        |
-| `release-development` | Skill | Step 3 of the release workflow                        |
-| `release-farewell`    | Skill | Step 4 of the release workflow                        |
+| `release-design`      | Skill | Step 2 of the release workflow                        |
+| `release-handoff`     | Skill | Step 3 of the release workflow                        |
+| `release-development` | Skill | Step 4 of the release workflow                        |
+| `release-farewell`    | Skill | Step 5 of the release workflow                        |
 | `add-migration`       | Skill | A schema change, from the new file to the new types   |
 | `ui-check`            | Skill | The Impeccable check for each UI change               |
 | `rules-reviewer`      | Agent | Reviews a diff against the project rules              |

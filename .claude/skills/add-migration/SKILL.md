@@ -7,7 +7,7 @@ description: Use when a my-app change needs a new table, column, view, trigger, 
 
 ## Steps
 
-1. Read `docs/database.md`.
+1. Read `docs/database.md`. Read the DB design of the milestone if the release has one.
 2. Add a new file `supabase/migrations/<YYYYMMDDHHMMSS>_<name>.sql`. Its timestamp must come after the last file. Never edit an applied migration.
 3. Give each user-owned table `user_id uuid not null default auth.uid() references auth.users (id) on delete cascade`.
 4. After each user-owned table, add `select public.apply_owner_rls('public.<table>');`.

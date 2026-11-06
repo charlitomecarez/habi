@@ -10,7 +10,7 @@ Every UI change consults Impeccable. A UI change is not done until this check ra
 ## Before you edit
 
 1. Read `docs/design-system.md`.
-2. For a new screen or flow, run `/impeccable shape <feature>`.
+2. For a new screen or flow, read its confirmed design in the release design artifact. If it has none, run `/impeccable shape <feature>`.
 3. For any other UI edit, load the `impeccable` skill. Read its craft floor before the first edit.
 
 ## After you edit
