@@ -1,13 +1,13 @@
 # Changelog
 
-This page lists the changes in each release, with the newest release first. It gives one line for each change. The [release records](releases/index.md) hold the full notes and the artifacts.
+This page lists the changes in each release, with the newest release first. It gives one line for each change. The [release records](docs/releases/index.md) hold the full notes and the artifacts.
 
 ## What goes here
 
 Each release section has this form:
 
 ```md
-## [v1.2.2](releases/v1.2.2.md) - 2026-11-06
+## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
 
 ### Added
 
@@ -47,7 +47,7 @@ Do not put these items here:
 
 - **UI changes:** Each UI change now needs the Impeccable check.
 
-## [v1.2.2](releases/v1.2.2.md) - 2026-11-06
+## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
 
 ### Added
 
@@ -61,7 +61,7 @@ Do not put these items here:
 - **Ulam:** Only the admin and ticked accounts get a Groq ulam. Other accounts see the bundled ulam.
 - **Android:** The app asks for microphone access. Install `my-app-1.2.2.apk` over the current app. This APK also holds all of v1.2.1.
 
-## [v1.2.1](releases/v1.2.1.md) - 2026-11-06
+## [v1.2.1](docs/releases/v1.2.1.md) - 2026-11-06
 
 ### Added
 
@@ -84,7 +84,7 @@ Do not put these items here:
 - **Screenshots:** Vault screens and decrypted photos block screenshots.
 - **Auto-lock:** The vault locks after 1 minute in the background and 2 minutes idle.
 
-## [v1.2.0](releases/v1.2.0.md) - 2026-11-05
+## [v1.2.0](docs/releases/v1.2.0.md) - 2026-11-05
 
 ### Added
 
@@ -103,7 +103,7 @@ Do not put these items here:
 - **Keyboard:** The focused field scrolls above the keyboard on Android.
 - **Home photo:** The Home screen shows the Google photo.
 
-## [v1.1.0](releases/v1.1.0.md) - 2026-11-05
+## [v1.1.0](docs/releases/v1.1.0.md) - 2026-11-05
 
 ### Added
 
@@ -129,7 +129,7 @@ Do not put these items here:
 - **Keyboard:** The keyboard no longer covers forms and sheets on Android.
 - **Sign-in:** The email sign-in screen takes the 8-digit code.
 
-## [v1.0.0](releases/v1.0.0.md) - 2026-11-04
+## [v1.0.0](docs/releases/v1.0.0.md) - 2026-11-04
 
 ### Added
 

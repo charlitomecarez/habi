@@ -12,7 +12,7 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [design-system.md](design-system.md)         | Tokens, shared UI components, layout rules                     |
 | [conventions.md](conventions.md)             | Project rules, commands, known problems                        |
 | [release-workflow.md](release-workflow.md)   | The five release steps, gates, artifact names                  |
-| [CHANGELOG.md](CHANGELOG.md)                 | The short list of changes in each release                      |
+| [CHANGELOG.md](../CHANGELOG.md)              | The short list of changes in each release                      |
 | [releases/index.md](releases/index.md)       | Past and current releases, and their artifacts                 |
 | [modules/todos.md](modules/todos.md)         | Todos, repeats, todo reminders                                 |
 | [modules/vehicle.md](modules/vehicle.md)     | Odometer, service schedule, service log                        |

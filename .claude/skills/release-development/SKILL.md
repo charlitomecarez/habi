@@ -19,7 +19,7 @@ This skill is step 4 of `docs/release-workflow.md`. Read that page first. It win
 2. Do only the work in the milestone. Follow the confirmed design. Name any other problem in one sentence.
 3. For a schema change, use `add-migration`.
    For a UI change, use `ui-check`.
-4. Update the docs in the same change. Add each change to `Unreleased` in `docs/CHANGELOG.md`.
+4. Update the docs in the same change. Add each change to `Unreleased` in `CHANGELOG.md`.
 5. Run `npm run typecheck`, `npm run lint` and `npm test`, one at a time.
 6. Check each "Done when" item. Report any item that only Charli can check.
 7. Commit and open a PR into the release branch when Charli asks.

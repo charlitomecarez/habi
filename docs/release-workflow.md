@@ -32,7 +32,7 @@ Use the release version in every name, so that each item is easy to find.
 | Release branch         | `r/v<version>`                    |
 | Milestone branch       | `feat/<name>` or `fix/<name>`     |
 | Release record         | `docs/releases/v<version>.md`     |
-| Changelog              | `docs/CHANGELOG.md`               |
+| Changelog              | `CHANGELOG.md`                    |
 | Tag and GitHub release | `v<version>`                      |
 
 ## Docs during each step
@@ -153,7 +153,7 @@ The branch workflow does not change.
 
 1. Cut `r/v<version>` from `main`.
 2. For each milestone, cut a branch from the release branch.
-3. Write the code and the tests. Follow the confirmed design. Update the docs in the same change, and add each change to `Unreleased` in [CHANGELOG.md](CHANGELOG.md).
+3. Write the code and the tests. Follow the confirmed design. Update the docs in the same change, and add each change to `Unreleased` in [CHANGELOG.md](../CHANGELOG.md).
 4. For a UI change, do the [Impeccable check](design-system.md#impeccable-check).
 5. Run `npm run typecheck`, `npm run lint` and `npm test`, one at a time.
 6. Open a PR into the release branch. CI must pass.
@@ -173,7 +173,7 @@ Claude does the docs before the merge, so that one PR holds the full record.
 1. Claude compares the handoff with the merged work. Claude lists what is done, what moved and what is not tested.
 2. Claude publishes the release notes artifact. The [v1.1.0 release notes](https://claude.ai/artifact/ChHjbRDoj3FuWZdXXoVi74) show the format.
 3. Claude copies the notes into the release record and links the artifact.
-4. Claude moves the `Unreleased` lines in [CHANGELOG.md](CHANGELOG.md) to a new section for the version.
+4. Claude moves the `Unreleased` lines in [CHANGELOG.md](../CHANGELOG.md) to a new section for the version.
 5. Claude sets the status to `Released` in the record and in the index.
 6. Claude commits the docs on the release branch and waits for CI.
 7. Charli confirms the release notes. This confirmation allows steps 8 to 10.

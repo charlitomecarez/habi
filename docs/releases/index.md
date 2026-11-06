@@ -1,6 +1,6 @@
 # Releases
 
-This page lists every release and its artifacts. [release-workflow.md](../release-workflow.md) explains the steps. [CHANGELOG.md](../CHANGELOG.md) lists the changes in short form.
+This page lists every release and its artifacts. [release-workflow.md](../release-workflow.md) explains the steps. [CHANGELOG.md](../../CHANGELOG.md) lists the changes in short form.
 
 Before v1.3.0, one page often held the plan and the handoff. Some old artifact names have no version, so use this table to find them. The Design step starts with v1.3.0.
 
