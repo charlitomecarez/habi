@@ -14,6 +14,18 @@
 - Inputs use 16 px text (`text-body`).
 - A form with more than three fields is a full screen. A form with one or two fields is a bottom sheet.
 
+## Impeccable check
+
+Every UI change consults [Impeccable](https://impeccable.style), so that AI slop does not reach the app. A UI change is a change to a screen, a component, a layout, a style, a token, an icon, motion or UI copy.
+
+1. Before you edit, follow the `ui-check` skill. A new screen starts with `/impeccable shape`.
+2. After you edit, run `/impeccable audit` and `/impeccable critique` on the changed files.
+3. Fix each real finding.
+4. Before the PR, run `/impeccable polish`.
+5. Write the result in the PR.
+
+This page and `CLAUDE.md` win over an Impeccable suggestion. On each machine, run `/plugin install impeccable@impeccable` once. Without the plugin, the check cannot run.
+
 ## Tokens
 
 All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light and dark).

@@ -52,6 +52,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Anyone
 - Sentence case; buttons name the action ("Save expense"). Optional fields say "(optional)".
 - Borders, not shadows (only the FAB has a shadow). Inputs use 16px text.
 - Full-screen form for more than three fields; bottom sheet for one or two.
+- Every UI change consults Impeccable through the `ui-check` skill. `docs/design-system.md` has the steps.
 
 ## Navigation
 

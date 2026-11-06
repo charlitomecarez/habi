@@ -99,6 +99,8 @@ The repo holds these in `.claude/`, so each machine gets the same set.
 | `release-development` | Skill | Step 3 of the release workflow                        |
 | `release-farewell`    | Skill | Step 4 of the release workflow                        |
 | `add-migration`       | Skill | A schema change, from the new file to the new types   |
+| `ui-check`            | Skill | The Impeccable check for each UI change               |
 | `rules-reviewer`      | Agent | Reviews a diff against the project rules              |
 | `migration-reviewer`  | Agent | Reviews new migrations for RLS, ownership and safety  |
 | `docs-checker`        | Agent | Checks that the docs and the release record match     |
+| `ui-reviewer`         | Agent | Reviews UI changes with Impeccable                    |

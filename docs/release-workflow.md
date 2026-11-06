@@ -81,14 +81,15 @@ The branch workflow does not change.
 1. Cut `r/v<version>` from `main`.
 2. For each milestone, cut a branch from the release branch.
 3. Write the code and the tests. Update the docs in the same change.
-4. Run `npm run typecheck`, `npm run lint` and `npm test`, one at a time.
-5. Open a PR into the release branch. CI must pass.
-6. After the last milestone, set the version in `app.json`, `package.json` and `package-lock.json`.
-7. Open the release PR from the release branch into `main`. Do not merge it yet.
-8. Charli starts a build with Build from GitHub in expo.dev.
-9. Charli tests the APK on the Galaxy A56.
-10. Claude fixes each problem on the release branch.
-11. Charli confirms that development is done.
+4. For a UI change, do the [Impeccable check](design-system.md#impeccable-check).
+5. Run `npm run typecheck`, `npm run lint` and `npm test`, one at a time.
+6. Open a PR into the release branch. CI must pass.
+7. After the last milestone, set the version in `app.json`, `package.json` and `package-lock.json`.
+8. Open the release PR from the release branch into `main`. Do not merge it yet.
+9. Charli starts a build with Build from GitHub in expo.dev.
+10. Charli tests the APK on the Galaxy A56.
+11. Claude fixes each problem on the release branch.
+12. Charli confirms that development is done.
 
 Only Charli does the phone tests. Claude lists each phone test as "Not tested" until Charli gives the result.
 
