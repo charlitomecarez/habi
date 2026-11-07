@@ -10,9 +10,21 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
-import { useWeather } from "@/lib/weather";
+import { useWeather, weatherIcon } from "@/lib/weather";
+
+/** The weather as a drawn icon. The word or the numbers beside it say the same thing, so TalkBack skips it. */
+function WeatherGlyph({ code, isDay, size }: { code?: number; isDay?: boolean; size: number }) {
+  const colors = useColors();
+  const name = weatherIcon(code, isDay);
+  if (!name) return null;
+  return <Ionicons name={name} size={size} color={colors.daily} accessibilityElementsHidden />;
+}
 
 const hourText = (time: string) => format(parse(time, "HH:mm", new Date()), "h a");
+
+const LEAD_ICON = 52;
+const HOUR_ICON = 24;
+const DAY_ICON = 28;
 
 export default function WeatherScreen() {
   const colors = useColors();
@@ -59,14 +71,17 @@ export default function WeatherScreen() {
               </Notice>
             ) : null}
             <View className="flex-row items-center justify-between gap-3">
-              <Text
-                adjustsFontSizeToFit
-                minimumFontScale={0.7}
-                numberOfLines={1}
-                className="font-bold text-display text-ink"
-              >
-                {forecast.temperature}°
-              </Text>
+              <View className="flex-row items-center gap-3">
+                <WeatherGlyph code={forecast.code} isDay={forecast.isDay} size={LEAD_ICON} />
+                <Text
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                  numberOfLines={1}
+                  className="font-bold text-display text-ink"
+                >
+                  {forecast.temperature}°
+                </Text>
+              </View>
               <View className="min-w-0 shrink items-end">
                 <Text className="text-right font-semibold text-label text-ink">{forecast.word}</Text>
                 <Text className="text-right font-sans text-caption text-ink-muted">
@@ -79,6 +94,7 @@ export default function WeatherScreen() {
                 {forecast.hours.map((hour) => (
                   <View key={hour.time} className="flex-1 gap-1">
                     <Text className="font-semibold text-caption text-ink">{hourText(hour.time)}</Text>
+                    <WeatherGlyph code={hour.code} isDay={hour.isDay} size={HOUR_ICON} />
                     <Text className="font-semibold text-row-title text-ink">{hour.temperature}°</Text>
                   </View>
                 ))}
@@ -92,6 +108,7 @@ export default function WeatherScreen() {
                 <DataRow
                   key={day.date}
                   title={format(parseISO(day.date), "EEE")}
+                  leading={<WeatherGlyph code={day.code} size={DAY_ICON} />}
                   detail={`Rain ${day.rain}%`}
                   value={`${day.high}° / ${day.low}°`}
                   last={index === forecast.days.length - 1}

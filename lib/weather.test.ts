@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { parseForecast, weatherWord } from "@/lib/weather";
+import { parseForecast, weatherIcon, weatherWord } from "@/lib/weather";
 
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: {} }));
 
@@ -11,6 +11,29 @@ describe("weatherWord", () => {
     expect(weatherWord(63)).toBe("Rain");
     expect(weatherWord(81)).toBe("Rain showers");
     expect(weatherWord(95)).toBe("Thunderstorm");
+  });
+});
+
+describe("weatherIcon", () => {
+  it("draws each kind of weather", () => {
+    expect(weatherIcon(0)).toBe("sunny");
+    expect(weatherIcon(2)).toBe("partly-sunny");
+    expect(weatherIcon(3)).toBe("cloudy");
+    expect(weatherIcon(45)).toBe("cloud-outline");
+    expect(weatherIcon(63)).toBe("rainy");
+    expect(weatherIcon(81)).toBe("rainy");
+    expect(weatherIcon(73)).toBe("snow");
+    expect(weatherIcon(95)).toBe("thunderstorm");
+  });
+
+  it("shows the moon at night", () => {
+    expect(weatherIcon(0, false)).toBe("moon");
+    expect(weatherIcon(1, false)).toBe("cloudy-night");
+    expect(weatherIcon(63, false)).toBe("rainy");
+  });
+
+  it("draws nothing for a saved forecast with no code", () => {
+    expect(weatherIcon(undefined)).toBeNull();
   });
 });
 
@@ -32,10 +55,30 @@ describe("parseForecast", () => {
   it("rounds, and keeps only today's set hours", () => {
     const f = parseForecast(reply, 1);
     expect(f).toMatchObject({ temperature: 24, word: "Partly cloudy", rain: 40, high: 27, low: 21 });
-    expect(f.hours).toEqual([
+    expect(f.hours).toMatchObject([
       { time: "10:00", temperature: 25 },
       { time: "13:00", temperature: 27 },
     ]);
+  });
+
+  it("keeps the codes for the icons, and treats a missing is_day as day", () => {
+    const f = parseForecast(
+      {
+        ...reply,
+        current: { ...reply.current, is_day: 0 },
+        hourly: {
+          ...reply.hourly,
+          weather_code: reply.hourly.time.map(() => 61),
+          is_day: reply.hourly.time.map(() => 0),
+        },
+        daily: { ...reply.daily, weather_code: reply.daily.time.map(() => 95) },
+      },
+      1,
+    );
+    expect(f).toMatchObject({ code: reply.current.weather_code, isDay: false });
+    expect(f.hours[0]).toMatchObject({ code: 61, isDay: false });
+    expect(f.days[0].code).toBe(95);
+    expect(parseForecast(reply, 1).isDay).toBe(true);
   });
 
   it("gives the next 3 days", () => {
