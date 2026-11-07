@@ -1,11 +1,11 @@
 import { format } from "date-fns";
-import { router } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useUserSettings } from "@/lib/settings";
 import { todayChoice, useSaveUlamDay, useUlamDays } from "@/lib/ulam";
 
@@ -49,7 +49,7 @@ export default function HowToCookScreen() {
                 ...(backup ? { options, source: "backup" as const } : {}),
                 eaten: true,
               });
-              router.back();
+              goBack();
             }}
           />
         )}

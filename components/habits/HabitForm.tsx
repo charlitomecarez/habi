@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Stepper } from "@/components/ui/Stepper";
+import { goBack } from "@/lib/navigation";
 import { WEEKDAYS } from "@/lib/calendar";
 import { useColors } from "@/lib/colors";
 import { REMIND_TIMES, SCHEDULE_OPTIONS, useSaveHabit, type Habit, type HabitSchedule } from "@/lib/habits";
@@ -46,7 +46,7 @@ export function HabitForm({ habit }: { habit?: Habit }) {
         remindTime: remind === NONE ? null : remind,
       },
     });
-    router.back();
+    goBack();
   }
 
   return (
@@ -56,7 +56,7 @@ export function HabitForm({ habit }: { habit?: Habit }) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

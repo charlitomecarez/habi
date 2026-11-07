@@ -15,6 +15,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useSaveVideo, type Video } from "@/lib/content";
 import { PLATFORMS, type StageId } from "@/lib/content/stages";
@@ -77,7 +78,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
       notes: values.notes.trim(),
     };
     const id = await save.mutateAsync({ id: video?.id, input: video ? input : { ...input, stage } });
-    if (video) router.back();
+    if (video) goBack();
     else router.replace({ pathname: "/content/video/[id]", params: { id } });
   });
 
@@ -88,7 +89,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

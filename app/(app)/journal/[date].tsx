@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +12,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { MOODS, useDeleteEntry, useJournal, useSaveEntry, type JournalEntry, type Mood } from "@/lib/journal";
 import { usePhotoUrls, type PhotoChange } from "@/lib/photos";
@@ -45,7 +46,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
 
   async function onSave() {
     await save.mutateAsync({ date, mood, body: body.trim(), photo, currentPath: entry?.photo_path ?? null });
-    router.back();
+    goBack();
   }
 
   return (
@@ -55,7 +56,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />
@@ -98,7 +99,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
                 loading={remove.isPending}
                 onPress={async () => {
                   await remove.mutateAsync(entry);
-                  router.back();
+                  goBack();
                 }}
               />
             ) : null}

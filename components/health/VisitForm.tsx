@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useSaveVisit, type Visit } from "@/lib/health";
 
@@ -31,7 +32,7 @@ export function VisitForm({ visit }: { visit?: Visit }) {
       id: visit?.id,
       input: { visitedOn, doctor: doctor.trim(), reason: reason.trim(), notes: notes.trim() || null },
     });
-    if (visit) router.back();
+    if (visit) goBack();
     else router.replace({ pathname: "/health/visit/[id]", params: { id } });
   }
 
@@ -42,7 +43,7 @@ export function VisitForm({ visit }: { visit?: Visit }) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

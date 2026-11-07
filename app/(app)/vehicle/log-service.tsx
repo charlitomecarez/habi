@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { ActivityIndicator, Text, View } from "react-native";
@@ -15,6 +15,7 @@ import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import type { LocalPhoto } from "@/lib/photos";
 import {
@@ -97,7 +98,7 @@ function LogServiceForm({
       notes: values.notes.trim() || null,
       receipt,
     });
-    router.back();
+    goBack();
   });
 
   return (

@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { amountText, parseAmount } from "@/lib/money";
 import { useSaveTrip, type Trip } from "@/lib/travel";
@@ -66,7 +67,7 @@ export function TripForm({ trip }: { trip?: Trip }) {
         note: v.note.trim() || null,
       },
     });
-    if (trip) router.back();
+    if (trip) goBack();
     else router.replace({ pathname: "/travel/[id]", params: { id } });
   });
 
@@ -79,7 +80,7 @@ export function TripForm({ trip }: { trip?: Trip }) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

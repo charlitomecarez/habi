@@ -9,6 +9,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useAccounts } from "@/lib/money";
 import {
@@ -41,7 +42,7 @@ export default function RecurringRuleScreen() {
   async function onDelete() {
     await remove.mutateAsync(id);
     setConfirming(false);
-    router.back();
+    goBack();
   }
 
   return (

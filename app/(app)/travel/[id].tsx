@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useExchangeRates } from "@/lib/money";
 import {
@@ -192,7 +193,7 @@ export default function TripScreen() {
           loading={remove.isPending}
           onPress={async () => {
             await remove.mutateAsync(id);
-            router.back();
+            goBack();
           }}
         />
       </ScrollView>

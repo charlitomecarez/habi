@@ -1,9 +1,10 @@
-import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { Redirect, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { EntryForm } from "@/components/vault/EntryForm";
 import { Button } from "@/components/ui/Button";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useSecureScreen } from "@/lib/secure-screen";
 import { useVaultEntry, useVaultStore } from "@/lib/vault";
@@ -25,7 +26,7 @@ export default function EditEntryScreen() {
       ) : (
         <View className="w-full gap-4">
           <Text className="text-center font-sans text-body text-ink-muted">This login no longer exists.</Text>
-          <Button label="Back to vault" variant="secondary" onPress={() => router.back()} />
+          <Button label="Back to vault" variant="secondary" onPress={goBack} />
         </View>
       )}
     </SafeAreaView>

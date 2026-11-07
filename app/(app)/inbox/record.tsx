@@ -5,7 +5,6 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from "expo-audio";
-import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   durationText,
@@ -70,7 +70,7 @@ export default function RecordScreen() {
   }, []);
 
   function sendNow(next: Recording) {
-    if (recipientId) send.mutate({ ...next, recipientId }, { onSuccess: () => router.back() });
+    if (recipientId) send.mutate({ ...next, recipientId }, { onSuccess: () => goBack() });
   }
 
   async function stopRecording(): Promise<Recording | null> {
@@ -103,7 +103,7 @@ export default function RecordScreen() {
 
   async function cancel() {
     if (stage === "recording") await recorder.stop().catch(() => undefined);
-    router.back();
+    goBack();
   }
 
   return (

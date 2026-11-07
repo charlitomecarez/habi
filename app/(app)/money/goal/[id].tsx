@@ -14,6 +14,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useAddContribution, useDeleteContribution, useGoals } from "@/lib/goals";
 import { formatPeso, parseAmount, useAccounts } from "@/lib/money";
@@ -46,7 +47,7 @@ export default function GoalScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{goals.error ? goals.error.message : "This goal was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>

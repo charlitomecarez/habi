@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import type { ReactNode } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 
 export type HeaderTone = "shell" | "daily" | "people" | "home" | "records";
@@ -35,7 +35,7 @@ export function ModuleHeader({ title, subtitle, tone = "shell", backLabel = "Bac
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={backLabel}
-          onPress={() => router.back()}
+          onPress={goBack}
           className="h-touch w-touch items-center justify-center"
         >
           <Ionicons name="chevron-back" size={22} color={colors.onShell} />
@@ -70,7 +70,7 @@ export function ModuleBar({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={backLabel}
-        onPress={() => router.back()}
+        onPress={goBack}
         className="h-touch w-touch items-center justify-center"
       >
         <Ionicons name="chevron-back" size={22} color={colors.onShell} />

@@ -13,6 +13,7 @@ import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { goBack } from "@/lib/navigation";
 import { copyText } from "@/lib/clipboard";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
@@ -83,7 +84,7 @@ export default function VideoScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{video.error ? video.error.message : "This video was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -367,7 +368,7 @@ export default function VideoScreen() {
               loading={remove.isPending}
               onPress={async () => {
                 await remove.mutateAsync(v.id);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep video" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />

@@ -1,10 +1,11 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TripForm } from "@/components/travel/TripForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useTrip } from "@/lib/travel";
 
@@ -20,7 +21,7 @@ export default function EditTripScreen() {
       ) : (
         <View className="w-full gap-3">
           <Notice tone="danger">{trip.error ? trip.error.message : "This trip was deleted."}</Notice>
-          <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+          <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}
     </SafeAreaView>

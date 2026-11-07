@@ -7,14 +7,6 @@ This page lists the changes in each release, with the newest release first. It g
 Each release section has this form:
 
 ```md
-### Fixed
-
-- **Statement import:** PDF import works on Android again, for every bank. Install the new APK.
-- **Statement import:** A server failure no longer asks you to check your connection.
-- **Vehicle:** Update odometer accepts a lower number after a confirm step, to fix a wrong reading. A lower reading stops reminders that are no longer true. This changes the old rule that the odometer never goes down.
-- **Ulam:** Show another stops at the third dish, and chips go back to any of the three.
-- **Inbox:** Play audio now shows Loading, the time while it plays, and an error with Try again.
-
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
 
 ### Added
@@ -72,7 +64,17 @@ Do not put these items here:
 - **Money:** A chart of this week and a Today list come first. Whole amounts drop ".00".
 - **Todos:** All is the first filter, and the list has Overdue, Today and Later groups.
 - **Vehicle:** Bars show the distance used, and Fuel shows the average and the last fill-up.
+- **Weather:** It is now in More too, and Home says "Add your weather" until you pick a place.
 - **Sports:** Standings use the design's columns, and NBA shows a win rate. Football teams show their crest, and NBA teams show their short code.
+
+### Fixed
+
+- **Statement import:** PDF import works on Android again, for every bank. Install the new APK.
+- **Statement import:** A server failure no longer asks you to check your connection.
+- **Vehicle:** Update odometer accepts a lower number after a confirm step, to fix a wrong reading. A lower reading stops reminders that are no longer true. This changes the old rule that the odometer never goes down.
+- **Ulam:** Show another stops at the third dish, and chips go back to any of the three.
+- **Inbox:** Play audio now shows Loading, the time while it plays, and an error with Try again.
+- **Navigation:** Back and Save go to Home when no screen is behind them, such as after a reload or a reminder tap.
 
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
 

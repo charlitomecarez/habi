@@ -15,6 +15,7 @@ import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebts } from "@/lib/debts";
 import { amountText, formatPeso, parseAmount, useAccounts } from "@/lib/money";
@@ -88,7 +89,7 @@ export default function PersonScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{people.error ? people.error.message : "This person was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -300,7 +301,7 @@ export default function PersonScreen() {
               loading={removePerson.isPending}
               onPress={async () => {
                 await removePerson.mutateAsync(id);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep person" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />

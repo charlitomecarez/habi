@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +11,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { WEEKDAYS } from "@/lib/calendar";
 import { useColors } from "@/lib/colors";
 import { useArchivePlan, useSavePlan, type Exercise, type Plan } from "@/lib/gym";
@@ -95,7 +95,7 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
         })),
       },
     });
-    router.back();
+    goBack();
   }
 
   return (
@@ -105,7 +105,7 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />
@@ -185,7 +185,7 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
               loading={archive.isPending}
               onPress={async () => {
                 await archive.mutateAsync(plan.id);
-                router.back();
+                goBack();
               }}
             />
           ) : null}

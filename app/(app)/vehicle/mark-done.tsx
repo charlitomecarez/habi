@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   dueText,
@@ -62,7 +62,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
       odometerKm: parseKm(values.odometer)!,
       servicedOn: values.date,
     });
-    router.back();
+    goBack();
   });
 
   const label = checked.length === 0 ? "Mark as done" : `Mark ${checked.length} as done`;

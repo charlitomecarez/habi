@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { documentStatus, typeLabel, useDeleteDocument, useDocument, useSetDocumentPhotos } from "@/lib/documents";
 import { removeEncryptedPhotos, uploadEncryptedPhoto } from "@/lib/secure-photos";
@@ -42,7 +43,7 @@ export default function DocumentScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{doc.error ? doc.error.message : "This document was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -124,7 +125,7 @@ export default function DocumentScreen() {
               onPress={async () => {
                 await remove.mutateAsync(d.id);
                 await removeEncryptedPhotos(d.photo_paths);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep document" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />

@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +7,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { Input } from "@/components/ui/Input";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { currentCoords } from "@/lib/location";
 import { searchPlaces, useSavePlace, type Place } from "@/lib/weather";
@@ -41,7 +41,7 @@ export default function ChoosePlaceScreen() {
 
   async function pick(place: Place) {
     await save.mutateAsync(place);
-    router.back();
+    goBack();
   }
 
   async function locate() {

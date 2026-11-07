@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   formatKg,
@@ -59,7 +60,7 @@ export default function WorkoutScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{gym.error ? gym.error.message : "This workout day was archived."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>

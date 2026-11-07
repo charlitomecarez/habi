@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
@@ -13,6 +12,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { generatePassword, passwordStrength, type Strength } from "@/lib/password";
 import {
@@ -77,7 +77,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
         notes: values.notes.trim(),
       },
     });
-    router.back();
+    goBack();
   });
 
   async function onGenerate() {
@@ -87,7 +87,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
   async function onDelete() {
     if (!entry) return;
     await remove.mutateAsync(entry.id);
-    router.back();
+    goBack();
   }
 
   const failure = save.error ?? remove.error;
@@ -99,7 +99,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

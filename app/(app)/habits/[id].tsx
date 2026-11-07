@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   day,
@@ -43,7 +44,7 @@ export default function HabitScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{habits.error ? habits.error.message : "This habit was archived or deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -142,7 +143,7 @@ export default function HabitScreen() {
           loading={archive.isPending}
           onPress={async () => {
             await archive.mutateAsync(h.id);
-            router.back();
+            goBack();
           }}
         />
         {confirm === "delete" ? (
@@ -157,7 +158,7 @@ export default function HabitScreen() {
               loading={remove.isPending}
               onPress={async () => {
                 await remove.mutateAsync(h.id);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep habit" variant="secondary" size="input" onPress={() => setConfirm(null)} />

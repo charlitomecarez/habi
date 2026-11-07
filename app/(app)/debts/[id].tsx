@@ -12,6 +12,7 @@ import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebt, useDebtPayments, useDeleteDebt, useDeletePayment, useRecordPayment } from "@/lib/debts";
 import { amountText, formatPeso, parseAmount } from "@/lib/money";
@@ -39,7 +40,7 @@ export default function DebtScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{debt.error ? debt.error.message : "This debt was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -154,7 +155,7 @@ export default function DebtScreen() {
               loading={remove.isPending}
               onPress={async () => {
                 await remove.mutateAsync(d.id);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep debt" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />

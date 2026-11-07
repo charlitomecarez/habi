@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, parse, parseISO } from "date-fns";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Linking, Pressable, Text, View } from "react-native";
@@ -17,6 +16,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useDocuments } from "@/lib/documents";
 import { amountText, CURRENCIES, parseAmount, toDateString, useExchangeRates } from "@/lib/money";
@@ -94,7 +94,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
         document_id: v.documentId,
       },
     });
-    router.back();
+    goBack();
   });
 
   const link = item ? mapLink(item) : null;
@@ -109,7 +109,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />
@@ -269,7 +269,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
                 loading={remove.isPending}
                 onPress={async () => {
                   await remove.mutateAsync(item.id);
-                  router.back();
+                  goBack();
                 }}
               />
             </View>

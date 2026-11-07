@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useDeleteVisit, useHealth, useSetVisitPhotos } from "@/lib/health";
 import { removeEncryptedPhotos, uploadEncryptedPhoto } from "@/lib/secure-photos";
@@ -30,7 +31,7 @@ export default function VisitScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{health.error ? health.error.message : "This visit was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -89,7 +90,7 @@ export default function VisitScreen() {
               onPress={async () => {
                 await remove.mutateAsync(v.id);
                 await removeEncryptedPhotos(v.photo_paths);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep visit" variant="secondary" size="input" onPress={() => setConfirm(false)} />

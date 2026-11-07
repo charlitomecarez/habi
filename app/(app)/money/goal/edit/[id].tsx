@@ -1,10 +1,11 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { GoalForm } from "@/components/money/GoalForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useGoals } from "@/lib/goals";
 
@@ -21,7 +22,7 @@ export default function EditGoalScreen() {
       ) : (
         <View className="w-full gap-3">
           <Notice tone="danger">{goals.error ? goals.error.message : "This goal was deleted."}</Notice>
-          <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+          <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +9,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { splitList, useJobs, useReadResume, useSaveProfile } from "@/lib/jobs";
 import { pickStatement } from "@/lib/statement-file";
 
@@ -57,7 +58,7 @@ export default function WorkProfileScreen() {
       remote_ok: true,
       salary_floor: Number(salary.replace(/[^\d.]/g, "")) || null,
     });
-    router.back();
+    goBack();
   }
 
   return (
