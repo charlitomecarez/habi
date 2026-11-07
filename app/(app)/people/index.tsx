@@ -10,6 +10,7 @@ import { Fab } from "@/components/ui/Fab";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { dateLabel, occurrenceText, usePeople, useSavePerson } from "@/lib/people";
 
@@ -41,19 +42,11 @@ export default function PeopleScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="people">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           People and dates
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         {people.isPending ? (
@@ -69,7 +62,7 @@ export default function PeopleScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 Coming up
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {upcoming.length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                     No dates in the next {UPCOMING_DAYS} days.
@@ -81,7 +74,7 @@ export default function PeopleScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${nameOf(d.person_id)}, ${dateLabel(d)}, ${when}`}
                       onPress={() => router.push({ pathname: "/people/[id]", params: { id: d.person_id } })}
-                      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === upcoming.length - 1 ? "" : "border-b border-divider"}`}
+                      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === upcoming.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <View className="min-w-0 flex-1 gap-1">
                         <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
@@ -100,7 +93,7 @@ export default function PeopleScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 People
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {(data?.people ?? []).length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                     Add the people whose dates you want to remember.
@@ -114,7 +107,7 @@ export default function PeopleScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={`${p.name}, ${count} ${count === 1 ? "date" : "dates"}`}
                         onPress={() => router.push({ pathname: "/people/[id]", params: { id: p.id } })}
-                        className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === data.people.length - 1 ? "" : "border-b border-divider"}`}
+                        className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === data.people.length - 1 ? "" : "border-b-2 border-border"}`}
                       >
                         <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">
                           {p.name}

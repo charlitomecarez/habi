@@ -32,11 +32,11 @@ export default function UlamWeekScreen() {
           ) : null}
         </View>
 
-        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+        <View className="overflow-hidden">
           {rows.map((row, index) => (
             <View
               key={row.date}
-              className={`min-h-touch flex-row items-center gap-3 px-4 py-2 ${index === rows.length - 1 ? "" : "border-b border-divider"}`}
+              className={`min-h-touch flex-row items-center gap-3 px-4 py-2 ${index === rows.length - 1 ? "" : "border-b-2 border-border"}`}
             >
               <Text className="w-8 font-sans text-caption text-ink-muted">{row.day}</Text>
               <Text

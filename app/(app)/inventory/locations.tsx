@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useDeleteLocation, useItems, useLocations, type LocationWithPath } from "@/lib/inventory";
 import { locationLink } from "@/lib/qr";
@@ -42,22 +42,14 @@ export default function LocationsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
+      <ModuleBar tone="home">
         <View>
-          <Text accessibilityRole="header" className="font-bold text-title text-ink">
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
             Locations
           </Text>
-          <Text className="font-sans text-caption text-ink-muted">Rooms, and the shelves and boxes inside them.</Text>
+          <Text className="font-sans text-caption text-on-shell">Rooms, and the shelves and boxes inside them.</Text>
         </View>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
         {locations.isPending ? (
@@ -72,7 +64,7 @@ export default function LocationsScreen() {
             </Text>
           </View>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {list.map((loc, index) => (
               <Pressable
                 key={loc.id}
@@ -82,7 +74,7 @@ export default function LocationsScreen() {
                   remove.reset();
                   setSelected(loc);
                 }}
-                className={`min-h-touch flex-row items-center gap-3 py-3 pr-4 active:bg-surface-muted ${index < list.length - 1 ? "border-b border-divider" : ""} ${loc.depth === 0 ? "pl-4" : loc.depth === 1 ? "pl-6" : "pl-8"}`}
+                className={`min-h-touch flex-row items-center gap-3 py-3 pr-4 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""} ${loc.depth === 0 ? "pl-4" : loc.depth === 1 ? "pl-6" : "pl-8"}`}
               >
                 <Ionicons
                   name={loc.depth === 0 ? "home-outline" : "file-tray-outline"}

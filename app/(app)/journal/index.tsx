@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { addMonths, format, isSameMonth, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -8,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { moodLabel, useJournal } from "@/lib/journal";
 
@@ -24,19 +24,11 @@ export default function JournalScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="daily">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Journal
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
         {journal.isPending ? (
@@ -53,7 +45,9 @@ export default function JournalScreen() {
               {todays ? (
                 <>
                   {moodLabel(todays.mood) ? (
-                    <Text className="font-semibold text-heading text-ink">Feeling {moodLabel(todays.mood)?.toLowerCase()}</Text>
+                    <Text className="font-semibold text-heading text-ink">
+                      Feeling {moodLabel(todays.mood)?.toLowerCase()}
+                    </Text>
                   ) : null}
                   <Text numberOfLines={4} className="font-sans text-body text-ink">
                     {todays.body || "No words yet."}
@@ -81,7 +75,11 @@ export default function JournalScreen() {
                 }}
                 describeDay={(date) => {
                   const e = byDate.get(date);
-                  return e ? `entry${moodLabel(e.mood) ? `, ${moodLabel(e.mood)}` : ""}` : date > today ? undefined : "no entry";
+                  return e
+                    ? `entry${moodLabel(e.mood) ? `, ${moodLabel(e.mood)}` : ""}`
+                    : date > today
+                      ? undefined
+                      : "no entry";
                 }}
                 renderDay={(date) => {
                   const e = byDate.get(date);
@@ -99,7 +97,7 @@ export default function JournalScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 {format(month, "MMMM")} · {recent.length} {recent.length === 1 ? "entry" : "entries"}
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {recent.length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No entries this month.</Text>
                 ) : (
@@ -109,7 +107,7 @@ export default function JournalScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${format(parseISO(e.on_date), "MMMM d")}${moodLabel(e.mood) ? `, ${moodLabel(e.mood)}` : ""}. Open entry`}
                       onPress={() => router.push({ pathname: "/journal/[date]", params: { date: e.on_date } })}
-                      className={`min-h-touch gap-1 px-4 py-3 active:bg-surface-muted ${i === recent.length - 1 ? "" : "border-b border-divider"}`}
+                      className={`min-h-touch gap-1 px-4 py-3 active:bg-surface-muted ${i === recent.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Text className="font-semibold text-row-title text-ink">
                         {format(parseISO(e.on_date), "EEE, MMM d")}

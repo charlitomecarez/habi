@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import {
   canRetry,
@@ -65,16 +66,8 @@ export default function InboxScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="flex-1 font-bold text-title text-ink">
+      <ModuleBar tone="people">
+        <Text accessibilityRole="header" className="flex-1 font-bold text-title text-on-shell">
           Inbox
         </Text>
         {isAdmin ? (
@@ -84,10 +77,10 @@ export default function InboxScreen() {
             onPress={() => router.push("/inbox/access")}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="people-outline" size={22} color={colors.ink} />
+            <Ionicons name="people-outline" size={22} color={colors.onShell} />
           </Pressable>
         ) : null}
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-3 px-5 pb-32 pt-3">
         {error ? <Notice tone="danger">Could not load your messages. {error.message}</Notice> : null}

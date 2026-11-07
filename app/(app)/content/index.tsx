@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useSaveVideo, useVideos, type Video } from "@/lib/content";
 import { daysFrom, nextStage, prevStage, STAGES, stage, urgency } from "@/lib/content/stages";
@@ -38,7 +39,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function ListCard({ children }: { children: ReactNode }) {
-  return <View className="overflow-hidden rounded-card border border-border bg-surface-card">{children}</View>;
+  return <View className="overflow-hidden">{children}</View>;
 }
 
 function Empty({ text }: { text: string }) {
@@ -143,7 +144,7 @@ function Board({ videos }: { videos: Video[] }) {
                   return (
                     <View
                       key={v.id}
-                      className={`flex-row items-center ${i === list.length - 1 ? "" : "border-b border-divider"}`}
+                      className={`flex-row items-center ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Pressable
                         accessibilityRole="button"
@@ -251,7 +252,7 @@ function Ideas({ videos }: { videos: Video[] }) {
           return (
             <View
               key={v.id}
-              className={`flex-row items-center gap-1 py-1 pr-3 ${i === ideas.length - 1 ? "" : "border-b border-divider"}`}
+              className={`flex-row items-center gap-1 py-1 pr-3 ${i === ideas.length - 1 ? "" : "border-b-2 border-border"}`}
             >
               <Pressable
                 accessibilityRole="button"
@@ -300,19 +301,11 @@ export default function ContentPlannerScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="records">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Content planner
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         <Segmented label="View" options={VIEWS} value={view} onChange={setView} />

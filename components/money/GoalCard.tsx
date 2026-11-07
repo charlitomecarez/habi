@@ -18,7 +18,7 @@ export function GoalCard({ g, last }: { g: GoalProgress; last: boolean }) {
       accessibilityRole="button"
       accessibilityLabel={`${g.name}, ${formatPeso(g.saved)} of ${formatPeso(g.target_amount)}${g.reached ? ", reached" : `, ${plan}`}. Open goal`}
       onPress={() => router.push({ pathname: "/money/goal/[id]", params: { id: g.id } })}
-      className={`gap-2 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`gap-2 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <View className="flex-row items-center gap-2">
         <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">

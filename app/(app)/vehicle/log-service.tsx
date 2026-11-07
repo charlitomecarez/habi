@@ -1,9 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -15,6 +14,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import type { LocalPhoto } from "@/lib/photos";
 import {
@@ -234,26 +234,18 @@ export default function LogServiceScreen() {
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
-        <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-            onPress={() => router.back()}
-            className="h-touch w-touch items-center justify-center"
-          >
-            <Ionicons name="chevron-back" size={22} color={colors.ink} />
-          </Pressable>
+        <ModuleBar>
           <View>
-            <Text accessibilityRole="header" className="font-bold text-title text-ink">
+            <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
               Log service
             </Text>
             {vehicle.data ? (
-              <Text className="font-sans text-caption text-ink-muted">
+              <Text className="font-sans text-caption text-on-shell">
                 {vehicleName(vehicle.data)} · {vehicle.data.make} {vehicle.data.model}
               </Text>
             ) : null}
           </View>
-        </View>
+        </ModuleBar>
 
         {vehicle.data && due.data ? (
           <LogServiceForm vehicle={vehicle.data} services={due.data} serviceId={serviceId} />

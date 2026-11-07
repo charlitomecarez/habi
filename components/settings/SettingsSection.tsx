@@ -40,7 +40,7 @@ function Row({ title, detail, icon, onPress, trailing, last = false }: RowProps)
       {trailing ?? <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />}
     </>
   );
-  const className = `min-h-touch flex-row items-center gap-3 px-4 py-3 ${last ? "" : "border-b border-divider"}`;
+  const className = `min-h-touch flex-row items-center gap-3 px-4 py-3 ${last ? "" : "border-b-2 border-border"}`;
   return onPress ? (
     <Pressable
       accessibilityRole="button"
@@ -103,7 +103,7 @@ export function SettingsSection() {
       </View>
 
       <View className="gap-3">
-        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+        <View className="overflow-hidden">
           <Row icon="contrast-outline" title="Theme" detail={themeLabel(theme)} onPress={() => setSheet("theme")} />
           <Row
             title="Daily email digest"

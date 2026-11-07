@@ -14,6 +14,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebts } from "@/lib/debts";
 import { amountText, formatPeso, parseAmount, useAccounts } from "@/lib/money";
@@ -164,16 +165,12 @@ export default function PersonScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar tone="people">
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {person.name}
         </Text>
         <Pressable
@@ -182,16 +179,16 @@ export default function PersonScreen() {
           onPress={() => open("rename")}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
         {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
         {person.note ? <Text className="font-sans text-body text-ink">{person.note}</Text> : null}
 
         <Section title="Dates">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {dates.length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                 No dates yet. Each date gets a reminder one week before.
@@ -200,7 +197,7 @@ export default function PersonScreen() {
               dates.map(({ d, when, days }, i) => (
                 <View
                   key={d.id}
-                  className={`min-h-touch flex-row items-center gap-3 py-2 pl-4 pr-1 ${i === dates.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-2 pl-4 pr-1 ${i === dates.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">{dateLabel(d)}</Text>
@@ -223,22 +220,23 @@ export default function PersonScreen() {
         </Section>
 
         <Section title="Gift ideas">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {gifts.length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No gift ideas yet.</Text>
             ) : (
               gifts.map((g, i) => (
                 <View
                   key={g.id}
-                  className={`min-h-touch flex-row items-center gap-2 py-2 pl-4 pr-1 ${i === gifts.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`min-h-touch flex-row items-center gap-2 py-2 pl-4 pr-1 ${i === gifts.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className={`font-semibold text-row-title ${g.bought_at ? "text-ink-muted" : "text-ink"}`}>
                       {g.title}
                     </Text>
                     <Text className="font-sans text-caption text-ink-muted">
-                      {[g.bought_at ? "Bought" : null, g.price ? formatPeso(g.price) : null].filter(Boolean).join(" · ") ||
-                        "No price"}
+                      {[g.bought_at ? "Bought" : null, g.price ? formatPeso(g.price) : null]
+                        .filter(Boolean)
+                        .join(" · ") || "No price"}
                     </Text>
                   </View>
                   {g.bought_at ? null : (
@@ -260,7 +258,7 @@ export default function PersonScreen() {
         </Section>
 
         <Section title="Debts">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {theirDebts.length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No debts with {person.name}.</Text>
             ) : (
@@ -270,7 +268,7 @@ export default function PersonScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={`${d.direction === "owed_to_me" ? "Owes you" : "You owe"} ${formatPeso(d.balance)}, ${debtStatus(d).text}`}
                   onPress={() => router.push({ pathname: "/debts/[id]", params: { id: d.id } })}
-                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === theirDebts.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === theirDebts.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">
@@ -321,7 +319,9 @@ export default function PersonScreen() {
 
       <Sheet visible={sheet === "date"} onClose={() => setSheet(null)} title="Add date" subtitle={person.name}>
         <Segmented label="Kind" options={KIND_OPTIONS} value={kind} onChange={setKind} />
-        {kind === "other" ? <Input label="Name of the date" value={label} onChangeText={setLabel} placeholder="Name day" /> : null}
+        {kind === "other" ? (
+          <Input label="Name of the date" value={label} onChangeText={setLabel} placeholder="Name day" />
+        ) : null}
         <DateTimeField label="Date" mode="date" value={date} onChange={setDate} />
         <Segmented label="Year" options={YEAR_OPTIONS} value={yearKnown} onChange={setYearKnown} />
         {formError ? <Notice tone="danger">{formError}</Notice> : null}

@@ -49,7 +49,7 @@ export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) 
   const info = meta(todo);
 
   return (
-    <View className={`flex-row items-start gap-2 py-1 pl-1 pr-4 ${last ? "" : "border-b border-divider"}`}>
+    <View className={`flex-row items-start gap-2 py-1 pl-1 pr-4 ${last ? "" : "border-b-2 border-border"}`}>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: done }}

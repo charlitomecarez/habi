@@ -12,6 +12,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { amountText, formatPeso, parseBalance, useAccounts, useCategories } from "@/lib/money";
 import { useAddItem, useCheckout, useRemoveItem, useShopping, useUpdateItem, type ShoppingItem } from "@/lib/shopping";
@@ -31,7 +32,7 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
   }
 
   return (
-    <View className={`flex-row items-center gap-1 py-1 pr-1 ${last ? "" : "border-b border-divider"}`}>
+    <View className={`flex-row items-center gap-1 py-1 pr-1 ${last ? "" : "border-b-2 border-border"}`}>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityLabel={`${item.name}${item.quantity ? `, ${item.quantity}` : ""}, in the cart`}
@@ -149,19 +150,11 @@ export default function ShoppingScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
-        <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-            onPress={() => router.back()}
-            className="h-touch w-touch items-center justify-center"
-          >
-            <Ionicons name="chevron-back" size={22} color={colors.ink} />
-          </Pressable>
-          <Text accessibilityRole="header" className="font-bold text-title text-ink">
+        <ModuleBar tone="home">
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
             Shopping list
           </Text>
-        </View>
+        </ModuleBar>
 
         <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           {done ? <Notice tone="warning">{done}</Notice> : null}
@@ -206,7 +199,7 @@ export default function ShoppingScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   To buy · {toBuy.length}
                 </Text>
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                <View className="overflow-hidden">
                   {toBuy.length === 0 ? (
                     <Text className="px-4 py-3 font-sans text-caption text-ink-muted">Nothing left to buy.</Text>
                   ) : (
@@ -219,7 +212,7 @@ export default function ShoppingScreen() {
                   <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                     In the cart · {inCart.length}
                   </Text>
-                  <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                  <View className="overflow-hidden">
                     {inCart.map((i, n) => (
                       <ItemRow key={i.id} item={i} last={n === inCart.length - 1} />
                     ))}

@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useAccounts } from "@/lib/money";
 import { monthlyAmount, nextDate, nextText, scheduleText, useRecurring, type Recurring } from "@/lib/recurring";
@@ -22,7 +22,7 @@ function RecurringRow({ rule, accountName, last }: { rule: Recurring; accountNam
       accessibilityRole="button"
       accessibilityLabel={`${rule.name}, ${formatPeso(rule.amount)}, ${detail}, ${next}`}
       onPress={() => router.push({ pathname: "/money/recurring/[id]", params: { id: rule.id } })}
-      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <View className="min-w-0 flex-1 gap-1">
         <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
@@ -52,26 +52,18 @@ export default function RecurringScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back to Money"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
+      <ModuleBar backLabel="Back to Money">
         <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" className="font-bold text-title text-ink">
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
             Recurring
           </Text>
           {list.length > 0 ? (
-            <Text className="font-sans text-caption text-ink-muted">
+            <Text className="font-sans text-caption text-on-shell">
               {running.length} running · {formatPeso(monthly)} a month
             </Text>
           ) : null}
         </View>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
         {rules.isPending ? (
@@ -89,7 +81,7 @@ export default function RecurringScreen() {
             action={{ label: "Add recurring", onPress: add }}
           />
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {list.map((rule, index) => (
               <RecurringRow
                 key={rule.id}

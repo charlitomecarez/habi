@@ -9,8 +9,19 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
-import { formatKg, setsText, today, useExerciseHistory, useGym, useSessionSets, useToggleSet, type Exercise, type Plan } from "@/lib/gym";
+import {
+  formatKg,
+  setsText,
+  today,
+  useExerciseHistory,
+  useGym,
+  useSessionSets,
+  useToggleSet,
+  type Exercise,
+  type Plan,
+} from "@/lib/gym";
 
 type Editing = { exercise: Exercise; setNumber: number; reps: string; weight: string };
 
@@ -18,7 +29,9 @@ function LastTime({ exerciseId, sessionId }: { exerciseId: string; sessionId: st
   const history = useExerciseHistory(exerciseId);
   const previous = (history.data ?? []).filter((s) => s.session_id !== sessionId);
   if (previous.length === 0) return null;
-  const last = previous.filter((s) => s.session_id === previous[0].session_id).sort((a, b) => a.set_number - b.set_number);
+  const last = previous
+    .filter((s) => s.session_id === previous[0].session_id)
+    .sort((a, b) => a.set_number - b.set_number);
   return (
     <Text className="font-sans text-caption text-ink-muted">
       Last time: {last.map((s) => `${s.reps}${s.weight_kg ? ` × ${formatKg(s.weight_kg)}` : ""}`).join(", ")}
@@ -63,24 +76,16 @@ export default function WorkoutScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
+      <ModuleBar tone="daily">
         <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-ink">
+          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-on-shell">
             {plan.name}
           </Text>
-          <Text className="font-sans text-caption text-ink-muted">
+          <Text className="font-sans text-caption text-on-shell">
             {format(new Date(), "EEEE, MMM d")} · {done} of {total} sets
           </Text>
         </View>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-10 pt-2">
         {toggle.error ? <Notice tone="danger">{toggle.error.message}</Notice> : null}
@@ -96,7 +101,9 @@ export default function WorkoutScreen() {
               className="gap-1"
             >
               <Text className="font-semibold text-heading text-ink">{e.name}</Text>
-              <Text className="font-sans text-caption text-ink-muted">Plan: {setsText(e.sets, e.reps, e.weight_kg)}</Text>
+              <Text className="font-sans text-caption text-ink-muted">
+                Plan: {setsText(e.sets, e.reps, e.weight_kg)}
+              </Text>
               <LastTime exerciseId={e.id} sessionId={session?.id} />
             </Pressable>
             {Array.from({ length: e.sets }, (_, i) => i + 1).map((n) => {
@@ -112,7 +119,11 @@ export default function WorkoutScreen() {
                     onPress={() => tick(plan, e, n, reps, weight, !s)}
                     className={`min-h-touch flex-1 flex-row items-center gap-3 rounded-input border px-3 ${s ? "border-accent bg-accent-tint" : "border-border-input"}`}
                   >
-                    <Ionicons name={s ? "checkmark-circle" : "ellipse-outline"} size={24} color={s ? colors.accent : colors.inkMuted} />
+                    <Ionicons
+                      name={s ? "checkmark-circle" : "ellipse-outline"}
+                      size={24}
+                      color={s ? colors.accent : colors.inkMuted}
+                    />
                     <Text className="font-medium text-row-title text-ink">
                       Set {n} · {reps} reps{weight ? ` · ${formatKg(weight)}` : ""}
                     </Text>
@@ -121,7 +132,12 @@ export default function WorkoutScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={`Change reps or weight for set ${n}`}
                     onPress={() =>
-                      setEditing({ exercise: e, setNumber: n, reps: String(reps), weight: weight ? String(weight) : "" })
+                      setEditing({
+                        exercise: e,
+                        setNumber: n,
+                        reps: String(reps),
+                        weight: weight ? String(weight) : "",
+                      })
                     }
                     className="h-touch w-touch items-center justify-center"
                   >

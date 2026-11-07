@@ -27,11 +27,11 @@ export default function HowToCookScreen() {
         <Text className="font-sans text-label text-ink-muted">
           {ulam.name} · {ulam.cookMinutes} min
         </Text>
-        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+        <View className="overflow-hidden">
           {ulam.steps.map((step, index) => (
             <View
               key={step}
-              className={`flex-row gap-3 px-4 py-3 ${index === ulam.steps.length - 1 ? "" : "border-b border-divider"}`}
+              className={`flex-row gap-3 px-4 py-3 ${index === ulam.steps.length - 1 ? "" : "border-b-2 border-border"}`}
             >
               <Text className="font-bold text-label text-ink">{index + 1}</Text>
               <Text className="flex-1 font-sans text-body text-ink">{step}</Text>

@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useDeleteVisit, useHealth, useSetVisitPhotos } from "@/lib/health";
 import { removeEncryptedPhotos, uploadEncryptedPhoto } from "@/lib/secure-photos";
@@ -38,16 +39,12 @@ export default function VisitScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar tone="daily">
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {v.doctor || v.reason || "Visit"}
         </Text>
         <Pressable
@@ -56,12 +53,14 @@ export default function VisitScreen() {
           onPress={() => router.push({ pathname: "/health/visit/edit/[id]", params: { id: v.id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
-      </View>
+      </ModuleBar>
       <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
         <View className="gap-2 rounded-card border border-border bg-surface-card p-4">
-          <Text className="font-medium text-caption text-ink-muted">{format(parseISO(v.visited_on), "EEEE, MMMM d, yyyy")}</Text>
+          <Text className="font-medium text-caption text-ink-muted">
+            {format(parseISO(v.visited_on), "EEEE, MMMM d, yyyy")}
+          </Text>
           {v.reason ? <Text className="font-semibold text-heading text-ink">{v.reason}</Text> : null}
           {v.notes ? <Text className="font-sans text-body text-ink">{v.notes}</Text> : null}
         </View>

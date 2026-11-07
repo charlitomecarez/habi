@@ -1,14 +1,14 @@
-import { Ionicons } from "@expo/vector-icons";
 import { format, isSameMonth, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useAccounts } from "@/lib/money";
 import {
@@ -23,7 +23,7 @@ import {
 
 function Fact({ label, detail, value, auto }: { label: string; detail: string; value: string; auto?: boolean }) {
   return (
-    <View className="flex-row items-center gap-3 border-b border-divider py-3">
+    <View className="flex-row items-center gap-3 border-b-2 border-border py-3">
       <View className="min-w-0 flex-1 gap-1">
         <Text className="font-semibold text-row-title text-ink">{label}</Text>
         <Text className="font-sans text-caption text-ink-muted">{detail}</Text>
@@ -60,26 +60,18 @@ export default function RecurringRuleScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back to Recurring"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
+      <ModuleBar backLabel="Back to Recurring">
         <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-ink">
+          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-on-shell">
             {rule?.name ?? "Recurring"}
           </Text>
           {rule ? (
-            <Text className="font-sans text-caption text-ink-muted">
+            <Text className="font-sans text-caption text-on-shell">
               {scheduleText(rule)} · {formatPeso(rule.amount)}
             </Text>
           ) : null}
         </View>
-      </View>
+      </ModuleBar>
 
       {!rule ? (
         <View className="flex-1 items-center justify-center px-5">

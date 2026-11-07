@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import {
   cycleLabel,
@@ -55,19 +56,11 @@ export default function SubscriptionsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back to Money"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar backLabel="Back to Money">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Subscriptions
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
         {subscriptions.isPending ? (
@@ -121,7 +114,7 @@ export default function SubscriptionsScreen() {
                 </Text>
               </View>
             ) : (
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {list.map((s, index) => {
                   const renewal = renewalText(s.next_billing_on);
                   const date = format(parseISO(s.next_billing_on), "MMM d");
@@ -144,7 +137,7 @@ export default function SubscriptionsScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${s.name}, ${formatMoney(s.amount ?? 0, s.currency)} ${costText(s)}, ${caption}`}
                       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
-                      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b border-divider" : ""}`}
+                      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""}`}
                     >
                       <BrandIcon name={s.name} />
                       <View className="min-w-0 flex-1 gap-1">

@@ -11,7 +11,7 @@ export function DoseRow({ dose, last }: { dose: Dose; last: boolean }) {
   const time = format(new Date(dose.scheduled_at), "h:mm a");
   const late = dose.status === "pending" && new Date(dose.scheduled_at) < new Date();
   return (
-    <View className={`gap-2 px-4 py-3 ${last ? "" : "border-b border-divider"}`}>
+    <View className={`gap-2 px-4 py-3 ${last ? "" : "border-b-2 border-border"}`}>
       <View className="flex-row items-center gap-2">
         <View className="min-w-0 flex-1 gap-1">
           <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
@@ -35,11 +35,21 @@ export function DoseRow({ dose, last }: { dose: Dose; last: boolean }) {
             <Button label="Taken" size="input" onPress={() => mark.mutate({ id: dose.id, status: "taken" })} />
           </View>
           <View className="flex-1">
-            <Button label="Skipped" variant="secondary" size="input" onPress={() => mark.mutate({ id: dose.id, status: "skipped" })} />
+            <Button
+              label="Skipped"
+              variant="secondary"
+              size="input"
+              onPress={() => mark.mutate({ id: dose.id, status: "skipped" })}
+            />
           </View>
         </View>
       ) : (
-        <Button label="Undo" variant="secondary" size="input" onPress={() => mark.mutate({ id: dose.id, status: "pending" })} />
+        <Button
+          label="Undo"
+          variant="secondary"
+          size="input"
+          onPress={() => mark.mutate({ id: dose.id, status: "pending" })}
+        />
       )}
     </View>
   );

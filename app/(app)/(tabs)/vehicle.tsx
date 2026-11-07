@@ -160,7 +160,7 @@ export default function VehicleScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   Later
                 </Text>
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                <View className="overflow-hidden">
                   {later.map((s, index) => (
                     <Pressable
                       key={s.vehicleServiceId}
@@ -169,7 +169,7 @@ export default function VehicleScreen() {
                       onPress={() =>
                         router.push({ pathname: "/vehicle/log-service", params: { serviceId: s.vehicleServiceId } })
                       }
-                      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${index < later.length - 1 ? "border-b border-divider" : ""}`}
+                      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${index < later.length - 1 ? "border-b-2 border-border" : ""}`}
                     >
                       <Text className="flex-1 font-medium text-row-title text-ink">{s.item}</Text>
                       <Text className="font-sans text-caption text-ink-muted">{laterText(s)}</Text>

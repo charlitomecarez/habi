@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import {
   descendantIds,
@@ -39,7 +39,7 @@ function ItemRow({
       accessibilityRole="button"
       accessibilityLabel={`${item.name}, ${path ?? "no location"}, quantity ${item.quantity}${warrantyText(item) ? `, ${warrantyText(item)!.text}` : ""}`}
       onPress={() => router.push({ pathname: "/inventory/item/[id]", params: { id: item.id } })}
-      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <ItemPhoto uri={photoUri} label={item.name} className="h-input w-input rounded-md" />
       <View className="min-w-0 flex-1 gap-1">
@@ -84,28 +84,22 @@ export default function InventoryScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center justify-between px-3 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
+      <ModuleBar tone="home">
+        <Text accessibilityRole="header" className="min-w-0 flex-1 font-bold text-title text-on-shell">
+          Inventory
+        </Text>
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push("/inventory/locations")}
           className="h-touch justify-center px-3"
         >
-          <Text className="font-semibold text-label text-accent">Locations</Text>
+          <Text className="font-semibold text-label text-on-shell">Locations</Text>
         </Pressable>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-start justify-between gap-3">
           <View className="flex-1 gap-1">
-            <ScreenHeader title="Inventory" />
             {items.data ? (
               <Text className="font-sans text-label text-ink-muted">
                 {total} {total === 1 ? "item" : "items"} in {allLocations.length}{" "}
@@ -199,7 +193,7 @@ export default function InventoryScreen() {
             </Text>
           </View>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {visible.map((item, index) => (
               <ItemRow
                 key={item.id}

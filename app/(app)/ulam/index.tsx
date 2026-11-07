@@ -11,7 +11,6 @@ import { UlamPhoto } from "@/components/ulam/UlamPhoto";
 import { UlamSettingsSheet } from "@/components/ulam/UlamSettingsSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
-import { HeroCard } from "@/components/ui/HeroCard";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { formatPeso } from "@/lib/money";
@@ -47,7 +46,7 @@ export default function UlamScreen() {
             onPress={() => setEditing(true)}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="options-outline" size={22} color={colors.ink} />
+            <Ionicons name="options-outline" size={22} color={colors.onShell} />
           </Pressable>
         }
       />
@@ -69,14 +68,13 @@ export default function UlamScreen() {
 
           <UlamPhoto ulam={ulam} />
 
-          <HeroCard
-            title={ulam.name}
-            stats={[
-              { value: formatPeso(ulam.cost), label: "to buy" },
-              { value: `${ulam.cookMinutes} min`, label: "to cook" },
-              { value: `≈ ${ulam.kcal}`, label: "kcal, for one" },
-            ]}
-          />
+          <View className="gap-2">
+            <Text className="font-bold text-title text-ink">{ulam.name}</Text>
+            <Text className="font-bold text-display text-ink">{formatPeso(ulam.cost)}</Text>
+            <Text className="font-sans text-caption text-ink-muted">
+              {ulam.cookMinutes} min to cook · ≈ {ulam.kcal} kcal, for one
+            </Text>
+          </View>
 
           {options.length > 1 ? (
             <View className="flex-row gap-2">
@@ -95,11 +93,11 @@ export default function UlamScreen() {
             <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
               What to buy
             </Text>
-            <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <View className="overflow-hidden">
               {ulam.ingredients.map((item, index) => (
                 <View
                   key={`${item.name}-${index}`}
-                  className={`flex-row justify-between gap-3 px-4 py-3 ${index === ulam.ingredients.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`flex-row justify-between gap-3 px-4 py-3 ${index === ulam.ingredients.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <Text className="flex-1 font-sans text-label text-ink">{item.name}</Text>
                   <Text className="font-medium text-label text-ink">{formatPeso(item.price)}</Text>

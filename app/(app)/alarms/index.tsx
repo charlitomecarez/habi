@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -23,6 +22,7 @@ import {
   type AlarmSetup,
 } from "@/lib/alarm";
 import { alarmTimeText, daysText, isUserAlarm, nextAlarmText } from "@/lib/alarm-rules";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 
 function SetupRow({ title, ready, onPress }: { title: string; ready: boolean; onPress: () => void }) {
@@ -31,7 +31,7 @@ function SetupRow({ title, ready, onPress }: { title: string; ready: boolean; on
       accessibilityRole="button"
       accessibilityLabel={`${title}, ${ready ? "Ready" : "Fix this"}`}
       onPress={ready ? undefined : onPress}
-      className="min-h-touch flex-row items-center justify-between gap-3 border-b border-divider px-4 py-3"
+      className="min-h-touch flex-row items-center justify-between gap-3 border-b-2 border-border px-4 py-3"
     >
       <Text className="flex-1 font-medium text-row-title text-ink">{title}</Text>
       <Badge label={ready ? "Ready" : "Fix this"} tone={ready ? "neutral" : "warning"} />
@@ -66,19 +66,11 @@ export default function AlarmsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="daily">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Alarms
         </Text>
-      </View>
+      </ModuleBar>
 
       {!isAlarmSupported ? (
         <View className="px-5 pt-3">
@@ -92,14 +84,14 @@ export default function AlarmsScreen() {
             {alarms.length === 0 ? (
               <EmptyState drawing="calendar" title="No alarms yet" body="Add one, then print your stop label." />
             ) : (
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {alarms.map((alarm, index) => (
                   <Pressable
                     key={alarm.id}
                     accessibilityRole="button"
                     accessibilityLabel={`Change alarm at ${alarmTimeText(alarm)}`}
                     onPress={() => setEditing({ alarm, key: Date.now() })}
-                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index === alarms.length - 1 ? "" : "border-b border-divider"}`}
+                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index === alarms.length - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <View className="min-w-0 flex-1">
                       <Text className="font-bold text-title text-ink">{alarmTimeText(alarm)}</Text>
@@ -141,7 +133,7 @@ export default function AlarmsScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   Setup check
                 </Text>
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                <View className="overflow-hidden">
                   <SetupRow title="Notifications" ready={setup.notifications} onPress={openAppSettings} />
                   <SetupRow title="Full-screen alarm" ready={setup.fullScreen} onPress={openFullScreenSettings} />
                   <SetupRow title="Battery set to Unrestricted" ready={setup.battery} onPress={openAppSettings} />
