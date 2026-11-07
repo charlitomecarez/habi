@@ -8,3 +8,7 @@ Sports shows matches and standings for the Premier League, La Liga, Ligue 1, Bun
 - Football keeps 14 days back and 14 days ahead. The free balldontlie key has no standings, so the NBA keeps the season, and `nbaStandings` counts wins and losses. The screen says that the order is calculated.
 - A failed league keeps its last good rows, and the screen says so.
 - A match opens a web search for both teams, in the phone browser.
+
+## Team marks
+
+`sports-sync` stores each team's `crest` and short code. football-data.org sends both. balldontlie sends only the abbreviation, so an NBA team shows its code. A crest that cannot load falls back to the code. The name is always beside the mark, so TalkBack skips the mark.

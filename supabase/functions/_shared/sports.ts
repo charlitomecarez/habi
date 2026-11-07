@@ -13,6 +13,10 @@ export type MatchRow = {
   away_team: string;
   home_score: number | null;
   away_score: number | null;
+  home_crest: string | null;
+  away_crest: string | null;
+  home_code: string | null;
+  away_code: string | null;
 };
 
 export type StandingRow = {
@@ -25,9 +29,11 @@ export type StandingRow = {
   lost: number;
   points: number | null;
   is_calculated: boolean;
+  crest: string | null;
+  code: string | null;
 };
 
-type FootballTeam = { name: string; shortName?: string | null };
+type FootballTeam = { name: string; shortName?: string | null; tla?: string | null; crest?: string | null };
 
 export type FootballMatch = {
   id: number;
@@ -68,6 +74,10 @@ export function footballMatch(league: League, m: FootballMatch): MatchRow {
     away_team: teamName(m.awayTeam),
     home_score: final ? (m.score?.fullTime?.home ?? null) : null,
     away_score: final ? (m.score?.fullTime?.away ?? null) : null,
+    home_crest: m.homeTeam.crest ?? null,
+    away_crest: m.awayTeam.crest ?? null,
+    home_code: m.homeTeam.tla ?? null,
+    away_code: m.awayTeam.tla ?? null,
   };
 }
 
@@ -82,6 +92,8 @@ export function footballStanding(league: League, r: FootballTableRow): StandingR
     lost: r.lost,
     points: r.points,
     is_calculated: false,
+    crest: r.team.crest ?? null,
+    code: r.team.tla ?? null,
   };
 }
 
@@ -90,8 +102,8 @@ export type NbaGame = {
   date: string;
   datetime?: string | null;
   status: string;
-  home_team: { full_name: string };
-  visitor_team: { full_name: string };
+  home_team: { full_name: string; abbreviation?: string | null };
+  visitor_team: { full_name: string; abbreviation?: string | null };
   home_team_score: number;
   visitor_team_score: number;
 };
@@ -113,6 +125,10 @@ export function nbaMatch(g: NbaGame): MatchRow {
     away_team: g.visitor_team.full_name,
     home_score: final ? g.home_team_score : null,
     away_score: final ? g.visitor_team_score : null,
+    home_crest: null,
+    away_crest: null,
+    home_code: g.home_team.abbreviation ?? null,
+    away_code: g.visitor_team.abbreviation ?? null,
   };
 }
 
@@ -121,17 +137,18 @@ export function nbaMatch(g: NbaGame): MatchRow {
  * A tie can differ from the official order, and the screen says so.
  */
 export function nbaStandings(matches: readonly MatchRow[]): StandingRow[] {
-  const teams = new Map<string, { won: number; lost: number }>();
-  const add = (team: string, won: boolean) => {
-    const row = teams.get(team) ?? { won: 0, lost: 0 };
+  const teams = new Map<string, { won: number; lost: number; code: string | null }>();
+  const add = (team: string, code: string | null, won: boolean) => {
+    const row = teams.get(team) ?? { won: 0, lost: 0, code };
+    row.code = row.code ?? code;
     if (won) row.won += 1;
     else row.lost += 1;
     teams.set(team, row);
   };
   for (const m of matches) {
     if (m.status !== "final" || m.home_score === null || m.away_score === null) continue;
-    add(m.home_team, m.home_score > m.away_score);
-    add(m.away_team, m.away_score > m.home_score);
+    add(m.home_team, m.home_code, m.home_score > m.away_score);
+    add(m.away_team, m.away_code, m.away_score > m.home_score);
   }
   const rate = (t: { won: number; lost: number }) => t.won / Math.max(t.won + t.lost, 1);
   return [...teams.entries()]
@@ -146,5 +163,7 @@ export function nbaStandings(matches: readonly MatchRow[]): StandingRow[] {
       lost: t.lost,
       points: null,
       is_calculated: true,
+      crest: null,
+      code: t.code,
     }));
 }

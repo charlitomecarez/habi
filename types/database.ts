@@ -1535,9 +1535,13 @@ export type Database = {
       };
       sports_matches: {
         Row: {
+          away_code: string | null;
+          away_crest: string | null;
           away_score: number | null;
           away_team: string;
           external_id: string;
+          home_code: string | null;
+          home_crest: string | null;
           home_score: number | null;
           home_team: string;
           league: string;
@@ -1546,9 +1550,13 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          away_code?: string | null;
+          away_crest?: string | null;
           away_score?: number | null;
           away_team: string;
           external_id: string;
+          home_code?: string | null;
+          home_crest?: string | null;
           home_score?: number | null;
           home_team: string;
           league: string;
@@ -1557,9 +1565,13 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          away_code?: string | null;
+          away_crest?: string | null;
           away_score?: number | null;
           away_team?: string;
           external_id?: string;
+          home_code?: string | null;
+          home_crest?: string | null;
           home_score?: number | null;
           home_team?: string;
           league?: string;
@@ -1571,6 +1583,8 @@ export type Database = {
       };
       sports_standings: {
         Row: {
+          code: string | null;
+          crest: string | null;
           drawn: number | null;
           is_calculated: boolean;
           league: string;
@@ -1583,6 +1597,8 @@ export type Database = {
           won: number;
         };
         Insert: {
+          code?: string | null;
+          crest?: string | null;
           drawn?: number | null;
           is_calculated?: boolean;
           league: string;
@@ -1595,6 +1611,8 @@ export type Database = {
           won: number;
         };
         Update: {
+          code?: string | null;
+          crest?: string | null;
           drawn?: number | null;
           is_calculated?: boolean;
           league?: string;

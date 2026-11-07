@@ -1,8 +1,9 @@
-import { format, parseISO } from "date-fns";
+import { format, isBefore, isToday, parseISO, startOfDay } from "date-fns";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { TeamMark } from "@/components/sports/TeamMark";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
@@ -32,24 +33,33 @@ const VIEWS = [
 function StandingsTable({ rows, nba }: { rows: Standing[]; nba: boolean }) {
   const cell = "w-chip text-right font-sans text-label text-ink";
   const head = "w-chip text-right font-semibold text-badge text-ink-muted";
+  const place = "w-6 font-sans text-label text-ink";
+  const rate = (row: Standing) => {
+    const games = row.won + row.lost;
+    return games === 0 ? "—" : (row.won / games).toFixed(3).replace(/^0/, "");
+  };
   return (
     <View>
-      <View className="flex-row items-center gap-2 border-b-2 border-border py-2">
+      <View className="flex-row items-center gap-1 border-b-2 border-border py-2">
+        <Text className="w-6 font-semibold text-badge text-ink-muted">#</Text>
+        <View className="w-8" />
         <Text className="min-w-0 flex-1 font-semibold text-badge text-ink-muted">Team</Text>
+        {nba ? null : <Text className={head}>P</Text>}
         <Text className={head}>W</Text>
-        {nba ? null : <Text className={head}>D</Text>}
         <Text className={head}>L</Text>
-        {nba ? null : <Text className={head}>Pts</Text>}
+        <Text className={head}>{nba ? "Win %" : "Pts"}</Text>
       </View>
       {rows.map((row) => (
-        <View key={row.team} className="flex-row items-center gap-2 border-b-2 border-border py-2">
+        <View key={row.team} className="flex-row items-center gap-1 border-b-2 border-border py-2">
+          <Text className={place}>{row.position}</Text>
+          <TeamMark crest={row.crest} code={row.code} />
           <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-label text-ink">
-            {row.position}. {row.team}
+            {row.team}
           </Text>
+          {nba ? null : <Text className={cell}>{row.played}</Text>}
           <Text className={cell}>{row.won}</Text>
-          {nba ? null : <Text className={cell}>{row.drawn}</Text>}
           <Text className={cell}>{row.lost}</Text>
-          {nba ? null : <Text className={cell}>{row.points}</Text>}
+          <Text className={`${cell} font-semibold`}>{nba ? rate(row) : row.points}</Text>
         </View>
       ))}
     </View>
@@ -62,17 +72,22 @@ export default function SportsScreen() {
   const [view, setView] = useState<Mode>("matches");
   const sports = useSports(league);
   const data = sports.data;
-  const days = groupByDay(data?.matches ?? []);
+  const grouped = groupByDay(data?.matches ?? []);
+  // Today and the coming days first, then the latest results.
+  const isPast = (day: (typeof grouped)[number]) =>
+    isBefore(parseISO(day.matches[0].starts_at), startOfDay(new Date()));
+  const days = [...grouped.filter((d) => !isPast(d)), ...grouped.filter(isPast).reverse()];
   const sync = data?.sync;
   const failed = sync?.last_error_at && (!sync.last_ok_at || sync.last_error_at > sync.last_ok_at);
-  const updated = sync?.last_ok_at ? format(parseISO(sync.last_ok_at), "MMM d, h:mm a") : null;
+  const lastOk = sync?.last_ok_at ? parseISO(sync.last_ok_at) : null;
+  const updated = lastOk ? `${isToday(lastOk) ? "today" : format(lastOk, "MMM d")}, ${format(lastOk, "h:mm a")}` : null;
   const calculated = data?.standings.some((s) => s.is_calculated);
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Sports" tone="daily" />
+      <ModuleHeader title="Sports" tone="daily" subtitle={updated ? `Updated ${updated}` : undefined} />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
+        <View accessibilityRole="radiogroup" accessibilityLabel="League" className="flex-row flex-wrap gap-2">
           {LEAGUES.map((item) => (
             <Chip
               key={item.id}
@@ -82,7 +97,7 @@ export default function SportsScreen() {
               onPress={() => setLeague(item.id)}
             />
           ))}
-        </ScrollView>
+        </View>
         <Segmented label="Show" options={VIEWS} value={view} onChange={setView} />
 
         {failed ? (
@@ -98,7 +113,11 @@ export default function SportsScreen() {
           </View>
         ) : view === "matches" ? (
           days.length === 0 ? (
-            <EmptyState drawing="calendar" title="No matches in the next 14 days" body="I check twice a day." />
+            <EmptyState
+              drawing="calendar"
+              title={lastOk ? "No matches in the next 14 days" : "I have no sports data yet"}
+              body={lastOk ? "I check twice a day." : "I check at 7 AM and 3 PM."}
+            />
           ) : (
             days.map((day) => (
               <View key={day.title}>
@@ -109,10 +128,17 @@ export default function SportsScreen() {
                   <DataRow
                     key={match.external_id}
                     title={matchTitle(match)}
-                    detail={
-                      match.status === "final"
-                        ? "Open match page"
-                        : `${format(parseISO(match.starts_at), "h:mm a")} · Open live scores`
+                    leading={
+                      <View className="gap-1">
+                        <TeamMark crest={match.home_crest} code={match.home_code} />
+                        <TeamMark crest={match.away_crest} code={match.away_code} />
+                      </View>
+                    }
+                    detail={match.status === "final" ? "Open match page" : format(parseISO(match.starts_at), "h:mm a")}
+                    value={
+                      match.status === "final" && match.home_score !== null
+                        ? `${match.home_score}-${match.away_score}`
+                        : undefined
                     }
                     status={matchStatus(match)}
                     onPress={() => void openMatch(match)}
@@ -123,19 +149,21 @@ export default function SportsScreen() {
             ))
           )
         ) : (data?.standings ?? []).length === 0 ? (
-          <EmptyState drawing="list" title="No standings yet" body="I check twice a day." />
+          <EmptyState
+            drawing="list"
+            title={lastOk ? "No standings yet" : "I have no sports data yet"}
+            body={lastOk ? "I check twice a day." : "I check at 7 AM and 3 PM."}
+          />
         ) : (
           <>
-            <StandingsTable rows={data?.standings ?? []} nba={league === "NBA"} />
             {calculated ? (
-              <Text className="font-sans text-caption text-ink-muted">
-                I counted this order from results, so a tie can differ from the official table.
-              </Text>
+              <Notice tone="neutral">
+                The app counts this order from results. A tie can differ from the official order.
+              </Notice>
             ) : null}
+            <StandingsTable rows={data?.standings ?? []} nba={league === "NBA"} />
           </>
         )}
-
-        {updated ? <Text className="font-sans text-caption text-ink-muted">Updated {updated}</Text> : null}
       </ScrollView>
     </SafeAreaView>
   );

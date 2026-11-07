@@ -5,6 +5,35 @@ import { footballMatch, footballStanding, nbaMatch, nbaStandings, type MatchRow 
 // Every team here is made up.
 const team = (name: string) => ({ name, shortName: name });
 
+describe("team marks", () => {
+  const crested = { name: "Team A", tla: "TMA", crest: "https://crests.example/1.svg" };
+
+  it("keeps the crest and code of a football team", () => {
+    const row = footballMatch("PL", {
+      id: 1,
+      utcDate: "2026-11-07T12:30:00Z",
+      status: "TIMED",
+      homeTeam: crested,
+      awayTeam: team("Team B"),
+    });
+    expect(row).toMatchObject({ home_crest: crested.crest, home_code: "TMA", away_crest: null, away_code: null });
+  });
+
+  it("gives an NBA team a code and no crest, and the table keeps the code", () => {
+    const game = nbaMatch({
+      id: 2,
+      date: "2026-11-07",
+      status: "Final",
+      home_team: { full_name: "Team A", abbreviation: "TMA" },
+      visitor_team: { full_name: "Team B", abbreviation: "TMB" },
+      home_team_score: 100,
+      visitor_team_score: 90,
+    });
+    expect(game).toMatchObject({ home_crest: null, home_code: "TMA", away_code: "TMB" });
+    expect(nbaStandings([game])[0]).toMatchObject({ team: "Team A", code: "TMA", crest: null });
+  });
+});
+
 describe("footballMatch", () => {
   const match = {
     id: 7,

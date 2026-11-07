@@ -41,15 +41,13 @@ export function groupByDay(matches: readonly Match[]): MatchDay[] {
 }
 
 export function matchTitle(m: Match): string {
-  return m.status === "final"
-    ? `${m.home_team} ${m.home_score}–${m.away_score} ${m.away_team}`
-    : `${m.home_team} vs ${m.away_team}`;
+  return `${m.home_team} vs ${m.away_team}`;
 }
 
 export function matchStatus(m: Match): { label: string; tone: "good" | "watch" | "muted" } {
   if (m.status === "final") return { label: "Final", tone: "muted" };
   if (m.status === "postponed") return { label: "Postponed", tone: "watch" };
-  return isToday(parseISO(m.starts_at)) ? { label: "Today", tone: "good" } : { label: "Soon", tone: "muted" };
+  return isToday(parseISO(m.starts_at)) ? { label: "Today", tone: "muted" } : { label: "Soon", tone: "muted" };
 }
 
 export function useSports(league: LeagueId) {

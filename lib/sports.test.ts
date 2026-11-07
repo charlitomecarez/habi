@@ -14,6 +14,10 @@ const match = (over: Partial<Match> = {}): Match => ({
   away_team: "Team B",
   home_score: null,
   away_score: null,
+  home_crest: null,
+  away_crest: null,
+  home_code: null,
+  away_code: null,
   updated_at: "2026-11-07T00:00:00Z",
   ...over,
 });
@@ -25,7 +29,7 @@ describe("matches", () => {
 
   it("shows the score only for a final match", () => {
     expect(matchTitle(match())).toBe("Team A vs Team B");
-    expect(matchTitle(match({ status: "final", home_score: 2, away_score: 1 }))).toBe("Team A 2–1 Team B");
+    expect(matchTitle(match({ status: "final", home_score: 2, away_score: 1 }))).toBe("Team A vs Team B");
   });
 
   it("says Final and Postponed in words", () => {
