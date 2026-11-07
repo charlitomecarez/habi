@@ -60,6 +60,13 @@ After sign-in the app calls `seed_money_defaults()`. When the user has no accoun
 
 Other banks and CSV files are not built.
 
+## Recurring
+
+- `recurring_transactions` holds a rule. `add_due_recurring` runs at 10 minutes past each hour, in each user's time zone, and catches up at most 7 days. `external_ref` is `recurring:<id>:<date>`, so a run cannot save a day twice.
+- `last_run_on` keeps a deleted Auto row deleted. A resume moves it to yesterday, so the job does not add the paused days.
+- A row shows Auto when `external_ref` starts with `recurring:`, so the label stays after the rule is deleted.
+- `isDueOn` in `lib/recurring.ts` and `recurring_is_due` in SQL hold the same rule. Change both.
+
 ## Statement import
 
 - `/money/import` sends a PDF to the `import-statement` Edge Function. The function holds `GOTYME_KEY` and `GCASH_KEY` as secrets, so the keys never reach the phone. They are not kept in `.env`.

@@ -261,6 +261,12 @@ export default function MoneyScreen() {
                 </View>
               </View>
               <Button
+                label="Recurring"
+                variant="secondary"
+                size="input"
+                onPress={() => router.push("/money/recurring")}
+              />
+              <Button
                 label="Import statement"
                 variant="secondary"
                 size="input"

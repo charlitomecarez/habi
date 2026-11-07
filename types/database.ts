@@ -1029,6 +1029,63 @@ export type Database = {
         };
         Relationships: [];
       };
+      recurring_transactions: {
+        Row: {
+          account_id: string;
+          amount: number;
+          category_id: string | null;
+          created_at: string;
+          ends_on: string | null;
+          id: string;
+          is_paused: boolean;
+          kind: Database["public"]["Enums"]["transaction_kind"];
+          last_run_on: string | null;
+          month_day: number | null;
+          name: string;
+          schedule: string;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+          week_days: number[] | null;
+        };
+        Insert: {
+          account_id: string;
+          amount: number;
+          category_id?: string | null;
+          created_at?: string;
+          ends_on?: string | null;
+          id?: string;
+          is_paused?: boolean;
+          kind?: Database["public"]["Enums"]["transaction_kind"];
+          last_run_on?: string | null;
+          month_day?: number | null;
+          name: string;
+          schedule: string;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+          week_days?: number[] | null;
+        };
+        Update: {
+          account_id?: string;
+          amount?: number;
+          category_id?: string | null;
+          created_at?: string;
+          ends_on?: string | null;
+          id?: string;
+          is_paused?: boolean;
+          kind?: Database["public"]["Enums"]["transaction_kind"];
+          last_run_on?: string | null;
+          month_day?: number | null;
+          name?: string;
+          schedule?: string;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+          week_days?: number[] | null;
+        };
+        Relationships: [];
+      };
       reminders: {
         Row: {
           body: string | null;
