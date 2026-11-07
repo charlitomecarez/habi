@@ -67,6 +67,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "daily",
         keywords: "food meal cook recipe calories",
       },
+      {
+        id: "sports",
+        label: "Sports",
+        href: "/sports",
+        icon: { name: "football-outline" },
+        tone: "daily",
+        keywords: "football nba basketball standings",
+      },
     ],
   },
   {

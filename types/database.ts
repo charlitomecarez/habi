@@ -1400,6 +1400,99 @@ export type Database = {
         };
         Relationships: [];
       };
+      sports_matches: {
+        Row: {
+          away_score: number | null;
+          away_team: string;
+          external_id: string;
+          home_score: number | null;
+          home_team: string;
+          league: string;
+          starts_at: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          away_score?: number | null;
+          away_team: string;
+          external_id: string;
+          home_score?: number | null;
+          home_team: string;
+          league: string;
+          starts_at: string;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          away_score?: number | null;
+          away_team?: string;
+          external_id?: string;
+          home_score?: number | null;
+          home_team?: string;
+          league?: string;
+          starts_at?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      sports_standings: {
+        Row: {
+          drawn: number | null;
+          is_calculated: boolean;
+          league: string;
+          lost: number;
+          played: number;
+          points: number | null;
+          position: number;
+          team: string;
+          updated_at: string;
+          won: number;
+        };
+        Insert: {
+          drawn?: number | null;
+          is_calculated?: boolean;
+          league: string;
+          lost: number;
+          played: number;
+          points?: number | null;
+          position: number;
+          team: string;
+          updated_at?: string;
+          won: number;
+        };
+        Update: {
+          drawn?: number | null;
+          is_calculated?: boolean;
+          league?: string;
+          lost?: number;
+          played?: number;
+          points?: number | null;
+          position?: number;
+          team?: string;
+          updated_at?: string;
+          won?: number;
+        };
+        Relationships: [];
+      };
+      sports_sync: {
+        Row: {
+          last_error_at: string | null;
+          last_ok_at: string | null;
+          league: string;
+        };
+        Insert: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          league: string;
+        };
+        Update: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          league?: string;
+        };
+        Relationships: [];
+      };
       subscriptions: {
         Row: {
           account_id: string | null;

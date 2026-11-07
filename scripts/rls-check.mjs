@@ -84,6 +84,9 @@ const READ_ONLY = [
   "voice_messages",
 ];
 
+// No user owns these rows. Signed-in accounts read them, and only the Edge Function writes them.
+const SHARED = ["sports_matches", "sports_standings", "sports_sync"];
+
 /** Every public table with a user_id column, from the generated types. */
 function ownedTables() {
   const source = readFileSync("types/database.ts", "utf8");
@@ -174,6 +177,13 @@ async function main() {
       const { error } = await a.client.from(seed.table).delete().eq("id", id);
       if (error) fail(seed.table, `the test row stayed (${error.message})`);
     }
+  }
+
+  for (const table of SHARED) {
+    const read = await b.client.from(table).select("*").limit(1);
+    if (read.error) fail(table, "a signed-in account could not read it");
+    const wrote = await b.client.from(table).delete().neq("league", "").select("league");
+    if (wrote.data?.length) fail(table, "a signed-in account deleted a shared row");
   }
 
   console.log(`Tables with a row test: ${added.size}. Read-only tables: ${READ_ONLY.length}.`);

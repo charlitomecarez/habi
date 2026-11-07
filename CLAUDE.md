@@ -40,7 +40,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 - Only the reminder Edge Function sends notifications. Modules write rows to `reminders`. One exception: Alarms ring from the phone, through `modules/alarm/`, because a push can arrive late and needs internet.
 - Vault data is encrypted on the device (libsodium Argon2id + XChaCha20-Poly1305). Never send plaintext or the key to Supabase, never log them.
 - Android-only APIs live behind adapters: `name.ts` + `name.web.ts`. Screens never branch on `Platform.OS`.
-- Statement PDF keys live only in Edge Function secrets. Never give them the `EXPO_PUBLIC_` prefix.
+- Statement PDF keys and the sports keys (`FOOTBALL_DATA_KEY`, `BALLDONTLIE_KEY`) live only in Edge Function secrets. Never give them the `EXPO_PUBLIC_` prefix.
 - Never commit a real statement, or put real statement rows in a fixture.
 
 ## Design system
@@ -61,7 +61,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 ## Navigation
 
 - `app/(auth)/login.tsx` and `app/alarm-ringing.tsx` are the only public screens; `app/(app)/` is protected (Stack.Protected + onAuthStateChange). The ringing screen opens over the lock screen, so it shows no personal data.
-- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms, Ulam · People: People, Debts, Inbox · Home and plans: Inventory, Shopping, Travel · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them, and each tile shows how much is inside. Settings is laid out at the end of More.
+- Tabs: Home · Money · Todos · Vehicle · More. More is a searchable grid of the other modules in sections (Daily life: Habits, Gym, Journal, Health, Alarms, Ulam, Sports · People: People, Debts, Inbox · Home and plans: Inventory, Shopping, Travel · Records and work: Documents, Vault, Content). `lib/modules.ts` lists them, and each tile shows how much is inside. Settings is laid out at the end of More.
 
 ## Releases
 
