@@ -4,9 +4,9 @@
 // Secrets (supabase secrets set ...): GOTYME_KEY, GCASH_KEY. MariBank PDFs have no password.
 // Log only the bank and the row count. Never log the file text, the rows or the keys.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
-import { getDocument } from "npm:pdfjs-dist@4.10.38/legacy/build/pdf.mjs";
-import * as pdfWorker from "npm:pdfjs-dist@4.10.38/legacy/build/pdf.worker.mjs";
+import { createClient } from "@supabase/supabase-js";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import * as pdfWorker from "pdfjs-dist/legacy/build/pdf.worker.mjs";
 
 import {
   addReferences,

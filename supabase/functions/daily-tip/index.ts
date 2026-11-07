@@ -5,14 +5,16 @@
 // Secrets (supabase secrets set ...): CRON_SECRET, GEMINI_API_KEY, optional GEMINI_MODEL.
 // The prompt has no personal data: Google may use free-tier content to improve its products.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 
 const TOPICS = ["life", "work", "relationships", "money", "health", "focus"] as const;
 const DEFAULT_MODEL = "gemini-2.5-flash";
 
 function localDay(timeZone: string): string {
   // en-CA formats as YYYY-MM-DD.
-  return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(
+    new Date(),
+  );
 }
 
 async function askGemini(topic: string): Promise<string> {
@@ -40,7 +42,9 @@ async function askGemini(topic: string): Promise<string> {
   });
   if (!res.ok) throw new Error(`Gemini ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const json = await res.json();
-  const text: string | undefined = json?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("");
+  const text: string | undefined = json?.candidates?.[0]?.content?.parts
+    ?.map((p: { text?: string }) => p.text ?? "")
+    .join("");
   const tip = text?.trim().replace(/^["“]|["”]$/g, "");
   if (!tip) throw new Error("Gemini returned no text");
   return tip.slice(0, 600);
@@ -68,7 +72,9 @@ Deno.serve(async (req) => {
   const { data: users, error } = await supabase.from("user_settings").select("user_id, timezone");
   if (error) throw error;
   const rows = users.map((u) => ({ user_id: u.user_id, on_date: localDay(u.timezone ?? "Asia/Manila"), topic, tip }));
-  const { error: insertError } = await supabase.from("daily_tips").upsert(rows, { onConflict: "user_id,on_date", ignoreDuplicates: true });
+  const { error: insertError } = await supabase
+    .from("daily_tips")
+    .upsert(rows, { onConflict: "user_id,on_date", ignoreDuplicates: true });
   if (insertError) throw insertError;
   return Response.json({ ok: true, topic, users: rows.length });
 });

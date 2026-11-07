@@ -7,7 +7,7 @@
 // Secrets (supabase secrets set ...): CRON_SECRET, GROQ_API_KEY, optional GROQ_MODEL.
 // The prompt has no name, no email and no money data.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 
 import { MAX_LIMIT, parseUlamReply, ulamPrompt, type Ulam, type UlamContext } from "../_shared/ulam.ts";
 
