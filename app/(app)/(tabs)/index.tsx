@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -30,7 +31,7 @@ import { todayChoice, useUlamDays } from "@/lib/ulam";
 import { useServiceDue, useVehicle } from "@/lib/vehicles";
 import { sleepMinutes, sleepRow, sleepText, useSleepLog } from "@/lib/sleep";
 import { stepsAverage, useSteps } from "@/lib/steps";
-import { useWeather } from "@/lib/weather";
+import { useWeather, weatherIcon } from "@/lib/weather";
 import { habitRow, moneyRow, todayIndex, todoRow, weekDays } from "@/lib/week";
 import { STRAND_WORD, type WeaveRow } from "@/lib/weave";
 
@@ -121,6 +122,7 @@ export default function HomeScreen() {
 
   const forecast = weather.data?.forecast;
   const today = format(now, "EEEE, MMM d");
+  const lineIcon = weatherIcon(forecast?.code, forecast?.isDay);
   const noPlace = weather.data !== undefined && weather.data.place === null;
   const weatherLine = forecast
     ? `${today} · ${forecast.temperature}° · Rain ${forecast.rain}%`
@@ -172,7 +174,10 @@ export default function HomeScreen() {
               onPress={() => router.push("/weather")}
               className="h-touch justify-center"
             >
-              <Text className="font-sans text-label text-on-shell">{weatherLine}</Text>
+              <View className="flex-row items-center gap-2">
+                {lineIcon ? <Ionicons name={lineIcon} size={18} color={colors.onShell} /> : null}
+                <Text className="min-w-0 shrink font-sans text-label text-on-shell">{weatherLine}</Text>
+              </View>
             </Pressable>
             <Text
               accessibilityRole="header"
@@ -287,7 +292,13 @@ export default function HomeScreen() {
             ) : (
               <View className="flex-row flex-wrap">
                 {shortcuts.map((m) => (
-                  <ModuleLine key={m.id} label={m.label} onPress={() => router.push(m.href)} />
+                  <ModuleLine
+                    key={m.id}
+                    label={m.label}
+                    icon={m.icon}
+                    tone={m.tone}
+                    onPress={() => router.push(m.href)}
+                  />
                 ))}
               </View>
             )}

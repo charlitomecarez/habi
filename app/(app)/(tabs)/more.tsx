@@ -76,6 +76,8 @@ export default function MoreScreen() {
                       <ModuleLine
                         key={m.id}
                         label={m.label}
+                        icon={m.icon}
+                        tone={m.tone}
                         detail={details[m.id]}
                         onPress={() => router.push(m.href)}
                       />

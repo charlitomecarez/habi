@@ -70,7 +70,7 @@ Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28
 | `DataRow`       | Title and detail, then number and status word. Stacks at 1.3 times text. It never cuts a number.                                         |
 | `BarChart`      | Bars of exact length, drawn with `View`.                                                                                                 |
 | `WeaveBand`     | The week: a row for each area, a strand for each day. Solid is good, split is watch, a dot is over.                                      |
-| `ModuleLine`    | A module on More or in the Home shortcuts: a name and how much is inside, two to a row.                                                  |
+| `ModuleLine`    | A module on More or in the Home shortcuts: an icon, a name and how much is inside.                                                       |
 | `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                                                        |
 | `FadeIn`        | A short fade for a list or section.                                                                                                      |
 | `PressScale`    | A `Pressable` that shrinks a little on press.                                                                                            |
