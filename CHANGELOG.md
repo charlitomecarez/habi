@@ -48,6 +48,7 @@ Do not put these items here:
 - **Changelog:** This page lists the changes in each release.
 - **Project agents and skills:** `.claude/` holds the release skills and the review agents.
 - **Database backup:** A daily job saves an encrypted copy of the database for 30 days. Storage files are not in it. Add two GitHub secrets to turn it on.
+- **RLS check:** A script proves on the live project that one account cannot reach the rows of another. It needs two test accounts.
 
 ### Changed
 

@@ -16,6 +16,7 @@
 | Web build check  | `npx expo export --platform web --max-workers 1`                  |
 | Apply migrations | `npx supabase db push --remote`                                   |
 | Generate types   | `npm run db:types`                                                |
+| RLS check        | `node --env-file=.env scripts/rls-check.mjs` (two test accounts)  |
 
 ## Memory
 
