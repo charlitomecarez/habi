@@ -29,6 +29,7 @@ import { useUserSettings } from "@/lib/settings";
 import { groupTodos, useTodos } from "@/lib/todos";
 import { todayChoice, useUlamDays } from "@/lib/ulam";
 import { useServiceDue, useVehicle } from "@/lib/vehicles";
+import { useWeather } from "@/lib/weather";
 import { habitRow, moneyRow, todayIndex, todoRow, weekDays } from "@/lib/week";
 import { STRAND_WORD, type WeaveRow } from "@/lib/weave";
 import { useAuth } from "@/providers/auth-provider";
@@ -71,6 +72,7 @@ export default function HomeScreen() {
   const budgets = useBudgetMonths(now);
   const habits = useHabits();
   const ulamDays = useUlamDays();
+  const weather = useWeather();
 
   const openToday = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
   const bills = subscriptions.data ?? [];
@@ -111,6 +113,10 @@ export default function HomeScreen() {
   const loading = todos.isPending || vehicle.isPending;
   const error = todos.error ?? vehicle.error ?? due.error ?? subscriptions.error ?? debts.error ?? people.error;
 
+  const forecast = weather.data?.forecast;
+  const today = format(now, "EEEE, MMM d");
+  const weatherLine = forecast ? `${today} · ${forecast.temperature}° · Rain ${forecast.rain}%` : today;
+
   const first = items[0];
   const firstRun = !loading && !error && items.length === 0 && (todos.data ?? []).length === 0;
   const sentence = loading
@@ -129,7 +135,14 @@ export default function HomeScreen() {
         <View>
           <View className="gap-1 bg-shell px-4 pb-2" style={{ paddingTop: insets.top + 8 }}>
             <View className="flex-row items-center justify-between gap-3">
-              <Text className="min-w-0 flex-1 font-sans text-label text-on-shell">{format(now, "EEEE, MMM d")}</Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Weather. ${weatherLine}`}
+                onPress={() => router.push("/weather")}
+                className="h-touch min-w-0 flex-1 justify-center"
+              >
+                <Text className="font-sans text-label text-on-shell">{weatherLine}</Text>
+              </Pressable>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Settings"

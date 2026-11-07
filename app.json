@@ -59,6 +59,12 @@
           "microphonePermission": false,
           "recordAudioAndroid": false
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "my-app uses your location only when you tap Use my location, to show your weather."
+        }
       ]
     ],
     "experiments": {
