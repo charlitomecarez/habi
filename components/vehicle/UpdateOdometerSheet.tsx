@@ -98,7 +98,7 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
         title="Lower the odometer?"
         subtitle={`From ${formatKm(currentKm)} km to ${formatKm(reading)} km`}
       >
-        <Notice tone="warning">
+        <Notice tone="neutral">
           {ended.length > 0
             ? `Service due dates change. ${names} ${ended.length === 1 ? "is" : "are"} no longer overdue, so the reminder stops.`
             : "Service due dates change."}
