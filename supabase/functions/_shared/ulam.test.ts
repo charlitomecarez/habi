@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { parseUlamReply, priceIngredients, ulamPrompt, type UlamContext } from "./ulam";
+import { checkedPhoto, commonsPhoto } from "./ulam-photos";
 import { ULAM_PRICES } from "./ulam-prices";
 
 const context: UlamContext = { limit: 99, recent: [], avoid: [] };
@@ -95,5 +96,28 @@ describe("ulamPrompt", () => {
 
   it("passes back the problems on the second try", () => {
     expect(ulamPrompt(context, ["Too expensive."])).toContain("Too expensive.");
+  });
+});
+
+describe("ulam photos", () => {
+  it("finds a checked photo by name, in any case", () => {
+    expect(checkedPhoto("Pinakbet")).toMatch(/^https:/);
+    expect(checkedPhoto("  CHICKEN ADOBO ")).toMatch(/^https:/);
+  });
+
+  it("finds a longer name that holds a checked dish", () => {
+    expect(checkedPhoto("Chicken adobo sa gata")).toBe(checkedPhoto("Chicken adobo"));
+  });
+
+  it("has no photo for an unknown dish", () => {
+    expect(checkedPhoto("Tuyo at kamatis")).toBeUndefined();
+  });
+
+  it("reads a Commons reply, and refuses anything else", () => {
+    const reply = (thumburl: string) => ({ query: { pages: { "1": { imageinfo: [{ thumburl }] } } } });
+    expect(commonsPhoto(reply("https://upload.wikimedia.org/a.jpg"))).toBe("https://upload.wikimedia.org/a.jpg");
+    expect(commonsPhoto(reply("http://example.com/a.jpg"))).toBeUndefined();
+    expect(commonsPhoto({})).toBeUndefined();
+    expect(commonsPhoto(null)).toBeUndefined();
   });
 });

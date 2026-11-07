@@ -7,9 +7,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MealSheet } from "@/components/ulam/MealSheet";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
-import { UlamPicture } from "@/components/ulam/UlamPicture";
+import { UlamPhoto } from "@/components/ulam/UlamPhoto";
 import { UlamSettingsSheet } from "@/components/ulam/UlamSettingsSheet";
 import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
 import { HeroCard } from "@/components/ui/HeroCard";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
@@ -66,9 +67,7 @@ export default function UlamScreen() {
             </View>
           ) : null}
 
-          <View className="items-center rounded-card bg-daily-tint py-4">
-            <UlamPicture kind={ulam.kind} />
-          </View>
+          <UlamPhoto ulam={ulam} />
 
           <HeroCard
             title={ulam.name}
@@ -78,6 +77,19 @@ export default function UlamScreen() {
               { value: `≈ ${ulam.kcal}`, label: "kcal, for one" },
             ]}
           />
+
+          {options.length > 1 ? (
+            <View className="flex-row gap-2">
+              {options.map((option, index) => (
+                <Chip
+                  key={option.name}
+                  label={String(index + 1)}
+                  selected={index === picked}
+                  onPress={() => save.mutate({ date: today, ...stored, picked: index })}
+                />
+              ))}
+            </View>
+          ) : null}
 
           <View className="gap-3">
             <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
@@ -100,21 +112,23 @@ export default function UlamScreen() {
           </View>
 
           <View className="gap-3">
-            <Button label="How to cook" variant="secondary" size="input" onPress={() => router.push("/ulam/cook")} />
-            {options.length > 1 ? (
-              <Button
-                label="Show another"
-                variant="secondary"
-                size="input"
-                onPress={() => save.mutate({ date: today, ...stored, picked: (picked + 1) % options.length })}
-              />
-            ) : null}
             <Button
               label={eaten ? "Undo I ate this" : "I ate this"}
               variant={eaten ? "secondary" : "primary"}
               loading={save.isPending}
               onPress={() => save.mutate({ date: today, ...stored, eaten: !eaten })}
             />
+            {picked < options.length - 1 ? (
+              <Button
+                label="Show another"
+                variant="secondary"
+                size="input"
+                onPress={() => save.mutate({ date: today, ...stored, picked: picked + 1 })}
+              />
+            ) : options.length > 1 ? (
+              <Text className="font-sans text-caption text-ink-muted">You saw all {options.length} for today.</Text>
+            ) : null}
+            <Button label="How to cook" variant="secondary" size="input" onPress={() => router.push("/ulam/cook")} />
             <Button label="I ate something else" variant="secondary" size="input" onPress={() => setTyping(true)} />
             <Button label="Last 7 days" variant="secondary" size="input" onPress={() => router.push("/ulam/week")} />
           </View>
