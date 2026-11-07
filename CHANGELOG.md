@@ -35,6 +35,8 @@ Do not put these items here:
 
 ## Unreleased
 
+## [v1.3.0](docs/releases/v1.3.0.md) - 2026-11-07
+
 ### Added
 
 - **Release workflow:** Each release has five steps: Planning, Design, Handoff, Development and Farewell. Charli gates each step.
