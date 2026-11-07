@@ -61,6 +61,7 @@ Do not put these items here:
 - **New look:** my-app has a new look, Banig: woven colour, a new font and larger touch targets. Install the new APK.
 - **Accounts:** The repo now records that sign-up is off. Only people the admin adds can use the app.
 - **UI changes:** Each UI change now needs the Impeccable check.
+- **README:** The banner shows the new look with sample data, and the text covers all nine Edge Functions and the backup.
 - **Design:** Every tab and module now follows the v1.3.0 mocks. Rows replace the information cards, and each module has its section header.
 - **Home:** The amount sits inside the sentence, rows show their number, and you can pull down to try again.
 - **Money:** A chart of this week and a Today list come first. Whole amounts drop ".00".
