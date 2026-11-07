@@ -13,6 +13,7 @@ import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
 import { useColors } from "@/lib/colors";
 import { economy, useFuelLogs } from "@/lib/fuel";
 import { formatPeso } from "@/lib/money";
+import { DAILY_CHECKS, useVehicleChecks, WEEKLY_CHECKS } from "@/lib/vehicle-checks";
 import {
   dueText,
   formatKm,
@@ -68,6 +69,7 @@ function ServiceRow({ service }: { service: ServiceDue }) {
 export default function VehicleScreen() {
   const colors = useColors();
   const [sheet, setSheet] = useState<"odometer" | "add" | null>(null);
+  const checks = useVehicleChecks();
   const vehicle = useVehicle();
   const vehicleId = vehicle.data?.id;
   const due = useServiceDue(vehicleId);
@@ -146,6 +148,29 @@ export default function VehicleScreen() {
               {[...dueNow, ...later].map((s) => (
                 <ServiceRow key={s.vehicleServiceId} service={s} />
               ))}
+            </View>
+
+            <View>
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Checks
+              </Text>
+              <DataRow
+                title="Before riding"
+                detail={`${checks.daily.length} of ${DAILY_CHECKS.length} done today`}
+                status={
+                  checks.daily.length === DAILY_CHECKS.length
+                    ? { label: "Done", tone: "good" }
+                    : { label: "Today", tone: "muted" }
+                }
+                onPress={() => router.push("/vehicle/checks")}
+              />
+              <DataRow
+                title="Weekly"
+                detail={`${checks.weekly.length} of ${WEEKLY_CHECKS.length} done this week`}
+                status={checks.weekly.length === WEEKLY_CHECKS.length ? { label: "Done", tone: "good" } : undefined}
+                onPress={() => router.push("/vehicle/checks")}
+                last
+              />
             </View>
 
             <View>

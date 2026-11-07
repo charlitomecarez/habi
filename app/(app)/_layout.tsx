@@ -51,6 +51,7 @@ export default function AppLayout() {
         <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="vehicle/log-service" />
         <Stack.Screen name="vehicle/mark-done" />
+        <Stack.Screen name="vehicle/checks" />
         <Stack.Screen name="vehicle/fuel/index" />
         <Stack.Screen name="vehicle/fuel/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="inventory/index" />
@@ -90,6 +91,7 @@ export default function AppLayout() {
         <Stack.Screen name="gym/plan/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="shopping/index" />
         <Stack.Screen name="journal/index" />
+        <Stack.Screen name="journal/entry/[date]" />
         <Stack.Screen name="journal/[date]" options={{ presentation: "modal" }} />
         <Stack.Screen name="health/index" />
         <Stack.Screen name="health/visit/[id]" />

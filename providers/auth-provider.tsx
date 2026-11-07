@@ -6,6 +6,7 @@ import { clearSleepLog } from "@/lib/sleep";
 import { refreshWidgets } from "@/lib/widgets";
 import { supabase } from "@/lib/supabase";
 import { lockVault } from "@/lib/vault";
+import { clearVehicleChecks } from "@/lib/vehicle-checks";
 
 type AuthState = {
   session: Session | null;
@@ -19,6 +20,7 @@ async function signOut() {
   lockVault();
   // Data on the phone must not reach the next account.
   await clearSleepLog();
+  await clearVehicleChecks();
   await signOutOfGoogle();
   await supabase.auth.signOut();
   await refreshWidgets();

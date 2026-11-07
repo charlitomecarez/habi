@@ -53,6 +53,8 @@ Do not put these items here:
 - **Sports:** Matches and standings for five football leagues and the NBA, in More. A tap on a match opens a web search. Scores are delayed, and the app shows no live scores.
 - **Find a work:** For the admin. The app finds and ranks jobs each day, drafts a cover letter when you ask, and opens the application. You press Submit on the employer page.
 - **Widgets:** Two Android home screen widgets show last night's sleep and today's screen time. They show nothing personal after sign-out.
+- **Vehicle:** CVT cleaning and steering bearings join the service list.
+- **Vehicle:** Checks holds the before-riding and weekly lists. Ticks stay on the phone, and they clear each day and each Monday.
 
 ### Changed
 
@@ -65,8 +67,10 @@ Do not put these items here:
 - **Todos:** All is the first filter, and the list has Overdue, Today and Later groups.
 - **Vehicle:** Bars show the distance used, and Fuel shows the average and the last fill-up.
 - **More:** Each module has its icon in its section colour, and so do the Home shortcuts.
+- **Vehicle:** ADV 160 intervals follow the updated maintenance checker: engine oil every 1,500 km, gear oil and brake pads 3,000 km, air filter 6,000 km, drive belt 12,000 km and battery 6 months. A custom interval stays.
 - **Money:** Accounts are now swipeable cards with a woven edge, under the chart.
 - **App icon:** The icon and the favicon are now indigo and cream, to match the theme.
+- **Journal:** A tap on an entry opens it to read, with the full text, the photo and links to the older and newer entries. The pencil opens the form.
 - **Weather:** It is now in More too, and Home says "Add your weather" until you pick a place.
 - **Weather:** The screen and the Home line show icons for sun, cloud, rain and storm, with the moon at night.
 - **Sports:** Standings use the design's columns, and NBA shows a win rate. Football teams show their crest, and NBA teams show their short code.
