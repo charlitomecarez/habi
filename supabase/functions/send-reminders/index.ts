@@ -6,7 +6,7 @@
 // Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY, optional APP_URL (adds a button to the digest).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by the platform.
 
-import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { reviewSections, reviewSummary, type WeeklyReview } from "../_shared/weekly.ts";
 import { buildDigest, buildWeeklyReview, type DigestInput } from "./digest.ts";

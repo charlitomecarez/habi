@@ -106,3 +106,7 @@ The repo holds these in `.claude/`, so each machine gets the same set.
 | `migration-reviewer`  | Agent | Reviews new migrations for RLS, ownership and safety  |
 | `docs-checker`        | Agent | Checks that the docs and the release record match     |
 | `ui-reviewer`         | Agent | Reviews UI changes with Impeccable                    |
+
+## Edge Functions
+
+Each function folder has its own `deno.json` with exact versions, because Supabase reads one file for each function. A new function needs one too. CI runs `deno check` on each function. Deno runs only in CI, not on this Mac.

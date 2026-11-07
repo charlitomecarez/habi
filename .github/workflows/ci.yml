@@ -26,3 +26,12 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      # tsc skips supabase/functions. Each function has its own deno.json, as Supabase reads one file for each function.
+      - name: Type check the Edge Functions
+        run: |
+          for config in supabase/functions/*/deno.json; do
+            deno check --no-lock --config "$config" "$(dirname "$config")/index.ts"
+          done

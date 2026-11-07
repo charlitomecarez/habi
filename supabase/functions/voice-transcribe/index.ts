@@ -8,7 +8,7 @@
 // Secrets (supabase secrets set ...): GROQ_API_KEY, CRON_SECRET, optional GROQ_SPEECH_MODEL.
 // Log only the status and the length. Never log the audio or the text.
 
-import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const DEFAULT_MODEL = "whisper-large-v3";
 const BUCKET = "voice-audio";
