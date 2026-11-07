@@ -54,6 +54,8 @@ Do not put these items here:
 - **RLS check:** A script proves on the live project that one account cannot reach the rows of another. It needs two test accounts.
 - **Money:** Recurring expenses and income save themselves on the days you pick, with an Auto label. You can delete a day, or pause a rule.
 - **Ulam:** Dishes show a real photo that stays on the phone. A dish with no photo keeps its drawing.
+- **Report a bug:** Any account can send a bug or an idea from More. The admin gets a push and reads it on the Reports screen.
+- **Reminders:** A tap on a reminder opens its item, not Home.
 
 ### Changed
 

@@ -67,6 +67,7 @@ Deleting a location sets `parent_id` and `location_id` to null on the children. 
 | `exchange_rates`         | One rate to PHP per foreign currency, set by the user.                                                                                                            |
 | `subscriptions`          | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                      |
 | `recurring_transactions` | A rule that saves its own row. `schedule`, `week_days`, `month_day`, `is_paused`, `last_run_on`. `add_due_recurring` runs each hour.                              |
+| `feedback`               | Report a bug. A sent report cannot change. `admin_select` and `admin_update` let `app_admins` read every row. 20 reports a day for each account.                  |
 | `transactions`           | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`. |
 
 Views:

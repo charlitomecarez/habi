@@ -354,6 +354,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      feedback: {
+        Row: {
+          app_version: string | null;
+          created_at: string;
+          device_model: string | null;
+          id: string;
+          kind: string;
+          message: string;
+          read_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          app_version?: string | null;
+          created_at?: string;
+          device_model?: string | null;
+          id?: string;
+          kind?: string;
+          message: string;
+          read_at?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          app_version?: string | null;
+          created_at?: string;
+          device_model?: string | null;
+          id?: string;
+          kind?: string;
+          message?: string;
+          read_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       fuel_logs: {
         Row: {
           created_at: string;
@@ -2480,6 +2513,7 @@ export type Database = {
       money_category_kind: "expense" | "income";
       person_date_kind: "birthday" | "anniversary" | "other";
       reminder_source:
+        | "feedback"
         | "todo"
         | "vehicle_service"
         | "custom"
@@ -2632,6 +2666,7 @@ export const Constants = {
       money_category_kind: ["expense", "income"],
       person_date_kind: ["birthday", "anniversary", "other"],
       reminder_source: [
+        "feedback",
         "todo",
         "vehicle_service",
         "custom",

@@ -50,12 +50,13 @@ export async function registerForPushNotifications(): Promise<void> {
   if (error) throw error;
 }
 
-/** Calls `open` when a tap on a voice message push opens the app. Returns the unsubscribe. */
-export function onInboxPushOpened(open: () => void): () => void {
+/** Calls `open` with the source and its ID when a tap on a push opens the app. Returns the unsubscribe. */
+export function onPushOpened(open: (source: unknown, sourceId: unknown) => void): () => void {
   const handle = (response: Notifications.NotificationResponse | null) => {
-    if (response?.notification.request.content.data?.source !== "inbox") return;
+    const data = response?.notification.request.content.data;
+    if (!data) return;
     Notifications.clearLastNotificationResponse();
-    open();
+    open(data.source, data.sourceId);
   };
   // A tap that started the app came before this listener.
   handle(Notifications.getLastNotificationResponse());

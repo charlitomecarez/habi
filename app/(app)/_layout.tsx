@@ -2,7 +2,8 @@ import { router, Stack } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 
-import { onInboxPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
+import { onPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
+import { reminderRoute } from "@/lib/reminder-route";
 import { noteVaultActivity } from "@/lib/vault";
 
 export default function AppLayout() {
@@ -12,7 +13,7 @@ export default function AppLayout() {
     });
   }, []);
 
-  useEffect(() => onInboxPushOpened(() => router.push("/inbox")), []);
+  useEffect(() => onPushOpened((source, id) => router.push(reminderRoute(source, id))), []);
 
   return (
     // Sees every touch without taking it, for the vault's idle lock.
@@ -33,6 +34,8 @@ export default function AppLayout() {
         <Stack.Screen name="travel/edit/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="travel/item/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="travel/item/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="reports/index" />
+        <Stack.Screen name="reports/[id]" />
         <Stack.Screen name="ulam/index" />
         <Stack.Screen name="ulam/cook" />
         <Stack.Screen name="ulam/week" />
