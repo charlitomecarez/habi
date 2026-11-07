@@ -10,6 +10,8 @@ export type ModuleEntry = {
   tone: TileTone;
   /** Extra words for the search on More. */
   keywords: string;
+  /** Only the admin sees this tile. The server checks too. */
+  adminOnly?: boolean;
 };
 
 export type ModuleSection = { title: string; modules: readonly ModuleEntry[] };
@@ -138,6 +140,15 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
   {
     title: "Records and work",
     modules: [
+      {
+        id: "work",
+        label: "Find a work",
+        href: "/work",
+        icon: { name: "briefcase-outline" },
+        tone: "records",
+        keywords: "job career resume cover letter apply",
+        adminOnly: true,
+      },
       {
         id: "documents",
         label: "Documents",

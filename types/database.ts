@@ -706,6 +706,117 @@ export type Database = {
           },
         ];
       };
+      job_matches: {
+        Row: {
+          applied_on: string | null;
+          company: string;
+          created_at: string;
+          external_id: string;
+          id: string;
+          is_remote: boolean;
+          letter: string | null;
+          location: string | null;
+          posted_on: string | null;
+          reason: string;
+          score: number;
+          status: string;
+          summary: string | null;
+          title: string;
+          updated_at: string;
+          url: string;
+          user_id: string;
+          visa_offered: boolean;
+        };
+        Insert: {
+          applied_on?: string | null;
+          company: string;
+          created_at?: string;
+          external_id: string;
+          id?: string;
+          is_remote?: boolean;
+          letter?: string | null;
+          location?: string | null;
+          posted_on?: string | null;
+          reason: string;
+          score: number;
+          status?: string;
+          summary?: string | null;
+          title: string;
+          updated_at?: string;
+          url: string;
+          user_id?: string;
+          visa_offered?: boolean;
+        };
+        Update: {
+          applied_on?: string | null;
+          company?: string;
+          created_at?: string;
+          external_id?: string;
+          id?: string;
+          is_remote?: boolean;
+          letter?: string | null;
+          location?: string | null;
+          posted_on?: string | null;
+          reason?: string;
+          score?: number;
+          status?: string;
+          summary?: string | null;
+          title?: string;
+          updated_at?: string;
+          url?: string;
+          user_id?: string;
+          visa_offered?: boolean;
+        };
+        Relationships: [];
+      };
+      job_profiles: {
+        Row: {
+          countries: string[];
+          created_at: string;
+          id: string;
+          last_new_count: number;
+          last_ok_at: string | null;
+          last_run_at: string | null;
+          past_roles: string;
+          remote_ok: boolean;
+          salary_floor: number | null;
+          skills: string[];
+          updated_at: string;
+          user_id: string;
+          wanted_jobs: string[];
+        };
+        Insert: {
+          countries?: string[];
+          created_at?: string;
+          id?: string;
+          last_new_count?: number;
+          last_ok_at?: string | null;
+          last_run_at?: string | null;
+          past_roles?: string;
+          remote_ok?: boolean;
+          salary_floor?: number | null;
+          skills?: string[];
+          updated_at?: string;
+          user_id?: string;
+          wanted_jobs?: string[];
+        };
+        Update: {
+          countries?: string[];
+          created_at?: string;
+          id?: string;
+          last_new_count?: number;
+          last_ok_at?: string | null;
+          last_run_at?: string | null;
+          past_roles?: string;
+          remote_ok?: boolean;
+          salary_floor?: number | null;
+          skills?: string[];
+          updated_at?: string;
+          user_id?: string;
+          wanted_jobs?: string[];
+        };
+        Relationships: [];
+      };
       journal_entries: {
         Row: {
           body: string;
