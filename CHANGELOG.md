@@ -60,6 +60,7 @@ Do not put these items here:
 - **Steps and sleep:** Home shows your steps from Health Connect, and the sleep that you type. Both stay on the phone.
 - **Sports:** Matches and standings for five football leagues and the NBA, in More. A tap on a match opens a web search. Scores are delayed, and the app shows no live scores.
 - **Find a work:** For the admin. The app finds and ranks jobs each day, drafts a cover letter when you ask, and opens the application. You press Submit on the employer page.
+- **Widgets:** Two Android home screen widgets show last night's sleep and today's screen time. They show nothing personal after sign-out.
 
 ### Changed
 

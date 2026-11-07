@@ -7,6 +7,7 @@ import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { sleepMinutes, sleepText, useSaveSleep } from "@/lib/sleep";
+import { refreshWidgets } from "@/lib/widgets";
 
 const at = (hours: number, minutes = 0) => set(new Date(), { hours, minutes, seconds: 0 });
 
@@ -34,7 +35,18 @@ export function SleepSheet({ visible, onClose }: { visible: boolean; onClose: ()
         label="Save sleep"
         loading={save.isPending}
         disabled={!entry}
-        onPress={() => entry && save.mutate({ day: new Date(), entry }, { onSuccess: onClose })}
+        onPress={() =>
+          entry &&
+          save.mutate(
+            { day: new Date(), entry },
+            {
+              onSuccess: () => {
+                void refreshWidgets();
+                onClose();
+              },
+            },
+          )
+        }
       />
     </Sheet>
   );

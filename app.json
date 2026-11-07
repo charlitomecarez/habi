@@ -75,6 +75,31 @@
             "minSdkVersion": 26
           }
         }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Sleep",
+              "label": "Sleep",
+              "description": "Last night's sleep",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "previewImage": "./assets/icon.png",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "ScreenTime",
+              "label": "Screen time",
+              "description": "Today's screen time, with no app names",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "previewImage": "./assets/icon.png",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
       ]
     ],
     "experiments": {

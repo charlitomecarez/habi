@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 import { signOutOfGoogle } from "@/lib/google-sign-in";
 import { clearSleepLog } from "@/lib/sleep";
+import { refreshWidgets } from "@/lib/widgets";
 import { supabase } from "@/lib/supabase";
 import { lockVault } from "@/lib/vault";
 
@@ -20,6 +21,7 @@ async function signOut() {
   await clearSleepLog();
   await signOutOfGoogle();
   await supabase.auth.signOut();
+  await refreshWidgets();
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
