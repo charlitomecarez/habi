@@ -69,3 +69,7 @@ If `RESEND_API_KEY` is not set, step 2 does nothing.
 - Supabase Vault secrets (SQL editor, once per database): `project_url` and `reminders_cron_secret`. The cron job reads them, so no secret is in git.
 
 The README has the commands.
+
+## Reminder taps
+
+`send-reminders` adds `sourceId` to the push data. `lib/reminder-route.ts` maps a source to a route, and `onPushOpened` opens it. A push with no ID opens the list. Deploy the function before you install the APK.

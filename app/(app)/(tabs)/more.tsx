@@ -4,19 +4,24 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ReportSheet } from "@/components/more/ReportSheet";
 import { SettingsSection } from "@/components/settings/SettingsSection";
+import { Button } from "@/components/ui/Button";
 import { ModuleTile } from "@/components/ui/ModuleTile";
 import { FadeIn } from "@/components/ui/Motion";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useColors } from "@/lib/colors";
 import { useModuleDetails } from "@/lib/module-details";
 import { searchModules } from "@/lib/modules";
+import { useVoiceAccess } from "@/lib/voice";
 
 export default function MoreScreen() {
   const colors = useColors();
   const [query, setQuery] = useState("");
   const sections = searchModules(query);
   const details = useModuleDetails();
+  const isAdmin = useVoiceAccess().data?.isAdmin ?? false;
+  const [reporting, setReporting] = useState(false);
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -77,8 +82,16 @@ export default function MoreScreen() {
           </View>
         </FadeIn>
 
+        <View className="gap-3">
+          <Button label="Report a bug" variant="secondary" size="input" onPress={() => setReporting(true)} />
+          {isAdmin ? (
+            <Button label="Reports" variant="secondary" size="input" onPress={() => router.push("/reports")} />
+          ) : null}
+        </View>
+
         <SettingsSection />
       </ScrollView>
+      <ReportSheet visible={reporting} onClose={() => setReporting(false)} />
     </SafeAreaView>
   );
 }

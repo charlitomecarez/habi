@@ -73,7 +73,16 @@ const SEEDS = [
 ];
 
 // The app cannot write these, or each account holds one fixed row. Account B must still read none of A's rows.
-const READ_ONLY = ["app_admins", "exchange_rates", "user_settings", "vault_settings", "voice_access", "voice_messages"];
+// feedback rows cannot be deleted, so the script adds none there.
+const READ_ONLY = [
+  "app_admins",
+  "exchange_rates",
+  "feedback",
+  "user_settings",
+  "vault_settings",
+  "voice_access",
+  "voice_messages",
+];
 
 /** Every public table with a user_id column, from the generated types. */
 function ownedTables() {
