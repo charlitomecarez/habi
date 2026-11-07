@@ -77,6 +77,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "daily",
         keywords: "football nba basketball standings",
       },
+      {
+        id: "weather",
+        label: "Weather",
+        href: "/weather",
+        icon: { name: "partly-sunny-outline" },
+        tone: "daily",
+        keywords: "rain forecast temperature ulan panahon",
+      },
     ],
   },
   {

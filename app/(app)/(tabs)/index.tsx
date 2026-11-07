@@ -121,7 +121,12 @@ export default function HomeScreen() {
 
   const forecast = weather.data?.forecast;
   const today = format(now, "EEEE, MMM d");
-  const weatherLine = forecast ? `${today} · ${forecast.temperature}° · Rain ${forecast.rain}%` : today;
+  const noPlace = weather.data !== undefined && weather.data.place === null;
+  const weatherLine = forecast
+    ? `${today} · ${forecast.temperature}° · Rain ${forecast.rain}%`
+    : noPlace
+      ? `${today} · Add your weather`
+      : today;
 
   const stepWeek = steps.data?.week ?? [];
   const stepsToday = stepWeek[stepWeek.length - 1] ?? 0;
