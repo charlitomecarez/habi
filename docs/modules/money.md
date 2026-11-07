@@ -62,7 +62,7 @@ Other banks and CSV files are not built.
 
 ## Statement import
 
-- `/money/import` sends a PDF to the `import-statement` Edge Function. The function holds `GOTYME_KEY` and `GCASH_KEY` as secrets, so the keys never reach the phone.
+- `/money/import` sends a PDF to the `import-statement` Edge Function. The function holds `GOTYME_KEY` and `GCASH_KEY` as secrets, so the keys never reach the phone. They are not kept in `.env`.
 - `supabase/functions/_shared/statements.ts` finds the bank and parses the rows. A totals mismatch stops the import.
 - `buildReview` in `lib/import.ts` removes repeats, pairs own transfers, and unticks possible duplicates.
 - `import_transactions` saves the ticked rows with `source = 'import'`. `external_ref` stops repeats.

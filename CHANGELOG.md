@@ -45,6 +45,7 @@ Do not put these items here:
 
 ### Changed
 
+- **Accounts:** The repo now records that sign-up is off. Only people the admin adds can use the app.
 - **UI changes:** Each UI change now needs the Impeccable check.
 
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06

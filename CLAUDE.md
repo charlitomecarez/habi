@@ -1,6 +1,6 @@
 # my-app
 
-Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Anyone can create an account, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance (Honda ADV 160 default), room inventory, money and subscriptions, password vault.
+Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance (Honda ADV 160 default), room inventory, money and subscriptions, password vault.
 
 - Display name: my-app
 - Android package: `com.charli.myapp` (app.json `android.package`; Google OAuth Android client IDs and FCM use it)
@@ -29,6 +29,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Anyone
 - `npm run typecheck`, `npm run lint` and `npm test` before each PR. Run them one at a time.
 - This Mac has 8 GB of RAM. Run one heavy command at a time, and stop the dev server when you finish. For a web build check, use `npx expo export --platform web --max-workers 1`.
 - `npx supabase db push --remote` for migrations. Do not use Docker or a local Supabase server. The CLI targets a local stack without `--remote`.
+- Never run `supabase config push`. `supabase/config.toml` has a localhost `site_url` and differs from the live auth settings.
 - `npm run db:types` after every migration. It reads the linked live project, so it needs no Docker.
 
 ## Rules

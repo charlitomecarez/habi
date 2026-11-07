@@ -40,6 +40,9 @@ yarn-error.*
 /ios
 /android
 
+# Gradle output of local Expo modules
+modules/*/android/build/
+
 # local env (holds Supabase and Google client IDs)
 .env
 
