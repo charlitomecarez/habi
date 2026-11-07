@@ -62,7 +62,7 @@ export default function HealthScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-6 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-6 px-5 pb-8 pt-2">
         {health.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : health.error || !data ? (
@@ -73,9 +73,9 @@ export default function HealthScreen() {
         ) : (
           <>
             <Section title="Doses today">
-              <View className="overflow-hidden">
+              <View>
                 {doses.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No doses today.</Text>
+                  <Text className="py-3 font-sans text-caption text-ink-muted">No doses today.</Text>
                 ) : (
                   doses.map((d, i) => <DoseRow key={d.id} dose={d} last={i === doses.length - 1} />)
                 )}
@@ -83,9 +83,9 @@ export default function HealthScreen() {
             </Section>
 
             <Section title="Medicines">
-              <View className="overflow-hidden">
+              <View>
                 {active.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No medicines right now.</Text>
+                  <Text className="py-3 font-sans text-caption text-ink-muted">No medicines right now.</Text>
                 ) : (
                   active.map((m, i) => (
                     <Pressable
@@ -93,7 +93,7 @@ export default function HealthScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${m.name}, ${m.times.map(timeText).join(", ")}. Edit`}
                       onPress={() => router.push({ pathname: "/health/medicine/[id]", params: { id: m.id } })}
-                      className={`min-h-touch gap-1 px-4 py-3 active:bg-surface-muted ${i === active.length - 1 ? "" : "border-b-2 border-border"}`}
+                      className={`min-h-touch gap-1 py-3 active:bg-surface-muted ${i === active.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Text className="font-semibold text-row-title text-ink">{m.name}</Text>
                       <Text className="font-sans text-caption text-ink-muted">
@@ -118,7 +118,7 @@ export default function HealthScreen() {
             </Section>
 
             <Section title={latest ? `Weight · ${kg(latest.weight_kg)}` : "Weight"}>
-              <View className="rounded-card border border-border bg-surface-card p-3">
+              <View>
                 <LineChart
                   points={weights.map((w) => ({ date: w.on_date, value: w.weight_kg }))}
                   format={kg}
@@ -126,14 +126,14 @@ export default function HealthScreen() {
                 />
               </View>
               {weights.length ? (
-                <View className="overflow-hidden">
+                <View>
                   {[...weights]
                     .reverse()
                     .slice(0, 5)
                     .map((w, i, list) => (
                       <View
                         key={w.id}
-                        className={`min-h-touch flex-row items-center gap-3 py-1 pl-4 pr-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
+                        className={`min-h-touch flex-row items-center gap-3 py-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
                       >
                         <Text className="min-w-0 flex-1 font-sans text-body text-ink">
                           {format(parseISO(w.on_date), "EEE, MMM d")}
@@ -164,9 +164,9 @@ export default function HealthScreen() {
             </Section>
 
             <Section title="Doctor visits">
-              <View className="overflow-hidden">
+              <View>
                 {data.visits.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No visits logged.</Text>
+                  <Text className="py-3 font-sans text-caption text-ink-muted">No visits logged.</Text>
                 ) : (
                   data.visits.map((v, i) => (
                     <Pressable
@@ -174,7 +174,7 @@ export default function HealthScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${format(parseISO(v.visited_on), "MMMM d, yyyy")}, ${v.doctor || v.reason}. Open`}
                       onPress={() => router.push({ pathname: "/health/visit/[id]", params: { id: v.id } })}
-                      className={`min-h-touch gap-1 px-4 py-3 active:bg-surface-muted ${i === data.visits.length - 1 ? "" : "border-b-2 border-border"}`}
+                      className={`min-h-touch gap-1 py-3 active:bg-surface-muted ${i === data.visits.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Text className="font-semibold text-row-title text-ink">{v.doctor || v.reason}</Text>
                       <Text className="font-sans text-caption text-ink-muted">

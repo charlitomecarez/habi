@@ -5,7 +5,6 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
-import { DataRow } from "@/components/ui/DataRow";
 import { useColors } from "@/lib/colors";
 import { isScreenTimeSupported, openUsageSettings, useScreenTime, useUsageAccess } from "@/lib/screen-time";
 
@@ -50,7 +49,20 @@ export function ScreenTimeCard() {
           </>
         ) : (
           <>
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center gap-1">
+              <View className="min-w-0 flex-1">
+                {isToday(day) ? null : (
+                  <Text className="font-medium text-caption text-ink-muted">{format(day, "EEEE, MMM d")}</Text>
+                )}
+                <Text
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                  numberOfLines={1}
+                  className="font-bold text-display text-ink"
+                >
+                  {usage.data ? duration(usage.data.day.totalMs) : "…"}
+                </Text>
+              </View>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Previous day"
@@ -59,14 +71,6 @@ export function ScreenTimeCard() {
               >
                 <Ionicons name="chevron-back" size={20} color={colors.ink} />
               </Pressable>
-              <View className="min-w-0 flex-1 items-center gap-1">
-                <Text className="font-medium text-caption text-ink-muted">
-                  {isToday(day) ? "Today" : format(day, "EEEE, MMM d")}
-                </Text>
-                <Text className="font-bold text-title text-ink">
-                  {usage.data ? duration(usage.data.day.totalMs) : "…"}
-                </Text>
-              </View>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Next day"
@@ -86,7 +90,9 @@ export function ScreenTimeCard() {
               </Text>
             ) : usage.data ? (
               <>
-                <Text className="font-sans text-caption text-ink-muted">
+                <Text
+                  className={`font-semibold text-caption ${usage.data.day.totalMs <= usage.data.weekMs / 7 ? "text-good" : "text-over"}`}
+                >
                   {compareText(usage.data.day.totalMs, usage.data.weekMs / 7)}
                 </Text>
                 <BarChart
@@ -98,13 +104,19 @@ export function ScreenTimeCard() {
                 <Text className="font-sans text-caption text-ink-muted">
                   Average {duration(usage.data.weekMs / 7)} a day
                 </Text>
-                {usage.data.day.apps.slice(0, TOP_APPS).map((a, index, list) => (
-                  <DataRow
-                    key={a.packageName}
-                    title={a.label}
-                    value={duration(a.totalMs)}
-                    last={index === list.length - 1}
-                  />
+                {usage.data.day.apps.slice(0, TOP_APPS).map((a) => (
+                  <View key={a.packageName} className="gap-1">
+                    <View className="flex-row justify-between gap-3">
+                      <Text className="min-w-0 shrink font-sans text-label text-ink">{a.label}</Text>
+                      <Text className="font-sans text-label text-ink-muted">{duration(a.totalMs)}</Text>
+                    </View>
+                    <View className="h-bar bg-surface-muted">
+                      <View
+                        className="h-full bg-accent"
+                        style={{ width: `${Math.min(100, (a.totalMs / Math.max(usage.data.day.totalMs, 1)) * 100)}%` }}
+                      />
+                    </View>
+                  </View>
                 ))}
               </>
             ) : null}

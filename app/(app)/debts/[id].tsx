@@ -87,20 +87,20 @@ export default function DebtScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
 
-        <View className="gap-3 rounded-hero bg-accent p-5">
-          <Text className="font-medium text-label text-on-accent/90">{owedToMe ? "Owes you" : "You owe"}</Text>
+        <View className="gap-1">
+          <Text className="font-medium text-label text-ink-muted">{owedToMe ? "Owes you" : "You owe"}</Text>
           <Text
             adjustsFontSizeToFit
             minimumFontScale={0.7}
             numberOfLines={1}
-            className="font-bold text-display text-on-accent"
+            className="font-bold text-display text-ink"
           >
             {formatPeso(d.balance)}
           </Text>
-          <Text className="font-sans text-caption text-on-accent/90">
+          <Text className="font-sans text-caption text-ink-muted">
             {formatPeso(d.paid)} paid of {formatPeso(d.amount)} · since {format(parseISO(d.occurred_on), "MMM d, yyyy")}
           </Text>
         </View>
@@ -115,9 +115,9 @@ export default function DebtScreen() {
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
             Payments
           </Text>
-          <View className="overflow-hidden">
+          <View>
             {(payments.data ?? []).length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No payments yet.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No payments yet.</Text>
             ) : (
               payments.data?.map((p, i) => (
                 <View

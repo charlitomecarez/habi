@@ -199,9 +199,9 @@ export default function ShoppingScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   To buy · {toBuy.length}
                 </Text>
-                <View className="overflow-hidden">
+                <View>
                   {toBuy.length === 0 ? (
-                    <Text className="px-4 py-3 font-sans text-caption text-ink-muted">Nothing left to buy.</Text>
+                    <Text className="py-3 font-sans text-caption text-ink-muted">Nothing left to buy.</Text>
                   ) : (
                     toBuy.map((i, n) => <ItemRow key={i.id} item={i} last={n === toBuy.length - 1} />)
                   )}
@@ -212,7 +212,7 @@ export default function ShoppingScreen() {
                   <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                     In the cart · {inCart.length}
                   </Text>
-                  <View className="overflow-hidden">
+                  <View>
                     {inCart.map((i, n) => (
                       <ItemRow key={i.id} item={i} last={n === inCart.length - 1} />
                     ))}

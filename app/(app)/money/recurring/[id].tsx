@@ -4,11 +4,11 @@ import { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useAccounts } from "@/lib/money";
 import {
@@ -20,21 +20,6 @@ import {
   useRecurringRows,
   useSetRecurringPaused,
 } from "@/lib/recurring";
-
-function Fact({ label, detail, value, auto }: { label: string; detail: string; value: string; auto?: boolean }) {
-  return (
-    <View className="flex-row items-center gap-3 border-b-2 border-border py-3">
-      <View className="min-w-0 flex-1 gap-1">
-        <Text className="font-semibold text-row-title text-ink">{label}</Text>
-        <Text className="font-sans text-caption text-ink-muted">{detail}</Text>
-      </View>
-      <View className="items-end gap-1">
-        <Text className="font-semibold text-label text-ink">{value}</Text>
-        {auto ? <Badge label="Auto" tone="neutral" /> : null}
-      </View>
-    </View>
-  );
-}
 
 export default function RecurringRuleScreen() {
   const colors = useColors();
@@ -51,6 +36,7 @@ export default function RecurringRuleScreen() {
   const saved = rows.data ?? [];
   const thisMonth = saved.filter((r) => isSameMonth(parseISO(r.occurred_on), now));
   const account = accounts.data?.find((a) => a.id === rule?.account_id)?.name ?? "";
+  const nextLine = rule && !rule.is_paused ? nextText(nextDate(rule, now), now).replace("Next: ", "") : undefined;
 
   async function onDelete() {
     await remove.mutateAsync(id);
@@ -60,18 +46,11 @@ export default function RecurringRuleScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar backLabel="Back to Recurring">
-        <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-on-shell">
-            {rule?.name ?? "Recurring"}
-          </Text>
-          {rule ? (
-            <Text className="font-sans text-caption text-on-shell">
-              {scheduleText(rule)} · {formatPeso(rule.amount)}
-            </Text>
-          ) : null}
-        </View>
-      </ModuleBar>
+      <ModuleHeader
+        title={rule?.name ?? "Recurring"}
+        backLabel="Back to Recurring"
+        subtitle={rule ? `${scheduleText(rule)} · ${formatPeso(rule.amount)}` : undefined}
+      />
 
       {!rule ? (
         <View className="flex-1 items-center justify-center px-5">
@@ -82,31 +61,31 @@ export default function RecurringRuleScreen() {
           )}
         </View>
       ) : (
-        <ScrollView contentContainerClassName="gap-4 px-5 pb-10 pt-2">
+        <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
           <View>
-            <Fact
-              label={rule.is_paused ? "Paused" : nextText(nextDate(rule, now), now).replace("Next: ", "Next ")}
-              detail={account}
+            <DataRow
+              title={rule.is_paused ? "Paused" : "Next"}
+              detail={[nextLine, account].filter(Boolean).join(" · ")}
               value={formatPeso(rule.amount)}
             />
             {saved[0] ? (
-              <Fact
-                label="Last saved"
+              <DataRow
+                title="Last saved"
                 detail={format(parseISO(saved[0].occurred_on), "EEE, MMM d")}
                 value={formatPeso(saved[0].amount)}
-                auto
+                status={{ label: "Auto", tone: "muted" }}
               />
             ) : null}
-            <Fact
-              label="This month"
+            <DataRow
+              title="This month"
               detail={`${thisMonth.length} ${thisMonth.length === 1 ? "day" : "days"}`}
               value={formatPeso(thisMonth.reduce((sum, r) => sum + r.amount, 0))}
             />
           </View>
 
-          <Text className="font-sans text-caption text-ink-muted">
+          <Notice tone="neutral">
             Pause it for a holiday. When you turn it on again, it does not add the days that you missed.
-          </Text>
+          </Notice>
           {setPaused.error ? <Notice tone="danger">Could not save. Check your connection.</Notice> : null}
 
           <Button
@@ -119,7 +98,7 @@ export default function RecurringRuleScreen() {
             variant="secondary"
             onPress={() => router.push({ pathname: "/money/recurring/edit", params: { id: rule.id } })}
           />
-          <Button label="Delete recurring" variant="destructive" onPress={() => setConfirming(true)} />
+          <Button label="Delete recurring" variant="plain" size="input" onPress={() => setConfirming(true)} />
         </ScrollView>
       )}
 

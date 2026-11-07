@@ -87,7 +87,7 @@ export default function WorkoutScreen() {
         </View>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-2">
         {toggle.error ? <Notice tone="danger">{toggle.error.message}</Notice> : null}
         {exercises.length === 0 ? (
           <Notice tone="warning">This workout day has no exercises yet. Add them from Workout days.</Notice>

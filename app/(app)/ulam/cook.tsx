@@ -27,7 +27,7 @@ export default function HowToCookScreen() {
         <Text className="font-sans text-label text-ink-muted">
           {ulam.name} · {ulam.cookMinutes} min
         </Text>
-        <View className="overflow-hidden">
+        <View>
           {ulam.steps.map((step, index) => (
             <View
               key={step}

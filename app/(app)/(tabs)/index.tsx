@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { InboxCard } from "@/components/home/InboxCard";
@@ -11,9 +11,8 @@ import { TipCard } from "@/components/home/TipCard";
 import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
-import { ModuleTile } from "@/components/ui/ModuleTile";
+import { ModuleLine } from "@/components/ui/ModuleLine";
 import { Notice } from "@/components/ui/Notice";
-import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { Sheet } from "@/components/ui/Sheet";
 import { WeaveBand } from "@/components/ui/WeaveBand";
 import { useBudgetMonths } from "@/lib/budgets";
@@ -34,13 +33,17 @@ import { stepsAverage, useSteps } from "@/lib/steps";
 import { useWeather } from "@/lib/weather";
 import { habitRow, moneyRow, todayIndex, todoRow, weekDays } from "@/lib/week";
 import { STRAND_WORD, type WeaveRow } from "@/lib/weave";
-import { useAuth } from "@/providers/auth-provider";
 
 /** Home shows this many rows, then "See all". */
 const ATTENTION_LIMIT = 5;
 
-const STATUS_TONE = { Overdue: "over", Today: "watch", "Due soon": "watch" } as const;
+const STATUS_TONE = { Overdue: "over", Today: "over", "Due soon": "watch" } as const;
 const STRAND_TONE = { good: "good", watch: "watch", over: "over", empty: "muted" } as const;
+
+/** "Engine oil" reads as "engine oil" inside a sentence. "LTO renewal" keeps its capitals. */
+function inSentence(title: string): string {
+  return /^[A-Z][a-z]/.test(title) ? title.charAt(0).toLowerCase() + title.slice(1) : title;
+}
 
 function SectionTitle({ children }: { children: string }) {
   return (
@@ -52,10 +55,7 @@ function SectionTitle({ children }: { children: string }) {
 
 export default function HomeScreen() {
   const colors = useColors();
-  const { session } = useAuth();
   const now = new Date();
-  const fullName = session?.user.user_metadata.full_name as string | undefined;
-  const initial = (fullName ?? session?.user.email ?? "?").charAt(0).toUpperCase();
   const insets = useSafeAreaInsets();
 
   const [showAll, setShowAll] = useState(false);
@@ -83,6 +83,7 @@ export default function HomeScreen() {
   const items = buildAttention(
     {
       services: vehicle.data ? (due.data ?? []) : [],
+      vehicleLabel: vehicle.data ? (vehicle.data.nickname ?? vehicle.data.model) : undefined,
       todos: openToday,
       bills,
       doses: health.data ? todaysDoses(health.data.doses, now) : [],
@@ -127,6 +128,19 @@ export default function HomeScreen() {
   const lastNight = sleepLog.data?.[toDateString(now)];
 
   const first = items[0];
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      todos.refetch(),
+      vehicle.refetch(),
+      due.refetch(),
+      subscriptions.refetch(),
+      debts.refetch(),
+      people.refetch(),
+    ]);
+    setRefreshing(false);
+  };
   const firstRun = !loading && !error && items.length === 0 && (todos.data ?? []).length === 0;
   const sentence = loading
     ? "Checking your day"
@@ -137,49 +151,47 @@ export default function HomeScreen() {
         : items.length === 0
           ? "Nothing is due today."
           : todaySentence(items);
+  const showAmount = !loading && !error && !firstRun;
 
   return (
     <View className="flex-1 bg-surface-page">
-      <ScrollView contentContainerClassName="gap-6 pb-8">
+      <ScrollView
+        contentContainerClassName="gap-6 pb-8"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.accent} />}
+      >
         <View>
-          <View className="gap-1 bg-shell px-4 pb-2" style={{ paddingTop: insets.top + 8 }}>
-            <View className="flex-row items-center justify-between gap-3">
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={`Weather. ${weatherLine}`}
-                onPress={() => router.push("/weather")}
-                className="h-touch min-w-0 flex-1 justify-center"
-              >
-                <Text className="font-sans text-label text-on-shell">{weatherLine}</Text>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Settings"
-                onPress={() => router.push("/more")}
-                className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-on-shell"
-              >
-                <ProfilePhoto letter={initial} letterClassName="font-semibold text-body text-shell" />
-              </Pressable>
-            </View>
+          <View className="gap-1 bg-shell px-5 pb-2" style={{ paddingTop: insets.top + 8 }}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Weather. ${weatherLine}`}
+              onPress={() => router.push("/weather")}
+              className="h-touch justify-center"
+            >
+              <Text className="font-sans text-label text-on-shell">{weatherLine}</Text>
+            </Pressable>
             <Text
               accessibilityRole="header"
               adjustsFontSizeToFit
               minimumFontScale={0.7}
-              numberOfLines={3}
+              numberOfLines={4}
               className="font-bold text-say text-on-shell"
             >
               {sentence}
+              {showAmount ? (
+                <>
+                  {" "}
+                  <Text className="text-watch-fill">{formatPeso(hasBudget ? moneyLeft : spentToday)}</Text>
+                  {hasBudget ? " left this month." : " spent today."}
+                </>
+              ) : null}
             </Text>
-            <Text className="font-bold text-amount text-watch-fill">
-              {hasBudget ? `${formatPeso(moneyLeft)} left this month` : `${formatPeso(spentToday)} spent today`}
-            </Text>
-            {first ? (
+            {first && showAmount ? (
               <Pressable
                 accessibilityRole="link"
                 onPress={() => router.push(first.href)}
                 className="h-touch justify-center"
               >
-                <Text className="font-semibold text-label text-on-shell underline">Open {first.title}</Text>
+                <Text className="font-semibold text-label text-on-shell underline">Open {inSentence(first.title)}</Text>
               </Pressable>
             ) : null}
           </View>
@@ -187,10 +199,11 @@ export default function HomeScreen() {
         </View>
 
         <View className="gap-6 px-5">
-          <InboxCard />
-
           {error ? (
-            <Notice tone="danger">Could not load everything. Check your connection, then try again.</Notice>
+            <Notice tone="danger">
+              {todos.error ? "Could not load todos." : "Could not load everything."} Check your connection, then pull
+              down to try again.
+            </Notice>
           ) : null}
 
           {firstRun ? (
@@ -201,15 +214,15 @@ export default function HomeScreen() {
               </Text>
               <Button label="Add todo" onPress={() => router.push("/todo/new")} />
             </View>
-          ) : (
+          ) : loading ? null : (
             <View>
-              {loading ? <ActivityIndicator color={colors.accent} className="py-4" /> : null}
               {visible.map((item) => (
                 <DataRow
                   key={item.key}
                   title={item.title}
                   detail={item.detail}
-                  status={{ label: item.status, tone: STATUS_TONE[item.status] }}
+                  value={item.value}
+                  status={{ label: item.status, tone: item.quiet ? "muted" : STATUS_TONE[item.status] }}
                   onPress={() => router.push(item.href)}
                 />
               ))}
@@ -228,7 +241,9 @@ export default function HomeScreen() {
                 title={ulam.name}
                 detail="Today's ulam"
                 value={formatPeso(ulam.cost)}
-                status={{ label: "Under limit", tone: "good" }}
+                status={
+                  error ? { label: "Saved on this phone", tone: "muted" } : { label: "Under limit", tone: "good" }
+                }
                 onPress={() => router.push("/ulam")}
               />
               <DataRow
@@ -246,16 +261,18 @@ export default function HomeScreen() {
             </View>
           )}
 
+          <InboxCard />
+
           <ScreenTimeCard />
 
-          <View className="gap-3">
+          <View>
             <View className="flex-row items-center justify-between">
               <SectionTitle>Shortcuts</SectionTitle>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Edit shortcuts"
                 onPress={() => setEditing(true)}
-                className="h-touch justify-center px-2"
+                className="h-touch justify-center pl-3"
               >
                 <Text className="font-semibold text-label text-accent">Edit</Text>
               </Pressable>
@@ -263,25 +280,16 @@ export default function HomeScreen() {
             {shortcuts.length === 0 ? (
               <Text className="font-sans text-caption text-ink-muted">Tap Edit to pin the modules you use most.</Text>
             ) : (
-              <View className="flex-row flex-wrap gap-y-3">
+              <View className="flex-row flex-wrap">
                 {shortcuts.map((m) => (
-                  <ModuleTile
-                    key={m.id}
-                    label={m.label}
-                    icon={m.icon}
-                    tone={m.tone}
-                    onPress={() => router.push(m.href)}
-                  />
+                  <ModuleLine key={m.id} label={m.label} onPress={() => router.push(m.href)} />
                 ))}
               </View>
             )}
           </View>
 
-          <View className="gap-3">
-            <SectionTitle>This week</SectionTitle>
-            <WeeklyReviewCard />
-            <TipCard />
-          </View>
+          <WeeklyReviewCard />
+          <TipCard />
         </View>
       </ScrollView>
 

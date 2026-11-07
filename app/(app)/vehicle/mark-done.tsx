@@ -101,7 +101,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
         </View>
 
         <View className="gap-2">
-          <View className="overflow-hidden">
+          <View>
             {services.map((s, index) => {
               const isChecked = checked.includes(s.vehicleServiceId);
               return (
@@ -111,7 +111,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
                   accessibilityState={{ checked: isChecked }}
                   accessibilityLabel={`${s.item}, ${statusText(s)}`}
                   onPress={() => toggle(s.vehicleServiceId)}
-                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < services.length - 1 ? "border-b-2 border-border" : ""}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${index < services.length - 1 ? "border-b-2 border-border" : ""}`}
                 >
                   <Ionicons
                     name={isChecked ? "checkbox" : "square-outline"}

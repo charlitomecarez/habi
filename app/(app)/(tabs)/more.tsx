@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ReportSheet } from "@/components/more/ReportSheet";
 import { SettingsSection } from "@/components/settings/SettingsSection";
 import { Button } from "@/components/ui/Button";
+import { ModuleLine } from "@/components/ui/ModuleLine";
 import { FadeIn } from "@/components/ui/Motion";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
@@ -35,12 +36,11 @@ export default function MoreScreen() {
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-5 pb-8 pt-4">
         <View className="px-5">
           <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
-            <Ionicons name="search" size={18} color={colors.inkMuted} />
             <TextInput
-              accessibilityLabel="Find a module"
+              accessibilityLabel="Search modules"
               value={query}
               onChangeText={setQuery}
-              placeholder="Find a module"
+              placeholder="Search modules"
               placeholderTextColor={colors.inkMuted}
               autoCorrect={false}
               returnKeyType="search"
@@ -73,18 +73,12 @@ export default function MoreScreen() {
                   {section.modules
                     .filter((m) => isAdmin || !m.adminOnly)
                     .map((m) => (
-                      <Pressable
+                      <ModuleLine
                         key={m.id}
-                        accessibilityRole="button"
-                        accessibilityLabel={[m.label, details[m.id]].filter(Boolean).join(", ")}
+                        label={m.label}
+                        detail={details[m.id]}
                         onPress={() => router.push(m.href)}
-                        className="min-h-touch w-1/2 flex-row items-center justify-between gap-2 border-b-2 border-border py-2 pr-3 active:bg-surface-muted"
-                      >
-                        <Text className="min-w-0 shrink font-medium text-label text-ink">{m.label}</Text>
-                        {details[m.id] ? (
-                          <Text className="font-sans text-caption text-ink-muted">{details[m.id]}</Text>
-                        ) : null}
-                      </Pressable>
+                      />
                     ))}
                 </View>
               </View>

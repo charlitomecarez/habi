@@ -59,18 +59,6 @@ export function WeaveBand({ rows, todayIndex, onDayPress }: WeaveBandProps) {
     <View className="gap-1 bg-shell px-4 pb-3 pt-1">
       <View>
         <View className="gap-1">
-          <View className="flex-row gap-1">
-            <View className="w-slot" />
-            {DAY_LETTERS.map((letter, index) => (
-              <Text
-                key={`${letter}-${index}`}
-                maxFontSizeMultiplier={1.3}
-                className="flex-1 text-center font-sans text-tab-label text-on-shell"
-              >
-                {letter}
-              </Text>
-            ))}
-          </View>
           {rows.map((row) => (
             <View
               key={row.label}
@@ -92,6 +80,18 @@ export function WeaveBand({ rows, todayIndex, onDayPress }: WeaveBandProps) {
               ))}
             </View>
           ))}
+          <View className="flex-row gap-1">
+            <View className="w-slot" />
+            {DAY_LETTERS.map((letter, index) => (
+              <Text
+                key={`${letter}-${index}`}
+                maxFontSizeMultiplier={1.3}
+                className="flex-1 text-center font-sans text-tab-label text-on-shell"
+              >
+                {letter}
+              </Text>
+            ))}
+          </View>
         </View>
         {onDayPress ? (
           <View className="absolute inset-0 flex-row gap-1">

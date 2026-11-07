@@ -49,7 +49,7 @@ export default function BillsScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <Text className="font-sans text-caption text-ink-muted">
           Bills whose amount changes, like Meralco, water and internet. You get a reminder before each due date and type
           the amount when you pay.
@@ -62,9 +62,9 @@ export default function BillsScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => subscriptions.refetch()} />
           </View>
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {bills.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No bills yet.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No bills yet.</Text>
             ) : (
               bills.map((s, i) => {
                 const status = dueStatus(s);

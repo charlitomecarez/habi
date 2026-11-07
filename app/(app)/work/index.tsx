@@ -18,7 +18,7 @@ function detail(job: JobMatch): string {
   return [job.company, job.location, job.visa_offered ? "Visa offered" : null].filter(Boolean).join(" · ");
 }
 
-const tone = (score: number) => (score >= 3.5 ? "good" : "muted") as "good" | "muted";
+const tone = (score: number) => (score >= 3.5 ? "good" : "watch") as "good" | "watch";
 
 export default function FindWorkScreen() {
   const colors = useColors();
@@ -54,11 +54,17 @@ export default function FindWorkScreen() {
           profile ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Edit work profile"
-              onPress={() => router.push("/work/profile")}
+              accessibilityLabel="Refresh jobs"
+              accessibilityState={{ busy: refresh.isPending }}
+              disabled={refresh.isPending}
+              onPress={() => refresh.mutate()}
               className="h-touch w-touch items-center justify-center"
             >
-              <Ionicons name="person-outline" size={22} color={colors.onShell} />
+              {refresh.isPending ? (
+                <ActivityIndicator color={colors.onShell} />
+              ) : (
+                <Ionicons name="refresh" size={22} color={colors.onShell} />
+              )}
             </Pressable>
           ) : undefined
         }
@@ -89,7 +95,7 @@ export default function FindWorkScreen() {
               <Notice tone="warning">Could not search today. These are your last jobs.</Notice>
             ) : null}
             {refresh.error ? <Notice tone="danger">{refresh.error.message}</Notice> : null}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
+            <View accessibilityRole="radiogroup" accessibilityLabel="Filter" className="flex-row flex-wrap gap-2">
               {JOB_FILTERS.map((item) => (
                 <Chip
                   key={item.value}
@@ -99,7 +105,7 @@ export default function FindWorkScreen() {
                   onPress={() => setFilter(item.value)}
                 />
               ))}
-            </ScrollView>
+            </View>
             {list.length === 0 ? (
               <View className="gap-3">
                 <Text className="font-bold text-title text-ink">No new matches today</Text>
@@ -123,13 +129,7 @@ export default function FindWorkScreen() {
                 ))}
               </View>
             )}
-            <Button
-              label="Refresh"
-              variant="secondary"
-              size="input"
-              loading={refresh.isPending}
-              onPress={() => refresh.mutate()}
-            />
+            <DataRow title="Edit work profile" onPress={() => router.push("/work/profile")} last />
             <Text className="font-sans text-caption text-ink-muted">Job data by freehire</Text>
           </>
         )}

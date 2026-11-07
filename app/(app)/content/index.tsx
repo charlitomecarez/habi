@@ -39,11 +39,11 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function ListCard({ children }: { children: ReactNode }) {
-  return <View className="overflow-hidden">{children}</View>;
+  return <View>{children}</View>;
 }
 
 function Empty({ text }: { text: string }) {
-  return <Text className="px-4 py-3 font-sans text-caption text-ink-muted">{text}</Text>;
+  return <Text className="py-3 font-sans text-caption text-ink-muted">{text}</Text>;
 }
 
 function NextUp({ videos }: { videos: Video[] }) {
@@ -72,7 +72,7 @@ function NextUp({ videos }: { videos: Video[] }) {
             accessibilityRole="button"
             accessibilityLabel={`${top.title}. Next: ${nextActionText(top)}. Open video`}
             onPress={() => router.push({ pathname: "/content/video/[id]", params: { id: top.id } })}
-            className="gap-2 rounded-card border border-accent bg-accent-tint p-4 active:bg-surface-muted"
+            className="gap-2 rounded-card border border-border bg-surface-card p-4 active:bg-surface-muted"
           >
             <Text className="font-medium text-caption text-accent-strong">
               {stage(top.stage).label} stage{publishStatus(top) ? ` · ${publishStatus(top)!.text}` : ""}
@@ -200,7 +200,7 @@ function CalendarView({ videos }: { videos: Video[] }) {
 
   return (
     <>
-      <View className="rounded-card border border-border bg-surface-card px-2 py-3">
+      <View>
         <MonthCalendar
           month={month}
           onPrevious={() => changeMonth(-1)}
@@ -307,7 +307,7 @@ export default function ContentPlannerScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <Segmented label="View" options={VIEWS} value={view} onChange={setView} />
         {videos.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />

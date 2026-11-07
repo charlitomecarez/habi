@@ -1,16 +1,8 @@
-import { Text } from "react-native";
-
-import { ModuleBar } from "@/components/ui/ModuleHeader";
 import type { ReactNode } from "react";
 
+import { ModuleHeader } from "@/components/ui/ModuleHeader";
+
 /** The back button, the title and an optional action. */
-export function UlamHeader({ title, action }: { title: string; action?: ReactNode }) {
-  return (
-    <ModuleBar tone="daily">
-      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-on-shell">
-        {title}
-      </Text>
-      {action}
-    </ModuleBar>
-  );
+export function UlamHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
+  return <ModuleHeader title={title} subtitle={subtitle} tone="daily" action={action} />;
 }

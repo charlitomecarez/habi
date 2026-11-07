@@ -30,15 +30,15 @@ export default function FuelScreen() {
           Fuel
         </Text>
       </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <View className="flex-row gap-3">
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Last</Text>
             <Text className="font-bold text-title text-ink">
               {latest ? `${latest.kmPerLitre.toFixed(1)} km/L` : "—"}
             </Text>
           </View>
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Average</Text>
             <Text className="font-bold text-title text-ink">{avg ? `${avg.toFixed(1)} km/L` : "—"}</Text>
           </View>
@@ -50,9 +50,9 @@ export default function FuelScreen() {
         {logs.isPending && vehicle.data ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {list.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No fill-ups logged.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No fill-ups logged.</Text>
             ) : (
               list.map((f, i) => (
                 <View

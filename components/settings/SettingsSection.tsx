@@ -91,7 +91,7 @@ export function SettingsSection() {
       </Text>
 
       <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
-        <View className="h-12 w-12 items-center justify-center overflow-hidden rounded-pill bg-border">
+        <View className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border">
           <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
         </View>
         <View className="flex-1 gap-1">
@@ -103,7 +103,7 @@ export function SettingsSection() {
       </View>
 
       <View className="gap-3">
-        <View className="overflow-hidden">
+        <View>
           <Row icon="contrast-outline" title="Theme" detail={themeLabel(theme)} onPress={() => setSheet("theme")} />
           <Row
             title="Daily email digest"

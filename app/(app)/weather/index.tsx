@@ -58,7 +58,7 @@ export default function WeatherScreen() {
                 Showing the last forecast, from {format(forecast.fetchedAt, "h:mm a")}. Could not update.
               </Notice>
             ) : null}
-            <View className="gap-1">
+            <View className="flex-row items-center justify-between gap-3">
               <Text
                 adjustsFontSizeToFit
                 minimumFontScale={0.7}
@@ -67,17 +67,19 @@ export default function WeatherScreen() {
               >
                 {forecast.temperature}°
               </Text>
-              <Text className="font-semibold text-row-title text-ink">{forecast.word}</Text>
-              <Text className="font-sans text-caption text-ink-muted">
-                Rain {forecast.rain}% · High {forecast.high}° · Low {forecast.low}°
-              </Text>
+              <View className="min-w-0 shrink items-end">
+                <Text className="text-right font-semibold text-label text-ink">{forecast.word}</Text>
+                <Text className="text-right font-sans text-caption text-ink-muted">
+                  Rain {forecast.rain}% · High {forecast.high}° · Low {forecast.low}°
+                </Text>
+              </View>
             </View>
             {forecast.hours.length > 0 ? (
-              <View className="flex-row justify-between gap-2">
+              <View className="flex-row gap-2 border-b-2 border-border pb-3">
                 {forecast.hours.map((hour) => (
-                  <View key={hour.time} className="flex-1 items-center gap-1">
-                    <Text className="font-sans text-caption text-ink-muted">{hourText(hour.time)}</Text>
-                    <Text className="font-bold text-amount text-ink">{hour.temperature}°</Text>
+                  <View key={hour.time} className="flex-1 gap-1">
+                    <Text className="font-semibold text-caption text-ink">{hourText(hour.time)}</Text>
+                    <Text className="font-semibold text-row-title text-ink">{hour.temperature}°</Text>
                   </View>
                 ))}
               </View>

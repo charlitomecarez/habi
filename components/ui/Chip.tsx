@@ -12,19 +12,19 @@ type ChipProps = {
   selected: boolean;
   onPress: () => void;
   tone?: Tone;
-  /** "filter" narrows a list (dark when selected); "choice" picks a form value. */
+  /** "filter" narrows a list (indigo when selected); "choice" picks a form value. */
   variant?: "choice" | "filter";
 };
 
 export function Chip({ label, selected, onPress, tone = "accent", variant = "choice" }: ChipProps) {
   const style =
-    variant === "filter" ? { container: "border-ink bg-ink", label: "text-surface-card" } : selectedByTone[tone];
+    variant === "filter" ? { container: "border-accent bg-accent", label: "text-on-accent" } : selectedByTone[tone];
   return (
     <Pressable
       accessibilityRole="radio"
       accessibilityState={{ checked: selected }}
       onPress={onPress}
-      className={`h-touch items-center justify-center rounded-pill border px-4 ${selected ? style.container : "border-border-input bg-surface-card"}`}
+      className={`h-touch items-center justify-center border px-4 ${variant === "filter" ? "rounded-md" : "rounded-pill"} ${selected ? style.container : "border-border-input bg-surface-card"}`}
     >
       <Text className={`text-label ${selected ? `font-semibold ${style.label}` : "font-sans text-ink"}`}>{label}</Text>
     </Pressable>

@@ -41,7 +41,7 @@ export default function TransactionsScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {transactions.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : error ? (
@@ -50,7 +50,7 @@ export default function TransactionsScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => transactions.refetch()} />
           </View>
         ) : transactions.data?.length === 0 ? (
-          <View className="items-center rounded-card border border-border bg-surface-card p-6">
+          <View className="items-center py-6">
             <Text className="text-center font-sans text-body text-ink-muted">No transactions yet.</Text>
           </View>
         ) : (
@@ -59,7 +59,7 @@ export default function TransactionsScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 {group.month}
               </Text>
-              <View className="overflow-hidden">
+              <View>
                 {group.rows.map((t, index) => (
                   <TransactionRow
                     key={t.id}

@@ -96,6 +96,7 @@ module.exports = {
         amount: "72px",
         bar: "6px",
         strand: "15px",
+        "fab-clear": "112px",
         slot: "64px",
         tile: "112px",
         "field-sm": "110px",

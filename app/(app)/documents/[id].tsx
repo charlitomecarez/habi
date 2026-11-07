@@ -71,11 +71,11 @@ export default function DocumentScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         <Badge label={status.text} tone={status.tone} />
         {setPhotos.error ? <Notice tone="danger">{setPhotos.error.message}</Notice> : null}
 
-        <View className="overflow-hidden">
+        <View>
           <Detail label="Type" value={typeLabel(d.type)} />
           <Detail label="Number" value={d.number || "Not set"} />
           <Detail label="Issued" value={fmt(d.issued_on)} />

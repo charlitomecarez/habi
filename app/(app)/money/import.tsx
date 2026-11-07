@@ -148,7 +148,7 @@ export default function ImportStatementScreen() {
             ) : null}
 
             {rows.length > 0 ? (
-              <View className="overflow-hidden">
+              <View>
                 {rows.map((row, index) => (
                   <View
                     key={row.ref}

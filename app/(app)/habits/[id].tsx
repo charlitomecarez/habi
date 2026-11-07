@@ -74,20 +74,20 @@ export default function HabitScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {(toggle.error ?? archive.error ?? remove.error) ? (
           <Notice tone="danger">{(toggle.error ?? archive.error ?? remove.error)!.message}</Notice>
         ) : null}
 
         <View className="flex-row gap-3">
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Streak</Text>
             <Text className="font-bold text-title text-ink">
               {s.count} {s.unit}
               {s.count === 1 ? "" : "s"}
             </Text>
           </View>
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">
               {h.schedule === "times_per_week" ? "This week" : `In ${format(month, "MMMM")}`}
             </Text>
@@ -102,7 +102,7 @@ export default function HabitScreen() {
           {scheduleText(h)} · {timeLabel(h.remind_time)}
         </Text>
 
-        <View className="rounded-card border border-border bg-surface-card px-2 py-3">
+        <View>
           <MonthCalendar
             month={month}
             onPrevious={() => setMonth(addMonths(month, -1))}

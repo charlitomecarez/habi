@@ -67,6 +67,12 @@ Do not put these items here:
 - **New look:** my-app has a new look, Banig: woven colour, a new font and larger touch targets. Install the new APK.
 - **Accounts:** The repo now records that sign-up is off. Only people the admin adds can use the app.
 - **UI changes:** Each UI change now needs the Impeccable check.
+- **Design:** Every tab and module now follows the v1.3.0 mocks. Rows replace the information cards, and each module has its section header.
+- **Home:** The amount sits inside the sentence, rows show their number, and you can pull down to try again.
+- **Money:** A chart of this week and a Today list come first. Whole amounts drop ".00".
+- **Todos:** All is the first filter, and the list has Overdue, Today and Later groups.
+- **Vehicle:** Bars show the distance used, and Fuel shows the average and the last fill-up.
+- **Sports:** Standings use the design's columns, and NBA shows a win rate. Football teams show their crest, and NBA teams show their short code.
 
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
 

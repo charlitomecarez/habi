@@ -78,20 +78,20 @@ export default function AlarmsScreen() {
         </View>
       ) : (
         <>
-          <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-3">
+          <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
             {next ? <Text className="font-sans text-label text-ink-muted">{next}</Text> : null}
 
             {alarms.length === 0 ? (
               <EmptyState drawing="calendar" title="No alarms yet" body="Add one, then print your stop label." />
             ) : (
-              <View className="overflow-hidden">
+              <View>
                 {alarms.map((alarm, index) => (
                   <Pressable
                     key={alarm.id}
                     accessibilityRole="button"
                     accessibilityLabel={`Change alarm at ${alarmTimeText(alarm)}`}
                     onPress={() => setEditing({ alarm, key: Date.now() })}
-                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index === alarms.length - 1 ? "" : "border-b-2 border-border"}`}
+                    className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${index === alarms.length - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <View className="min-w-0 flex-1">
                       <Text className="font-bold text-title text-ink">{alarmTimeText(alarm)}</Text>
@@ -133,7 +133,7 @@ export default function AlarmsScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   Setup check
                 </Text>
-                <View className="overflow-hidden">
+                <View>
                   <SetupRow title="Notifications" ready={setup.notifications} onPress={openAppSettings} />
                   <SetupRow title="Full-screen alarm" ready={setup.fullScreen} onPress={openFullScreenSettings} />
                   <SetupRow title="Battery set to Unrestricted" ready={setup.battery} onPress={openAppSettings} />

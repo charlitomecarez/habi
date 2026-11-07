@@ -62,7 +62,7 @@ export default function SubscriptionsScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {subscriptions.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : error ? (
@@ -80,7 +80,7 @@ export default function SubscriptionsScreen() {
           </View>
         ) : (
           <>
-            <View className="flex-row items-end justify-between gap-3 rounded-hero border border-border bg-surface-card px-5 py-4">
+            <View className="flex-row items-end justify-between gap-3">
               <View className="flex-1 gap-1">
                 <Text className="font-sans text-caption text-ink-muted">Per month</Text>
                 <Text
@@ -114,14 +114,14 @@ export default function SubscriptionsScreen() {
             ) : null}
 
             {list.length === 0 ? (
-              <View className="items-center gap-3 rounded-hero border border-border bg-surface-card p-6">
+              <View className="items-center gap-3 py-6">
                 <Ionicons name="repeat-outline" size={32} color={colors.accent} />
                 <Text className="text-center font-sans text-body text-ink-muted">
                   Add your subscriptions to see what they cost and get a reminder before each renewal.
                 </Text>
               </View>
             ) : (
-              <View className="overflow-hidden">
+              <View>
                 {list.map((s, index) => {
                   const renewal = renewalText(s.next_billing_on);
                   const date = format(parseISO(s.next_billing_on), "MMM d");
@@ -144,7 +144,7 @@ export default function SubscriptionsScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${s.name}, ${formatMoney(s.amount ?? 0, s.currency)} ${costText(s)}, ${caption}`}
                       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
-                      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""}`}
+                      className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""}`}
                     >
                       <BrandIcon name={s.name} />
                       <View className="min-w-0 flex-1 gap-1">

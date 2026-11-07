@@ -1,7 +1,8 @@
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
@@ -22,7 +23,7 @@ export default function TravelScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-32 pt-3">
+      <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
         {trips.error ? <Notice tone="danger">Could not load your trips. {trips.error.message}</Notice> : null}
         {trips.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
@@ -34,22 +35,20 @@ export default function TravelScreen() {
             action={{ label: "Add trip", onPress: () => router.push("/travel/new") }}
           />
         ) : (
-          list.map((trip) => {
-            const days = tripLength(trip);
-            return (
-              <Pressable
-                key={trip.id}
-                accessibilityRole="button"
-                onPress={() => router.push({ pathname: "/travel/[id]", params: { id: trip.id } })}
-                className="min-h-touch gap-1 rounded-card border border-border bg-surface-card p-4 active:bg-surface-muted"
-              >
-                <Text className="font-semibold text-heading text-ink">{trip.title}</Text>
-                <Text className="font-sans text-caption text-ink-muted">
-                  {tripDatesText(trip)} · {days} {days === 1 ? "day" : "days"}
-                </Text>
-              </Pressable>
-            );
-          })
+          <View>
+            {list.map((trip, index) => {
+              const days = tripLength(trip);
+              return (
+                <DataRow
+                  key={trip.id}
+                  title={trip.title}
+                  detail={`${tripDatesText(trip)} · ${days} ${days === 1 ? "day" : "days"}`}
+                  onPress={() => router.push({ pathname: "/travel/[id]", params: { id: trip.id } })}
+                  last={index === list.length - 1}
+                />
+              );
+            })}
+          </View>
         )}
       </ScrollView>
       {list.length > 0 ? <Fab label="Add trip" onPress={() => router.push("/travel/new")} /> : null}

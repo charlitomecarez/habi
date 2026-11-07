@@ -56,8 +56,8 @@ export default function VisitScreen() {
           <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
       </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
-        <View className="gap-2 rounded-card border border-border bg-surface-card p-4">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+        <View className="gap-2">
           <Text className="font-medium text-caption text-ink-muted">
             {format(parseISO(v.visited_on), "EEEE, MMMM d, yyyy")}
           </Text>

@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
@@ -14,6 +14,7 @@ import { useColors } from "@/lib/colors";
 import {
   canRetry,
   markInboxRead,
+  unreadCount,
   useInbox,
   useRefreshVoice,
   useRetryVoice,
@@ -44,6 +45,7 @@ export default function InboxScreen() {
   const retry = useRetryVoice();
   const refresh = useRefreshVoice();
   const player = useVoicePlayer();
+  const unread = unreadCount(inbox.data ?? []);
   const [tab, setTab] = useState<Tab>("inbox");
 
   // Opening the screen reads the inbox. New stays on the cards until you leave.
@@ -67,9 +69,16 @@ export default function InboxScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="people">
-        <Text accessibilityRole="header" className="flex-1 font-bold text-title text-on-shell">
-          Inbox
-        </Text>
+        <View className="min-w-0 flex-1">
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+            Inbox
+          </Text>
+          {unread > 0 ? (
+            <Text className="font-sans text-label text-on-shell">
+              {unread} new {unread === 1 ? "message" : "messages"}
+            </Text>
+          ) : null}
+        </View>
         {isAdmin ? (
           <Pressable
             accessibilityRole="button"
@@ -82,7 +91,7 @@ export default function InboxScreen() {
         ) : null}
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-32 pt-3">
+      <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
         {error ? <Notice tone="danger">Could not load your messages. {error.message}</Notice> : null}
         {retry.error ? <Notice tone="danger">{retry.error.message}</Notice> : null}
 

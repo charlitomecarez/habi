@@ -14,7 +14,7 @@ export default function StopLabelScreen() {
         </Text>
       </ModuleBar>
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
-        <View className="overflow-hidden rounded-card border border-border">
+        <View className="overflow-hidden">
           <QrCode value={STOP_LABEL} label="QR code that stops the alarm" />
         </View>
         <Text className="font-sans text-body text-ink-muted">

@@ -31,7 +31,7 @@ export function Sheet({ visible, onClose, title, subtitle, children }: SheetProp
         <View className="max-h-full rounded-t-sheet bg-surface-card">
           <SafeAreaView edges={["bottom"]}>
             <View className="items-center pt-3">
-              <View className="h-1 w-10 rounded-pill bg-border-input" />
+              <View className="h-1 w-chip rounded-pill bg-border-input" />
             </View>
             <View className="flex-row items-center justify-between gap-3 px-5 pt-4">
               <View className="flex-1 gap-1">

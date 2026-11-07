@@ -30,7 +30,7 @@ export default function JournalScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {journal.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : journal.error ? (
@@ -40,7 +40,7 @@ export default function JournalScreen() {
           </View>
         ) : (
           <>
-            <View className="gap-3 rounded-card border border-border bg-surface-card p-4">
+            <View className="gap-3">
               <Text className="font-medium text-caption text-ink-muted">{format(now, "EEEE, MMMM d")}</Text>
               {todays ? (
                 <>
@@ -62,7 +62,7 @@ export default function JournalScreen() {
               />
             </View>
 
-            <View className="rounded-card border border-border bg-surface-card px-2 py-3">
+            <View>
               <MonthCalendar
                 month={month}
                 onPrevious={() => setMonth(addMonths(month, -1))}
@@ -97,9 +97,9 @@ export default function JournalScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 {format(month, "MMMM")} · {recent.length} {recent.length === 1 ? "entry" : "entries"}
               </Text>
-              <View className="overflow-hidden">
+              <View>
                 {recent.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No entries this month.</Text>
+                  <Text className="py-3 font-sans text-caption text-ink-muted">No entries this month.</Text>
                 ) : (
                   recent.map((e, i) => (
                     <Pressable
@@ -107,7 +107,7 @@ export default function JournalScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={`${format(parseISO(e.on_date), "MMMM d")}${moodLabel(e.mood) ? `, ${moodLabel(e.mood)}` : ""}. Open entry`}
                       onPress={() => router.push({ pathname: "/journal/[date]", params: { date: e.on_date } })}
-                      className={`min-h-touch gap-1 px-4 py-3 active:bg-surface-muted ${i === recent.length - 1 ? "" : "border-b-2 border-border"}`}
+                      className={`min-h-touch gap-1 py-3 active:bg-surface-muted ${i === recent.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Text className="font-semibold text-row-title text-ink">
                         {format(parseISO(e.on_date), "EEE, MMM d")}

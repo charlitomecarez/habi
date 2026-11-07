@@ -20,7 +20,7 @@ export default function UlamWeekScreen() {
       <UlamHeader title="Last 7 days" />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
         {days.error ? <Notice tone="danger">Could not load your ulam. {days.error.message}</Notice> : null}
-        <View className="gap-1 rounded-card border border-border bg-surface-card p-4">
+        <View className="gap-1">
           <View className="flex-row justify-between gap-3">
             <Text className="font-semibold text-heading text-ink">{formatPeso(summary.spent)} spent</Text>
             <Text className="font-sans text-caption text-ink-muted">{summary.logged} of 7 days</Text>
@@ -32,7 +32,7 @@ export default function UlamWeekScreen() {
           ) : null}
         </View>
 
-        <View className="overflow-hidden">
+        <View>
           {rows.map((row, index) => (
             <View
               key={row.date}

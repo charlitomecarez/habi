@@ -183,14 +183,14 @@ export default function PersonScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
         {person.note ? <Text className="font-sans text-body text-ink">{person.note}</Text> : null}
 
         <Section title="Dates">
-          <View className="overflow-hidden">
+          <View>
             {dates.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+              <Text className="py-3 font-sans text-caption text-ink-muted">
                 No dates yet. Each date gets a reminder one week before.
               </Text>
             ) : (
@@ -220,9 +220,9 @@ export default function PersonScreen() {
         </Section>
 
         <Section title="Gift ideas">
-          <View className="overflow-hidden">
+          <View>
             {gifts.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No gift ideas yet.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No gift ideas yet.</Text>
             ) : (
               gifts.map((g, i) => (
                 <View
@@ -258,9 +258,9 @@ export default function PersonScreen() {
         </Section>
 
         <Section title="Debts">
-          <View className="overflow-hidden">
+          <View>
             {theirDebts.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No debts with {person.name}.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No debts with {person.name}.</Text>
             ) : (
               theirDebts.map((d, i) => (
                 <Pressable
@@ -268,7 +268,7 @@ export default function PersonScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={`${d.direction === "owed_to_me" ? "Owes you" : "You owe"} ${formatPeso(d.balance)}, ${debtStatus(d).text}`}
                   onPress={() => router.push({ pathname: "/debts/[id]", params: { id: d.id } })}
-                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === theirDebts.length - 1 ? "" : "border-b-2 border-border"}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${i === theirDebts.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">

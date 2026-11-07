@@ -19,7 +19,7 @@ export function WeeklyReviewCard() {
           ? ` · ${format(parseISO(review.data.review.week_start), "MMM d")} to ${format(parseISO(review.data.review.week_end), "MMM d")}`
           : ""}
       </Text>
-      <View className="gap-4 rounded-card border border-border bg-surface-card p-4">
+      <View className="gap-4">
         {review.isPending ? (
           <ActivityIndicator color={colors.accent} />
         ) : review.error ? (
@@ -27,7 +27,7 @@ export function WeeklyReviewCard() {
         ) : (
           review.data?.sections.map((s) => (
             <View key={s.heading} className="gap-1">
-              <Text className="font-semibold text-caption uppercase tracking-wide text-ink-muted">{s.heading}</Text>
+              <Text className="font-semibold text-row-title text-ink">{s.heading}</Text>
               {s.lines.map((l) => (
                 <Text key={l} className="font-sans text-body text-ink">
                   {l}

@@ -1,7 +1,7 @@
-import { format, parseISO } from "date-fns";
+import { format, isToday, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -11,7 +11,7 @@ import { TabField } from "@/components/ui/ModuleHeader";
 import { AddVehicleSheet } from "@/components/vehicle/AddVehicleSheet";
 import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
 import { useColors } from "@/lib/colors";
-import { economy, monthFuelCost, useFuelLogs } from "@/lib/fuel";
+import { economy, useFuelLogs } from "@/lib/fuel";
 import { formatPeso } from "@/lib/money";
 import {
   dueText,
@@ -25,35 +25,43 @@ import {
   type ServiceDue,
 } from "@/lib/vehicles";
 
-function ServiceRow({ service, last }: { service: ServiceDue; last: boolean }) {
+/** The fuel average covers this many fill-ups. */
+const FUEL_AVERAGE_RUNS = 5;
+
+function ServiceRow({ service }: { service: ServiceDue }) {
   const overdue = service.status === "overdue";
   const soon = service.status === "due_soon";
   const used = usedShare(service);
-  const open = () => router.push({ pathname: "/vehicle/log-service", params: { serviceId: service.vehicleServiceId } });
+  const name = service.nextDueKm !== null ? `${service.item} · at ${formatKm(service.nextDueKm)} km` : service.item;
+  const left =
+    service.kmRemaining !== null && service.kmRemaining > 0
+      ? `${formatKm(service.kmRemaining)} km left`
+      : overdue || soon
+        ? dueText(service)
+        : laterText(service);
+  const word = overdue ? "Overdue" : soon ? "Due soon" : undefined;
   return (
-    <View className={last ? "" : "border-b-2 border-border"}>
-      <DataRow
-        title={service.item}
-        detail={service.nextDueKm !== null ? `At ${formatKm(service.nextDueKm)} km` : undefined}
-        status={
-          overdue
-            ? { label: dueText(service), tone: "over" }
-            : soon
-              ? { label: dueText(service), tone: "watch" }
-              : { label: laterText(service), tone: "muted" }
-        }
-        onPress={open}
-        last
-      />
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={[service.item, left, word].filter(Boolean).join(", ")}
+      onPress={() => router.push({ pathname: "/vehicle/log-service", params: { serviceId: service.vehicleServiceId } })}
+      className="min-h-touch justify-center gap-1 py-2 active:bg-surface-muted"
+    >
+      <View className="flex-row flex-wrap justify-between gap-x-3">
+        <Text className="min-w-0 shrink font-semibold text-label text-ink">{name}</Text>
+        <Text className="font-sans text-label text-ink-muted">
+          {left}
+          {word ? (
+            <Text className={`font-semibold ${overdue ? "text-over" : "text-watch"}`}>{` · ${word}`}</Text>
+          ) : null}
+        </Text>
+      </View>
       {used !== null ? (
-        <View className="mb-3 h-1 overflow-hidden bg-surface-muted">
-          <View
-            className={`h-full ${overdue ? "bg-over-fill" : soon ? "bg-watch-fill" : "bg-accent"}`}
-            style={{ width: `${used * 100}%` }}
-          />
+        <View className="h-bar bg-surface-muted">
+          <View className="h-full bg-accent" style={{ width: `${used * 100}%` }} />
         </View>
       ) : null}
-    </View>
+    </Pressable>
   );
 }
 
@@ -65,8 +73,16 @@ export default function VehicleScreen() {
   const due = useServiceDue(vehicleId);
   const lastReading = useLastReading(vehicleId);
   const fuel = useFuelLogs(vehicleId);
-  const fuelLatest = economy(fuel.data ?? []).at(-1);
-  const fuelMonth = monthFuelCost(fuel.data ?? []);
+  const fuelRuns = economy(fuel.data ?? []);
+  const fuelLatest = fuelRuns.at(-1);
+  const fuelRecent = fuelRuns.slice(-FUEL_AVERAGE_RUNS);
+  const fuelAverage =
+    fuelRecent.reduce((sum, run) => sum + run.km, 0) /
+    Math.max(
+      fuelRecent.reduce((sum, run) => sum + run.litres, 0),
+      1,
+    );
+  const lastFill = [...(fuel.data ?? [])].sort((a, b) => b.odometer_km - a.odometer_km)[0];
 
   const services = due.data ?? [];
   const dueNow = services
@@ -112,7 +128,7 @@ export default function VehicleScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <TabField
         lead={`${formatKm(v.current_odometer_km)} km`}
-        detail={`${vehicleName(v)} · ${v.make} ${v.model} · Updated ${format(parseISO(updatedAt), "MMM d")}`}
+        detail={`${vehicleName(v)} · Updated ${isToday(parseISO(updatedAt)) ? "today" : format(parseISO(updatedAt), "MMM d")}`}
       />
       <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-4">
         {error ? <Notice tone="danger">Could not load services. Check your connection.</Notice> : null}
@@ -127,19 +143,8 @@ export default function VehicleScreen() {
         ) : (
           <>
             <View>
-              {dueNow.length === 0 ? (
-                <Text className="py-3 font-sans text-body text-ink-muted">Nothing is due.</Text>
-              ) : (
-                dueNow.map((s, index) => (
-                  <ServiceRow
-                    key={s.vehicleServiceId}
-                    service={s}
-                    last={later.length === 0 && index === dueNow.length - 1}
-                  />
-                ))
-              )}
-              {later.map((s, index) => (
-                <ServiceRow key={s.vehicleServiceId} service={s} last={index === later.length - 1} />
+              {[...dueNow, ...later].map((s) => (
+                <ServiceRow key={s.vehicleServiceId} service={s} />
               ))}
             </View>
 
@@ -147,27 +152,36 @@ export default function VehicleScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 Fuel
               </Text>
-              <DataRow
-                title="Fuel log"
-                detail={`${formatPeso(fuelMonth)} this month`}
-                value={fuelLatest ? `${fuelLatest.kmPerLitre.toFixed(1)} km/L` : undefined}
-                onPress={() => router.push("/vehicle/fuel")}
-                last
-              />
+              {fuelLatest && lastFill ? (
+                <>
+                  <DataRow
+                    title="Average"
+                    detail={`Last ${fuelRecent.length} ${fuelRecent.length === 1 ? "fill-up" : "fill-ups"}`}
+                    value={`${fuelAverage.toFixed(1)} km/L`}
+                    onPress={() => router.push("/vehicle/fuel")}
+                  />
+                  <DataRow
+                    title="Last fill-up"
+                    detail={`${format(parseISO(lastFill.filled_on), "MMM d")} · ${lastFill.litres} L`}
+                    value={formatPeso(lastFill.total)}
+                    onPress={() => router.push("/vehicle/fuel")}
+                    last
+                  />
+                </>
+              ) : (
+                <DataRow
+                  title="Fuel log"
+                  detail="Log a full tank twice to see km/L"
+                  onPress={() => router.push("/vehicle/fuel")}
+                  last
+                />
+              )}
             </View>
 
-            <Button
-              label="Mark services done"
-              variant="secondary"
-              size="input"
-              onPress={() => router.push("/vehicle/mark-done")}
-            />
-            <Button
-              label="Log another service"
-              variant="secondary"
-              size="input"
-              onPress={() => router.push("/vehicle/log-service")}
-            />
+            <View>
+              <DataRow title="Mark services done" onPress={() => router.push("/vehicle/mark-done")} />
+              <DataRow title="Log another service" onPress={() => router.push("/vehicle/log-service")} last />
+            </View>
           </>
         )}
       </ScrollView>

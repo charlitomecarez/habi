@@ -1,42 +1,33 @@
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useAccounts } from "@/lib/money";
 import { monthlyAmount, nextDate, nextText, scheduleText, useRecurring, type Recurring } from "@/lib/recurring";
 
 function RecurringRow({ rule, accountName, last }: { rule: Recurring; accountName?: string; last: boolean }) {
   const income = rule.kind === "income";
-  const detail = [scheduleText(rule), income ? "Income" : accountName, rule.is_paused ? "Paused" : null]
-    .filter(Boolean)
-    .join(" · ");
-  const next = rule.is_paused ? "Paused" : nextText(nextDate(rule, new Date()), new Date());
+  const today = new Date();
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${rule.name}, ${formatPeso(rule.amount)}, ${detail}, ${next}`}
+    <DataRow
+      title={rule.name}
+      detail={[scheduleText(rule), income ? "Income" : accountName].filter(Boolean).join(" · ")}
+      value={formatPeso(rule.amount)}
+      status={
+        rule.is_paused
+          ? { label: "Paused", tone: "watch" }
+          : { label: nextText(nextDate(rule, today), today), tone: "muted" }
+      }
       onPress={() => router.push({ pathname: "/money/recurring/[id]", params: { id: rule.id } })}
-      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
-    >
-      <View className="min-w-0 flex-1 gap-1">
-        <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-          {rule.name}
-        </Text>
-        <Text numberOfLines={2} className="font-sans text-caption text-ink-muted">
-          {detail}
-        </Text>
-      </View>
-      <View className="items-end gap-1">
-        <Text className="font-semibold text-label text-ink">{formatPeso(rule.amount)}</Text>
-        <Text className="font-sans text-caption text-ink-muted">{next}</Text>
-      </View>
-    </Pressable>
+      last={last}
+    />
   );
 }
 
@@ -52,20 +43,13 @@ export default function RecurringScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar backLabel="Back to Money">
-        <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-            Recurring
-          </Text>
-          {list.length > 0 ? (
-            <Text className="font-sans text-caption text-on-shell">
-              {running.length} running · {formatPeso(monthly)} a month
-            </Text>
-          ) : null}
-        </View>
-      </ModuleBar>
+      <ModuleHeader
+        title="Recurring"
+        backLabel="Back to Money"
+        subtitle={list.length > 0 ? `${running.length} running · ${formatPeso(monthly)} a month` : undefined}
+      />
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3">
         {rules.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : rules.error ? (
@@ -81,7 +65,7 @@ export default function RecurringScreen() {
             action={{ label: "Add recurring", onPress: add }}
           />
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {list.map((rule, index) => (
               <RecurringRow
                 key={rule.id}

@@ -50,11 +50,13 @@ function JobBody({ job }: { job: JobMatch }) {
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
-      <View>
+      <View className="flex-row items-center justify-between gap-3">
         <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} className="font-bold text-display text-ink">
           {job.score.toFixed(1)}
         </Text>
-        <Text className="font-semibold text-label text-good">{fitWord(job.score)}</Text>
+        <Text className={`font-semibold text-label ${job.score >= 3.5 ? "text-good" : "text-watch"}`}>
+          {fitWord(job.score)}
+        </Text>
       </View>
       <View className="gap-1">
         <Text accessibilityRole="header" className="font-semibold text-heading text-ink">

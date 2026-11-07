@@ -42,7 +42,7 @@ export default function VoiceAccessScreen() {
               accessibilityState={{ checked: account.ticked, disabled: setAccess.isPending }}
               disabled={setAccess.isPending}
               onPress={() => setAccess.mutate({ userId: account.user_id, on: !account.ticked })}
-              className="min-h-touch flex-row items-center gap-3 rounded-card border border-border bg-surface-card p-4 active:bg-surface-muted"
+              className="min-h-touch flex-row items-center gap-3 border-b-2 border-border p-4 active:bg-surface-muted"
             >
               <Ionicons
                 name={account.ticked ? "checkbox" : "square-outline"}

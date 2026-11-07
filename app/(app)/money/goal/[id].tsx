@@ -88,8 +88,8 @@ export default function GoalScreen() {
           <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
       </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
-        <View className="overflow-hidden">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+        <View>
           <GoalCard g={g} last />
         </View>
         {account ? <Text className="font-sans text-caption text-ink-muted">Saved in {account}</Text> : null}
@@ -108,14 +108,14 @@ export default function GoalScreen() {
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
             History
           </Text>
-          <View className="overflow-hidden">
+          <View>
             {list.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">Nothing marked for this goal yet.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">Nothing marked for this goal yet.</Text>
             ) : (
               list.map((c, i) => (
                 <View
                   key={c.id}
-                  className={`min-h-touch flex-row items-center gap-3 py-1 pl-4 pr-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text

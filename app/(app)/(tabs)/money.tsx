@@ -10,17 +10,17 @@ import { CategorySpending } from "@/components/money/CategorySpending";
 import { GoalCard } from "@/components/money/GoalCard";
 import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
+import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
-import { DataRow } from "@/components/ui/DataRow";
+import { DataRow, type RowStatus } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
-import { WeaveBand } from "@/components/ui/WeaveBand";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import { useGoals } from "@/lib/goals";
-import { monthlyAmount, useRecurring } from "@/lib/recurring";
-import { moneyRow, todayIndex } from "@/lib/week";
+import { isAutoRow, monthlyAmount, useRecurring } from "@/lib/recurring";
+import { todayIndex, weekDays } from "@/lib/week";
 import {
   dayTotals,
   daysUntil,
@@ -28,6 +28,7 @@ import {
   formatPeso,
   RENEWAL_LIST_DAYS,
   renewalText,
+  toDateString,
   useAccounts,
   useCategories,
   useMonthSummary,
@@ -57,49 +58,31 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
   const renewal = renewalText(s.next_billing_on);
   const date = format(parseISO(s.next_billing_on), "MMM d");
   const days = daysUntil(s.next_billing_on);
-  const caption =
-    renewal.status === "overdue"
-      ? `Overdue · ${date}, not logged`
-      : renewal.status === "today"
-        ? s.kind === "bill"
-          ? "Due today"
-          : "Renews today"
-        : renewal.status === "soon"
-          ? `${date} · in ${days} ${days === 1 ? "day" : "days"}`
-          : [date, accountName].filter(Boolean).join(" · ");
-  const captionClass =
-    renewal.status === "overdue"
-      ? "font-medium text-danger"
-      : renewal.status === "later"
-        ? "font-sans text-ink-muted"
-        : "font-medium text-warning";
   const inPesos = s.currency !== "PHP" && s.rateToPhp !== null && s.amount !== null ? s.amount * s.rateToPhp : null;
-  const amountLabel = s.amount === null ? "Amount when you pay" : formatMoney(s.amount, s.currency);
+  const detail =
+    renewal.status === "soon"
+      ? `${date} · in ${days} ${days === 1 ? "day" : "days"}`
+      : [date, accountName, inPesos !== null ? `≈ ${formatPeso(Math.round(inPesos))}` : undefined]
+          .filter(Boolean)
+          .join(" · ");
+  const status: RowStatus | undefined =
+    renewal.status === "overdue"
+      ? { label: "Overdue", tone: "over" }
+      : renewal.status === "today"
+        ? { label: "Today", tone: "over" }
+        : renewal.status === "soon"
+          ? { label: "Due soon", tone: "watch" }
+          : undefined;
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${s.name}, ${amountLabel}, ${caption}`}
+    <DataRow
+      title={s.name}
+      detail={detail}
+      value={s.amount === null ? undefined : formatMoney(s.amount, s.currency)}
+      status={status}
       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
-      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
-    >
-      <View className="min-w-0 flex-1 gap-1">
-        <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-          {s.name}
-        </Text>
-        <Text numberOfLines={1} className={`text-caption ${captionClass}`}>
-          {caption}
-        </Text>
-      </View>
-      <View className="items-end gap-1">
-        <Text className={`font-semibold text-row-title ${s.amount === null ? "text-ink-muted" : "text-ink"}`}>
-          {amountLabel}
-        </Text>
-        {inPesos !== null ? (
-          <Text className="font-sans text-badge text-ink-muted">≈ {formatPeso(Math.round(inPesos))}</Text>
-        ) : null}
-      </View>
-    </Pressable>
+      last={last}
+    />
   );
 }
 
@@ -119,10 +102,11 @@ export default function MoneyScreen() {
 
   const budgetList = budgets ?? [];
   const hasBudget = budgetList.length > 0;
-  const budgetTotal = budgetList.reduce((sum, b) => sum + b.available, 0);
   const moneyLeft = budgetList.reduce((sum, b) => sum + b.left, 0);
   const overBudget = budgetList.filter((b) => b.left < 0).length;
   const spentByDay = new Map([...dayTotals(monthRows.data ?? []).byDay].map(([day, t]) => [day, t.spent]));
+  const week = weekDays(now);
+  const todayRows = (monthRows.data ?? []).filter((t) => t.occurred_on === toDateString(now) && t.kind !== "transfer");
   const running = (recurring.data ?? []).filter((r) => !r.is_paused);
   const recurringMonthly = running.filter((r) => r.kind === "expense").reduce((sum, r) => sum + monthlyAmount(r), 0);
   const subscriptionList = (subscriptions.data ?? []).filter((x) => x.kind === "subscription");
@@ -147,7 +131,7 @@ export default function MoneyScreen() {
             : `Total balance · ${formatPeso(month.data?.spent ?? 0)} spent this month`
         }
       />
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-4">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
         {accounts.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : error ? (
@@ -168,26 +152,32 @@ export default function MoneyScreen() {
           </View>
         ) : (
           <>
-            {hasBudget ? (
-              <View className="-mx-5 -mt-4">
-                <WeaveBand rows={[moneyRow(spentByDay, budgetTotal, now)]} todayIndex={todayIndex(now)} />
-              </View>
-            ) : null}
+            <BarChart
+              label={`Spending this week. Today ${formatPeso(spentByDay.get(toDateString(now)) ?? 0)}.`}
+              values={week.map((d) => spentByDay.get(toDateString(d)) ?? 0)}
+              labels={week.map((d) => format(d, "EEEEE"))}
+              highlight={todayIndex(now)}
+            />
 
             <View>
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-                Accounts
+                Today
               </Text>
-              <DataRow title="Total balance" value={formatPeso(total)} />
-              {accountList.map((a, index) => (
-                <DataRow
-                  key={a.id}
-                  title={a.name}
-                  value={formatMoney(a.balance, a.currency)}
-                  onPress={() => setEditing(a)}
-                  last={index === accountList.length - 1}
-                />
-              ))}
+              {todayRows.length === 0 ? (
+                <Text className="py-3 font-sans text-caption text-ink-muted">Nothing logged today.</Text>
+              ) : (
+                todayRows.map((t, index) => (
+                  <DataRow
+                    key={t.id}
+                    title={t.merchant ?? categoryName(t.category_id) ?? (t.kind === "income" ? "Income" : "Expense")}
+                    detail={accountName(t.account_id)}
+                    value={formatPeso(t.amount)}
+                    status={isAutoRow(t.external_ref) ? { label: "Auto", tone: "muted" } : undefined}
+                    onPress={() => router.push({ pathname: "/money/transaction/[id]", params: { id: t.id } })}
+                    last={index === todayRows.length - 1}
+                  />
+                ))
+              )}
             </View>
 
             <View>
@@ -219,13 +209,29 @@ export default function MoneyScreen() {
               <DataRow title="Import statement" onPress={() => router.push("/money/import")} last />
             </View>
 
+            <View>
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Accounts
+              </Text>
+              <DataRow title="Total balance" value={formatPeso(total)} />
+              {accountList.map((a, index) => (
+                <DataRow
+                  key={a.id}
+                  title={a.name}
+                  value={formatMoney(a.balance, a.currency)}
+                  onPress={() => setEditing(a)}
+                  last={index === accountList.length - 1}
+                />
+              ))}
+            </View>
+
             <SpendingCalendar accountName={accountName} categoryName={categoryName} />
 
             <View className="gap-2">
               <SectionHeader title="Savings goals" action="Add goal" onAction={() => router.push("/money/goal/new")} />
-              <View className="overflow-hidden">
+              <View>
                 {(goals.data?.goals ?? []).length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                  <Text className="py-3 font-sans text-caption text-ink-muted">
                     Set a goal, for example a new phone ₱30,000 by June.
                   </Text>
                 ) : (
@@ -240,9 +246,9 @@ export default function MoneyScreen() {
 
             <View className="gap-2">
               <SectionHeader title="Renewing and due soon" />
-              <View className="overflow-hidden">
+              <View>
                 {renewing.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                  <Text className="py-3 font-sans text-caption text-ink-muted">
                     Nothing renews or is due in the next {RENEWAL_LIST_DAYS} days.
                   </Text>
                 ) : (
@@ -260,7 +266,7 @@ export default function MoneyScreen() {
 
             <View className="gap-2">
               <SectionHeader title="Recent" action="See all" onAction={() => router.push("/money/transactions")} />
-              <View className="overflow-hidden">
+              <View>
                 {(recent.data ?? []).length === 0 ? (
                   <View className="items-center gap-2 p-6">
                     <Ionicons name="wallet-outline" size={28} color={colors.accent} />

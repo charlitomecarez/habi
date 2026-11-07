@@ -33,7 +33,7 @@ type MessageCardProps = {
 export function MessageCard({ message, badge, fallback, audio, onPlay, onRetry }: MessageCardProps) {
   const path = message.audio_path;
   return (
-    <View className="gap-2 rounded-card border border-border bg-surface-card p-4">
+    <View className="gap-2 border-b-2 border-border py-3">
       <View className="flex-row items-center justify-between gap-2">
         <Text className="flex-1 font-sans text-caption text-ink-muted">
           {whenText(message.created_at)} · {durationText(message.duration_s)}

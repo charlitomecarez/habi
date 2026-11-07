@@ -1,15 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { documentStatus, typeLabel, useDocuments } from "@/lib/documents";
+
+const STATUS_TONE = { danger: "over", warning: "watch", neutral: "muted", good: "good" } as const;
 
 export default function DocumentsScreen() {
   const colors = useColors();
@@ -24,7 +25,7 @@ export default function DocumentsScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {docs.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : docs.error ? (
@@ -33,9 +34,9 @@ export default function DocumentsScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => docs.refetch()} />
           </View>
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {list.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+              <Text className="py-3 font-sans text-caption text-ink-muted">
                 Add your LTO registration, license, passport, insurance and PhilHealth. Each one reminds you 30 days
                 before it expires.
               </Text>
@@ -43,21 +44,14 @@ export default function DocumentsScreen() {
               list.map((d, i) => {
                 const status = documentStatus(d);
                 return (
-                  <Pressable
+                  <DataRow
                     key={d.id}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${d.name}, ${typeLabel(d.type)}, ${status.text}`}
+                    title={d.name}
+                    detail={typeLabel(d.type)}
+                    status={{ label: status.text, tone: STATUS_TONE[status.tone] }}
                     onPress={() => router.push({ pathname: "/documents/[id]", params: { id: d.id } })}
-                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
-                  >
-                    <View className="min-w-0 flex-1 gap-1">
-                      <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-                        {d.name}
-                      </Text>
-                      <Badge label={status.text} tone={status.tone} />
-                    </View>
-                    <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
-                  </Pressable>
+                    last={i === list.length - 1}
+                  />
                 );
               })
             )}

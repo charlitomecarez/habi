@@ -38,43 +38,42 @@ All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light
 - **Section colours:** `daily`, `people`, `home`, `records`, each with a `-tint`. The colour on its tint passes 4.5:1 in light and dark. They are in `global.css` and `lib/colors.ts`.
 - **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes.
 - **Font families:** Schibsted Grotesk. `font-sans` (400), `font-medium` (500), `font-semibold` (700), `font-bold` (900).
-- **Font sizes:** `display` 34, `amount-input` 32, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 15, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
-- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 48, `input` 52, `button` 56, `slot` 64, `amount` 72, `field-sm` 110, `tile` 112.
+- **Font sizes:** `say` 30, `display` 34, `amount-input` 32, `amount` 20, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 16, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
+- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 48, `input` 52, `button` 56, `slot` 64, `amount` 72, `fab-clear` 112 (space under a list with a FAB), `field-sm` 110, `tile` 112.
 - **Radius:** `sm` 10, `md` 12, `input` 14, `card` 16, `fab` 18, `hero` 20, `sheet` 28, `pill` 999.
 
 Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28` or `h-1.5`. NativeWind uses rem = 14 px on native, so those classes give a different size on Android and web. Add a named token instead.
 
 ## Shared components (`components/ui/`)
 
-| Component       | Use                                                                                                             |
-| --------------- | --------------------------------------------------------------------------------------------------------------- |
-| `Button`        | Variants `primary`, `secondary`, `destructive`. Sizes `button` (56) and `input` (52). Has `loading` and `icon`. |
-| `Input`         | Labelled text field with an error line.                                                                         |
-| `PasswordInput` | Text field with a show or hide button. `emphasis` adds a 2 px accent border.                                    |
-| `AmountInput`   | Large amount field. `unitPosition` puts the currency before or after.                                           |
-| `Select`        | Field that opens an `OptionSheet`. `optional` allows no value.                                                  |
-| `OptionSheet`   | Radio list in a `Sheet`.                                                                                        |
-| `Segmented`     | Segmented control for two to four choices.                                                                      |
-| `Chip`          | `choice` (form) or `filter` (list filter, filled when selected).                                                |
-| `DateTimeField` | Date or date-and-time field. Has a `.web.tsx` version.                                                          |
-| `Stepper`       | − and + buttons around a number field.                                                                          |
-| `PhotoField`    | Photo picker. `tiles` layout (camera and library tiles) or `single` layout (one button that asks).              |
-| `DashedButton`  | Dashed "add" button. Shapes `tall` and `wide`.                                                                  |
-| `LetterAvatar`  | First letter on a token colour picked from a hash of the name.                                                  |
-| `Badge`         | Status word. Tones `danger`, `warning`, `neutral`, `good`.                                                      |
-| `Notice`        | Message box. Tones `warning`, `danger` and `neutral`.                                                           |
-| `Fab`           | Floating action button. The one primary action on a list screen.                                                |
-| `ScreenHeader`  | Screen title.                                                                                                   |
-| `Sheet`         | Bottom sheet.                                                                                                   |
-| `TabBar`        | The app's tab bar. The open tab has a filled icon on a tinted pill. Its height follows the bottom inset.        |
-| `ModuleHeader`  | A field of section colour with the back button and the title. Reaches under the status bar.                     |
-| `DataRow`       | Title and detail, then number and status word. Wraps, and never cuts a number.                                  |
-| `BarChart`      | Bars of exact length, drawn with `View`.                                                                        |
-| `WeaveBand`     | The week: a row for each area, a strand for each day. Solid is good, split is watch, a dot is over.             |
-| `ModuleTile`    | A module in a grid, with a section colour. Tones `accent`, `daily`, `people`, `home`, `records`.                |
-| `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                               |
-| `FadeIn`        | A short fade for a list or section.                                                                             |
-| `PressScale`    | A `Pressable` that shrinks a little on press.                                                                   |
+| Component       | Use                                                                                                                                      |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`        | Variants `primary`, `secondary`, `destructive`, `plain` (a text action). Sizes `button` (56) and `input` (52). Has `loading` and `icon`. |
+| `Input`         | Labelled text field with an error line.                                                                                                  |
+| `PasswordInput` | Text field with a show or hide button. `emphasis` adds a 2 px accent border.                                                             |
+| `AmountInput`   | Large amount field. `unitPosition` puts the currency before or after.                                                                    |
+| `Select`        | Field that opens an `OptionSheet`. `optional` allows no value.                                                                           |
+| `OptionSheet`   | Radio list in a `Sheet`.                                                                                                                 |
+| `Segmented`     | Segmented control for two to four choices.                                                                                               |
+| `Chip`          | `choice` (form) or `filter` (list filter, indigo when selected). Filter chips wrap, and they never scroll.                               |
+| `DateTimeField` | Date or date-and-time field. Has a `.web.tsx` version.                                                                                   |
+| `Stepper`       | − and + buttons around a number field.                                                                                                   |
+| `PhotoField`    | Photo picker. `tiles` layout (camera and library tiles) or `single` layout (one button that asks).                                       |
+| `DashedButton`  | Dashed "add" button. Shapes `tall` and `wide`.                                                                                           |
+| `LetterAvatar`  | First letter on a token colour picked from a hash of the name.                                                                           |
+| `Badge`         | Status word. Tones `danger`, `warning`, `neutral`, `good`.                                                                               |
+| `Notice`        | Message box. Tones `warning`, `danger` and `neutral`.                                                                                    |
+| `Fab`           | Floating action button. The one primary action on a list screen.                                                                         |
+| `Sheet`         | Bottom sheet.                                                                                                                            |
+| `TabBar`        | The app's tab bar. The open tab has a filled icon on a tinted pill. Its height follows the bottom inset.                                 |
+| `ModuleHeader`  | A field of section colour with the back button and the title. Reaches under the status bar.                                              |
+| `DataRow`       | Title and detail, then number and status word. Stacks at 1.3 times text. It never cuts a number.                                         |
+| `BarChart`      | Bars of exact length, drawn with `View`.                                                                                                 |
+| `WeaveBand`     | The week: a row for each area, a strand for each day. Solid is good, split is watch, a dot is over.                                      |
+| `ModuleLine`    | A module on More or in the Home shortcuts: a name and how much is inside, two to a row.                                                  |
+| `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                                                        |
+| `FadeIn`        | A short fade for a list or section.                                                                                                      |
+| `PressScale`    | A `Pressable` that shrinks a little on press.                                                                                            |
 
 Lists are plain rows with 2 px rules (`border-b-2 border-border`). Only an object that you act on is a card (`rounded-card border border-border bg-surface-card`). There is no `Card` or `ListRow` component.
 
@@ -86,4 +85,5 @@ The source for the design is the Design canvas at https://claude.ai/artifact/7y3
 - Sizes between token steps snap to the nearest token.
 - `LetterAvatar` uses token colours only.
 - The expense form shows all categories, not six and "More…".
-- Some extra parts stay: the Recent list on Money, "Mark services done" and "Log another service" on Vehicle, back buttons on Inventory and Vault, and the fingerprint switch on Vault.
+- Some extra parts stay: Accounts, the calendar, goals and the Recent list on Money, "Mark services done" and "Log another service" on Vehicle, and the fingerprint switch on Vault. They sit below the parts that the design shows.
+- Todos and Habits keep a check box before each row, which the v1.3.0 mocks do not show. Without it, a row needs two taps to finish.

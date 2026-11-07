@@ -7,9 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
+import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SetUpVault, UnlockVault } from "@/components/vault/VaultGate";
 import { copySecret } from "@/lib/clipboard";
 import { useColors } from "@/lib/colors";
@@ -56,10 +56,9 @@ function UnlockedVault() {
   const visible = entries.filter((e) => matches(e, query));
 
   return (
-    <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2" keyboardShouldPersistTaps="handled">
+    <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3" keyboardShouldPersistTaps="handled">
       <View className="flex-row items-start justify-between gap-3">
         <View className="flex-1 gap-1">
-          <ScreenHeader title="Vault" />
           <View className="flex-row items-center gap-1">
             <Ionicons
               name={
@@ -107,10 +106,10 @@ function UnlockedVault() {
       </View>
 
       {copied ? (
-        <View accessibilityLiveRegion="polite" className="rounded-input bg-accent-tint px-4 py-3">
-          <Text className="font-sans text-caption text-accent-strong">
+        <View accessibilityLiveRegion="polite">
+          <Notice tone="neutral">
             Password for {copied} copied. The clipboard clears in {CLEAR_CLIPBOARD_SECONDS} seconds.
-          </Text>
+          </Notice>
         </View>
       ) : null}
 
@@ -122,22 +121,18 @@ function UnlockedVault() {
           <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
         </View>
       ) : entries.length === 0 ? (
-        <View className="items-center rounded-card border border-border bg-surface-card p-6">
-          <Text className="text-center font-sans text-body text-ink-muted">No logins yet.</Text>
-        </View>
+        <Text className="py-4 font-sans text-body text-ink-muted">I keep your logins here. Add your first one.</Text>
       ) : visible.length === 0 ? (
-        <View className="items-center rounded-card border border-border bg-surface-card p-6">
-          <Text className="text-center font-sans text-body text-ink-muted">No logins match “{query.trim()}”.</Text>
-        </View>
+        <Text className="py-4 font-sans text-body text-ink-muted">No logins match “{query.trim()}”.</Text>
       ) : (
-        <View className="overflow-hidden">
+        <View>
           {visible.map((entry, index) => {
             const data = entry.data;
             const title = data?.title || "Untitled";
             return (
               <View
                 key={entry.id}
-                className={`min-h-touch flex-row items-center gap-3 py-3 pl-4 pr-3 ${index < visible.length - 1 ? "border-b-2 border-border" : ""}`}
+                className={`min-h-touch flex-row items-center gap-3 py-3 ${index < visible.length - 1 ? "border-b-2 border-border" : ""}`}
               >
                 <Pressable
                   accessibilityRole="button"
@@ -188,7 +183,7 @@ function UnlockedVault() {
             accessibilityLabel={`Quick unlock, ${quickUnlockLabel(biometric.data.mode)}. Change`}
             disabled={setBiometric.isPending}
             onPress={() => setChoosingUnlock(true)}
-            className="min-h-touch flex-row items-center gap-3 rounded-card border border-border bg-surface-card px-4 py-3 active:bg-surface-muted"
+            className="min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted"
           >
             <Ionicons
               name={biometric.data.mode === "face" ? "happy-outline" : "finger-print"}
@@ -258,17 +253,8 @@ export default function VaultScreen() {
   useSecureScreen("vault");
 
   return (
-    <SafeAreaView className="flex-1 bg-surface-page">
-      <View className="px-3 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-      </View>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
+      <ModuleHeader title="Vault" tone="records" />
 
       {settings.isPending ? (
         <ActivityIndicator color={colors.accent} className="py-8" />

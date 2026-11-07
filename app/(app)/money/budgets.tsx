@@ -52,7 +52,7 @@ export default function BudgetsScreen() {
           Budgets
         </Text>
       </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <Text className="font-sans text-caption text-ink-muted">
           Money you don&apos;t spend carries over to next month. Going over does not take from next month. You get a
           notification at 80% and at 100%.
@@ -62,9 +62,9 @@ export default function BudgetsScreen() {
         ) : budgets.error ? (
           <Notice tone="danger">Could not load your budgets. {budgets.error.message}</Notice>
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {(months ?? []).length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No budgets yet.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No budgets yet.</Text>
             ) : (
               months?.map((m, i) => (
                 <Pressable

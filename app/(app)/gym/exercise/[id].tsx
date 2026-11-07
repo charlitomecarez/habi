@@ -35,7 +35,7 @@ export default function ExerciseHistoryScreen() {
           {exercise?.name ?? "Exercise"}
         </Text>
       </ModuleBar>
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-3 px-5 pb-8 pt-2">
         {history.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : history.error ? (
@@ -45,7 +45,7 @@ export default function ExerciseHistoryScreen() {
             No sets yet. Tick sets during a workout to build the history.
           </Text>
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {bySession.map((g, i) => {
               const date = dateOf(g.sessionId);
               const best = Math.max(...g.sets.map((s) => s.weight_kg ?? 0));

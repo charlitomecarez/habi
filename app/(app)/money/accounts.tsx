@@ -24,20 +24,20 @@ export default function AccountsScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {accounts.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : accounts.error ? (
           <Notice tone="danger">Could not load your accounts. {accounts.error.message}</Notice>
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {list.map((a, index) => (
               <Pressable
                 key={a.id}
                 accessibilityRole="button"
                 accessibilityLabel={`${a.name}, balance ${formatMoney(a.balance, a.currency)}. Edit account`}
                 onPress={() => setEditing(a)}
-                className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""}`}
+                className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""}`}
               >
                 <BrandIcon name={a.name} />
                 <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">

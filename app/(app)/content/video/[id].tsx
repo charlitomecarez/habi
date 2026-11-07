@@ -154,10 +154,10 @@ export default function VideoScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
 
-        <View className="gap-3 rounded-card border border-border bg-surface-card p-4">
+        <View className="gap-3">
           <View className="flex-row flex-wrap items-center gap-2">
             <Badge label={`${current.label} stage`} tone="neutral" />
             {status ? <Badge label={status.text} tone={status.tone} /> : null}
@@ -180,7 +180,7 @@ export default function VideoScreen() {
 
         {steps.length > 0 ? (
           <Section title={`${current.label} checklist`}>
-            <View className="overflow-hidden">
+            <View>
               {steps.map((st, i) => {
                 const done = v.done_steps.includes(st.id);
                 const command = commandFor(st, v.project_slug);
@@ -194,7 +194,7 @@ export default function VideoScreen() {
                       accessibilityLabel={st.label}
                       accessibilityState={{ checked: done }}
                       onPress={() => toggleStep(st.id)}
-                      className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted"
+                      className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3 py-3 active:bg-surface-muted"
                     >
                       <Ionicons
                         name={done ? "checkbox" : "square-outline"}
@@ -262,9 +262,9 @@ export default function VideoScreen() {
         </View>
 
         <Section title="Tasks">
-          <View className="overflow-hidden">
+          <View>
             {(tasks.data ?? []).length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+              <Text className="py-3 font-sans text-caption text-ink-muted">
                 No tasks. Tasks also show in Todos and get their reminders.
               </Text>
             ) : (
@@ -277,7 +277,7 @@ export default function VideoScreen() {
                     accessibilityLabel={`${t.title}${t.due_at ? `, due ${format(parseISO(t.due_at), "MMM d, h:mm a")}` : ""}`}
                     accessibilityState={{ checked: done }}
                     onPress={() => toggleTask.mutate({ id: t.id, done: !done })}
-                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === (tasks.data?.length ?? 0) - 1 ? "" : "border-b-2 border-border"}`}
+                    className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${i === (tasks.data?.length ?? 0) - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <Ionicons
                       name={done ? "checkbox" : "square-outline"}
@@ -305,7 +305,7 @@ export default function VideoScreen() {
         </Section>
 
         <Section title="Posts">
-          <View className="overflow-hidden">
+          <View>
             {POST_PLATFORMS.map((p, i) => {
               const post = v.posts.find((x) => x.platform === p.id);
               return (
@@ -338,7 +338,7 @@ export default function VideoScreen() {
         </Section>
 
         <Section title="Details">
-          <View className="overflow-hidden">
+          <View>
             <Detail
               label="Publish date"
               value={v.publish_on ? format(parseISO(v.publish_on), "EEEE, MMMM d, yyyy") : "Not set"}

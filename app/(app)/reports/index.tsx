@@ -5,11 +5,11 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
-import { Segmented } from "@/components/ui/Segmented";
 import { useColors } from "@/lib/colors";
 import { useReports, type Report } from "@/lib/feedback";
 
@@ -52,14 +52,24 @@ export default function ReportsScreen() {
           <EmptyState drawing="list" title="No reports yet" body="A report from any account shows here." />
         ) : (
           <>
-            <Segmented label="Show" options={FILTERS} value={filter} onChange={setFilter} />
+            <View accessibilityRole="radiogroup" accessibilityLabel="Show" className="flex-row flex-wrap gap-2">
+              {FILTERS.map((f) => (
+                <Chip
+                  key={f.value}
+                  label={f.label}
+                  variant="filter"
+                  selected={filter === f.value}
+                  onPress={() => setFilter(f.value)}
+                />
+              ))}
+            </View>
             <View>
               {list.map((report, index) => (
                 <DataRow
                   key={report.id}
                   title={report.message}
                   detail={detail(report)}
-                  status={report.read_at ? { label: "Read", tone: "muted" } : { label: "New", tone: "watch" }}
+                  status={report.read_at ? { label: "Read", tone: "muted" } : { label: "New", tone: "over" }}
                   onPress={() => router.push({ pathname: "/reports/[id]", params: { id: report.id } })}
                   last={index === list.length - 1}
                 />

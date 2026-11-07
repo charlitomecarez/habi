@@ -51,20 +51,20 @@ export default function LocationsScreen() {
         </View>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {locations.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : locations.error ? (
           <Notice tone="danger">Could not load locations. {locations.error.message}</Notice>
         ) : list.length === 0 ? (
-          <View className="items-center gap-3 rounded-hero border border-border bg-surface-card p-6">
+          <View className="items-center gap-3 py-6">
             <Ionicons name="home-outline" size={32} color={colors.accent} />
             <Text className="text-center font-sans text-body text-ink-muted">
               Start with a room, then add the shelves, drawers and boxes inside it.
             </Text>
           </View>
         ) : (
-          <View className="overflow-hidden">
+          <View>
             {list.map((loc, index) => (
               <Pressable
                 key={loc.id}
