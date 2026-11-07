@@ -7,6 +7,11 @@ This page lists the changes in each release, with the newest release first. It g
 Each release section has this form:
 
 ```md
+### Fixed
+
+- **Statement import:** PDF import works on Android again, for every bank. Install the new APK.
+- **Statement import:** A server failure no longer asks you to check your connection.
+
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
 
 ### Added

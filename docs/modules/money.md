@@ -63,6 +63,7 @@ Other banks and CSV files are not built.
 ## Statement import
 
 - `/money/import` sends a PDF to the `import-statement` Edge Function. The function holds `GOTYME_KEY` and `GCASH_KEY` as secrets, so the keys never reach the phone. They are not kept in `.env`.
+- On Android, `lib/statement-file.ts` uploads an `expo-file-system` `File`. Expo's `fetch` throws on the React Native `{ uri }` form part, before any request leaves the phone.
 - `supabase/functions/_shared/statements.ts` finds the bank and parses the rows. A totals mismatch stops the import.
 - `buildReview` in `lib/import.ts` removes repeats, pairs own transfers, and unticks possible duplicates.
 - `import_transactions` saves the ticked rows with `source = 'import'`. `external_ref` stops repeats.
