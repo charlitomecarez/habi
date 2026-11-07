@@ -36,6 +36,13 @@ export function useJournal() {
   });
 }
 
+/** The entries on either side of a date. The list is newest first. */
+export function entryNeighbours(entries: readonly JournalEntry[], date: string) {
+  const index = entries.findIndex((e) => e.on_date === date);
+  if (index === -1) return { older: undefined, newer: undefined };
+  return { older: entries[index + 1], newer: entries[index - 1] };
+}
+
 /** Saves the day's entry; a second save on the same day edits it. */
 export function useSaveEntry() {
   const client = useQueryClient();

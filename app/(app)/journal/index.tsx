@@ -21,6 +21,7 @@ export default function JournalScreen() {
   const byDate = new Map(entries.map((e) => [e.on_date, e]));
   const todays = byDate.get(today);
   const recent = entries.filter((e) => isSameMonth(parseISO(e.on_date), month));
+  const openEntry = (date: string) => router.push({ pathname: "/journal/entry/[date]", params: { date } });
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -43,7 +44,12 @@ export default function JournalScreen() {
             <View className="gap-3">
               <Text className="font-medium text-caption text-ink-muted">{format(now, "EEEE, MMMM d")}</Text>
               {todays ? (
-                <>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Read today's entry"
+                  onPress={() => openEntry(today)}
+                  className="gap-3 active:bg-surface-muted"
+                >
                   {moodLabel(todays.mood) ? (
                     <Text className="font-semibold text-heading text-ink">
                       Feeling {moodLabel(todays.mood)?.toLowerCase()}
@@ -52,7 +58,7 @@ export default function JournalScreen() {
                   <Text numberOfLines={4} className="font-sans text-body text-ink">
                     {todays.body || "No words yet."}
                   </Text>
-                </>
+                </Pressable>
               ) : (
                 <Text className="font-sans text-body text-ink-muted">How was today? A few lines is enough.</Text>
               )}
@@ -71,7 +77,8 @@ export default function JournalScreen() {
                 selected={null}
                 onSelect={(date) => {
                   if (date > today) return;
-                  router.push({ pathname: "/journal/[date]", params: { date } });
+                  if (byDate.has(date)) openEntry(date);
+                  else router.push({ pathname: "/journal/[date]", params: { date } });
                 }}
                 describeDay={(date) => {
                   const e = byDate.get(date);
@@ -106,7 +113,7 @@ export default function JournalScreen() {
                       key={e.id}
                       accessibilityRole="button"
                       accessibilityLabel={`${format(parseISO(e.on_date), "MMMM d")}${moodLabel(e.mood) ? `, ${moodLabel(e.mood)}` : ""}. Open entry`}
-                      onPress={() => router.push({ pathname: "/journal/[date]", params: { date: e.on_date } })}
+                      onPress={() => openEntry(e.on_date)}
                       className={`min-h-touch gap-1 py-3 active:bg-surface-muted ${i === recent.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Text className="font-semibold text-row-title text-ink">
