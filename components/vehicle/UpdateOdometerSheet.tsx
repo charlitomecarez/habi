@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, isToday, parseISO, set } from "date-fns";
+import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { View } from "react-native";
 import { z } from "zod";
@@ -13,6 +14,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import {
   formatKm,
   newlyDueAt,
+  noLongerDueAt,
   parseKm,
   useLogOdometer,
   vehicleName,
@@ -33,7 +35,7 @@ function makeSchema(currentKm: number) {
     reading: z
       .string()
       .refine((v) => parseKm(v) !== null, "Enter the reading in whole kilometres.")
-      .refine((v) => (parseKm(v) ?? 0) > currentKm, `Enter more than ${formatKm(currentKm)} km.`),
+      .refine((v) => parseKm(v) !== currentKm, "This is the same as the odometer. Enter a different number."),
     date: z
       .date({ error: "Choose a date." })
       .nullable()
@@ -52,16 +54,20 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
     resolver: zodResolver(makeSchema(currentKm)),
     defaultValues: { reading: "", date: new Date(), note: "" },
   });
+  const [confirming, setConfirming] = useState(false);
   const reading = parseKm(useWatch({ control, name: "reading" }) ?? "");
   const newlyDue = reading !== null && reading > currentKm ? newlyDueAt(services, reading) : [];
+  const lowering = reading !== null && reading < currentKm;
+  const ended = lowering ? noLongerDueAt(services, reading, format(new Date(), "yyyy-MM-dd")) : [];
 
   const help = lastReading
-    ? `Last reading: ${formatKm(lastReading.odometer_km)} km on ${format(parseISO(lastReading.logged_at), "MMM d")}. Must be higher.`
-    : `Now ${formatKm(currentKm)} km. Must be higher.`;
+    ? `Last reading: ${formatKm(lastReading.odometer_km)} km on ${format(parseISO(lastReading.logged_at), "MMM d")}.`
+    : `Now ${formatKm(currentKm)} km.`;
 
   function close() {
     reset({ reading: "", date: new Date(), note: "" });
     logOdometer.reset();
+    setConfirming(false);
     onClose();
   }
 
@@ -74,9 +80,35 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
       odometerKm: parseKm(values.reading)!,
       loggedAt,
       note: values.note.trim() || null,
+      isCorrection: parseKm(values.reading)! < currentKm,
     });
     close();
   });
+
+  const saveError = logOdometer.error ? (
+    <Notice tone="danger">Could not save the reading. Check your connection.</Notice>
+  ) : null;
+
+  if (confirming && reading !== null) {
+    const names = ended.map((s) => s.item).join(", ");
+    return (
+      <Sheet
+        visible={visible}
+        onClose={close}
+        title="Lower the odometer?"
+        subtitle={`From ${formatKm(currentKm)} km to ${formatKm(reading)} km`}
+      >
+        <Notice tone="warning">
+          {ended.length > 0
+            ? `Service due dates change. ${names} ${ended.length === 1 ? "is" : "are"} no longer overdue, so the reminder stops.`
+            : "Service due dates change."}
+        </Notice>
+        {saveError}
+        <Button label={`Lower to ${formatKm(reading)} km`} loading={formState.isSubmitting} onPress={onSubmit} />
+        <Button label="Go back" variant="secondary" onPress={() => setConfirming(false)} />
+      </Sheet>
+    );
+  }
 
   return (
     <Sheet
@@ -127,9 +159,16 @@ export function UpdateOdometerSheet({ visible, onClose, vehicle, services, lastR
           Saving this makes {newlyDue.map((s) => s.item).join(", ")} due. You&apos;ll get a reminder.
         </Notice>
       ) : null}
-      {logOdometer.error ? <Notice tone="danger">{logOdometer.error.message}</Notice> : null}
+      {lowering ? (
+        <Notice tone="warning">This is lower than the odometer. Lower it only to fix a wrong reading.</Notice>
+      ) : null}
+      {saveError}
 
-      <Button label="Save reading" loading={formState.isSubmitting} onPress={onSubmit} />
+      {lowering ? (
+        <Button label="Continue" onPress={() => setConfirming(true)} />
+      ) : (
+        <Button label="Save reading" loading={formState.isSubmitting} onPress={onSubmit} />
+      )}
     </Sheet>
   );
 }
