@@ -29,6 +29,8 @@ import { useUserSettings } from "@/lib/settings";
 import { groupTodos, useTodos } from "@/lib/todos";
 import { todayChoice, useUlamDays } from "@/lib/ulam";
 import { useServiceDue, useVehicle } from "@/lib/vehicles";
+import { sleepMinutes, sleepRow, sleepText, useSleepLog } from "@/lib/sleep";
+import { stepsAverage, useSteps } from "@/lib/steps";
 import { useWeather } from "@/lib/weather";
 import { habitRow, moneyRow, todayIndex, todoRow, weekDays } from "@/lib/week";
 import { STRAND_WORD, type WeaveRow } from "@/lib/weave";
@@ -73,6 +75,8 @@ export default function HomeScreen() {
   const habits = useHabits();
   const ulamDays = useUlamDays();
   const weather = useWeather();
+  const sleepLog = useSleepLog();
+  const steps = useSteps();
 
   const openToday = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
   const bills = subscriptions.data ?? [];
@@ -101,6 +105,7 @@ export default function HomeScreen() {
     ...(hasBudget ? [moneyRow(spentByDay, budgetTotal, now)] : []),
     todoRow(todos.data ?? [], now),
     habitRow(habits.data?.habits ?? [], habits.data?.checks ?? new Map(), now),
+    sleepRow(sleepLog.data ?? {}, now),
   ];
 
   const ulamRow = ulamDays.data?.find((d) => d.on_date === toDateString(now));
@@ -116,6 +121,10 @@ export default function HomeScreen() {
   const forecast = weather.data?.forecast;
   const today = format(now, "EEEE, MMM d");
   const weatherLine = forecast ? `${today} · ${forecast.temperature}° · Rain ${forecast.rain}%` : today;
+
+  const stepWeek = steps.data?.week ?? [];
+  const stepsToday = stepWeek[stepWeek.length - 1] ?? 0;
+  const lastNight = sleepLog.data?.[toDateString(now)];
 
   const first = items[0];
   const firstRun = !loading && !error && items.length === 0 && (todos.data ?? []).length === 0;
@@ -221,6 +230,17 @@ export default function HomeScreen() {
                 value={formatPeso(ulam.cost)}
                 status={{ label: "Under limit", tone: "good" }}
                 onPress={() => router.push("/ulam")}
+              />
+              <DataRow
+                title={steps.data?.access ? "Steps" : "Sleep"}
+                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "Log last night's sleep"}
+                value={steps.data?.access ? stepsToday.toLocaleString("en-PH") : undefined}
+                status={
+                  steps.data?.access && stepsToday >= stepsAverage(stepWeek)
+                    ? { label: "On track", tone: "good" }
+                    : undefined
+                }
+                onPress={() => router.push("/steps")}
                 last
               />
             </View>

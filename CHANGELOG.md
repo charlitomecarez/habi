@@ -57,6 +57,7 @@ Do not put these items here:
 - **Report a bug:** Any account can send a bug or an idea from More. The admin gets a push and reads it on the Reports screen.
 - **Reminders:** A tap on a reminder opens its item, not Home.
 - **Weather:** Home shows the temperature and the rain chance for a place you pick. Tap it for the forecast. Your location is optional.
+- **Steps and sleep:** Home shows your steps from Health Connect, and the sleep that you type. Both stay on the phone.
 
 ### Changed
 

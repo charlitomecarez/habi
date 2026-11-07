@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": ["android.permission.health.READ_STEPS"]
     },
     "web": {
       "bundler": "metro",
@@ -64,6 +65,15 @@
         "expo-location",
         {
           "locationWhenInUsePermission": "my-app uses your location only when you tap Use my location, to show your weather."
+        }
+      ],
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
         }
       ]
     ],
