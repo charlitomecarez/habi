@@ -88,7 +88,7 @@ Views:
 | `subscriptions_sync_reminder`       | `subscriptions` | Keeps one pending renewal reminder per active subscription.           |
 | `transactions_advance_subscription` | `transactions`  | A payment linked to a subscription moves `next_billing_on` one cycle. |
 
-The odometer never goes down. Both log triggers use `greatest(current, new)`.
+The odometer goes down only through an `odometer_logs` row with `is_correction`. Every other log uses `greatest(current, new)`, so an old fuel or service entry never lowers it. A correction also deletes pending `vehicle_service` reminders that are no longer overdue.
 
 ## RPC
 

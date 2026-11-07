@@ -11,6 +11,7 @@ Each release section has this form:
 
 - **Statement import:** PDF import works on Android again, for every bank. Install the new APK.
 - **Statement import:** A server failure no longer asks you to check your connection.
+- **Vehicle:** Update odometer accepts a lower number after a confirm step, to fix a wrong reading. A lower reading stops reminders that are no longer true. This changes the old rule that the odometer never goes down.
 - **Inbox:** Play audio now shows Loading, the time while it plays, and an error with Try again.
 
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06

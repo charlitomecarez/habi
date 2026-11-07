@@ -893,6 +893,7 @@ export type Database = {
       odometer_logs: {
         Row: {
           id: string;
+          is_correction: boolean;
           logged_at: string;
           note: string | null;
           odometer_km: number;
@@ -901,6 +902,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
+          is_correction?: boolean;
           logged_at?: string;
           note?: string | null;
           odometer_km: number;
@@ -909,6 +911,7 @@ export type Database = {
         };
         Update: {
           id?: string;
+          is_correction?: boolean;
           logged_at?: string;
           note?: string | null;
           odometer_km?: number;

@@ -141,12 +141,19 @@ export function useAddVehicle() {
 export function useLogOdometer() {
   const invalidate = useInvalidateVehicle();
   return useMutation({
-    mutationFn: async (input: { vehicleId: string; odometerKm: number; loggedAt: Date; note: string | null }) => {
+    mutationFn: async (input: {
+      vehicleId: string;
+      odometerKm: number;
+      loggedAt: Date;
+      note: string | null;
+      isCorrection?: boolean;
+    }) => {
       const { error } = await supabase.from("odometer_logs").insert({
         vehicle_id: input.vehicleId,
         odometer_km: input.odometerKm,
         logged_at: input.loggedAt.toISOString(),
         note: input.note,
+        is_correction: input.isCorrection ?? false,
       });
       if (error) throw error;
     },
@@ -258,6 +265,17 @@ export function laterText(s: ServiceDue): string {
   if (s.nextDueKm !== null) parts.push(`at ${formatKm(s.nextDueKm)} km`);
   if (s.nextDueOn !== null) parts.push(format(parseISO(s.nextDueOn), "MMM yyyy"));
   return parts.join(" or ");
+}
+
+/** Overdue items that a lower reading would end. An item that is overdue by date stays overdue. */
+export function noLongerDueAt(services: ServiceDue[], odometerKm: number, today: string): ServiceDue[] {
+  return services.filter(
+    (s) =>
+      s.status === "overdue" &&
+      s.nextDueKm !== null &&
+      odometerKm < s.nextDueKm &&
+      (s.nextDueOn === null || s.nextDueOn > today),
+  );
 }
 
 /** Items with a km interval that a new reading would make overdue. */

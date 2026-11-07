@@ -39,7 +39,8 @@ App text comes from `dueText` (for example "300 km overdue", "Due in 12 days") a
 `UpdateOdometerSheet` calls `useLogOdometer`, which inserts an `odometer_logs` row.
 
 - Before save, `newlyDueAt` lists items that the new reading makes overdue. The sheet shows them with "You'll get a reminder."
-- `on_odometer_logged` raises `current_odometer_km`. It never lowers it.
+- A lower reading needs a second step. The sheet then saves with `is_correction`, and `noLongerDueAt` names the items that it ends.
+- `on_odometer_logged` raises `current_odometer_km`, or sets it for a correction. No other log lowers it.
 - It inserts a `vehicle_service` reminder (due now) for each overdue item that has no pending reminder.
 
 ## Log a service
