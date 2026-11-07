@@ -1,7 +1,7 @@
 // Pure Ulam rules, shared by the daily-ulam function and the app.
 import { ULAM_PRICES } from "./ulam-prices.ts";
 
-/** Picks the bundled picture. Groq gives only text, so a dish never has its own photo. */
+/** Picks the bundled picture, which shows when a dish has no photo. */
 export const ULAM_KINDS = ["egg", "vegetable", "beans", "fish", "meat", "soup"] as const;
 export type UlamKind = (typeof ULAM_KINDS)[number];
 
@@ -15,6 +15,8 @@ export type Ulam = {
   cookMinutes: number;
   kcal: number;
   steps: string[];
+  /** A Commons photo. Old rows and some dishes have none. */
+  photo_url?: string;
 };
 
 export const OPTIONS_PER_DAY = 3;

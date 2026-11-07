@@ -3,7 +3,7 @@ import Svg, { Circle, Ellipse, Path, Rect } from "react-native-svg";
 import { useColors } from "@/lib/colors";
 import type { Ulam } from "@/lib/ulam";
 
-/** A simple bundled picture for each kind of dish. Groq gives only text, so a dish has no photo. */
+/** A simple bundled picture for each kind of dish. It shows when a dish has no photo. */
 export function UlamPicture({ kind, size = 112 }: { kind: Ulam["kind"]; size?: number }) {
   const colors = useColors();
   const line = { stroke: colors.ink, strokeWidth: 2.5, strokeLinecap: "round", strokeLinejoin: "round" } as const;

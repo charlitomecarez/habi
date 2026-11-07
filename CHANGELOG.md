@@ -12,6 +12,7 @@ Each release section has this form:
 - **Statement import:** PDF import works on Android again, for every bank. Install the new APK.
 - **Statement import:** A server failure no longer asks you to check your connection.
 - **Vehicle:** Update odometer accepts a lower number after a confirm step, to fix a wrong reading. A lower reading stops reminders that are no longer true. This changes the old rule that the odometer never goes down.
+- **Ulam:** Show another stops at the third dish, and chips go back to any of the three.
 - **Inbox:** Play audio now shows Loading, the time while it plays, and an error with Try again.
 
 ## [v1.2.2](docs/releases/v1.2.2.md) - 2026-11-06
@@ -52,6 +53,7 @@ Do not put these items here:
 - **Database backup:** A daily job saves an encrypted copy of the database for 30 days. Storage files are not in it. Add two GitHub secrets to turn it on.
 - **RLS check:** A script proves on the live project that one account cannot reach the rows of another. It needs two test accounts.
 - **Money:** Recurring expenses and income save themselves on the days you pick, with an Auto label. You can delete a day, or pause a rule.
+- **Ulam:** Dishes show a real photo that stays on the phone. A dish with no photo keeps its drawing.
 
 ### Changed
 

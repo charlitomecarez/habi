@@ -74,6 +74,7 @@ module.exports = {
         8: "32px",
         chip: "40px",
         touch: "44px",
+        photo: "208px",
         input: "52px",
         button: "56px",
         amount: "72px",
