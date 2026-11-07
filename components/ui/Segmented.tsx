@@ -22,7 +22,7 @@ export function Segmented<T extends string>({ label, options, value, onChange }:
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
-            className={`h-chip flex-1 items-center justify-center rounded-sm ${selected ? "bg-surface-card" : ""}`}
+            className={`h-touch flex-1 items-center justify-center rounded-sm ${selected ? "bg-surface-card" : ""}`}
           >
             <Text className={`text-label ${selected ? "font-semibold text-ink" : "font-medium text-ink-muted"}`}>
               {option.label}

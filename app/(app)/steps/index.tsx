@@ -63,7 +63,14 @@ export default function StepsScreen() {
         {access ? (
           <View className="gap-3">
             <View>
-              <Text className="font-bold text-display text-ink">{today.toLocaleString("en-PH")}</Text>
+              <Text
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+                numberOfLines={1}
+                className="font-bold text-display text-ink"
+              >
+                {today.toLocaleString("en-PH")}
+              </Text>
               <Text className="font-sans text-caption text-ink-muted">
                 steps · Average {stepsAverage(week).toLocaleString("en-PH")} a day
               </Text>

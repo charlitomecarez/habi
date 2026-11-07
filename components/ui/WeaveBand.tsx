@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 
-import { STRAND_WORD, weaveSummary, type Strand, type WeaveRow } from "@/lib/weave";
+import { weaveSummary, type Strand, type WeaveRow } from "@/lib/weave";
 
 const WEAVE_MS = 300;
 const DAY_LETTERS = ["M", "T", "W", "T", "F", "S", "S"];
@@ -43,48 +43,71 @@ function TodayStrand({ state }: { state: Strand }) {
   );
 }
 
+const DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
 type WeaveBandProps = {
   rows: readonly WeaveRow[];
   /** 0 is Monday. */
   todayIndex: number;
-  onDayPress: (row: WeaveRow, dayIndex: number) => void;
+  /** Opens a day. Each day is one tall column, because a strand alone is too small to tap. */
+  onDayPress?: (dayIndex: number) => void;
 };
 
-/** The week as a mat: a row for each habit of life, and a strand for each day. */
+/** The week as a mat: a row for each area of life, and a strand for each day. */
 export function WeaveBand({ rows, todayIndex, onDayPress }: WeaveBandProps) {
   return (
     <View className="gap-1 bg-shell px-4 pb-3 pt-1">
-      <View className="flex-row gap-1">
-        <View className="w-slot" />
-        {DAY_LETTERS.map((letter, index) => (
-          <Text
-            key={`${letter}-${index}`}
-            maxFontSizeMultiplier={1.3}
-            className="flex-1 text-center font-sans text-tab-label text-on-shell"
-          >
-            {letter}
-          </Text>
-        ))}
-      </View>
-      {rows.map((row) => (
-        <View key={row.label} accessible accessibilityLabel={weaveSummary(row)} className="flex-row items-center gap-1">
-          <Text numberOfLines={1} maxFontSizeMultiplier={1.3} className="w-slot font-sans text-tab-label text-on-shell">
-            {row.label}
-          </Text>
-          {row.days.map((state, index) => (
-            <Pressable
-              key={index}
-              accessibilityRole="button"
-              accessibilityLabel={`${row.label}, ${STRAND_WORD[state]}`}
-              hitSlop={8}
-              onPress={() => onDayPress(row, index)}
-              className="flex-1"
+      <View>
+        <View className="gap-1">
+          <View className="flex-row gap-1">
+            <View className="w-slot" />
+            {DAY_LETTERS.map((letter, index) => (
+              <Text
+                key={`${letter}-${index}`}
+                maxFontSizeMultiplier={1.3}
+                className="flex-1 text-center font-sans text-tab-label text-on-shell"
+              >
+                {letter}
+              </Text>
+            ))}
+          </View>
+          {rows.map((row) => (
+            <View
+              key={row.label}
+              accessible
+              accessibilityLabel={weaveSummary(row)}
+              className="flex-row items-center gap-1"
             >
-              {index === todayIndex ? <TodayStrand state={state} /> : <StrandCell state={state} today={false} />}
-            </Pressable>
+              <Text
+                numberOfLines={1}
+                maxFontSizeMultiplier={1.3}
+                className="w-slot font-sans text-tab-label text-on-shell"
+              >
+                {row.label}
+              </Text>
+              {row.days.map((state, index) => (
+                <View key={index} className="flex-1">
+                  {index === todayIndex ? <TodayStrand state={state} /> : <StrandCell state={state} today={false} />}
+                </View>
+              ))}
+            </View>
           ))}
         </View>
-      ))}
+        {onDayPress ? (
+          <View className="absolute inset-0 flex-row gap-1">
+            <View className="w-slot" />
+            {DAY_NAMES.map((name, index) => (
+              <Pressable
+                key={name}
+                accessibilityRole="button"
+                accessibilityLabel={`${name}, in words`}
+                onPress={() => onDayPress(index)}
+                className="min-h-touch flex-1"
+              />
+            ))}
+          </View>
+        ) : null}
+      </View>
       <Text maxFontSizeMultiplier={1.3} className="pt-1 font-sans text-tab-label text-on-shell">
         Solid: good · Split: watch · Dot: over
       </Text>

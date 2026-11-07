@@ -79,3 +79,23 @@ export function ModuleBar({
     </View>
   );
 }
+
+/** The indigo field of a tab: the number that matters, then one line. It reaches under the status bar. */
+export function TabField({ lead, detail, children }: { lead: string; detail?: string; children?: ReactNode }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <View className="gap-1 bg-shell px-5 pb-4" style={{ marginTop: -insets.top, paddingTop: insets.top + 16 }}>
+      <Text
+        accessibilityRole="header"
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        numberOfLines={1}
+        className="font-bold text-display text-on-shell"
+      >
+        {lead}
+      </Text>
+      {detail ? <Text className="font-sans text-label text-on-shell">{detail}</Text> : null}
+      {children}
+    </View>
+  );
+}

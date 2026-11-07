@@ -20,6 +20,7 @@ export type ServiceDue = {
   nextDueKm: number | null;
   nextDueOn: string | null;
   kmRemaining: number | null;
+  intervalKm: number | null;
   daysRemaining: number | null;
   sortOrder: number;
 };
@@ -67,7 +68,9 @@ export function useServiceDue(vehicleId: string | undefined) {
     queryFn: async (): Promise<ServiceDue[]> => {
       const { data, error } = await supabase
         .from("vehicle_service_due")
-        .select("vehicle_service_id, item, status, next_due_km, next_due_on, km_remaining, days_remaining, sort_order")
+        .select(
+          "vehicle_service_id, item, status, next_due_km, next_due_on, km_remaining, days_remaining, sort_order, interval_km",
+        )
         .eq("vehicle_id", vehicleId!)
         .order("sort_order");
       if (error) throw error;
@@ -78,6 +81,7 @@ export function useServiceDue(vehicleId: string | undefined) {
         nextDueKm: row.next_due_km,
         nextDueOn: row.next_due_on,
         kmRemaining: row.km_remaining,
+        intervalKm: row.interval_km,
         daysRemaining: row.days_remaining,
         sortOrder: row.sort_order ?? 0,
       }));
@@ -265,6 +269,12 @@ export function laterText(s: ServiceDue): string {
   if (s.nextDueKm !== null) parts.push(`at ${formatKm(s.nextDueKm)} km`);
   if (s.nextDueOn !== null) parts.push(format(parseISO(s.nextDueOn), "MMM yyyy"));
   return parts.join(" or ");
+}
+
+/** How much of the interval is used, from 0 to 1. Null when the item has no km interval. */
+export function usedShare(s: Pick<ServiceDue, "kmRemaining" | "intervalKm">): number | null {
+  if (s.kmRemaining === null || !s.intervalKm) return null;
+  return Math.min(1, Math.max(0, 1 - s.kmRemaining / s.intervalKm));
 }
 
 /** Overdue items that a lower reading would end. An item that is overdue by date stays overdue. */

@@ -92,7 +92,14 @@ export default function DebtScreen() {
 
         <View className="gap-3 rounded-hero bg-accent p-5">
           <Text className="font-medium text-label text-on-accent/90">{owedToMe ? "Owes you" : "You owe"}</Text>
-          <Text className="font-bold text-display text-on-accent">{formatPeso(d.balance)}</Text>
+          <Text
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            numberOfLines={1}
+            className="font-bold text-display text-on-accent"
+          >
+            {formatPeso(d.balance)}
+          </Text>
           <Text className="font-sans text-caption text-on-accent/90">
             {formatPeso(d.paid)} paid of {formatPeso(d.amount)} · since {format(parseISO(d.occurred_on), "MMM d, yyyy")}
           </Text>

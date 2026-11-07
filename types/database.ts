@@ -1228,7 +1228,29 @@ export type Database = {
           user_id?: string;
           week_days?: number[] | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "recurring_transactions_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_account_balances";
+            referencedColumns: ["account_id"];
+          },
+          {
+            foreignKeyName: "recurring_transactions_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "recurring_transactions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "money_categories";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       reminders: {
         Row: {
@@ -2600,6 +2622,7 @@ export type Database = {
       };
     };
     Functions: {
+      add_due_recurring: { Args: never; Returns: number };
       add_due_subscription_expenses: { Args: never; Returns: number };
       admin_voice_accounts: {
         Args: never;
@@ -2662,6 +2685,13 @@ export type Database = {
         };
         Returns: string;
       };
+      recurring_is_due: {
+        Args: {
+          d: string;
+          r: Database["public"]["Tables"]["recurring_transactions"]["Row"];
+        };
+        Returns: boolean;
+      };
       seed_money_defaults: { Args: never; Returns: undefined };
       set_voice_access: {
         Args: { p_on: boolean; p_user_id: string };
@@ -2717,7 +2747,6 @@ export type Database = {
       money_category_kind: "expense" | "income";
       person_date_kind: "birthday" | "anniversary" | "other";
       reminder_source:
-        | "feedback"
         | "todo"
         | "vehicle_service"
         | "custom"
@@ -2732,7 +2761,8 @@ export type Database = {
         | "budget"
         | "inventory"
         | "trip_item"
-        | "inbox";
+        | "inbox"
+        | "feedback";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -2870,7 +2900,6 @@ export const Constants = {
       money_category_kind: ["expense", "income"],
       person_date_kind: ["birthday", "anniversary", "other"],
       reminder_source: [
-        "feedback",
         "todo",
         "vehicle_service",
         "custom",
@@ -2886,6 +2915,7 @@ export const Constants = {
         "inventory",
         "trip_item",
         "inbox",
+        "feedback",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],

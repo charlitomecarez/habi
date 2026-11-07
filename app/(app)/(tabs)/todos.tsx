@@ -6,16 +6,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TodoRow } from "@/components/todos/TodoRow";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { TabField } from "@/components/ui/ModuleHeader";
+import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { useColors } from "@/lib/colors";
-import { groupTodos, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
+import { groupTodos, isOverdue, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
 
 type Filter = "today" | "upcoming" | "done";
 
 const FILTERS = [
   { value: "today", label: "Today" },
-  { value: "upcoming", label: "Upcoming" },
+  { value: "upcoming", label: "Later" },
   { value: "done", label: "Done" },
 ] as const;
 
@@ -48,38 +49,29 @@ export default function TodosScreen() {
   const toggle = useToggleTodo();
 
   const groups = groupTodos(data ?? []);
-  const openCount = (data ?? []).filter((t) => !t.completed_at).length;
+  const overdueCount = (data ?? []).filter((t) => isOverdue(t)).length;
   const todayCount = groups.today.filter((t) => !t.completed_at).length;
   const visible = groups[filter];
   const onToggle = (todo: Todo) => toggle.mutate({ id: todo.id, done: !todo.completed_at });
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-6">
-        <View className="gap-1">
-          <ScreenHeader title="Todos" />
-          {data ? (
-            <Text className="font-sans text-label text-ink-muted">
-              {openCount} open · {todayCount} due today
-            </Text>
-          ) : null}
-        </View>
-
+      <TabField
+        lead={data ? `${todayCount} left today` : "Todos"}
+        detail={overdueCount > 0 ? `${overdueCount} overdue` : undefined}
+      />
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-4">
         <Segmented label="Filter" options={FILTERS} value={filter} onChange={setFilter} />
 
         {isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : error ? (
-          <View className="gap-3 rounded-card bg-danger-tint p-4">
-            <Text accessibilityRole="alert" className="font-sans text-caption text-danger">
-              Could not load todos. {error.message}
-            </Text>
+          <View className="gap-3">
+            <Notice tone="danger">Could not load todos. Check your connection.</Notice>
             <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
           </View>
         ) : visible.length === 0 ? (
-          <View className="items-center rounded-card border border-border bg-surface-card p-6">
-            <Text className="font-sans text-body text-ink-muted">{EMPTY_TEXT[filter]}</Text>
-          </View>
+          <Text className="py-4 font-sans text-body text-ink-muted">{EMPTY_TEXT[filter]}</Text>
         ) : (
           <TodoList todos={visible} onToggle={onToggle} />
         )}
@@ -94,7 +86,7 @@ export default function TodosScreen() {
         ) : null}
       </ScrollView>
 
-      <Fab label="New todo" onPress={() => router.push("/todo/new")} />
+      <Fab label="Add todo" onPress={() => router.push("/todo/new")} />
     </SafeAreaView>
   );
 }

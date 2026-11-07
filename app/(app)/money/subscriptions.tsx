@@ -83,7 +83,14 @@ export default function SubscriptionsScreen() {
             <View className="flex-row items-end justify-between gap-3 rounded-hero border border-border bg-surface-card px-5 py-4">
               <View className="flex-1 gap-1">
                 <Text className="font-sans text-caption text-ink-muted">Per month</Text>
-                <Text className="font-bold text-display text-ink">{formatPeso(Math.round(monthly))}</Text>
+                <Text
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                  numberOfLines={1}
+                  className="font-bold text-display text-ink"
+                >
+                  {formatPeso(Math.round(monthly))}
+                </Text>
                 <Text className="font-sans text-caption text-ink-muted">
                   {formatPeso(Math.round(monthly * 12))} a year · {list.length} active
                 </Text>
