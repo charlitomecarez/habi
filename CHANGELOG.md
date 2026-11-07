@@ -58,6 +58,7 @@ Do not put these items here:
 - **Reminders:** A tap on a reminder opens its item, not Home.
 - **Weather:** Home shows the temperature and the rain chance for a place you pick. Tap it for the forecast. Your location is optional.
 - **Steps and sleep:** Home shows your steps from Health Connect, and the sleep that you type. Both stay on the phone.
+- **Sports:** Matches and standings for five football leagues and the NBA, in More. A tap on a match opens a web search. Scores are delayed, and the app shows no live scores.
 
 ### Changed
 
