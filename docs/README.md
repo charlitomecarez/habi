@@ -33,6 +33,9 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 | [modules/ulam.md](modules/ulam.md)           | The daily ulam, prices, backup dishes, the 7-day log                    |
 | [modules/travel.md](modules/travel.md)       | Trips, items, budget, reminders, PDF export                             |
 | [modules/inbox.md](modules/inbox.md)         | Voice access, voice messages, Groq text, audio cleanup                  |
+| [modules/weather.md](modules/weather.md)     | Open-Meteo, the saved place and the last forecast                       |
+| [modules/sports.md](modules/sports.md)       | Sync, shared tables and the NBA order                                   |
+| [modules/find-work.md](modules/find-work.md) | Job search, letters and the resume draft                                |
 
 ## Facts to know first
 
