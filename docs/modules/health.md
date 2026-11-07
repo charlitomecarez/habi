@@ -21,3 +21,9 @@
 ## Reminders
 
 Source `medicine`. Each pending dose has its own push. Taken, Skipped or deleting removes it. The daily digest lists today's doses.
+
+## Steps and sleep
+
+- `lib/health-connect.ts` reads steps through `react-native-health-connect`, and `.web.ts` is the adapter. The app asks only for `READ_STEPS`, and `minSdkVersion` is 26.
+- A phone alone cannot measure sleep, so you type it. `lib/sleep.ts` keeps 30 days in AsyncStorage, and sign-out clears it.
+- Nothing here goes to Supabase, so this needs no table.

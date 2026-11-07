@@ -2,6 +2,7 @@ import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 import { signOutOfGoogle } from "@/lib/google-sign-in";
+import { clearSleepLog } from "@/lib/sleep";
 import { supabase } from "@/lib/supabase";
 import { lockVault } from "@/lib/vault";
 
@@ -15,6 +16,8 @@ const AuthContext = createContext<AuthState | null>(null);
 
 async function signOut() {
   lockVault();
+  // Data on the phone must not reach the next account.
+  await clearSleepLog();
   await signOutOfGoogle();
   await supabase.auth.signOut();
 }

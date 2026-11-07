@@ -34,6 +34,8 @@ export default function AppLayout() {
         <Stack.Screen name="travel/edit/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="travel/item/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="travel/item/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="steps/index" />
+        <Stack.Screen name="steps/how" />
         <Stack.Screen name="weather/index" />
         <Stack.Screen name="weather/place" />
         <Stack.Screen name="reports/index" />
