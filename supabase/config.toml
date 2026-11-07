@@ -466,6 +466,14 @@ verify_jwt = false
 [functions.sports-sync]
 verify_jwt = false
 
+# Called by pg_cron and by the app. It checks the cron secret or the session itself.
+[functions.job-search]
+verify_jwt = false
+
+# Called by the app with the user's session.
+[functions.job-profile-draft]
+verify_jwt = true
+
 # Called by the app with the user's session.
 [functions.import-statement]
 verify_jwt = true

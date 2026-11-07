@@ -63,16 +63,18 @@ export default function MoreScreen() {
                   {section.title}
                 </Text>
                 <View className="flex-row flex-wrap gap-y-3">
-                  {section.modules.map((m) => (
-                    <ModuleTile
-                      key={m.id}
-                      label={m.label}
-                      icon={m.icon}
-                      tone={m.tone}
-                      detail={details[m.id]}
-                      onPress={() => router.push(m.href)}
-                    />
-                  ))}
+                  {section.modules
+                    .filter((m) => isAdmin || !m.adminOnly)
+                    .map((m) => (
+                      <ModuleTile
+                        key={m.id}
+                        label={m.label}
+                        icon={m.icon}
+                        tone={m.tone}
+                        detail={details[m.id]}
+                        onPress={() => router.push(m.href)}
+                      />
+                    ))}
                 </View>
               </View>
             ))}

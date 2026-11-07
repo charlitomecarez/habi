@@ -69,6 +69,7 @@ Deleting a location sets `parent_id` and `location_id` to null on the children. 
 | `recurring_transactions`                            | A rule that saves its own row. `schedule`, `week_days`, `month_day`, `is_paused`, `last_run_on`. `add_due_recurring` runs each hour.                              |
 | `feedback`                                          | Report a bug. A sent report cannot change. `admin_select` and `admin_update` let `app_admins` read every row. 20 reports a day for each account.                  |
 | `sports_matches`, `sports_standings`, `sports_sync` | Shared. RLS allows signed-in reads, and only the service role in `sports-sync` writes.                                                                            |
+| `job_profiles`, `job_matches`                       | Find a work. No name, phone or address column. Only `job-search` adds matches, so `owner_insert` is dropped on `job_matches`.                                     |
 | `transactions`                                      | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`. |
 
 Views:
