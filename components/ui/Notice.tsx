@@ -4,11 +4,12 @@ import { Text, View } from "react-native";
 
 import { useColors } from "@/lib/colors";
 
-type Tone = "warning" | "danger";
+type Tone = "warning" | "danger" | "neutral";
 
-const classByTone: Record<Tone, { container: string; text: string; icon: "warningInk" | "danger" }> = {
-  warning: { container: "bg-warning-tint", text: "text-warning-ink", icon: "warningInk" },
-  danger: { container: "bg-danger-tint", text: "text-danger", icon: "danger" },
+const classByTone: Record<Tone, { container: string; text: string; icon: "watch" | "over" | "inkMuted" }> = {
+  warning: { container: "border-2 border-watch", text: "text-watch", icon: "watch" },
+  danger: { container: "border-2 border-over", text: "text-over", icon: "over" },
+  neutral: { container: "bg-surface-muted", text: "text-ink", icon: "inkMuted" },
 };
 
 export function Notice({ tone, children }: { tone: Tone; children: ReactNode }) {

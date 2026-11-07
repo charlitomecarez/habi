@@ -4,11 +4,15 @@
 
 - Use token classes only. Do not put hex codes or bare pixel values in screens or components.
 - Build screens from `components/ui/`.
-- Use one primary action per screen. The accent colour marks the primary action, the open tab and the one Today card on Home.
-- Section colours are only for icons and tiles. They never show status.
+- The look is Banig, from the woven mats of Samar and Basey. Your week is a mat, and each day is a strand.
+- Use at most one primary action per screen. Read-only screens have none. Indigo marks the shell and the primary action.
+- Section colours are for icons, tiles and module header fields. They never show status.
+- Cards are only for objects that you act on. Rows use 2 px rules and space.
+- The assistant says "I" in its sentences and empty states. Buttons and labels stay plain.
 - Motion stays short and stops when the phone's reduce-motion setting is on. Use `FadeIn` and `PressScale`.
-- A touch target is at least 44 px (`h-touch`). An icon-only button needs an `accessibilityLabel`.
-- A status always has a word (Overdue, Today, Due soon), not only a colour.
+- A touch target is at least 48 px (`h-touch`). An icon-only button needs an `accessibilityLabel`.
+- A status always has a word (Overdue, Today, Due soon), and one colour: `good`, `watch` or `over`. These colours mean nothing else.
+- Long text wraps. Only row titles may end with "…", and numbers never do. Tab labels stop growing at 1.3 times.
 - Use sentence case. A button names its action ("Save expense"). An optional field says "(optional)" in its label.
 - Use borders, not shadows. Only the FAB has a shadow.
 - Inputs use 16 px text (`text-body`).
@@ -33,7 +37,7 @@ All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light
 - **Colours:** `surface-page`, `surface-card`, `surface-muted`, `border`, `border-input`, `border-dashed`, `divider`, `ink`, `ink-muted`, `on-accent`, `accent`, `accent-strong`, `accent-tint`, `warning`, `warning-tint`, `warning-ink`, `danger`, `danger-tint`, `fab-shadow`, `scrim`.
 - **Section colours:** `daily`, `people`, `home`, `records`, each with a `-tint`. The colour on its tint passes 4.5:1 in light and dark. They are in `global.css` and `lib/colors.ts`.
 - **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes.
-- **Font families:** `font-sans` (400), `font-medium` (500), `font-semibold` (600), `font-bold` (700).
+- **Font families:** Schibsted Grotesk. `font-sans` (400), `font-medium` (500), `font-semibold` (700), `font-bold` (900).
 - **Font sizes:** `display` 34, `amount-input` 32, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 15, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
 - **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 44, `input` 52, `button` 56, `slot` 64, `amount` 72, `field-sm` 110, `tile` 112.
 - **Radius:** `sm` 10, `md` 12, `input` 14, `card` 16, `fab` 18, `hero` 20, `sheet` 28, `pill` 999.
@@ -57,13 +61,16 @@ Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28
 | `PhotoField`    | Photo picker. `tiles` layout (camera and library tiles) or `single` layout (one button that asks).              |
 | `DashedButton`  | Dashed "add" button. Shapes `tall` and `wide`.                                                                  |
 | `LetterAvatar`  | First letter on a token colour picked from a hash of the name.                                                  |
-| `Badge`         | Status word. Tones `danger`, `warning`, `neutral`.                                                              |
-| `Notice`        | Message box. Tones `warning` and `danger`.                                                                      |
+| `Badge`         | Status word. Tones `danger`, `warning`, `neutral`, `good`.                                                      |
+| `Notice`        | Message box. Tones `warning`, `danger` and `neutral`.                                                           |
 | `Fab`           | Floating action button. The one primary action on a list screen.                                                |
 | `ScreenHeader`  | Screen title.                                                                                                   |
 | `Sheet`         | Bottom sheet.                                                                                                   |
 | `TabBar`        | The app's tab bar. The open tab has a filled icon on a tinted pill. Its height follows the bottom inset.        |
-| `HeroCard`      | The one solid accent card on a screen: a sentence and up to three numbers.                                      |
+| `ModuleHeader`  | A field of section colour with the back button and the title. Reaches under the status bar.                     |
+| `DataRow`       | Title and detail, then number and status word. Wraps, and never cuts a number.                                  |
+| `BarChart`      | Bars of exact length, drawn with `View`.                                                                        |
+| `WeaveBand`     | The week: a row for each area, a strand for each day. Solid is good, split is watch, a dot is over.             |
 | `ModuleTile`    | A module in a grid, with a section colour. Tones `accent`, `daily`, `people`, `home`, `records`.                |
 | `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                               |
 | `FadeIn`        | A short fade for a list or section.                                                                             |

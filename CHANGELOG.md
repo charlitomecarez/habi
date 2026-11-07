@@ -57,6 +57,7 @@ Do not put these items here:
 
 ### Changed
 
+- **New look:** my-app has a new look, Banig: woven colour, a new font and larger touch targets. Install the new APK.
 - **Accounts:** The repo now records that sign-up is off. Only people the admin adds can use the app.
 - **UI changes:** Each UI change now needs the Impeccable check.
 

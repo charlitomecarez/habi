@@ -12,7 +12,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 - Supabase: Postgres with RLS, Auth, Storage, Edge Functions, pg_cron + pg_net.
 - Resend for email (Supabase SMTP sender + one daily digest). Expo Push for notifications.
 - Groq free plan for the daily ulam and voice text. Only the `daily-ulam` and `voice-transcribe` Edge Functions call it.
-- NativeWind for styling; Plus Jakarta Sans via @expo-google-fonts.
+- NativeWind for styling; Schibsted Grotesk via @expo-google-fonts.
 - Data: @supabase/supabase-js, @tanstack/react-query, zustand, react-hook-form + zod, date-fns.
 - Everything must stay on free tiers.
 
@@ -46,11 +46,13 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 ## Design system
 
 - Use token classes only (see `tailwind.config.js`). No hex codes or bare px values in screens.
-- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ScreenHeader, Sheet, HeroCard, ModuleTile, EmptyState, FadeIn, PressScale.
-- One primary action per screen. Accent (#0F766E) marks the primary action, the open tab and the one Today card on Home.
-- Section colours (`daily`, `people`, `home`, `records`) are for icons and tiles only, never for status.
-- Minimum touch target 44px; icon-only buttons need an accessibility label.
-- Status always includes a word (Overdue, Today, Due soon), not colour alone.
+- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ScreenHeader, ModuleHeader, DataRow, BarChart, WeaveBand, Sheet, ModuleTile, EmptyState, FadeIn, PressScale.
+- At most one primary action per screen. Read-only screens have none. Indigo marks the shell and the primary action. The open tab is a cream pill on indigo.
+- Section colours (`daily`, `people`, `home`, `records`) are for icons, tiles and module header fields, never for status.
+- Minimum touch target 48px; icon-only buttons need an accessibility label.
+- Status always includes a word (Overdue, Today, Due soon), plus one colour: good (emerald), watch (saffron) or over (magenta). These colours never mean anything else.
+- Cards are only for objects that you act on. Rows use 2 px rules and space.
+- The assistant says "I" in its sentences and empty states. Buttons and labels stay plain.
 - Sentence case; buttons name the action ("Save expense"). Optional fields say "(optional)".
 - Borders, not shadows (only the FAB has a shadow). Inputs use 16px text.
 - Full-screen form for more than three fields; bottom sheet for one or two.

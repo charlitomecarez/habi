@@ -1,12 +1,12 @@
 import "../global.css";
 
 import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
+  SchibstedGrotesk_400Regular,
+  SchibstedGrotesk_500Medium,
+  SchibstedGrotesk_700Bold,
+  SchibstedGrotesk_900Black,
   useFonts,
-} from "@expo-google-fonts/plus-jakarta-sans";
+} from "@expo-google-fonts/schibsted-grotesk";
 import {
   DarkTheme,
   DefaultTheme,
@@ -49,10 +49,10 @@ function navigationTheme(dark: boolean, colors: Palette): Theme {
 function RootNavigator() {
   const { session, isLoading } = useAuth();
   const [fontsLoaded] = useFonts({
-    PlusJakartaSans_400Regular,
-    PlusJakartaSans_500Medium,
-    PlusJakartaSans_600SemiBold,
-    PlusJakartaSans_700Bold,
+    SchibstedGrotesk_400Regular,
+    SchibstedGrotesk_500Medium,
+    SchibstedGrotesk_700Bold,
+    SchibstedGrotesk_900Black,
   });
   const ready = fontsLoaded && !isLoading;
 

@@ -25,7 +25,7 @@ const ICONS: Record<
 
 function TabIcon({ route, focused }: { route: string; focused: boolean }) {
   const colors = useColors();
-  const color = focused ? colors.accent : colors.inkMuted;
+  const color = focused ? colors.shell : colors.onShell;
   const icon = ICONS[route];
   if (icon === "motorbike") return <MaterialCommunityIcons name="motorbike" size={24} color={color} />;
   return <Ionicons name={focused ? icon.open : icon.closed} size={22} color={color} />;
@@ -41,15 +41,15 @@ function Pill({ focused }: { focused: boolean }) {
 
   return (
     <Animated.View style={[{ position: "absolute" }, animated]}>
-      <View className="h-8 w-slot rounded-pill bg-accent-tint" />
+      <View className="h-8 w-slot rounded-pill bg-on-shell" />
     </Animated.View>
   );
 }
 
-/** The app's tab bar: the open tab has a filled icon on a tinted pill. */
+/** The app's tab bar: indigo, and the open tab has a filled icon on a cream pill. */
 export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: TabBarProps) {
   return (
-    <View className="flex-row border-t border-border bg-surface-card pt-2" style={{ paddingBottom: insets.bottom + 8 }}>
+    <View className="flex-row bg-shell pt-2" style={{ paddingBottom: insets.bottom + 8 }}>
       {state.routes.map((route, index) => {
         const focused = state.index === index;
         const title = descriptors[route.key].options.title ?? route.name;
@@ -72,7 +72,10 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: T
               <Pill focused={focused} />
               <TabIcon route={route.name} focused={focused} />
             </View>
-            <Text className={`text-tab-label ${focused ? "font-semibold text-accent" : "font-medium text-ink-muted"}`}>
+            <Text
+              maxFontSizeMultiplier={1.3}
+              className={`text-tab-label text-on-shell ${focused ? "font-semibold" : "font-medium"}`}
+            >
               {title}
             </Text>
           </PressScale>
