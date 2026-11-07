@@ -2,47 +2,50 @@
 
 ![my-app on Android: the money, todos, home, vehicle and vault screens](docs/images/readme-banner.png)
 
-my-app is a personal app. Each account has fully separate data. It runs on Android first and on the web second, from one codebase.
+my-app is a personal app for its admin and the few people the admin adds. Sign-up is off, and each account has fully separate data. It runs on Android first and on the web second.
 
 The tabs are Home, Money, Todos, Vehicle and More.
 
-- **Home:** the day at a glance, a weekly review and a daily tip. On Android it also shows screen time, which never leaves the phone.
-- **Money:** accounts, transactions, bills, budgets, savings goals, subscriptions and exchange rates. You type each account balance by hand, and logging does not change it.
+- **Home:** one sentence on what needs you, the week band for money, todos, habits and sleep, then today's rows. It also shows the weather, your steps and your screen time. Steps, sleep and screen time stay on the phone.
+- **Money:** accounts, transactions, bills, budgets, savings goals, subscriptions, recurring expenses and income, and exchange rates.
 - **Statement import:** reads GoTyme, GCash and MariBank PDF statements. You review the rows before the app saves them.
 - **Todos:** tasks with due dates, repeats and reminders.
 - **Vehicle:** the odometer, the service schedule, the service log and fuel logs. The default vehicle is a Honda ADV 160.
 
 The More tab holds the other modules:
 
-- **Daily life:** Habits, Gym, Journal and Health (medicine and doctor visits).
-- **People:** People and dates (birthdays, yearly dates and gift ideas), and Debts.
-- **Home:** Inventory (items, photos, locations, warranties and QR box labels) and Shopping list.
-- **Records:** Documents (expiry dates, renewal reminders and encrypted photos), and Vault (passwords encrypted on the device with a master password).
-- **Work:** Content planner.
+- **Daily life:** Habits, Gym, Journal, Health (medicine, doctor visits, steps and sleep), Alarms, Ulam (a daily dish under your limit, with a photo) and Sports (five football leagues and the NBA).
+- **People:** People and dates (birthdays, yearly dates and gift ideas), Debts, and Inbox (voice messages with text).
+- **Home and plans:** Inventory (items, photos, locations, warranties and QR box labels), Shopping list and Travel.
+- **Records and work:** Find a work (admin only), Documents (expiry dates, renewal reminders and encrypted photos), Vault (passwords encrypted on the phone) and Content planner.
+
+Android also has two home screen widgets, Sleep and Screen time. Report a bug is on More.
 
 ## Install on Android
 
-The APK is on the [latest release](https://github.com/charlitomecarez/my-app/releases/latest). It is not on the Play Store.
+The APK comes from Build from GitHub in expo.dev. It is not on the Play Store. From v1.3.0, GitHub releases hold only the source code.
 
-1. On the phone, open the latest release and download `my-app-<version>.apk`.
-2. Open the APK file.
-3. If Android asks, allow installs from that app.
-4. Tap **Install**.
-5. Open my-app and sign in with Google.
+1. On the phone, sign in to expo.dev and open the latest `production` build.
+2. Download the APK.
+3. Open the APK file.
+4. If Android asks, allow installs from that app.
+5. Tap **Install**.
+6. Open my-app and sign in with Google.
 
-To update, install the APK from a newer release over the current app. Your data stays in Supabase.
-
-The repo is private, so you must sign in to GitHub to download the APK.
+To update, install the APK from a newer build over the current app. Your data stays in Supabase.
 
 ## Stack
 
 - Expo SDK 58 with expo-router.
-- TypeScript, NativeWind 4 and the Plus Jakarta Sans font.
+- TypeScript, NativeWind 4 and the Schibsted Grotesk font.
 - Supabase: Postgres with RLS, Auth, Storage, Edge Functions, pg_cron and pg_net.
 - @tanstack/react-query, zustand, react-hook-form with zod, and date-fns.
-- Expo Push for notifications. Resend for email. The Gemini API free tier for the daily tip.
+- Expo Push for notifications. Resend for email. The Gemini API free tier for the daily tip. The Groq free plan for the daily ulam, voice text and Find a work.
+- Open-Meteo for weather, football-data.org and balldontlie for sports, freehire for jobs, and Wikimedia Commons for ulam photos.
+- Health Connect for steps, and `react-native-android-widget` for the widgets.
 - react-native-libsodium for the vault (Argon2id and XChaCha20-Poly1305).
-- pdfjs-dist in the `import-statement` Edge Function.
+- pdfjs-dist in the `import-statement` and `job-profile-draft` Edge Functions.
+- A daily encrypted database backup in GitHub Actions.
 
 ## Requirements
 
@@ -151,7 +154,7 @@ The build profiles are in `eas.json`:
 
 - `development`: a development client for internal use.
 - `preview`: an APK for internal use.
-- `production`: a release APK. Upload it to a GitHub release.
+- `production`: a release APK. It stays in expo.dev. Do not attach it to a GitHub release.
 
 ## Project layout
 

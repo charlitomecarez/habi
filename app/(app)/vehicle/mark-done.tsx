@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +11,8 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   dueText,
@@ -61,7 +62,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
       odometerKm: parseKm(values.odometer)!,
       servicedOn: values.date,
     });
-    router.back();
+    goBack();
   });
 
   const label = checked.length === 0 ? "Mark as done" : `Mark ${checked.length} as done`;
@@ -100,7 +101,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
         </View>
 
         <View className="gap-2">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View>
             {services.map((s, index) => {
               const isChecked = checked.includes(s.vehicleServiceId);
               return (
@@ -110,7 +111,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
                   accessibilityState={{ checked: isChecked }}
                   accessibilityLabel={`${s.item}, ${statusText(s)}`}
                   onPress={() => toggle(s.vehicleServiceId)}
-                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < services.length - 1 ? "border-b border-divider" : ""}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${index < services.length - 1 ? "border-b-2 border-border" : ""}`}
                 >
                   <Ionicons
                     name={isChecked ? "checkbox" : "square-outline"}
@@ -154,19 +155,11 @@ export default function MarkDoneScreen() {
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
-        <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-            onPress={() => router.back()}
-            className="h-touch w-touch items-center justify-center"
-          >
-            <Ionicons name="chevron-back" size={22} color={colors.ink} />
-          </Pressable>
-          <Text accessibilityRole="header" className="font-bold text-title text-ink">
+        <ModuleBar>
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
             Mark services done
           </Text>
-        </View>
+        </ModuleBar>
 
         {vehicle.data && due.data ? (
           <MarkDoneForm vehicle={vehicle.data} services={due.data} />

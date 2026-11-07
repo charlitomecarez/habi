@@ -7,10 +7,11 @@ export function TipCard() {
   const tip = useDailyTip();
   const t = tip.data ?? bundledTip();
   return (
-    <View className="gap-2 rounded-card border border-border bg-surface-card p-4">
-      <Text className="font-semibold text-caption uppercase tracking-wide text-ink-muted">
-        Tip for today · {topicLabel(t.topic)}
+    <View className="gap-1">
+      <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+        Tip for today
       </Text>
+      <Text className="font-sans text-caption text-ink-muted">{topicLabel(t.topic)}</Text>
       <Text className="font-sans text-body text-ink">{t.tip}</Text>
     </View>
   );

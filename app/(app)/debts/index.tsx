@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
+import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { DIRECTION_OPTIONS, debtStatus, useDebts, type Debt, type DebtDirection } from "@/lib/debts";
 import { formatPeso } from "@/lib/money";
@@ -20,7 +20,7 @@ function DebtRow({ d, last }: { d: Debt; last: boolean }) {
       accessibilityRole="button"
       accessibilityLabel={`${d.person_name}, ${formatPeso(d.balance)} left of ${formatPeso(d.amount)}, ${status.text}`}
       onPress={() => router.push({ pathname: "/debts/[id]", params: { id: d.id } })}
-      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <View className="min-w-0 flex-1 gap-1">
         <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
@@ -32,9 +32,7 @@ function DebtRow({ d, last }: { d: Debt; last: boolean }) {
         <Text className={`font-semibold text-row-title ${d.balance > 0 ? "text-ink" : "text-ink-muted"}`}>
           {formatPeso(d.balance)}
         </Text>
-        {d.paid > 0 ? (
-          <Text className="font-sans text-badge text-ink-muted">of {formatPeso(d.amount)}</Text>
-        ) : null}
+        {d.paid > 0 ? <Text className="font-sans text-badge text-ink-muted">of {formatPeso(d.amount)}</Text> : null}
       </View>
     </Pressable>
   );
@@ -52,32 +50,13 @@ export default function DebtsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Debts
-        </Text>
-      </View>
+      <ModuleHeader
+        title="Debts"
+        tone="people"
+        subtitle={`They owe you ${formatPeso(total("owed_to_me"))} · You owe ${formatPeso(total("i_owe"))}`}
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
-        <View className="flex-row gap-3">
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
-            <Text className="font-sans text-caption text-ink-muted">They owe you</Text>
-            <Text className="font-bold text-heading text-ink">{formatPeso(total("owed_to_me"))}</Text>
-          </View>
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
-            <Text className="font-sans text-caption text-ink-muted">You owe</Text>
-            <Text className="font-bold text-heading text-ink">{formatPeso(total("i_owe"))}</Text>
-          </View>
-        </View>
-
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
         <Segmented label="Show" options={DIRECTION_OPTIONS} value={direction} onChange={setDirection} />
 
         {debts.isPending ? (
@@ -89,9 +68,9 @@ export default function DebtsScreen() {
           </View>
         ) : (
           <>
-            <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <View>
               {open.length === 0 ? (
-                <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                <Text className="py-3 font-sans text-caption text-ink-muted">
                   {direction === "owed_to_me" ? "Nobody owes you right now." : "You don't owe anyone right now."}
                 </Text>
               ) : (
@@ -103,7 +82,7 @@ export default function DebtsScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   Paid
                 </Text>
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                <View>
                   {paid.map((d, i) => (
                     <DebtRow key={d.id} d={d} last={i === paid.length - 1} />
                   ))}

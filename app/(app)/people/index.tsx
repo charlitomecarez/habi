@@ -1,15 +1,15 @@
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { dateLabel, occurrenceText, usePeople, useSavePerson } from "@/lib/people";
 
@@ -41,21 +41,13 @@ export default function PeopleScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="people">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           People and dates
         </Text>
-      </View>
+      </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {people.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : people.error ? (
@@ -69,28 +61,27 @@ export default function PeopleScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 Coming up
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View>
                 {upcoming.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                  <Text className="py-3 font-sans text-caption text-ink-muted">
                     No dates in the next {UPCOMING_DAYS} days.
                   </Text>
                 ) : (
                   upcoming.map(({ d, when, days }, i) => (
-                    <Pressable
+                    <DataRow
                       key={d.id}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${nameOf(d.person_id)}, ${dateLabel(d)}, ${when}`}
+                      title={`${nameOf(d.person_id)} · ${dateLabel(d)}`}
+                      detail={when}
+                      status={
+                        days === 0
+                          ? { label: "Today", tone: "over" }
+                          : days <= 7
+                            ? { label: "This week", tone: "watch" }
+                            : undefined
+                      }
                       onPress={() => router.push({ pathname: "/people/[id]", params: { id: d.person_id } })}
-                      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === upcoming.length - 1 ? "" : "border-b border-divider"}`}
-                    >
-                      <View className="min-w-0 flex-1 gap-1">
-                        <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-                          {nameOf(d.person_id)} · {dateLabel(d)}
-                        </Text>
-                        <Text className="font-sans text-caption text-ink-muted">{when}</Text>
-                      </View>
-                      {days <= 7 ? <Badge label={days === 0 ? "Today" : "This week"} tone="warning" /> : null}
-                    </Pressable>
+                      last={i === upcoming.length - 1}
+                    />
                   ))
                 )}
               </View>
@@ -100,30 +91,22 @@ export default function PeopleScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 People
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View>
                 {(data?.people ?? []).length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                  <Text className="py-3 font-sans text-caption text-ink-muted">
                     Add the people whose dates you want to remember.
                   </Text>
                 ) : (
                   data?.people.map((p, i) => {
                     const count = data.dates.filter((d) => d.person_id === p.id).length;
                     return (
-                      <Pressable
+                      <DataRow
                         key={p.id}
-                        accessibilityRole="button"
-                        accessibilityLabel={`${p.name}, ${count} ${count === 1 ? "date" : "dates"}`}
+                        title={p.name}
+                        detail={`${count} ${count === 1 ? "date" : "dates"}`}
                         onPress={() => router.push({ pathname: "/people/[id]", params: { id: p.id } })}
-                        className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === data.people.length - 1 ? "" : "border-b border-divider"}`}
-                      >
-                        <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">
-                          {p.name}
-                        </Text>
-                        <Text className="font-sans text-caption text-ink-muted">
-                          {count} {count === 1 ? "date" : "dates"}
-                        </Text>
-                        <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
-                      </Pressable>
+                        last={i === data.people.length - 1}
+                      />
                     );
                   })
                 )}

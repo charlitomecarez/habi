@@ -2,8 +2,11 @@ import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 import { signOutOfGoogle } from "@/lib/google-sign-in";
+import { clearSleepLog } from "@/lib/sleep";
+import { refreshWidgets } from "@/lib/widgets";
 import { supabase } from "@/lib/supabase";
 import { lockVault } from "@/lib/vault";
+import { clearVehicleChecks } from "@/lib/vehicle-checks";
 
 type AuthState = {
   session: Session | null;
@@ -15,8 +18,12 @@ const AuthContext = createContext<AuthState | null>(null);
 
 async function signOut() {
   lockVault();
+  // Data on the phone must not reach the next account.
+  await clearSleepLog();
+  await clearVehicleChecks();
   await signOutOfGoogle();
   await supabase.auth.signOut();
+  await refreshWidgets();
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

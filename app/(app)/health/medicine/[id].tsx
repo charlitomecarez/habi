@@ -1,10 +1,11 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MedicineForm } from "@/components/health/MedicineForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useHealth } from "@/lib/health";
 
@@ -21,7 +22,7 @@ export default function EditMedicineScreen() {
       ) : (
         <View className="w-full gap-3">
           <Notice tone="danger">{health.error ? health.error.message : "This medicine was deleted."}</Notice>
-          <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+          <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}
     </SafeAreaView>

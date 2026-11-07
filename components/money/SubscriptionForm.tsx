@@ -16,6 +16,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   amountText,
@@ -175,13 +176,13 @@ export function SubscriptionForm({
         autoAdd: values.autoAdd === "on",
       },
     });
-    router.back();
+    goBack();
   });
 
   async function onDelete() {
     if (!subscription) return;
     await remove.mutateAsync(subscription.id);
-    router.back();
+    goBack();
   }
 
   function onLogPayment() {
@@ -210,7 +211,7 @@ export function SubscriptionForm({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

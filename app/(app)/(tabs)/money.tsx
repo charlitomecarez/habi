@@ -5,27 +5,35 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { AccountCards } from "@/components/money/AccountCards";
 import { AccountSheet } from "@/components/money/AccountSheet";
-import { BudgetRow } from "@/components/money/BudgetRow";
 import { CategorySpending } from "@/components/money/CategorySpending";
 import { GoalCard } from "@/components/money/GoalCard";
 import { SpendingCalendar } from "@/components/money/SpendingCalendar";
 import { TransactionRow } from "@/components/money/TransactionRow";
+import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
+import { DataRow, type RowStatus } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
+import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import { useGoals } from "@/lib/goals";
+import { isAutoRow, monthlyAmount, useRecurring } from "@/lib/recurring";
+import { todayIndex, weekDays } from "@/lib/week";
 import {
+  dayTotals,
   daysUntil,
   formatMoney,
   formatPeso,
   RENEWAL_LIST_DAYS,
   renewalText,
+  toDateString,
   useAccounts,
   useCategories,
   useMonthSummary,
+  useMonthTransactions,
   useSubscriptions,
   useTransactions,
   type Account,
@@ -51,49 +59,31 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
   const renewal = renewalText(s.next_billing_on);
   const date = format(parseISO(s.next_billing_on), "MMM d");
   const days = daysUntil(s.next_billing_on);
-  const caption =
-    renewal.status === "overdue"
-      ? `Overdue · ${date}, not logged`
-      : renewal.status === "today"
-        ? s.kind === "bill"
-          ? "Due today"
-          : "Renews today"
-        : renewal.status === "soon"
-          ? `${date} · in ${days} ${days === 1 ? "day" : "days"}`
-          : [date, accountName].filter(Boolean).join(" · ");
-  const captionClass =
-    renewal.status === "overdue"
-      ? "font-medium text-danger"
-      : renewal.status === "later"
-        ? "font-sans text-ink-muted"
-        : "font-medium text-warning";
   const inPesos = s.currency !== "PHP" && s.rateToPhp !== null && s.amount !== null ? s.amount * s.rateToPhp : null;
-  const amountLabel = s.amount === null ? "Amount when you pay" : formatMoney(s.amount, s.currency);
+  const detail =
+    renewal.status === "soon"
+      ? `${date} · in ${days} ${days === 1 ? "day" : "days"}`
+      : [date, accountName, inPesos !== null ? `≈ ${formatPeso(Math.round(inPesos))}` : undefined]
+          .filter(Boolean)
+          .join(" · ");
+  const status: RowStatus | undefined =
+    renewal.status === "overdue"
+      ? { label: "Overdue", tone: "over" }
+      : renewal.status === "today"
+        ? { label: "Today", tone: "over" }
+        : renewal.status === "soon"
+          ? { label: "Due soon", tone: "watch" }
+          : undefined;
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${s.name}, ${amountLabel}, ${caption}`}
+    <DataRow
+      title={s.name}
+      detail={detail}
+      value={s.amount === null ? undefined : formatMoney(s.amount, s.currency)}
+      status={status}
       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
-      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
-    >
-      <View className="min-w-0 flex-1 gap-1">
-        <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
-          {s.name}
-        </Text>
-        <Text numberOfLines={1} className={`text-caption ${captionClass}`}>
-          {caption}
-        </Text>
-      </View>
-      <View className="items-end gap-1">
-        <Text className={`font-semibold text-row-title ${s.amount === null ? "text-ink-muted" : "text-ink"}`}>
-          {amountLabel}
-        </Text>
-        {inPesos !== null ? (
-          <Text className="font-sans text-badge text-ink-muted">≈ {formatPeso(Math.round(inPesos))}</Text>
-        ) : null}
-      </View>
-    </Pressable>
+      last={last}
+    />
   );
 }
 
@@ -108,6 +98,20 @@ export default function MoneyScreen() {
   const recent = useTransactions("recent");
   const budgets = useBudgetMonths(now);
   const goals = useGoals();
+  const recurring = useRecurring();
+  const monthRows = useMonthTransactions(now);
+
+  const budgetList = budgets ?? [];
+  const hasBudget = budgetList.length > 0;
+  const moneyLeft = budgetList.reduce((sum, b) => sum + b.left, 0);
+  const overBudget = budgetList.filter((b) => b.left < 0).length;
+  const spentByDay = new Map([...dayTotals(monthRows.data ?? []).byDay].map(([day, t]) => [day, t.spent]));
+  const week = weekDays(now);
+  const todayRows = (monthRows.data ?? []).filter((t) => t.occurred_on === toDateString(now) && t.kind !== "transfer");
+  const running = (recurring.data ?? []).filter((r) => !r.is_paused);
+  const recurringMonthly = running.filter((r) => r.kind === "expense").reduce((sum, r) => sum + monthlyAmount(r), 0);
+  const subscriptionList = (subscriptions.data ?? []).filter((x) => x.kind === "subscription");
+  const subscriptionMonthly = subscriptionList.reduce((sum, x) => sum + (x.monthlyPhp ?? 0), 0);
 
   const accountList = accounts.data ?? [];
   const total = accountList.filter((a) => a.currency === "PHP").reduce((sum, a) => sum + a.balance, 0);
@@ -120,12 +124,20 @@ export default function MoneyScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-6">
+      <TabField
+        lead={hasBudget ? `${formatPeso(moneyLeft)} left` : formatPeso(total)}
+        detail={
+          hasBudget
+            ? `This month, from your budgets · ${formatPeso(month.data?.spent ?? 0)} spent`
+            : `Total balance · ${formatPeso(month.data?.spent ?? 0)} spent this month`
+        }
+      />
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
         {accounts.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your money. {error.message}</Notice>
+            <Notice tone="danger">Could not load your money. Check your connection.</Notice>
             <Button
               label="Try again"
               variant="secondary"
@@ -141,82 +153,77 @@ export default function MoneyScreen() {
           </View>
         ) : (
           <>
-            <View className="gap-3 rounded-hero bg-accent p-5">
-              <View className="flex-row items-center justify-between">
-                <Text className="font-medium text-label text-on-accent/90">Total balance</Text>
-                <Text className="font-medium text-caption text-on-accent/90">{format(now, "MMMM")}</Text>
-              </View>
-              <Text accessibilityRole="header" className="font-bold text-display text-on-accent">
-                {formatPeso(total)}
+            <BarChart
+              label={`Spending this week. Today ${formatPeso(spentByDay.get(toDateString(now)) ?? 0)}.`}
+              values={week.map((d) => spentByDay.get(toDateString(d)) ?? 0)}
+              labels={week.map((d) => format(d, "EEEEE"))}
+              highlight={todayIndex(now)}
+            />
+
+            <View className="gap-3">
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Accounts · {formatPeso(total)}
               </Text>
-              <View className="flex-row gap-5">
-                <View className="gap-1">
-                  <Text className="font-sans text-caption text-on-accent/90">Spent this month</Text>
-                  <Text className="font-semibold text-row-title text-on-accent">
-                    {formatPeso(month.data?.spent ?? 0)}
-                  </Text>
-                </View>
-                <View className="gap-1">
-                  <Text className="font-sans text-caption text-on-accent/90">Income</Text>
-                  <Text className="font-semibold text-row-title text-on-accent">
-                    {formatPeso(month.data?.income ?? 0)}
-                  </Text>
-                </View>
-              </View>
+              <AccountCards accounts={accountList} onPress={setEditing} />
             </View>
 
-            <View className="flex-row flex-wrap gap-3">
-              {accountList.map((a) => (
-                <Pressable
-                  key={a.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${a.name}, balance ${formatMoney(a.balance, a.currency)}. Edit account`}
-                  onPress={() => setEditing(a)}
-                  className="min-h-touch min-w-0 grow basis-[45%] gap-1 rounded-input border border-border bg-surface-card px-4 py-3 active:bg-surface-muted"
-                >
-                  <Text numberOfLines={1} className="font-sans text-caption text-ink-muted">
-                    {a.name}
-                  </Text>
-                  <Text numberOfLines={1} className="font-bold text-heading text-ink">
-                    {formatMoney(a.balance, a.currency)}
-                  </Text>
-                </Pressable>
-              ))}
+            <View>
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Today
+              </Text>
+              {todayRows.length === 0 ? (
+                <Text className="py-3 font-sans text-caption text-ink-muted">Nothing logged today.</Text>
+              ) : (
+                todayRows.map((t, index) => (
+                  <DataRow
+                    key={t.id}
+                    title={t.merchant ?? categoryName(t.category_id) ?? (t.kind === "income" ? "Income" : "Expense")}
+                    detail={accountName(t.account_id)}
+                    value={formatPeso(t.amount)}
+                    status={isAutoRow(t.external_ref) ? { label: "Auto", tone: "muted" } : undefined}
+                    onPress={() => router.push({ pathname: "/money/transaction/[id]", params: { id: t.id } })}
+                    last={index === todayRows.length - 1}
+                  />
+                ))
+              )}
+            </View>
+
+            <View>
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                This month
+              </Text>
+              <DataRow
+                title="Budgets"
+                detail={
+                  budgets?.length ? `${budgets.length} ${budgets.length === 1 ? "budget" : "budgets"}` : "Set a limit"
+                }
+                status={overBudget > 0 ? { label: `${overBudget} over`, tone: "over" } : undefined}
+                onPress={() => router.push("/money/budgets")}
+              />
+              <DataRow
+                title="Recurring"
+                detail={`${running.length} running`}
+                value={running.length > 0 ? formatPeso(recurringMonthly) : undefined}
+                onPress={() => router.push("/money/recurring")}
+              />
+              <DataRow
+                title="Subscriptions"
+                detail={`${subscriptionList.length} active`}
+                value={subscriptionList.length > 0 ? formatPeso(subscriptionMonthly) : undefined}
+                onPress={() => router.push("/money/subscriptions")}
+              />
+              <DataRow title="Bills" onPress={() => router.push("/money/bills")} />
+              <DataRow title="Income" value={formatPeso(month.data?.income ?? 0)} />
+              <DataRow title="Import statement" onPress={() => router.push("/money/import")} last />
             </View>
 
             <SpendingCalendar accountName={accountName} categoryName={categoryName} />
 
             <View className="gap-2">
-              <SectionHeader
-                title="Budgets this month"
-                action={budgets?.length ? "Edit" : "Add budget"}
-                onAction={() => router.push("/money/budgets")}
-              />
-              {budgets?.length ? (
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
-                  {budgets.map((b, i) => (
-                    <BudgetRow
-                      key={b.budget.id}
-                      b={b}
-                      name={categoryName(b.budget.category_id) ?? "Category"}
-                      last={i === budgets.length - 1}
-                    />
-                  ))}
-                </View>
-              ) : (
-                <View className="rounded-card border border-border bg-surface-card px-4 py-3">
-                  <Text className="font-sans text-caption text-ink-muted">
-                    Set a monthly limit for a category, for example Food ₱8,000.
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            <View className="gap-2">
               <SectionHeader title="Savings goals" action="Add goal" onAction={() => router.push("/money/goal/new")} />
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View>
                 {(goals.data?.goals ?? []).length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                  <Text className="py-3 font-sans text-caption text-ink-muted">
                     Set a goal, for example a new phone ₱30,000 by June.
                   </Text>
                 ) : (
@@ -231,9 +238,9 @@ export default function MoneyScreen() {
 
             <View className="gap-2">
               <SectionHeader title="Renewing and due soon" />
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View>
                 {renewing.length === 0 ? (
-                  <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
+                  <Text className="py-3 font-sans text-caption text-ink-muted">
                     Nothing renews or is due in the next {RENEWAL_LIST_DAYS} days.
                   </Text>
                 ) : (
@@ -247,30 +254,11 @@ export default function MoneyScreen() {
                   ))
                 )}
               </View>
-              <View className="flex-row gap-3">
-                <View className="flex-1">
-                  <Button
-                    label="Subscriptions"
-                    variant="secondary"
-                    size="input"
-                    onPress={() => router.push("/money/subscriptions")}
-                  />
-                </View>
-                <View className="flex-1">
-                  <Button label="Bills" variant="secondary" size="input" onPress={() => router.push("/money/bills")} />
-                </View>
-              </View>
-              <Button
-                label="Import statement"
-                variant="secondary"
-                size="input"
-                onPress={() => router.push("/money/import")}
-              />
             </View>
 
             <View className="gap-2">
               <SectionHeader title="Recent" action="See all" onAction={() => router.push("/money/transactions")} />
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View>
                 {(recent.data ?? []).length === 0 ? (
                   <View className="items-center gap-2 p-6">
                     <Ionicons name="wallet-outline" size={28} color={colors.accent} />

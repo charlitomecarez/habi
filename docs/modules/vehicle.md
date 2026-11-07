@@ -5,7 +5,7 @@
 ## Model
 
 - `vehicle_models` and `service_templates` are shared. The Honda ADV 160 is the default model.
-- The ADV 160 intervals come from the owner's manual (migration `...0900`). For example: engine oil every 6,000 km or 12 months.
+- The ADV 160 intervals come from the owner's manual (migration `...0900`), then Charli's stricter maintenance checker (migration `20261106000700`). For example: engine oil every 1,500 km or 12 months. Each item has one interval, so an inspect value and a replace value become one reminder.
 - Each vehicle gets its own copy of the schedule in `vehicle_services`. This lets one vehicle change an interval without a change to the templates.
 
 ## Add a vehicle
@@ -39,7 +39,8 @@ App text comes from `dueText` (for example "300 km overdue", "Due in 12 days") a
 `UpdateOdometerSheet` calls `useLogOdometer`, which inserts an `odometer_logs` row.
 
 - Before save, `newlyDueAt` lists items that the new reading makes overdue. The sheet shows them with "You'll get a reminder."
-- `on_odometer_logged` raises `current_odometer_km`. It never lowers it.
+- A lower reading needs a second step. The sheet then saves with `is_correction`, and `noLongerDueAt` names the items that it ends.
+- `on_odometer_logged` raises `current_odometer_km`, or sets it for a correction. No other log lowers it.
 - It inserts a `vehicle_service` reminder (due now) for each overdue item that has no pending reminder.
 
 ## Log a service
@@ -58,3 +59,7 @@ App text comes from `dueText` (for example "300 km overdue", "Due in 12 days") a
 
 - **Vehicle tab:** vehicle name and odometer, "Update odometer", "Service due now" (overdue and due soon), "Later", "Mark services done" and "Log another service".
 - **Home:** an overdue or due-soon item shows as a "Needs attention" card. A tap opens Log service for that item.
+
+## Checks
+
+`vehicle/checks` holds the 6 checks before riding and the 5 weekly checks in `lib/vehicle-checks.ts`. They have no intervals and send no reminders. Ticks stay on the phone: the daily list clears each day, and the weekly list clears each Monday. Sign-out clears them.

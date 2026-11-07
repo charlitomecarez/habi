@@ -27,7 +27,11 @@ When today's row is missing, `todayChoice` shows 3 of the 20 dishes in `lib/ulam
 
 ## Pictures
 
-Groq gives only text, so a dish has no photo. `UlamPicture` draws a simple bundled picture for each `kind`: egg, vegetable, beans, fish, meat or soup.
+`_shared/ulam-photos.ts` holds photos of 26 common dishes from Wikimedia Commons, and a person checked each one. `daily-ulam` uses that list, then makes one Commons search for a new dish, and stores the link as `photo_url` in that day's `options`. A blind search can show the wrong thing, so the checked list comes first.
+
+`UlamPhoto` shows the photo through `expo-image`, which keeps it on the phone for no signal. `UlamPicture` draws a simple bundled picture for each `kind`, for a dish with no photo and for old rows.
+
+Show another stops at the third dish, and it makes no Groq call.
 
 ## Log
 

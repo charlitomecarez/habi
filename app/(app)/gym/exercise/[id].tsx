@@ -1,10 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
-import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatKg, useExerciseHistory, useGym } from "@/lib/gym";
 
@@ -26,33 +26,34 @@ export default function ExerciseHistoryScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar tone="daily">
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {exercise?.name ?? "Exercise"}
         </Text>
-      </View>
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-10 pt-2">
+      </ModuleBar>
+      <ScrollView contentContainerClassName="gap-3 px-5 pb-8 pt-2">
         {history.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : history.error ? (
           <Notice tone="danger">Could not load the history. {history.error.message}</Notice>
         ) : bySession.length === 0 ? (
-          <Text className="font-sans text-body text-ink-muted">No sets yet. Tick sets during a workout to build the history.</Text>
+          <Text className="font-sans text-body text-ink-muted">
+            No sets yet. Tick sets during a workout to build the history.
+          </Text>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View>
             {bySession.map((g, i) => {
               const date = dateOf(g.sessionId);
               const best = Math.max(...g.sets.map((s) => s.weight_kg ?? 0));
               return (
-                <View key={g.sessionId} className={`gap-1 px-4 py-3 ${i === bySession.length - 1 ? "" : "border-b border-divider"}`}>
+                <View
+                  key={g.sessionId}
+                  className={`gap-1 px-4 py-3 ${i === bySession.length - 1 ? "" : "border-b-2 border-border"}`}
+                >
                   <Text className="font-semibold text-row-title text-ink">
                     {date ? format(parseISO(date), "EEE, MMM d, yyyy") : "Earlier"}
                     {best > 0 ? ` · best ${formatKg(best)}` : ""}

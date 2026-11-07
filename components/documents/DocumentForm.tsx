@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
-import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,6 +14,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { DEFAULT_REMIND_DAYS, DOCUMENT_TYPES, typeLabel, useSaveDocument, type DocumentRow } from "@/lib/documents";
 import { useVehicle, vehicleName } from "@/lib/vehicles";
@@ -78,7 +78,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
         note: f.note.trim() || null,
       },
     });
-    router.back();
+    goBack();
   });
 
   return (
@@ -88,7 +88,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

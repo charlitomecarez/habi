@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
-import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +15,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { DIRECTION_OPTIONS, useSaveDebt, type Debt, type DebtDirection } from "@/lib/debts";
 import { amountText, parseAmount } from "@/lib/money";
@@ -68,7 +68,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
         note: v.note.trim() || null,
       },
     });
-    router.back();
+    goBack();
   });
 
   return (
@@ -78,7 +78,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

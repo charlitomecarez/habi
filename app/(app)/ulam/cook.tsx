@@ -1,11 +1,11 @@
 import { format } from "date-fns";
-import { router } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useUserSettings } from "@/lib/settings";
 import { todayChoice, useSaveUlamDay, useUlamDays } from "@/lib/ulam";
 
@@ -27,11 +27,11 @@ export default function HowToCookScreen() {
         <Text className="font-sans text-label text-ink-muted">
           {ulam.name} · {ulam.cookMinutes} min
         </Text>
-        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+        <View>
           {ulam.steps.map((step, index) => (
             <View
               key={step}
-              className={`flex-row gap-3 px-4 py-3 ${index === ulam.steps.length - 1 ? "" : "border-b border-divider"}`}
+              className={`flex-row gap-3 px-4 py-3 ${index === ulam.steps.length - 1 ? "" : "border-b-2 border-border"}`}
             >
               <Text className="font-bold text-label text-ink">{index + 1}</Text>
               <Text className="flex-1 font-sans text-body text-ink">{step}</Text>
@@ -49,7 +49,7 @@ export default function HowToCookScreen() {
                 ...(backup ? { options, source: "backup" as const } : {}),
                 eaten: true,
               });
-              router.back();
+              goBack();
             }}
           />
         )}

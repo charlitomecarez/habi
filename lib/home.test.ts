@@ -29,6 +29,7 @@ const service = (over: Partial<ServiceDue> = {}): ServiceDue => ({
   nextDueKm: 13000,
   nextDueOn: null,
   kmRemaining: 120,
+  intervalKm: null,
   daysRemaining: null,
   sortOrder: 1,
   ...over,
@@ -109,7 +110,7 @@ describe("buildAttention", () => {
       status: "Overdue",
       title: "Electric bill",
     });
-    expect(buildAttention(input({ bills: [bill()] }), NOW)[0].detail).toContain("₱1,850");
+    expect(buildAttention(input({ bills: [bill()] }), NOW)[0].value).toBe("₱1,850");
   });
 
   it("leaves out a bill past the next 7 days, and a subscription", () => {
@@ -119,7 +120,7 @@ describe("buildAttention", () => {
   });
 
   it("handles a bill with no amount yet", () => {
-    expect(buildAttention(input({ bills: [bill({ amount: null })] }), NOW)[0].detail).toBe("Money · Due Nov 3");
+    expect(buildAttention(input({ bills: [bill({ amount: null })] }), NOW)[0].detail).toBe("Due Nov 3");
   });
 
   it("shows a near birthday with the person's name", () => {
@@ -160,9 +161,9 @@ describe("buildAttention", () => {
 describe("todaySentence", () => {
   it("counts late and today items, and not due soon ones", () => {
     const items = buildAttention(input({ services: [service()], todos: [todo()], bills: [bill()] }), NOW);
-    expect(todaySentence(items)).toBe("2 things need you today");
-    expect(todaySentence(items.slice(0, 1))).toBe("1 thing needs you today");
-    expect(todaySentence(items.slice(2))).toBe("Nothing needs you today");
+    expect(todaySentence(items)).toBe("2 things need you today.");
+    expect(todaySentence(items.slice(0, 1))).toBe("1 thing needs you today.");
+    expect(todaySentence(items.slice(2))).toBe("Nothing needs you today.");
   });
 });
 

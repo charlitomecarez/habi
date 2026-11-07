@@ -6,7 +6,7 @@ One person records in the app, and the other reads plain text. It works in both 
 
 ## Who has voice
 
-- Anyone can create an account. Voice is off until the admin ticks the account on the Voice access screen (`app/(app)/inbox/access.tsx`, reached from Inbox).
+- Sign-up is off, so the admin adds each account. Voice is off until the admin ticks the account on the Voice access screen (`app/(app)/inbox/access.tsx`, reached from Inbox).
 - `app_admins` marks the admin. Add that row in the SQL editor, so no address goes in the repo. Only the admin sees the Voice access button.
 - A ticked account and the admin can message each other. Ticked accounts cannot message each other. `voice_can_message` holds this rule, and `voice-transcribe` checks it on every send and retry.
 - `app_admins` and `voice_access` can only be read by the app. Ticks go through `set_voice_access`, which refuses anyone but the admin.

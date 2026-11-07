@@ -2,7 +2,7 @@
   "expo": {
     "name": "my-app",
     "slug": "my-app",
-    "version": "1.2.2",
+    "version": "1.3.0",
     "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,13 +13,14 @@
     "android": {
       "package": "com.charli.myapp",
       "adaptiveIcon": {
-        "backgroundColor": "#0F766E",
+        "backgroundColor": "#23205C",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": ["android.permission.health.READ_STEPS"]
     },
     "web": {
       "bundler": "metro",
@@ -58,6 +59,46 @@
           "cameraPermission": "my-app uses the camera to scan the QR labels on your storage boxes and your alarm stop label.",
           "microphonePermission": false,
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "my-app uses your location only when you tap Use my location, to show your weather."
+        }
+      ],
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Sleep",
+              "label": "Sleep",
+              "description": "Last night's sleep",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "previewImage": "./assets/icon.png",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "ScreenTime",
+              "label": "Screen time",
+              "description": "Today's screen time, with no app names",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "previewImage": "./assets/icon.png",
+              "updatePeriodMillis": 1800000
+            }
+          ]
         }
       ]
     ],

@@ -25,7 +25,7 @@ export function CategorySpending({ categoryName }: { categoryName: (id: string |
       <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
         Spending by category
       </Text>
-      <View className="gap-3 rounded-card border border-border bg-surface-card p-4">
+      <View className="gap-3">
         <View className="flex-row items-center gap-2">
           <Pressable
             accessibilityRole="button"

@@ -63,11 +63,11 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
         <KeyboardScrollView
-          contentContainerClassName="min-h-full justify-between gap-8 px-6 pb-8 pt-16"
+          contentContainerClassName="min-h-full justify-between gap-8 px-6 pb-8 pt-slot"
           keyboardShouldPersistTaps="handled"
         >
           <View className="gap-5">
-            <View className="h-14 w-14 items-center justify-center rounded-card bg-accent">
+            <View className="h-slot w-slot items-center justify-center rounded-card bg-accent">
               <Ionicons name="grid-outline" size={28} color={colors.onAccent} accessibilityElementsHidden />
             </View>
             <View className="gap-2">

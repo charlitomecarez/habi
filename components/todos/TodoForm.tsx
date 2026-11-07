@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Segmented } from "@/components/ui/Segmented";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useDeleteTodo, useSaveTodo, type Todo } from "@/lib/todos";
 
@@ -78,13 +78,13 @@ export function TodoForm({ todo }: { todo?: Todo }) {
         priority: values.priority,
       },
     });
-    router.back();
+    goBack();
   });
 
   async function onDelete() {
     if (!todo) return;
     await remove.mutateAsync(todo.id);
-    router.back();
+    goBack();
   }
 
   const failure = save.error ?? remove.error;
@@ -96,7 +96,7 @@ export function TodoForm({ todo }: { todo?: Todo }) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

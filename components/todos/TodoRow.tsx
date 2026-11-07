@@ -1,36 +1,57 @@
 import { Ionicons } from "@expo/vector-icons";
-import { format, isToday, isTomorrow } from "date-fns";
-import { Pressable, Text, View } from "react-native";
+import { differenceInCalendarDays, format, isToday, isTomorrow } from "date-fns";
+import { Pressable, View } from "react-native";
 
-import { Badge } from "@/components/ui/Badge";
+import { DataRow, type RowStatus } from "@/components/ui/DataRow";
 import { useColors } from "@/lib/colors";
 import { isOverdue, todoDate, type Todo } from "@/lib/todos";
 
 const REPEAT_LABEL = { daily: "Daily", weekly: "Weekly", monthly: "Monthly" } as const;
 
 function dayLabel(date: Date): string {
-  if (isToday(date)) return "Today";
   if (isTomorrow(date)) return "Tomorrow";
   return format(date, "EEE, MMM d");
 }
 
-function meta(todo: Todo): { icon: "notifications-outline" | "repeat" | null; text: string } | null {
+/** The line under the title: when it is due, and how often. */
+function detailText(todo: Todo): string | undefined {
   if (todo.completed_at) {
     const done = new Date(todo.completed_at);
-    return { icon: null, text: `Done ${isToday(done) ? format(done, "h:mm a") : format(done, "MMM d")}` };
+    return `Done ${isToday(done) ? format(done, "h:mm a") : format(done, "MMM d")}`;
   }
-  const remind = todo.remind_at ? new Date(todo.remind_at) : null;
   const date = todoDate(todo);
-  if (!date) return null;
+  const remind = todo.remind_at ? new Date(todo.remind_at) : null;
+  const when = !date
+    ? undefined
+    : isOverdue(todo)
+      ? `Due ${format(date, "MMM d")}`
+      : isToday(date)
+        ? remind
+          ? format(remind, "h:mm a")
+          : "No time set"
+        : remind
+          ? `${dayLabel(date)}, ${format(remind, "h:mm a")}`
+          : dayLabel(date);
+  const repeat = todo.repeat !== "none" ? REPEAT_LABEL[todo.repeat] : undefined;
+  const high = todo.priority === 1 ? "High" : undefined;
+  return [high, repeat, when].filter(Boolean).join(" · ") || undefined;
+}
 
-  if (todo.repeat !== "none") {
-    const when = remind ? format(remind, "h:mm a") : dayLabel(date);
-    return { icon: "repeat", text: `${REPEAT_LABEL[todo.repeat]}, ${when}` };
-  }
-  if (remind) {
-    return { icon: "notifications-outline", text: `${dayLabel(remind)}, ${format(remind, "h:mm a")}` };
-  }
-  return { icon: null, text: dayLabel(date) };
+/** A todo with a set time is pressing today. One with no time only says that it is today. */
+function statusOf(todo: Todo): RowStatus | undefined {
+  if (todo.completed_at) return undefined;
+  if (isOverdue(todo)) return { label: "Overdue", tone: "over" };
+  const date = todoDate(todo);
+  if (date && isToday(date)) return { label: "Today", tone: todo.remind_at ? "over" : "muted" };
+  return undefined;
+}
+
+function lateText(todo: Todo): string | undefined {
+  const date = todoDate(todo);
+  if (todo.completed_at || !date || !isOverdue(todo)) return undefined;
+  const days = differenceInCalendarDays(new Date(), date);
+  if (days < 1) return undefined;
+  return days === 1 ? "1 day" : `${days} days`;
 }
 
 type TodoRowProps = {
@@ -43,19 +64,15 @@ type TodoRowProps = {
 export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) {
   const colors = useColors();
   const done = todo.completed_at !== null;
-  const overdue = isOverdue(todo);
-  const date = todoDate(todo);
-  const dueToday = !done && date !== null && isToday(date);
-  const info = meta(todo);
 
   return (
-    <View className={`flex-row items-start gap-2 py-1 pl-1 pr-4 ${last ? "" : "border-b border-divider"}`}>
+    <View className={`flex-row items-center ${last ? "" : "border-b-2 border-border"}`}>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: done }}
         accessibilityLabel={done ? `Mark ${todo.title} as not done` : `Mark ${todo.title} as done`}
         onPress={onToggle}
-        className="h-touch w-touch items-center justify-center"
+        className="-ml-3 h-touch w-touch items-center justify-center"
       >
         <Ionicons
           name={done ? "checkbox" : "square-outline"}
@@ -63,31 +80,17 @@ export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) 
           color={done ? colors.accent : colors.inkMuted}
         />
       </Pressable>
-
-      <Pressable accessibilityRole="button" onPress={onOpen} className="min-h-touch flex-1 justify-center gap-1 py-2">
-        <Text
-          className={`text-row-title ${done ? "font-medium text-ink-muted line-through" : "font-semibold text-ink"}`}
-        >
-          {todo.title}
-        </Text>
-        {info ? (
-          <View className="flex-row items-center gap-1">
-            {info.icon ? (
-              <Ionicons name={info.icon} size={14} color={dueToday ? colors.warning : colors.inkMuted} />
-            ) : null}
-            <Text className={`text-caption ${dueToday ? "font-medium text-warning" : "font-sans text-ink-muted"}`}>
-              {info.text}
-            </Text>
-          </View>
-        ) : null}
-      </Pressable>
-
-      {!done && (overdue || todo.priority === 1) ? (
-        <View className="items-end gap-1 pt-3">
-          {overdue ? <Badge label="Overdue" tone="danger" /> : null}
-          {todo.priority === 1 ? <Badge label="High" tone="danger" /> : null}
-        </View>
-      ) : null}
+      <View className="min-w-0 flex-1">
+        <DataRow
+          title={todo.title}
+          detail={detailText(todo)}
+          value={lateText(todo)}
+          status={statusOf(todo)}
+          onPress={onOpen}
+          done={done}
+          last
+        />
+      </View>
     </View>
   );
 }

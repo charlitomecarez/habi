@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
@@ -20,6 +19,7 @@ import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
 import { Stepper } from "@/components/ui/Stepper";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useDeleteItem, useLocations, useSaveItem, warrantyText, type InventoryItem } from "@/lib/inventory";
 import { amountText, parseBalance } from "@/lib/money";
@@ -109,13 +109,13 @@ export function ItemForm({
       },
       photo,
     });
-    router.back();
+    goBack();
   });
 
   async function onDelete() {
     if (!item) return;
     await remove.mutateAsync(item);
-    router.back();
+    goBack();
   }
 
   const failure = save.error ?? remove.error;
@@ -127,7 +127,7 @@ export function ItemForm({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

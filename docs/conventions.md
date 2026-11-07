@@ -16,6 +16,7 @@
 | Web build check  | `npx expo export --platform web --max-workers 1`                  |
 | Apply migrations | `npx supabase db push --remote`                                   |
 | Generate types   | `npm run db:types`                                                |
+| RLS check        | `node --env-file=.env scripts/rls-check.mjs` (two test accounts)  |
 
 ## Memory
 
@@ -87,3 +88,25 @@ Do not use Docker or a local Supabase server. That rule bans these commands, bec
 - Commit only when asked. Never commit to `main`.
 - Use Conventional Commits, for example `feat(money): add exchange rates`.
 - Never commit `.env`, a token or a secret.
+
+## Agents and skills
+
+The repo holds these in `.claude/`, so each machine gets the same set.
+
+| Name                  | Type  | Use                                                   |
+| --------------------- | ----- | ----------------------------------------------------- |
+| `release-plan`        | Skill | Step 1 of [the release workflow](release-workflow.md) |
+| `release-design`      | Skill | Step 2 of the release workflow                        |
+| `release-handoff`     | Skill | Step 3 of the release workflow                        |
+| `release-development` | Skill | Step 4 of the release workflow                        |
+| `release-farewell`    | Skill | Step 5 of the release workflow                        |
+| `add-migration`       | Skill | A schema change, from the new file to the new types   |
+| `ui-check`            | Skill | The Impeccable check for each UI change               |
+| `rules-reviewer`      | Agent | Reviews a diff against the project rules              |
+| `migration-reviewer`  | Agent | Reviews new migrations for RLS, ownership and safety  |
+| `docs-checker`        | Agent | Checks that the docs and the release record match     |
+| `ui-reviewer`         | Agent | Reviews UI changes with Impeccable                    |
+
+## Edge Functions
+
+Each function folder has its own `deno.json` with exact versions, because Supabase reads one file for each function. A new function needs one too. CI runs `deno check` on each function. Deno runs only in CI, not on this Mac.

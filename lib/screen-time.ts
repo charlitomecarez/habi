@@ -44,7 +44,12 @@ export function useScreenTime(day: Date, enabled: boolean) {
     staleTime: 60 * 1000,
     queryFn: async () => {
       const days = await Promise.all(Array.from({ length: 7 }, (_, i) => usage(subDays(day, i))));
-      return { day: days[0], weekMs: days.reduce((s, d) => s + d.totalMs, 0) };
+      // Oldest first, for the chart.
+      return {
+        day: days[0],
+        weekMs: days.reduce((s, d) => s + d.totalMs, 0),
+        dailyMs: days.map((d) => d.totalMs).reverse(),
+      };
     },
   });
 }

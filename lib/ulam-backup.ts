@@ -1,4 +1,5 @@
 import { priceIngredients, type Ulam, type UlamKind } from "@/supabase/functions/_shared/ulam";
+import { checkedPhoto } from "@/supabase/functions/_shared/ulam-photos";
 
 // Shown when today's row is missing (Groq failed, or the job has not run), so the screen always
 // has an ulam. Costs come from the shared price list. Calories are estimates.
@@ -282,4 +283,7 @@ function toUlam(recipe: Recipe): Ulam {
   };
 }
 
-export const BACKUP_ULAM: readonly Ulam[] = RECIPES.map(toUlam);
+export const BACKUP_ULAM: readonly Ulam[] = RECIPES.map((recipe) => {
+  const photo = checkedPhoto(recipe.name);
+  return photo ? { ...toUlam(recipe), photo_url: photo } : toUlam(recipe);
+});

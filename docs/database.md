@@ -60,13 +60,17 @@ Deleting a location sets `parent_id` and `location_id` to null on the children. 
 
 ### Money (`20261103000700_money.sql`)
 
-| Table              | Purpose                                                                                                                                                           |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `money_accounts`   | `name`, `kind`, `opening_balance`, `currency`, `is_archived`, `sort_order`.                                                                                       |
-| `money_categories` | `name`, `kind` (`expense` or `income`), `icon`, `sort_order`.                                                                                                     |
-| `exchange_rates`   | One rate to PHP per foreign currency, set by the user.                                                                                                            |
-| `subscriptions`    | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                      |
-| `transactions`     | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`. |
+| Table                                               | Purpose                                                                                                                                                           |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `money_accounts`                                    | `name`, `kind`, `opening_balance`, `currency`, `is_archived`, `sort_order`.                                                                                       |
+| `money_categories`                                  | `name`, `kind` (`expense` or `income`), `icon`, `sort_order`.                                                                                                     |
+| `exchange_rates`                                    | One rate to PHP per foreign currency, set by the user.                                                                                                            |
+| `subscriptions`                                     | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                      |
+| `recurring_transactions`                            | A rule that saves its own row. `schedule`, `week_days`, `month_day`, `is_paused`, `last_run_on`. `add_due_recurring` runs each hour.                              |
+| `feedback`                                          | Report a bug. A sent report cannot change. `admin_select` and `admin_update` let `app_admins` read every row. 20 reports a day for each account.                  |
+| `sports_matches`, `sports_standings`, `sports_sync` | Shared. RLS allows signed-in reads, and only the service role in `sports-sync` writes.                                                                            |
+| `job_profiles`, `job_matches`                       | Find a work. No name, phone or address column. Only `job-search` adds matches, so `owner_insert` is dropped on `job_matches`.                                     |
+| `transactions`                                      | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`. |
 
 Views:
 
@@ -88,7 +92,7 @@ Views:
 | `subscriptions_sync_reminder`       | `subscriptions` | Keeps one pending renewal reminder per active subscription.           |
 | `transactions_advance_subscription` | `transactions`  | A payment linked to a subscription moves `next_billing_on` one cycle. |
 
-The odometer never goes down. Both log triggers use `greatest(current, new)`.
+The odometer goes down only through an `odometer_logs` row with `is_correction`. Every other log uses `greatest(current, new)`, so an old fuel or service entry never lowers it. A correction also deletes pending `vehicle_service` reminders that are no longer overdue.
 
 ## RPC
 

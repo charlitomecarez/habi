@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebt, useDebtPayments, useDeleteDebt, useDeletePayment, useRecordPayment } from "@/lib/debts";
 import { amountText, formatPeso, parseAmount } from "@/lib/money";
@@ -38,7 +40,7 @@ export default function DebtScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{debt.error ? debt.error.message : "This debt was deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -68,16 +70,12 @@ export default function DebtScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar tone="people">
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {d.person_name}
         </Text>
         <Pressable
@@ -86,17 +84,24 @@ export default function DebtScreen() {
           onPress={() => router.push({ pathname: "/debts/edit/[id]", params: { id: d.id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
-      </View>
+      </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
 
-        <View className="gap-3 rounded-hero bg-accent p-5">
-          <Text className="font-medium text-label text-on-accent/90">{owedToMe ? "Owes you" : "You owe"}</Text>
-          <Text className="font-bold text-display text-on-accent">{formatPeso(d.balance)}</Text>
-          <Text className="font-sans text-caption text-on-accent/90">
+        <View className="gap-1">
+          <Text className="font-medium text-label text-ink-muted">{owedToMe ? "Owes you" : "You owe"}</Text>
+          <Text
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            numberOfLines={1}
+            className="font-bold text-display text-ink"
+          >
+            {formatPeso(d.balance)}
+          </Text>
+          <Text className="font-sans text-caption text-ink-muted">
             {formatPeso(d.paid)} paid of {formatPeso(d.amount)} · since {format(parseISO(d.occurred_on), "MMM d, yyyy")}
           </Text>
         </View>
@@ -111,14 +116,14 @@ export default function DebtScreen() {
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
             Payments
           </Text>
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View>
             {(payments.data ?? []).length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No payments yet.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No payments yet.</Text>
             ) : (
               payments.data?.map((p, i) => (
                 <View
                   key={p.id}
-                  className={`min-h-touch flex-row items-center gap-3 py-2 pl-4 pr-1 ${i === (payments.data?.length ?? 0) - 1 ? "" : "border-b border-divider"}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-2 pl-4 pr-1 ${i === (payments.data?.length ?? 0) - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">{formatPeso(p.amount)}</Text>
@@ -142,9 +147,7 @@ export default function DebtScreen() {
 
         {confirmDelete ? (
           <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">
-              Delete this debt? Its payments are deleted too.
-            </Text>
+            <Text className="font-sans text-body text-danger">Delete this debt? Its payments are deleted too.</Text>
             <Button
               label="Delete debt"
               variant="destructive"
@@ -152,7 +155,7 @@ export default function DebtScreen() {
               loading={remove.isPending}
               onPress={async () => {
                 await remove.mutateAsync(d.id);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep debt" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />

@@ -39,7 +39,7 @@ export function OptionSheet<T extends string>({
                 onChange(option.value);
                 onClose();
               }}
-              className={`min-h-touch flex-row items-center justify-between px-4 py-3 active:bg-surface-muted ${index < options.length - 1 ? "border-b border-divider" : ""}`}
+              className={`min-h-touch flex-row items-center justify-between py-3 active:bg-surface-muted ${index < options.length - 1 ? "border-b-2 border-border" : ""}`}
             >
               <Text className={`text-body ${isSelected ? "font-semibold text-ink" : "font-sans text-ink"}`}>
                 {option.label}

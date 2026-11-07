@@ -3,7 +3,7 @@
 //
 // Secrets (supabase secrets set ...): CRON_SECRET.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 
 const BUCKET = "voice-audio";
 const KEEP_DAYS = 7;

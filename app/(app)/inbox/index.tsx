@@ -9,10 +9,12 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import {
   canRetry,
   markInboxRead,
+  unreadCount,
   useInbox,
   useRefreshVoice,
   useRetryVoice,
@@ -43,6 +45,7 @@ export default function InboxScreen() {
   const retry = useRetryVoice();
   const refresh = useRefreshVoice();
   const player = useVoicePlayer();
+  const unread = unreadCount(inbox.data ?? []);
   const [tab, setTab] = useState<Tab>("inbox");
 
   // Opening the screen reads the inbox. New stays on the cards until you leave.
@@ -65,18 +68,17 @@ export default function InboxScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="flex-1 font-bold text-title text-ink">
-          Inbox
-        </Text>
+      <ModuleBar tone="people">
+        <View className="min-w-0 flex-1">
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+            Inbox
+          </Text>
+          {unread > 0 ? (
+            <Text className="font-sans text-label text-on-shell">
+              {unread} new {unread === 1 ? "message" : "messages"}
+            </Text>
+          ) : null}
+        </View>
         {isAdmin ? (
           <Pressable
             accessibilityRole="button"
@@ -84,15 +86,14 @@ export default function InboxScreen() {
             onPress={() => router.push("/inbox/access")}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="people-outline" size={22} color={colors.ink} />
+            <Ionicons name="people-outline" size={22} color={colors.onShell} />
           </Pressable>
         ) : null}
-      </View>
+      </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-32 pt-3">
+      <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
         {error ? <Notice tone="danger">Could not load your messages. {error.message}</Notice> : null}
         {retry.error ? <Notice tone="danger">{retry.error.message}</Notice> : null}
-        {player.error ? <Notice tone="danger">{player.error}</Notice> : null}
 
         <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 
@@ -122,7 +123,7 @@ export default function InboxScreen() {
               key={message.id}
               message={message}
               badge={message.read_at === null ? { label: "New", tone: "warning" } : undefined}
-              playing={player.playingPath === message.audio_path}
+              audio={player.view(message.audio_path)}
               onPlay={(path) => void player.toggle(path)}
             />
           ) : (
@@ -131,7 +132,7 @@ export default function InboxScreen() {
               message={message}
               badge={sentBadge(message)}
               fallback={message.status === "pending" ? "The text is on its way." : "The text could not be made."}
-              playing={player.playingPath === message.audio_path}
+              audio={player.view(message.audio_path)}
               onPlay={(path) => void player.toggle(path)}
               onRetry={canRetry(message) ? () => retry.mutate(message.id) : undefined}
             />

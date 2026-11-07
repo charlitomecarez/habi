@@ -7,10 +7,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MealSheet } from "@/components/ulam/MealSheet";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
-import { UlamPicture } from "@/components/ulam/UlamPicture";
+import { UlamPhoto } from "@/components/ulam/UlamPhoto";
 import { UlamSettingsSheet } from "@/components/ulam/UlamSettingsSheet";
 import { Button } from "@/components/ui/Button";
-import { HeroCard } from "@/components/ui/HeroCard";
+import { Chip } from "@/components/ui/Chip";
+import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { formatPeso } from "@/lib/money";
@@ -39,6 +40,7 @@ export default function UlamScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <UlamHeader
         title="Ulam"
+        subtitle={`Under ${formatPeso(limit)}`}
         action={
           <Pressable
             accessibilityRole="button"
@@ -46,7 +48,7 @@ export default function UlamScreen() {
             onPress={() => setEditing(true)}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="options-outline" size={22} color={colors.ink} />
+            <Ionicons name="options-outline" size={22} color={colors.onShell} />
           </Pressable>
         }
       />
@@ -54,69 +56,78 @@ export default function UlamScreen() {
       {days.isPending ? (
         <ActivityIndicator color={colors.accent} className="py-8" />
       ) : (
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-3">
-          <Text className="font-sans text-label text-ink-muted">{format(now, "EEEE, MMMM d")}</Text>
-          {days.error ? <Notice tone="danger">Could not load your ulam. {days.error.message}</Notice> : null}
-          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        <ScrollView contentContainerClassName="pb-8">
+          <UlamPhoto ulam={ulam} />
 
-          {row?.custom ? (
-            <View className="gap-1 rounded-card border border-border bg-surface-card p-4">
-              <Text className="font-semibold text-row-title text-ink">You ate {row.custom.name}</Text>
-              <Text className="font-sans text-caption text-ink-muted">Saved for today.</Text>
+          <View className="gap-4 px-5 pt-4">
+            {days.error ? <Notice tone="danger">Could not load your ulam. {days.error.message}</Notice> : null}
+            {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+
+            {row?.custom ? (
+              <Text className="font-semibold text-row-title text-ink">You ate {row.custom.name}. Saved for today.</Text>
+            ) : null}
+
+            <View className="flex-row items-center justify-between gap-3">
+              <Text className="min-w-0 shrink font-bold text-title-lg text-ink">{ulam.name}</Text>
+              <Text className="font-bold text-title-lg text-ink">{formatPeso(ulam.cost)}</Text>
             </View>
-          ) : null}
 
-          <View className="items-center rounded-card bg-daily-tint py-4">
-            <UlamPicture kind={ulam.kind} />
-          </View>
+            {options.length > 1 ? (
+              <View accessibilityRole="radiogroup" accessibilityLabel="Dish" className="flex-row gap-2">
+                {options.map((option, index) => (
+                  <Chip
+                    key={option.name}
+                    label={String(index + 1)}
+                    variant="filter"
+                    selected={index === picked}
+                    onPress={() => save.mutate({ date: today, ...stored, picked: index })}
+                  />
+                ))}
+              </View>
+            ) : null}
 
-          <HeroCard
-            title={ulam.name}
-            stats={[
-              { value: formatPeso(ulam.cost), label: "to buy" },
-              { value: `${ulam.cookMinutes} min`, label: "to cook" },
-              { value: `≈ ${ulam.kcal}`, label: "kcal, for one" },
-            ]}
-          />
-
-          <View className="gap-3">
-            <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-              What to buy
+            <Text className="font-sans text-caption text-ink-muted">
+              ≈ {ulam.kcal + RICE_KCAL} kcal with 1 cup rice · {ulam.cookMinutes} min to cook
             </Text>
-            <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+
+            <View className="gap-3">
+              <Button
+                label={eaten ? "Undo I ate this" : "I ate this"}
+                variant={eaten ? "secondary" : "primary"}
+                loading={save.isPending}
+                onPress={() => save.mutate({ date: today, ...stored, eaten: !eaten })}
+              />
+              {picked < options.length - 1 ? (
+                <Button
+                  label="Show another"
+                  variant="secondary"
+                  onPress={() => save.mutate({ date: today, ...stored, picked: picked + 1 })}
+                />
+              ) : options.length > 1 ? (
+                <Text className="font-sans text-caption text-ink-muted">You saw all {options.length} for today.</Text>
+              ) : null}
+              <Button label="How to cook" variant="plain" size="input" onPress={() => router.push("/ulam/cook")} />
+            </View>
+
+            <View>
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                What to buy
+              </Text>
               {ulam.ingredients.map((item, index) => (
                 <View
                   key={`${item.name}-${index}`}
-                  className={`flex-row justify-between gap-3 px-4 py-3 ${index === ulam.ingredients.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`flex-row justify-between gap-3 py-3 ${index === ulam.ingredients.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <Text className="flex-1 font-sans text-label text-ink">{item.name}</Text>
                   <Text className="font-medium text-label text-ink">{formatPeso(item.price)}</Text>
                 </View>
               ))}
             </View>
-            <Text className="font-sans text-caption text-ink-muted">
-              ≈ {ulam.kcal + RICE_KCAL} kcal with 1 cup rice
-            </Text>
-          </View>
 
-          <View className="gap-3">
-            <Button label="How to cook" variant="secondary" size="input" onPress={() => router.push("/ulam/cook")} />
-            {options.length > 1 ? (
-              <Button
-                label="Show another"
-                variant="secondary"
-                size="input"
-                onPress={() => save.mutate({ date: today, ...stored, picked: (picked + 1) % options.length })}
-              />
-            ) : null}
-            <Button
-              label={eaten ? "Undo I ate this" : "I ate this"}
-              variant={eaten ? "secondary" : "primary"}
-              loading={save.isPending}
-              onPress={() => save.mutate({ date: today, ...stored, eaten: !eaten })}
-            />
-            <Button label="I ate something else" variant="secondary" size="input" onPress={() => setTyping(true)} />
-            <Button label="Last 7 days" variant="secondary" size="input" onPress={() => router.push("/ulam/week")} />
+            <View>
+              <DataRow title="I ate something else" onPress={() => setTyping(true)} />
+              <DataRow title="Last 7 days" onPress={() => router.push("/ulam/week")} last />
+            </View>
           </View>
         </ScrollView>
       )}

@@ -26,7 +26,9 @@ function Clock() {
   const now = new Date();
   return (
     <View className="items-center gap-1">
-      <Text className="font-bold text-display text-ink">{format(now, "h:mm")}</Text>
+      <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} className="font-bold text-display text-ink">
+        {format(now, "h:mm")}
+      </Text>
       <Text className="font-sans text-label text-ink-muted">{format(now, "EEEE, MMMM d")}</Text>
     </View>
   );
@@ -47,7 +49,9 @@ function AwakeCheck({ onAwake, onTimeUp }: { onAwake: () => void; onTimeUp: () =
   return (
     <>
       <View className="flex-1 items-center justify-center gap-3">
-        <Text className="font-bold text-display text-ink">0:{String(left).padStart(2, "0")}</Text>
+        <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} className="font-bold text-display text-ink">
+          0:{String(left).padStart(2, "0")}
+        </Text>
         <Text accessibilityRole="header" className="font-bold text-title-lg text-ink">
           Are you awake?
         </Text>

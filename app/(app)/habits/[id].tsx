@@ -8,6 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   day,
@@ -42,7 +44,7 @@ export default function HabitScreen() {
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{habits.error ? habits.error.message : "This habit was archived or deleted."}</Notice>
-            <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+            <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
       </SafeAreaView>
@@ -55,16 +57,12 @@ export default function HabitScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar tone="daily">
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {h.name}
         </Text>
         <Pressable
@@ -73,29 +71,31 @@ export default function HabitScreen() {
           onPress={() => router.push({ pathname: "/habits/edit/[id]", params: { id: h.id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
-      </View>
+      </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
-        {toggle.error ?? archive.error ?? remove.error ? (
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+        {(toggle.error ?? archive.error ?? remove.error) ? (
           <Notice tone="danger">{(toggle.error ?? archive.error ?? remove.error)!.message}</Notice>
         ) : null}
 
         <View className="flex-row gap-3">
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Streak</Text>
             <Text className="font-bold text-title text-ink">
               {s.count} {s.unit}
               {s.count === 1 ? "" : "s"}
             </Text>
           </View>
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">
               {h.schedule === "times_per_week" ? "This week" : `In ${format(month, "MMMM")}`}
             </Text>
             <Text className="font-bold text-title text-ink">
-              {h.schedule === "times_per_week" ? `${weekCount(checks, now)} of ${h.times_per_week}` : `${monthChecks} done`}
+              {h.schedule === "times_per_week"
+                ? `${weekCount(checks, now)} of ${h.times_per_week}`
+                : `${monthChecks} done`}
             </Text>
           </View>
         </View>
@@ -103,7 +103,7 @@ export default function HabitScreen() {
           {scheduleText(h)} · {timeLabel(h.remind_time)}
         </Text>
 
-        <View className="rounded-card border border-border bg-surface-card px-2 py-3">
+        <View>
           <MonthCalendar
             month={month}
             onPrevious={() => setMonth(addMonths(month, -1))}
@@ -123,7 +123,12 @@ export default function HabitScreen() {
               const d = parseISO(date);
               if (isAfter(d, today)) return null;
               if (checks.has(date)) return <Ionicons name="checkmark-circle" size={18} color={colors.accent} />;
-              if (date !== day(now) && isScheduled(h, d) && h.schedule !== "times_per_week" && d >= startOfDay(new Date(h.created_at)))
+              if (
+                date !== day(now) &&
+                isScheduled(h, d) &&
+                h.schedule !== "times_per_week" &&
+                d >= startOfDay(new Date(h.created_at))
+              )
                 return <Text className="font-medium text-tab-label text-ink-muted">Missed</Text>;
               return null;
             }}
@@ -138,12 +143,14 @@ export default function HabitScreen() {
           loading={archive.isPending}
           onPress={async () => {
             await archive.mutateAsync(h.id);
-            router.back();
+            goBack();
           }}
         />
         {confirm === "delete" ? (
           <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">Delete this habit and its history? Archive keeps the history.</Text>
+            <Text className="font-sans text-body text-danger">
+              Delete this habit and its history? Archive keeps the history.
+            </Text>
             <Button
               label="Delete habit"
               variant="destructive"
@@ -151,7 +158,7 @@ export default function HabitScreen() {
               loading={remove.isPending}
               onPress={async () => {
                 await remove.mutateAsync(h.id);
-                router.back();
+                goBack();
               }}
             />
             <Button label="Keep habit" variant="secondary" size="input" onPress={() => setConfirm(null)} />

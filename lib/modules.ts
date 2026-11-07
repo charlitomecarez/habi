@@ -10,6 +10,8 @@ export type ModuleEntry = {
   tone: TileTone;
   /** Extra words for the search on More. */
   keywords: string;
+  /** Only the admin sees this tile. The server checks too. */
+  adminOnly?: boolean;
 };
 
 export type ModuleSection = { title: string; modules: readonly ModuleEntry[] };
@@ -66,6 +68,22 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         icon: { name: "restaurant-outline" },
         tone: "daily",
         keywords: "food meal cook recipe calories",
+      },
+      {
+        id: "sports",
+        label: "Sports",
+        href: "/sports",
+        icon: { name: "football-outline" },
+        tone: "daily",
+        keywords: "football nba basketball standings",
+      },
+      {
+        id: "weather",
+        label: "Weather",
+        href: "/weather",
+        icon: { name: "partly-sunny-outline" },
+        tone: "daily",
+        keywords: "rain forecast temperature ulan panahon",
       },
     ],
   },
@@ -130,6 +148,15 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
   {
     title: "Records and work",
     modules: [
+      {
+        id: "work",
+        label: "Find a work",
+        href: "/work",
+        icon: { name: "briefcase-outline" },
+        tone: "records",
+        keywords: "job career resume cover letter apply",
+        adminOnly: true,
+      },
       {
         id: "documents",
         label: "Documents",

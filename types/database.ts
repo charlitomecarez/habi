@@ -354,6 +354,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      feedback: {
+        Row: {
+          app_version: string | null;
+          created_at: string;
+          device_model: string | null;
+          id: string;
+          kind: string;
+          message: string;
+          read_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          app_version?: string | null;
+          created_at?: string;
+          device_model?: string | null;
+          id?: string;
+          kind?: string;
+          message: string;
+          read_at?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          app_version?: string | null;
+          created_at?: string;
+          device_model?: string | null;
+          id?: string;
+          kind?: string;
+          message?: string;
+          read_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       fuel_logs: {
         Row: {
           created_at: string;
@@ -673,6 +706,117 @@ export type Database = {
           },
         ];
       };
+      job_matches: {
+        Row: {
+          applied_on: string | null;
+          company: string;
+          created_at: string;
+          external_id: string;
+          id: string;
+          is_remote: boolean;
+          letter: string | null;
+          location: string | null;
+          posted_on: string | null;
+          reason: string;
+          score: number;
+          status: string;
+          summary: string | null;
+          title: string;
+          updated_at: string;
+          url: string;
+          user_id: string;
+          visa_offered: boolean;
+        };
+        Insert: {
+          applied_on?: string | null;
+          company: string;
+          created_at?: string;
+          external_id: string;
+          id?: string;
+          is_remote?: boolean;
+          letter?: string | null;
+          location?: string | null;
+          posted_on?: string | null;
+          reason: string;
+          score: number;
+          status?: string;
+          summary?: string | null;
+          title: string;
+          updated_at?: string;
+          url: string;
+          user_id?: string;
+          visa_offered?: boolean;
+        };
+        Update: {
+          applied_on?: string | null;
+          company?: string;
+          created_at?: string;
+          external_id?: string;
+          id?: string;
+          is_remote?: boolean;
+          letter?: string | null;
+          location?: string | null;
+          posted_on?: string | null;
+          reason?: string;
+          score?: number;
+          status?: string;
+          summary?: string | null;
+          title?: string;
+          updated_at?: string;
+          url?: string;
+          user_id?: string;
+          visa_offered?: boolean;
+        };
+        Relationships: [];
+      };
+      job_profiles: {
+        Row: {
+          countries: string[];
+          created_at: string;
+          id: string;
+          last_new_count: number;
+          last_ok_at: string | null;
+          last_run_at: string | null;
+          past_roles: string;
+          remote_ok: boolean;
+          salary_floor: number | null;
+          skills: string[];
+          updated_at: string;
+          user_id: string;
+          wanted_jobs: string[];
+        };
+        Insert: {
+          countries?: string[];
+          created_at?: string;
+          id?: string;
+          last_new_count?: number;
+          last_ok_at?: string | null;
+          last_run_at?: string | null;
+          past_roles?: string;
+          remote_ok?: boolean;
+          salary_floor?: number | null;
+          skills?: string[];
+          updated_at?: string;
+          user_id?: string;
+          wanted_jobs?: string[];
+        };
+        Update: {
+          countries?: string[];
+          created_at?: string;
+          id?: string;
+          last_new_count?: number;
+          last_ok_at?: string | null;
+          last_run_at?: string | null;
+          past_roles?: string;
+          remote_ok?: boolean;
+          salary_floor?: number | null;
+          skills?: string[];
+          updated_at?: string;
+          user_id?: string;
+          wanted_jobs?: string[];
+        };
+        Relationships: [];
+      };
       journal_entries: {
         Row: {
           body: string;
@@ -893,6 +1037,7 @@ export type Database = {
       odometer_logs: {
         Row: {
           id: string;
+          is_correction: boolean;
           logged_at: string;
           note: string | null;
           odometer_km: number;
@@ -901,6 +1046,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
+          is_correction?: boolean;
           logged_at?: string;
           note?: string | null;
           odometer_km: number;
@@ -909,6 +1055,7 @@ export type Database = {
         };
         Update: {
           id?: string;
+          is_correction?: boolean;
           logged_at?: string;
           note?: string | null;
           odometer_km?: number;
@@ -1025,6 +1172,85 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      recurring_transactions: {
+        Row: {
+          account_id: string;
+          amount: number;
+          category_id: string | null;
+          created_at: string;
+          ends_on: string | null;
+          id: string;
+          is_paused: boolean;
+          kind: Database["public"]["Enums"]["transaction_kind"];
+          last_run_on: string | null;
+          month_day: number | null;
+          name: string;
+          schedule: string;
+          starts_on: string;
+          updated_at: string;
+          user_id: string;
+          week_days: number[] | null;
+        };
+        Insert: {
+          account_id: string;
+          amount: number;
+          category_id?: string | null;
+          created_at?: string;
+          ends_on?: string | null;
+          id?: string;
+          is_paused?: boolean;
+          kind?: Database["public"]["Enums"]["transaction_kind"];
+          last_run_on?: string | null;
+          month_day?: number | null;
+          name: string;
+          schedule: string;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+          week_days?: number[] | null;
+        };
+        Update: {
+          account_id?: string;
+          amount?: number;
+          category_id?: string | null;
+          created_at?: string;
+          ends_on?: string | null;
+          id?: string;
+          is_paused?: boolean;
+          kind?: Database["public"]["Enums"]["transaction_kind"];
+          last_run_on?: string | null;
+          month_day?: number | null;
+          name?: string;
+          schedule?: string;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string;
+          week_days?: number[] | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "recurring_transactions_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_account_balances";
+            referencedColumns: ["account_id"];
+          },
+          {
+            foreignKeyName: "recurring_transactions_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "money_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "recurring_transactions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "money_categories";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       reminders: {
         Row: {
@@ -1304,6 +1530,117 @@ export type Database = {
           quantity?: string;
           ticked?: boolean;
           user_id?: string;
+        };
+        Relationships: [];
+      };
+      sports_matches: {
+        Row: {
+          away_code: string | null;
+          away_crest: string | null;
+          away_score: number | null;
+          away_team: string;
+          external_id: string;
+          home_code: string | null;
+          home_crest: string | null;
+          home_score: number | null;
+          home_team: string;
+          league: string;
+          starts_at: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          away_code?: string | null;
+          away_crest?: string | null;
+          away_score?: number | null;
+          away_team: string;
+          external_id: string;
+          home_code?: string | null;
+          home_crest?: string | null;
+          home_score?: number | null;
+          home_team: string;
+          league: string;
+          starts_at: string;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          away_code?: string | null;
+          away_crest?: string | null;
+          away_score?: number | null;
+          away_team?: string;
+          external_id?: string;
+          home_code?: string | null;
+          home_crest?: string | null;
+          home_score?: number | null;
+          home_team?: string;
+          league?: string;
+          starts_at?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      sports_standings: {
+        Row: {
+          code: string | null;
+          crest: string | null;
+          drawn: number | null;
+          is_calculated: boolean;
+          league: string;
+          lost: number;
+          played: number;
+          points: number | null;
+          position: number;
+          team: string;
+          updated_at: string;
+          won: number;
+        };
+        Insert: {
+          code?: string | null;
+          crest?: string | null;
+          drawn?: number | null;
+          is_calculated?: boolean;
+          league: string;
+          lost: number;
+          played: number;
+          points?: number | null;
+          position: number;
+          team: string;
+          updated_at?: string;
+          won: number;
+        };
+        Update: {
+          code?: string | null;
+          crest?: string | null;
+          drawn?: number | null;
+          is_calculated?: boolean;
+          league?: string;
+          lost?: number;
+          played?: number;
+          points?: number | null;
+          position?: number;
+          team?: string;
+          updated_at?: string;
+          won?: number;
+        };
+        Relationships: [];
+      };
+      sports_sync: {
+        Row: {
+          last_error_at: string | null;
+          last_ok_at: string | null;
+          league: string;
+        };
+        Insert: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          league: string;
+        };
+        Update: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          league?: string;
         };
         Relationships: [];
       };
@@ -2303,6 +2640,7 @@ export type Database = {
       };
     };
     Functions: {
+      add_due_recurring: { Args: never; Returns: number };
       add_due_subscription_expenses: { Args: never; Returns: number };
       admin_voice_accounts: {
         Args: never;
@@ -2364,6 +2702,13 @@ export type Database = {
           p_paid_on: string;
         };
         Returns: string;
+      };
+      recurring_is_due: {
+        Args: {
+          d: string;
+          r: Database["public"]["Tables"]["recurring_transactions"]["Row"];
+        };
+        Returns: boolean;
       };
       seed_money_defaults: { Args: never; Returns: undefined };
       set_voice_access: {
@@ -2434,7 +2779,8 @@ export type Database = {
         | "budget"
         | "inventory"
         | "trip_item"
-        | "inbox";
+        | "inbox"
+        | "feedback";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -2587,6 +2933,7 @@ export const Constants = {
         "inventory",
         "trip_item",
         "inbox",
+        "feedback",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],

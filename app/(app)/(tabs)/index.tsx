@@ -1,41 +1,49 @@
+import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AttentionCard } from "@/components/home/AttentionCard";
 import { InboxCard } from "@/components/home/InboxCard";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { ShortcutsSheet } from "@/components/home/ShortcutsSheet";
 import { TipCard } from "@/components/home/TipCard";
 import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
-import { HeroCard } from "@/components/ui/HeroCard";
-import { ModuleTile } from "@/components/ui/ModuleTile";
-import { FadeIn } from "@/components/ui/Motion";
+import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
+import { ModuleLine } from "@/components/ui/ModuleLine";
 import { Notice } from "@/components/ui/Notice";
-import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { Sheet } from "@/components/ui/Sheet";
+import { WeaveBand } from "@/components/ui/WeaveBand";
+import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import { useDebts } from "@/lib/debts";
 import { todaysDoses, useHealth } from "@/lib/health";
-import { billsThisWeek, buildAttention, todaySentence } from "@/lib/home";
+import { buildAttention, todaySentence } from "@/lib/home";
+import { useHabits } from "@/lib/habits";
 import { dayTotals, formatPeso, toDateString, useMonthTransactions, useSubscriptions } from "@/lib/money";
 import { shortcutModules } from "@/lib/modules";
 import { usePeople } from "@/lib/people";
 import { useUserSettings } from "@/lib/settings";
 import { groupTodos, useTodos } from "@/lib/todos";
+import { todayChoice, useUlamDays } from "@/lib/ulam";
 import { useServiceDue, useVehicle } from "@/lib/vehicles";
-import { useAuth } from "@/providers/auth-provider";
+import { sleepMinutes, sleepRow, sleepText, useSleepLog } from "@/lib/sleep";
+import { stepsAverage, useSteps } from "@/lib/steps";
+import { useWeather, weatherIcon } from "@/lib/weather";
+import { habitRow, moneyRow, todayIndex, todoRow, weekDays } from "@/lib/week";
+import { STRAND_WORD, type WeaveRow } from "@/lib/weave";
 
-/** Needs attention shows this many, then "See all". */
+/** Home shows this many rows, then "See all". */
 const ATTENTION_LIMIT = 5;
 
-function greeting(now: Date): string {
-  const hour = now.getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+const STATUS_TONE = { Overdue: "over", Today: "over", "Due soon": "watch" } as const;
+const STRAND_TONE = { good: "good", watch: "watch", over: "over", empty: "muted" } as const;
+
+/** "Engine oil" reads as "engine oil" inside a sentence. "LTO renewal" keeps its capitals. */
+function inSentence(title: string): string {
+  return /^[A-Z][a-z]/.test(title) ? title.charAt(0).toLowerCase() + title.slice(1) : title;
 }
 
 function SectionTitle({ children }: { children: string }) {
@@ -48,14 +56,12 @@ function SectionTitle({ children }: { children: string }) {
 
 export default function HomeScreen() {
   const colors = useColors();
-  const { session } = useAuth();
   const now = new Date();
-  const fullName = session?.user.user_metadata.full_name as string | undefined;
-  const firstName = fullName?.split(" ")[0];
-  const initial = (firstName ?? session?.user.email ?? "?").charAt(0).toUpperCase();
+  const insets = useSafeAreaInsets();
 
   const [showAll, setShowAll] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [openDay, setOpenDay] = useState<number | null>(null);
 
   const todos = useTodos();
   const vehicle = useVehicle();
@@ -66,12 +72,19 @@ export default function HomeScreen() {
   const people = usePeople();
   const month = useMonthTransactions(now);
   const settings = useUserSettings();
+  const budgets = useBudgetMonths(now);
+  const habits = useHabits();
+  const ulamDays = useUlamDays();
+  const weather = useWeather();
+  const sleepLog = useSleepLog();
+  const steps = useSteps();
 
   const openToday = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
   const bills = subscriptions.data ?? [];
   const items = buildAttention(
     {
       services: vehicle.data ? (due.data ?? []) : [],
+      vehicleLabel: vehicle.data ? (vehicle.data.nickname ?? vehicle.data.model) : undefined,
       todos: openToday,
       bills,
       doses: health.data ? todaysDoses(health.data.doses, now) : [],
@@ -83,111 +96,238 @@ export default function HomeScreen() {
   );
   const visible = showAll ? items : items.slice(0, ATTENTION_LIMIT);
 
-  const spentToday = dayTotals(month.data ?? []).byDay.get(toDateString(now))?.spent ?? 0;
+  const totals = dayTotals(month.data ?? []);
+  const spentToday = totals.byDay.get(toDateString(now))?.spent ?? 0;
+  const budgetTotal = (budgets ?? []).reduce((sum, b) => sum + b.available, 0);
+  const moneyLeft = (budgets ?? []).reduce((sum, b) => sum + b.left, 0);
+  const hasBudget = (budgets ?? []).length > 0;
+
+  const spentByDay = new Map([...totals.byDay].map(([day, t]) => [day, t.spent]));
+  const rows: WeaveRow[] = [
+    ...(hasBudget ? [moneyRow(spentByDay, budgetTotal, now)] : []),
+    todoRow(todos.data ?? [], now),
+    habitRow(habits.data?.habits ?? [], habits.data?.checks ?? new Map(), now),
+    sleepRow(sleepLog.data ?? {}, now),
+  ];
+
+  const ulamRow = ulamDays.data?.find((d) => d.on_date === toDateString(now));
+  const ulamLimit = settings.data?.ulamLimit ?? 99;
+  const { ulam } = todayChoice(ulamRow, now, ulamLimit);
+
   const shortcutIds = settings.data?.homeShortcuts ?? [];
   const shortcuts = shortcutModules(shortcutIds);
 
   const loading = todos.isPending || vehicle.isPending;
   const error = todos.error ?? vehicle.error ?? due.error ?? subscriptions.error ?? debts.error ?? people.error;
 
+  const forecast = weather.data?.forecast;
+  const today = format(now, "EEEE, MMM d");
+  const lineIcon = weatherIcon(forecast?.code, forecast?.isDay);
+  const noPlace = weather.data !== undefined && weather.data.place === null;
+  const weatherLine = forecast
+    ? `${today} · ${forecast.temperature}° · Rain ${forecast.rain}%`
+    : noPlace
+      ? `${today} · Add your weather`
+      : today;
+
+  const stepWeek = steps.data?.week ?? [];
+  const stepsToday = stepWeek[stepWeek.length - 1] ?? 0;
+  const lastNight = sleepLog.data?.[toDateString(now)];
+
+  const first = items[0];
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      todos.refetch(),
+      vehicle.refetch(),
+      due.refetch(),
+      subscriptions.refetch(),
+      debts.refetch(),
+      people.refetch(),
+    ]);
+    setRefreshing(false);
+  };
+  const firstRun = !loading && !error && items.length === 0 && (todos.data ?? []).length === 0;
+  const sentence = loading
+    ? "Checking your day"
+    : error
+      ? "I could not load your day."
+      : firstRun
+        ? "I have nothing to tell you yet."
+        : items.length === 0
+          ? "Nothing is due today."
+          : todaySentence(items);
+  const showAmount = !loading && !error && !firstRun;
+
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ScrollView contentContainerClassName="gap-6 px-5 pb-8 pt-6">
-        <View className="flex-row items-start justify-between gap-3">
-          <View className="flex-1 gap-1">
-            <Text className="font-sans text-label text-ink-muted">{format(now, "EEEE, MMMM d")}</Text>
-            <ScreenHeader title={firstName ? `${greeting(now)}, ${firstName}` : greeting(now)} />
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Settings"
-            onPress={() => router.push("/more")}
-            className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border"
-          >
-            <ProfilePhoto letter={initial} letterClassName="font-semibold text-body text-ink" />
-          </Pressable>
-        </View>
-
-        <HeroCard
-          title={loading ? "Checking your day" : todaySentence(items)}
-          stats={[
-            { value: formatPeso(spentToday), label: "spent today" },
-            { value: String(openToday.length), label: openToday.length === 1 ? "todo left" : "todos left" },
-            { value: formatPeso(billsThisWeek(bills, now)), label: "bills this week" },
-          ]}
-        />
-
-        <InboxCard />
-
-        <View className="gap-3">
-          <SectionTitle>Needs attention</SectionTitle>
-          {error ? <Notice tone="danger">Could not load everything. {error.message}</Notice> : null}
-          {loading ? (
-            <ActivityIndicator color={colors.accent} className="py-4" />
-          ) : items.length === 0 ? (
-            <View className="rounded-card border border-border bg-surface-card px-4 py-3">
-              <Text className="font-sans text-caption text-ink-muted">Nothing is due today.</Text>
-            </View>
-          ) : (
-            <FadeIn>
-              <View className="gap-3">
-                {visible.map((item) => (
-                  <AttentionCard key={item.key} item={item} />
-                ))}
+    <View className="flex-1 bg-surface-page">
+      <ScrollView
+        contentContainerClassName="gap-6 pb-8"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.accent} />}
+      >
+        <View>
+          <View className="gap-1 bg-shell px-5 pb-2" style={{ paddingTop: insets.top + 8 }}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Weather. ${weatherLine}`}
+              onPress={() => router.push("/weather")}
+              className="h-touch justify-center"
+            >
+              <View className="flex-row items-center gap-2">
+                {lineIcon ? <Ionicons name={lineIcon} size={18} color={colors.onShell} /> : null}
+                <Text className="min-w-0 shrink font-sans text-label text-on-shell">{weatherLine}</Text>
               </View>
-            </FadeIn>
-          )}
-          {items.length > ATTENTION_LIMIT ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => setShowAll(!showAll)}
-              className="h-touch items-center justify-center"
-            >
-              <Text className="font-semibold text-label text-accent">
-                {showAll ? "Show less" : `See all ${items.length}`}
-              </Text>
             </Pressable>
-          ) : null}
+            <Text
+              accessibilityRole="header"
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={4}
+              className="font-bold text-say text-on-shell"
+            >
+              {sentence}
+              {showAmount ? (
+                <>
+                  {" "}
+                  <Text className="text-watch-fill">{formatPeso(hasBudget ? moneyLeft : spentToday)}</Text>
+                  {hasBudget ? " left this month." : " spent today."}
+                </>
+              ) : null}
+            </Text>
+            {first && showAmount ? (
+              <Pressable
+                accessibilityRole="link"
+                onPress={() => router.push(first.href)}
+                className="h-touch justify-center"
+              >
+                <Text className="font-semibold text-label text-on-shell underline">Open {inSentence(first.title)}</Text>
+              </Pressable>
+            ) : null}
+          </View>
+          <WeaveBand rows={rows} todayIndex={todayIndex(now)} onDayPress={setOpenDay} />
         </View>
 
-        <View className="gap-3">
-          <View className="flex-row items-center justify-between">
-            <SectionTitle>Shortcuts</SectionTitle>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Edit shortcuts"
-              onPress={() => setEditing(true)}
-              className="h-touch justify-center px-2"
-            >
-              <Text className="font-semibold text-label text-accent">Edit</Text>
-            </Pressable>
-          </View>
-          {shortcuts.length === 0 ? (
-            <Text className="font-sans text-caption text-ink-muted">Tap Edit to pin the modules you use most.</Text>
-          ) : (
-            <View className="flex-row flex-wrap gap-y-3">
-              {shortcuts.map((m) => (
-                <ModuleTile
-                  key={m.id}
-                  label={m.label}
-                  icon={m.icon}
-                  tone={m.tone}
-                  onPress={() => router.push(m.href)}
+        <View className="gap-6 px-5">
+          {error ? (
+            <Notice tone="danger">
+              {todos.error ? "Could not load todos." : "Could not load everything."} Check your connection, then pull
+              down to try again.
+            </Notice>
+          ) : null}
+
+          {firstRun ? (
+            <View className="gap-3">
+              <Text className="font-bold text-title text-ink">Add one todo to start</Text>
+              <Text className="font-sans text-body text-ink-muted">
+                I tell you what needs action here. The band fills as you log.
+              </Text>
+              <Button label="Add todo" onPress={() => router.push("/todo/new")} />
+            </View>
+          ) : loading ? null : (
+            <View>
+              {visible.map((item) => (
+                <DataRow
+                  key={item.key}
+                  title={item.title}
+                  detail={item.detail}
+                  value={item.value}
+                  status={{ label: item.status, tone: item.quiet ? "muted" : STATUS_TONE[item.status] }}
+                  onPress={() => router.push(item.href)}
                 />
               ))}
+              {items.length > ATTENTION_LIMIT ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setShowAll(!showAll)}
+                  className="h-touch items-center justify-center"
+                >
+                  <Text className="font-semibold text-label text-accent">
+                    {showAll ? "Show less" : `See all ${items.length}`}
+                  </Text>
+                </Pressable>
+              ) : null}
+              <DataRow
+                title={ulam.name}
+                detail="Today's ulam"
+                value={formatPeso(ulam.cost)}
+                status={
+                  error ? { label: "Saved on this phone", tone: "muted" } : { label: "Under limit", tone: "good" }
+                }
+                onPress={() => router.push("/ulam")}
+              />
+              <DataRow
+                title={steps.data?.access ? "Steps" : "Sleep"}
+                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "Log last night's sleep"}
+                value={steps.data?.access ? stepsToday.toLocaleString("en-PH") : undefined}
+                status={
+                  steps.data?.access && stepsToday >= stepsAverage(stepWeek)
+                    ? { label: "On track", tone: "good" }
+                    : undefined
+                }
+                onPress={() => router.push("/steps")}
+                last
+              />
             </View>
           )}
-        </View>
 
-        <View className="gap-3">
-          <SectionTitle>This week</SectionTitle>
+          <InboxCard />
+
+          <ScreenTimeCard />
+
+          <View>
+            <View className="flex-row items-center justify-between">
+              <SectionTitle>Shortcuts</SectionTitle>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Edit shortcuts"
+                onPress={() => setEditing(true)}
+                className="h-touch justify-center pl-3"
+              >
+                <Text className="font-semibold text-label text-accent">Edit</Text>
+              </Pressable>
+            </View>
+            {shortcuts.length === 0 ? (
+              <Text className="font-sans text-caption text-ink-muted">Tap Edit to pin the modules you use most.</Text>
+            ) : (
+              <View className="flex-row flex-wrap">
+                {shortcuts.map((m) => (
+                  <ModuleLine
+                    key={m.id}
+                    label={m.label}
+                    icon={m.icon}
+                    tone={m.tone}
+                    onPress={() => router.push(m.href)}
+                  />
+                ))}
+              </View>
+            )}
+          </View>
+
           <WeeklyReviewCard />
           <TipCard />
-          <ScreenTimeCard />
         </View>
       </ScrollView>
 
       <ShortcutsSheet visible={editing} onClose={() => setEditing(false)} selected={shortcutIds} />
-    </SafeAreaView>
+      <Sheet
+        visible={openDay !== null}
+        onClose={() => setOpenDay(null)}
+        title={openDay !== null ? format(weekDays(now)[openDay], "EEEE, MMM d") : ""}
+        subtitle="The week band, in words"
+      >
+        {openDay !== null
+          ? rows.map((row, index) => (
+              <DataRow
+                key={row.label}
+                title={row.label}
+                detail={row.details?.[openDay]}
+                status={{ label: STRAND_WORD[row.days[openDay]], tone: STRAND_TONE[row.days[openDay]] }}
+                last={index === rows.length - 1}
+              />
+            ))
+          : null}
+      </Sheet>
+    </View>
   );
 }

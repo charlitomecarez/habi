@@ -2,8 +2,10 @@ import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
+import { Badge } from "@/components/ui/Badge";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { formatPeso, type Transaction } from "@/lib/money";
+import { isAutoRow } from "@/lib/recurring";
 
 type TransactionRowProps = {
   transaction: Transaction;
@@ -28,7 +30,7 @@ export function TransactionRow({ transaction: t, accountName, categoryName, last
       accessibilityRole="button"
       accessibilityLabel={`${title}, ${t.kind}, ${formatPeso(t.amount)}, ${where}, ${date}`}
       onPress={() => router.push({ pathname: "/money/transaction/[id]", params: { id: t.id } })}
-      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <BrandIcon name={title} />
       <View className="min-w-0 flex-1 gap-1">
@@ -39,10 +41,13 @@ export function TransactionRow({ transaction: t, accountName, categoryName, last
           {[category, where, date].filter(Boolean).join(" · ")}
         </Text>
       </View>
-      <Text className={`font-semibold text-label ${t.kind === "income" ? "text-accent-strong" : "text-ink"}`}>
-        {sign}
-        {formatPeso(t.amount)}
-      </Text>
+      <View className="items-end gap-1">
+        <Text className={`font-bold text-amount ${t.kind === "income" ? "text-accent-strong" : "text-ink"}`}>
+          {sign}
+          {formatPeso(t.amount)}
+        </Text>
+        {isAutoRow(t.external_ref) ? <Badge label="Auto" tone="neutral" /> : null}
+      </View>
     </Pressable>
   );
 }

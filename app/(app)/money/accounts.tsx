@@ -1,5 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +6,7 @@ import { AccountSheet } from "@/components/money/AccountSheet";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatMoney, useAccounts, type Account } from "@/lib/money";
 
@@ -19,34 +18,26 @@ export default function AccountsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar>
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Money accounts
         </Text>
-      </View>
+      </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-32 pt-2">
+      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {accounts.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : accounts.error ? (
           <Notice tone="danger">Could not load your accounts. {accounts.error.message}</Notice>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View>
             {list.map((a, index) => (
               <Pressable
                 key={a.id}
                 accessibilityRole="button"
                 accessibilityLabel={`${a.name}, balance ${formatMoney(a.balance, a.currency)}. Edit account`}
                 onPress={() => setEditing(a)}
-                className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b border-divider" : ""}`}
+                className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${index < list.length - 1 ? "border-b-2 border-border" : ""}`}
               >
                 <BrandIcon name={a.name} />
                 <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">

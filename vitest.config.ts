@@ -8,7 +8,7 @@ export default defineConfig({
     alias: { "@": fileURLToPath(new URL(".", import.meta.url)) },
   },
   test: {
-    include: ["lib/**/*.test.ts", "supabase/functions/_shared/**/*.test.ts"],
+    include: ["lib/**/*.test.ts", "widgets/**/*.test.ts", "supabase/functions/_shared/**/*.test.ts"],
     environment: "node",
     // This Mac has 8 GB of RAM, so the safe run is the default.
     maxWorkers: 1,

@@ -1,10 +1,11 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { PlanForm } from "@/components/gym/PlanForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useGym } from "@/lib/gym";
 
@@ -21,7 +22,7 @@ export default function EditPlanScreen() {
       ) : (
         <View className="w-full gap-3">
           <Notice tone="danger">{gym.error ? gym.error.message : "This workout day was archived."}</Notice>
-          <Button label="Back" variant="secondary" size="input" onPress={() => router.back()} />
+          <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}
     </SafeAreaView>

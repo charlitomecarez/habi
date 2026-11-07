@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseISO } from "date-fns";
-import { router } from "expo-router";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
@@ -18,6 +17,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
   amountText,
@@ -158,13 +158,13 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
         note: v.note.trim() || null,
       },
     });
-    router.back();
+    goBack();
   });
 
   async function onDelete() {
     if (!transaction) return;
     await remove.mutateAsync(transaction.id);
-    router.back();
+    goBack();
   }
 
   const failure = save.error ?? remove.error ?? accounts.error;
@@ -177,7 +177,7 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useLocations } from "@/lib/inventory";
 import { parseLocationLink } from "@/lib/qr";
@@ -40,7 +41,7 @@ export default function ScanLabelScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Close"
-          onPress={() => router.back()}
+          onPress={goBack}
           className="h-touch w-touch items-center justify-center"
         >
           <Ionicons name="close" size={22} color={colors.ink} />

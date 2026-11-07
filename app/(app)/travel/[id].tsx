@@ -9,6 +9,8 @@ import { ExportSheet } from "@/components/travel/ExportSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useExchangeRates } from "@/lib/money";
 import {
@@ -43,7 +45,7 @@ function ItemRow({ item }: { item: TripItem }) {
     <Pressable
       accessibilityRole="button"
       onPress={() => router.push({ pathname: "/travel/item/[id]", params: { id: item.id, tripId: item.trip_id } })}
-      className="min-h-touch flex-row items-center gap-3 rounded-card border border-border bg-surface-card p-3 active:bg-surface-muted"
+      className="min-h-touch flex-row items-center gap-3 border-b-2 border-border py-3 active:bg-surface-muted"
     >
       <View className="h-touch w-touch items-center justify-center rounded-md bg-home-tint">
         <Ionicons name={ICONS[item.kind]} size={20} color={colors.home} />
@@ -72,16 +74,8 @@ export default function TripScreen() {
   const [exporting, setExporting] = useState(false);
 
   const header = (title: string) => (
-    <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Back"
-        onPress={() => router.back()}
-        className="h-touch w-touch items-center justify-center"
-      >
-        <Ionicons name="chevron-back" size={22} color={colors.ink} />
-      </Pressable>
-      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-ink">
+    <ModuleBar tone="home">
+      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-on-shell">
         {title}
       </Text>
       {trip.data ? (
@@ -91,10 +85,10 @@ export default function TripScreen() {
           onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
       ) : null}
-    </View>
+    </ModuleBar>
   );
 
   if (!trip.data) {
@@ -133,7 +127,7 @@ export default function TripScreen() {
         </Text>
         {items.error ? <Notice tone="danger">{items.error.message}</Notice> : null}
 
-        <View className="gap-2 rounded-card border border-border bg-surface-card p-4">
+        <View className="gap-2">
           <View className="flex-row justify-between gap-3">
             <Text className="font-semibold text-heading text-ink">
               {budget
@@ -199,7 +193,7 @@ export default function TripScreen() {
           loading={remove.isPending}
           onPress={async () => {
             await remove.mutateAsync(id);
-            router.back();
+            goBack();
           }}
         />
       </ScrollView>

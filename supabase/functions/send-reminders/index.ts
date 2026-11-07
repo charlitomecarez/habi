@@ -6,7 +6,7 @@
 // Secrets (supabase secrets set ...): CRON_SECRET, RESEND_API_KEY, optional APP_URL (adds a button to the digest).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by the platform.
 
-import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { reviewSections, reviewSummary, type WeeklyReview } from "../_shared/weekly.ts";
 import { buildDigest, buildWeeklyReview, type DigestInput } from "./digest.ts";
@@ -16,7 +16,14 @@ const EXPO_BATCH_SIZE = 100;
 const MAX_REMINDERS_PER_RUN = 500;
 const DIGEST_FROM = "my-app <noreply@email.blabbun.com>";
 
-type Reminder = { id: string; user_id: string; source_type: string; title: string; body: string | null };
+type Reminder = {
+  id: string;
+  user_id: string;
+  source_type: string;
+  source_id: string | null;
+  title: string;
+  body: string | null;
+};
 type PushTicket = { status: "ok" | "error"; details?: { error?: string } };
 
 Deno.serve(async (req) => {
@@ -39,7 +46,7 @@ Deno.serve(async (req) => {
 async function sendDueReminders(supabase: SupabaseClient) {
   const { data: due, error } = await supabase
     .from("reminders")
-    .select("id, user_id, source_type, title, body")
+    .select("id, user_id, source_type, source_id, title, body")
     .is("sent_at", null)
     .lte("remind_at", new Date().toISOString())
     .order("remind_at")
@@ -63,7 +70,7 @@ async function sendDueReminders(supabase: SupabaseClient) {
         body: r.body ?? undefined,
         sound: "default",
         channelId: "reminders",
-        data: { reminderId: r.id, source: r.source_type },
+        data: { reminderId: r.id, source: r.source_type, sourceId: r.source_id },
       })),
   );
 

@@ -2,7 +2,8 @@ import { router, Stack } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 
-import { onInboxPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
+import { onPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
+import { reminderRoute } from "@/lib/reminder-route";
 import { noteVaultActivity } from "@/lib/vault";
 
 export default function AppLayout() {
@@ -12,7 +13,7 @@ export default function AppLayout() {
     });
   }, []);
 
-  useEffect(() => onInboxPushOpened(() => router.push("/inbox")), []);
+  useEffect(() => onPushOpened((source, id) => router.push(reminderRoute(source, id))), []);
 
   return (
     // Sees every touch without taking it, for the vault's idle lock.
@@ -33,6 +34,16 @@ export default function AppLayout() {
         <Stack.Screen name="travel/edit/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="travel/item/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="travel/item/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="sports/index" />
+        <Stack.Screen name="work/index" />
+        <Stack.Screen name="work/profile" />
+        <Stack.Screen name="work/[id]" />
+        <Stack.Screen name="steps/index" />
+        <Stack.Screen name="steps/how" />
+        <Stack.Screen name="weather/index" />
+        <Stack.Screen name="weather/place" />
+        <Stack.Screen name="reports/index" />
+        <Stack.Screen name="reports/[id]" />
         <Stack.Screen name="ulam/index" />
         <Stack.Screen name="ulam/cook" />
         <Stack.Screen name="ulam/week" />
@@ -40,6 +51,7 @@ export default function AppLayout() {
         <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="vehicle/log-service" />
         <Stack.Screen name="vehicle/mark-done" />
+        <Stack.Screen name="vehicle/checks" />
         <Stack.Screen name="vehicle/fuel/index" />
         <Stack.Screen name="vehicle/fuel/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="inventory/index" />
@@ -59,6 +71,10 @@ export default function AppLayout() {
         <Stack.Screen name="money/bill/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/transaction/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/transaction/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="money/recurring/index" />
+        <Stack.Screen name="money/recurring/[id]" />
+        <Stack.Screen name="money/recurring/new" options={{ presentation: "modal" }} />
+        <Stack.Screen name="money/recurring/edit" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/subscription/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/subscription/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="vault/index" />
@@ -75,6 +91,7 @@ export default function AppLayout() {
         <Stack.Screen name="gym/plan/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="shopping/index" />
         <Stack.Screen name="journal/index" />
+        <Stack.Screen name="journal/entry/[date]" />
         <Stack.Screen name="journal/[date]" options={{ presentation: "modal" }} />
         <Stack.Screen name="health/index" />
         <Stack.Screen name="health/visit/[id]" />

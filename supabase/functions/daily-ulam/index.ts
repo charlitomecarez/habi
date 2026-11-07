@@ -7,9 +7,10 @@
 // Secrets (supabase secrets set ...): CRON_SECRET, GROQ_API_KEY, optional GROQ_MODEL.
 // The prompt has no name, no email and no money data.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 
 import { MAX_LIMIT, parseUlamReply, ulamPrompt, type Ulam, type UlamContext } from "../_shared/ulam.ts";
+import { checkedPhoto, commonsPhoto, commonsSearchUrl } from "../_shared/ulam-photos.ts";
 
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
 const KEEP_DAYS = 7;
@@ -47,6 +48,31 @@ async function todaysUlam(context: UlamContext): Promise<Ulam[]> {
   const second = parseUlamReply(await askGroq(ulamPrompt(context, first.problems)), context);
   if (second.ok) return second.ulam;
   throw new Error(`Rejected twice: ${second.problems.join(" ")}`);
+}
+
+/** The checked list first, then one Commons search. A failed search leaves the drawing. */
+async function findPhoto(name: string): Promise<string | undefined> {
+  const checked = checkedPhoto(name);
+  if (checked) return checked;
+  try {
+    const res = await fetch(commonsSearchUrl(name), {
+      headers: { "User-Agent": "my-app/1.3 (private app; daily ulam photo)" },
+      signal: AbortSignal.timeout(5000),
+    });
+    return res.ok ? commonsPhoto(await res.json()) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function addPhotos(options: Ulam[]): Promise<Ulam[]> {
+  const result: Ulam[] = [];
+  // One at a time, because Commons limits fast calls.
+  for (const ulam of options) {
+    const photo = await findPhoto(ulam.name);
+    result.push(photo ? { ...ulam, photo_url: photo } : ulam);
+  }
+  return result;
 }
 
 Deno.serve(async (req) => {
@@ -97,11 +123,13 @@ Deno.serve(async (req) => {
     });
 
     try {
-      const options = await todaysUlam({
-        limit: Math.min(user.ulam_limit ?? MAX_LIMIT, MAX_LIMIT),
-        recent,
-        avoid: user.ulam_avoid ?? [],
-      });
+      const options = await addPhotos(
+        await todaysUlam({
+          limit: Math.min(user.ulam_limit ?? MAX_LIMIT, MAX_LIMIT),
+          recent,
+          avoid: user.ulam_avoid ?? [],
+        }),
+      );
       const { error: insertError } = await supabase
         .from("ulam_days")
         .upsert(

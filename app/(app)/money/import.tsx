@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
-import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,14 +11,9 @@ import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
-import {
-  BANK_NAMES,
-  buildReview,
-  useReadStatement,
-  useSaveImport,
-  type ReviewRow,
-} from "@/lib/import";
+import { BANK_NAMES, buildReview, useReadStatement, useSaveImport, type ReviewRow } from "@/lib/import";
 import { formatPeso, useAccounts, useCategories, useExpenseNames } from "@/lib/money";
 import { pickStatement } from "@/lib/statement-file";
 
@@ -94,7 +88,7 @@ export default function ImportStatementScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Back"
-          onPress={() => router.back()}
+          onPress={goBack}
           className="h-touch w-touch items-center justify-center"
         >
           <Ionicons name="arrow-back" size={22} color={colors.ink} />
@@ -154,11 +148,11 @@ export default function ImportStatementScreen() {
             ) : null}
 
             {rows.length > 0 ? (
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View>
                 {rows.map((row, index) => (
                   <View
                     key={row.ref}
-                    className={`min-h-touch flex-row items-center gap-1 py-2 pr-4 ${index < rows.length - 1 ? "border-b border-divider" : ""}`}
+                    className={`min-h-touch flex-row items-center gap-1 py-2 pr-4 ${index < rows.length - 1 ? "border-b-2 border-border" : ""}`}
                   >
                     <Pressable
                       accessibilityRole="checkbox"

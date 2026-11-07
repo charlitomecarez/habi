@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useLogFuel } from "@/lib/fuel";
 import { formatPeso, useAccounts, useCategories } from "@/lib/money";
@@ -68,7 +68,7 @@ export default function LogFuelScreen() {
       accountId: accountValue,
       categoryId: category?.id ?? null,
     });
-    router.back();
+    goBack();
   }
 
   return (
@@ -78,7 +78,7 @@ export default function LogFuelScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />

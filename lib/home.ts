@@ -5,7 +5,7 @@ import { debtStatus, type Debt } from "@/lib/debts";
 import { formatPeso, type Subscription } from "@/lib/money";
 import { occurrenceText, dateLabel, type Person, type PersonDate } from "@/lib/people";
 import { isOverdue, type Todo } from "@/lib/todos";
-import { dueText, type ServiceDue } from "@/lib/vehicles";
+import { dueText, formatKm, type ServiceDue } from "@/lib/vehicles";
 
 export type AttentionStatus = "Overdue" | "Today" | "Due soon";
 export type AttentionModule = "vehicle" | "todo" | "bill" | "medicine" | "debt" | "date";
@@ -16,6 +16,10 @@ export type AttentionItem = {
   status: AttentionStatus;
   title: string;
   detail: string;
+  /** The number at the end of the row. */
+  value?: string;
+  /** Due today with no set time, so the status word stays quiet. */
+  quiet?: boolean;
   href: Href;
   /** Days until it is due. Negative when late. Sorts inside a status. */
   days: number;
@@ -25,6 +29,8 @@ export type DoseDue = { id: string; medicine_name: string; dose: string; schedul
 
 export type AttentionInput = {
   services: readonly ServiceDue[];
+  /** The vehicle's short name, for the service rows. */
+  vehicleLabel?: string;
   /** Open todos for today, and any that are late. */
   todos: readonly Todo[];
   bills: readonly Subscription[];
@@ -39,14 +45,17 @@ const STATUS_ORDER: Record<AttentionStatus, number> = { Overdue: 0, Today: 1, "D
 
 const dayStatus = (days: number): AttentionStatus => (days < 0 ? "Overdue" : days === 0 ? "Today" : "Due soon");
 
-function serviceItem(s: ServiceDue): AttentionItem {
+function serviceItem(s: ServiceDue, vehicleLabel?: string): AttentionItem {
   const overdue = s.status === "overdue";
   return {
     key: `service-${s.vehicleServiceId}`,
     module: "vehicle",
     status: overdue ? "Overdue" : "Due soon",
     title: s.item,
-    detail: `Vehicle · ${dueText(s)}`,
+    detail: [vehicleLabel, s.nextDueKm !== null ? `at ${formatKm(s.nextDueKm)} km` : dueText(s)]
+      .filter(Boolean)
+      .join(" · "),
+    value: s.kmRemaining !== null ? `${formatKm(Math.abs(s.kmRemaining))} km` : undefined,
     href: { pathname: "/vehicle/log-service", params: { serviceId: s.vehicleServiceId } },
     days: s.daysRemaining ?? (overdue ? -1 : 1),
   };
@@ -57,16 +66,17 @@ function todoItem(todo: Todo, now: Date): AttentionItem {
   const remind = todo.remind_at ? new Date(todo.remind_at) : null;
   const due = todo.due_at ? new Date(todo.due_at) : null;
   const detail = remind
-    ? `reminder at ${format(remind, "h:mm a")}${isToday(remind) ? " today" : `, ${format(remind, "MMM d")}`}`
+    ? `${isToday(remind) ? "Today" : format(remind, "MMM d")}, ${format(remind, "h:mm a")}`
     : due
-      ? `due ${isToday(due) ? "today" : format(due, "MMM d")}`
-      : "no date";
+      ? `Due ${isToday(due) ? "today" : format(due, "MMM d")}`
+      : "No date";
   return {
     key: `todo-${todo.id}`,
     module: "todo",
     status: overdue ? "Overdue" : "Today",
     title: todo.title,
-    detail: `Todo · ${detail}`,
+    detail,
+    quiet: !overdue && !remind,
     href: { pathname: "/todo/[id]", params: { id: todo.id } },
     days: overdue ? -1 : 0,
   };
@@ -79,7 +89,8 @@ function billItem(bill: Subscription, days: number): AttentionItem {
     module: "bill",
     status: dayStatus(days),
     title: bill.name,
-    detail: `Money · ${bill.amount === null ? `Due ${when}` : `${formatPeso(bill.amount)} · ${when}`}`,
+    detail: `Due ${when}`,
+    value: bill.amount === null ? undefined : formatPeso(bill.amount),
     href: "/money/bills",
     days,
   };
@@ -93,7 +104,7 @@ function doseItem(dose: DoseDue, now: Date): AttentionItem {
     module: "medicine",
     status: late ? "Overdue" : "Today",
     title: dose.medicine_name,
-    detail: `Health · ${dose.dose ? `${dose.dose} · ` : ""}${format(at, "h:mm a")}`,
+    detail: `${dose.dose ? `${dose.dose} · ` : ""}${format(at, "h:mm a")}`,
     href: "/health",
     days: late ? -1 : 0,
   };
@@ -106,7 +117,8 @@ function debtItem(debt: Debt, days: number, status: string): AttentionItem {
     module: "debt",
     status: dayStatus(days),
     title: owed ? `${debt.person_name} owes you` : `You owe ${debt.person_name}`,
-    detail: `Debts · ${formatPeso(debt.balance)} · ${status}`,
+    detail: status,
+    value: formatPeso(debt.balance),
     href: { pathname: "/debts/[id]", params: { id: debt.id } },
     days,
   };
@@ -120,7 +132,7 @@ function dateItem(date: PersonDate, name: string, now: Date): AttentionItem | nu
     module: "date",
     status: dayStatus(days),
     title: `${name}'s ${dateLabel(date).toLowerCase()}`,
-    detail: `People · ${when}`,
+    detail: when,
     href: { pathname: "/people/[id]", params: { id: date.person_id } },
     days,
   };
@@ -133,7 +145,9 @@ export function buildAttention(input: AttentionInput, now = new Date()): Attenti
   const nameById = new Map(input.people.map((p) => [p.id, p.name]));
 
   const items: AttentionItem[] = [
-    ...input.services.filter((s) => s.status === "overdue" || s.status === "due_soon").map(serviceItem),
+    ...input.services
+      .filter((s) => s.status === "overdue" || s.status === "due_soon")
+      .map((s) => serviceItem(s, input.vehicleLabel)),
     ...input.todos.filter((t) => !t.completed_at).map((t) => todoItem(t, now)),
     ...input.bills
       .filter((b) => b.kind === "bill" && daysTo(b.next_billing_on) <= DUE_SOON_DAYS)
@@ -153,8 +167,8 @@ export function buildAttention(input: AttentionInput, now = new Date()): Attenti
 /** The sentence on the Today card. Due-soon items wait, so only late and today items count. */
 export function todaySentence(items: readonly AttentionItem[]): string {
   const count = items.filter((i) => i.status !== "Due soon").length;
-  if (count === 0) return "Nothing needs you today";
-  return count === 1 ? "1 thing needs you today" : `${count} things need you today`;
+  if (count === 0) return "Nothing needs you today.";
+  return count === 1 ? "1 thing needs you today." : `${count} things need you today.`;
 }
 
 /** Bills due in the next 7 days, and any that are late, in PHP. */

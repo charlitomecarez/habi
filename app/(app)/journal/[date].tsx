@@ -12,9 +12,13 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
+import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { MOODS, useDeleteEntry, useJournal, useSaveEntry, type JournalEntry, type Mood } from "@/lib/journal";
 import { usePhotoUrls, type PhotoChange } from "@/lib/photos";
+
+/** The entry box starts tall, so a long entry stays readable while you edit. */
+const ENTRY_LINES = 8;
 
 export default function JournalEntryScreen() {
   const { date } = useLocalSearchParams<{ date: string }>();
@@ -45,7 +49,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
 
   async function onSave() {
     await save.mutateAsync({ date, mood, body: body.trim(), photo, currentPath: entry?.photo_path ?? null });
-    router.back();
+    goBack();
   }
 
   return (
@@ -55,7 +59,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close"
-            onPress={() => router.back()}
+            onPress={goBack}
             className="h-touch w-touch items-center justify-center"
           >
             <Ionicons name="close" size={22} color={colors.ink} />
@@ -80,9 +84,16 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
                 ))}
               </View>
             </View>
-            <Input label="Entry" value={body} onChangeText={setBody} multiline placeholder="What happened today?" />
+            <Input
+              label="Entry"
+              value={body}
+              onChangeText={setBody}
+              multiline
+              numberOfLines={ENTRY_LINES}
+              placeholder="What happened today?"
+            />
             <PhotoField
-              label="Photo (optional)"
+              label="Photo"
               previewUri={preview}
               subject="Journal photo"
               layout="single"
@@ -98,7 +109,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
                 loading={remove.isPending}
                 onPress={async () => {
                   await remove.mutateAsync(entry);
-                  router.back();
+                  router.dismissTo("/journal");
                 }}
               />
             ) : null}

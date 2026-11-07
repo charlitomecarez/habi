@@ -40,7 +40,7 @@ export function SpendingCalendar({ accountName, categoryName }: SpendingCalendar
         Daily spending
       </Text>
       {/* Narrow side padding and no gaps between cells keep each day 44px wide on a 384dp phone. */}
-      <View className="gap-4 rounded-card border border-border bg-surface-card px-2 py-3">
+      <View className="gap-4">
         <MonthCalendar
           month={month}
           onPrevious={() => changeMonth(-1)}

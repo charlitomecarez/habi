@@ -21,3 +21,13 @@
 ## Reminders
 
 Source `medicine`. Each pending dose has its own push. Taken, Skipped or deleting removes it. The daily digest lists today's doses.
+
+## Steps and sleep
+
+- `lib/health-connect.ts` reads steps through `react-native-health-connect`, and `.web.ts` is the adapter. The app asks only for `READ_STEPS`, and `minSdkVersion` is 26.
+- A phone alone cannot measure sleep, so you type it. `lib/sleep.ts` keeps 30 days in AsyncStorage, and sign-out clears it.
+- Nothing here goes to Supabase, so this needs no table.
+
+## Widgets
+
+`widgets/` holds the Sleep and Screen time home screen widgets, through `react-native-android-widget`. `index.js` registers the headless task, so `package.json` `main` is `index.js`. Both read only data on the phone. Screen time shows no app names, because anyone can see a home screen. A signed-out phone shows nothing personal. Android refreshes them about every 30 minutes, and `lib/widgets.ts` redraws them after a save and after sign-out.

@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { economy, monthFuelCost, useDeleteFuel, useFuelLogs } from "@/lib/fuel";
 import { formatPeso } from "@/lib/money";
@@ -24,26 +25,20 @@ export default function FuelScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar>
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Fuel
         </Text>
-      </View>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
+      </ModuleBar>
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <View className="flex-row gap-3">
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Last</Text>
-            <Text className="font-bold text-title text-ink">{latest ? `${latest.kmPerLitre.toFixed(1)} km/L` : "—"}</Text>
+            <Text className="font-bold text-title text-ink">
+              {latest ? `${latest.kmPerLitre.toFixed(1)} km/L` : "—"}
+            </Text>
           </View>
-          <View className="flex-1 gap-1 rounded-card border border-border bg-surface-card px-4 py-3">
+          <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Average</Text>
             <Text className="font-bold text-title text-ink">{avg ? `${avg.toFixed(1)} km/L` : "—"}</Text>
           </View>
@@ -55,18 +50,27 @@ export default function FuelScreen() {
         {logs.isPending && vehicle.data ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View>
             {list.length === 0 ? (
-              <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No fill-ups logged.</Text>
+              <Text className="py-3 font-sans text-caption text-ink-muted">No fill-ups logged.</Text>
             ) : (
               list.map((f, i) => (
-                <View key={f.id} className={`min-h-touch flex-row items-center gap-3 py-2 pl-4 pr-1 ${i === list.length - 1 ? "" : "border-b border-divider"}`}>
+                <View
+                  key={f.id}
+                  className={`min-h-touch flex-row items-center gap-3 py-2 pl-4 pr-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
+                >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">
                       {format(parseISO(f.filled_on), "MMM d")} · {formatPeso(f.total)}
                     </Text>
                     <Text className="font-sans text-caption text-ink-muted">
-                      {[`${f.litres} L at ₱${f.price_per_litre}`, `${formatKm(f.odometer_km)} km`, f.full_tank ? "Full" : "Not full", kmPerLById.has(f.id) ? `${kmPerLById.get(f.id)!.toFixed(1)} km/L` : null, f.station]
+                      {[
+                        `${f.litres} L at ₱${f.price_per_litre}`,
+                        `${formatKm(f.odometer_km)} km`,
+                        f.full_tank ? "Full" : "Not full",
+                        kmPerLById.has(f.id) ? `${kmPerLById.get(f.id)!.toFixed(1)} km/L` : null,
+                        f.station,
+                      ]
                         .filter(Boolean)
                         .join(" · ")}
                     </Text>

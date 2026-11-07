@@ -3,18 +3,20 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { useColors } from "@/lib/colors";
 
-type Variant = "primary" | "secondary" | "destructive";
+type Variant = "primary" | "secondary" | "destructive" | "plain";
 
 const containerByVariant: Record<Variant, string> = {
   primary: "bg-accent active:bg-accent-strong",
   secondary: "border border-border-input bg-surface-card active:bg-surface-muted",
   destructive: "border border-border-input bg-surface-card active:bg-danger-tint",
+  plain: "active:bg-surface-muted",
 };
 
 const labelByVariant: Record<Variant, string> = {
   primary: "text-on-accent",
   secondary: "text-ink",
   destructive: "text-danger",
+  plain: "text-accent",
 };
 
 type ButtonProps = {
