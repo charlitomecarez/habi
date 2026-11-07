@@ -56,9 +56,12 @@ jobs:
           BIN=/usr/lib/postgresql/17/bin
           psql_q() { "$BIN/psql" "$1" -v ON_ERROR_STOP=1 -Atc "$2"; }
           for role in anon authenticated service_role; do psql_q "$RESTORE_URL" "create role $role"; done
-          # Supabase extensions do not exist here, so their objects fail. The row counts below decide the result.
+          # pg_restore --schema restores what is inside a schema, not the schema itself.
+          psql_q "$RESTORE_URL" "create schema auth; create schema extensions; create extension pgcrypto schema extensions; create extension \"uuid-ossp\" schema extensions"
+          # Supabase-only objects fail here. The row counts below decide the result.
           "$BIN/pg_restore" --dbname="$RESTORE_URL" --schema=public --schema=auth --no-owner --no-privileges backup.dump 2>restore.log || true
-          echo "Restore messages: $(wc -l < restore.log)"
+          # Only the error sentence, cut short: a COPY context line can hold row data.
+          grep -E "ERROR: " restore.log | sed -E 's/.*ERROR: +//' | cut -c1-90 | sort | uniq -c | sort -rn | head -15 || true
           tables=$(psql_q "$BACKUP_DB_URL" "select tablename from pg_tables where schemaname = 'public' order by 1")
           bad=0; total=0
           for t in $tables; do
