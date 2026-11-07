@@ -92,7 +92,6 @@ export default function InboxScreen() {
       <ScrollView contentContainerClassName="gap-3 px-5 pb-32 pt-3">
         {error ? <Notice tone="danger">Could not load your messages. {error.message}</Notice> : null}
         {retry.error ? <Notice tone="danger">{retry.error.message}</Notice> : null}
-        {player.error ? <Notice tone="danger">{player.error}</Notice> : null}
 
         <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 
@@ -122,7 +121,7 @@ export default function InboxScreen() {
               key={message.id}
               message={message}
               badge={message.read_at === null ? { label: "New", tone: "warning" } : undefined}
-              playing={player.playingPath === message.audio_path}
+              audio={player.view(message.audio_path)}
               onPlay={(path) => void player.toggle(path)}
             />
           ) : (
@@ -131,7 +130,7 @@ export default function InboxScreen() {
               message={message}
               badge={sentBadge(message)}
               fallback={message.status === "pending" ? "The text is on its way." : "The text could not be made."}
-              playing={player.playingPath === message.audio_path}
+              audio={player.view(message.audio_path)}
               onPlay={(path) => void player.toggle(path)}
               onRetry={canRetry(message) ? () => retry.mutate(message.id) : undefined}
             />
