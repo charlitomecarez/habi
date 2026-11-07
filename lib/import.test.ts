@@ -1,6 +1,7 @@
+import { FunctionsFetchError, FunctionsHttpError, FunctionsRelayError } from "@supabase/supabase-js";
 import { describe, expect, it, vi } from "vitest";
 
-import { buildReview, type Statement, type StatementRow } from "@/lib/import";
+import { buildReview, statementError, type Statement, type StatementRow } from "@/lib/import";
 import type { Account, Category } from "@/lib/money";
 
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
@@ -134,5 +135,25 @@ describe("buildReview", () => {
   it("files interest under Other income, and leaves other income blank", () => {
     expect(review([row({ kind: "income", name: "Interest earned" })]).rows[0].categoryId).toBe("other-income-id");
     expect(review([row({ kind: "income", name: "Sample salary" })]).rows[0].categoryId).toBeNull();
+  });
+});
+
+describe("statementError", () => {
+  const stopped = "The server could not finish reading this PDF. Try a statement with fewer pages.";
+
+  it("shows the function's own sentence", async () => {
+    const reply = new Response(JSON.stringify({ error: "No saved key opens this PDF." }), { status: 422 });
+    expect(await statementError(new FunctionsHttpError(reply))).toBe("No saved key opens this PDF.");
+  });
+
+  it("does not blame the connection when the function stops with no sentence", async () => {
+    expect(await statementError(new FunctionsHttpError(new Response("", { status: 546 })))).toBe(stopped);
+    expect(await statementError(new FunctionsRelayError(new Response("", { status: 502 })))).toBe(stopped);
+  });
+
+  it("names the connection only when the request never arrived", async () => {
+    expect(await statementError(new FunctionsFetchError(new TypeError("Network request failed")))).toBe(
+      "Could not reach the server. Check your connection.",
+    );
   });
 });

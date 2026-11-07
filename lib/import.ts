@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addDays, differenceInCalendarDays, format, parseISO } from "date-fns";
-import { FunctionsHttpError } from "@supabase/supabase-js";
+import { FunctionsHttpError, FunctionsRelayError } from "@supabase/supabase-js";
 
 import type { Account, Category, ExpenseName, TransactionKind } from "@/lib/money";
 import { supabase } from "@/lib/supabase";
@@ -172,15 +172,24 @@ function toPayload(row: ReviewRow) {
   };
 }
 
+/** Says what failed. Only a request that never reached the server is a connection problem. */
+export async function statementError(error: unknown): Promise<string> {
+  if (error instanceof FunctionsHttpError) {
+    const body = await error.context.json().catch(() => null);
+    return body?.error ?? "The server could not finish reading this PDF. Try a statement with fewer pages.";
+  }
+  if (error instanceof FunctionsRelayError) {
+    return "The server could not finish reading this PDF. Try a statement with fewer pages.";
+  }
+  return "Could not reach the server. Check your connection.";
+}
+
 /** Sends the PDF to the import-statement function, then loads the rows to compare it with. */
 export function useReadStatement() {
   return useMutation({
     mutationFn: async (form: FormData) => {
       const { data, error } = await supabase.functions.invoke<Statement>("import-statement", { body: form });
-      if (error) {
-        const body = error instanceof FunctionsHttpError ? await error.context.json().catch(() => null) : null;
-        throw new Error(body?.error ?? "Could not read this statement. Check your connection.");
-      }
+      if (error) throw new Error(await statementError(error));
       if (!data) throw new Error("Could not read this statement.");
 
       const day = (date: string, shift: number) => format(addDays(parseISO(date), shift), "yyyy-MM-dd");

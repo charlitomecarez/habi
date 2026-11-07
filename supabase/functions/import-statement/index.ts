@@ -8,7 +8,14 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { getDocument } from "npm:pdfjs-dist@4.10.38/legacy/build/pdf.mjs";
 import * as pdfWorker from "npm:pdfjs-dist@4.10.38/legacy/build/pdf.worker.mjs";
 
-import { addReferences, parseStatement, toLines, totalsMatch, type Line, type TextItem } from "../_shared/statements.ts";
+import {
+  addReferences,
+  parseStatement,
+  toLines,
+  totalsMatch,
+  type Line,
+  type TextItem,
+} from "../_shared/statements.ts";
 
 // Runs the pdf.js worker in this thread. The Edge runtime has no worker file to load.
 (globalThis as { pdfjsWorker?: unknown }).pdfjsWorker = pdfWorker;
@@ -71,8 +78,11 @@ Deno.serve(async (req) => {
     if (!lines) return fail("No saved key opens this PDF.");
 
     const parsed = parseStatement(lines);
-    if (!parsed) return fail("This is not a GoTyme, GCash or MariBank statement.");
-    if (!totalsMatch(parsed)) return fail("The rows do not match the statement totals, so nothing was read. The bank may have changed its layout.");
+    if (!parsed) return fail("I could not find a GoTyme, GCash or MariBank statement in this PDF.");
+    if (!totalsMatch(parsed))
+      return fail(
+        "The rows do not match the statement totals, so nothing was read. The bank may have changed its layout.",
+      );
 
     const statement = await addReferences(parsed);
     console.log(`import-statement: ${statement.bank}, ${statement.rows.length} rows`);
