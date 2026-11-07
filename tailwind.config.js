@@ -97,6 +97,7 @@ module.exports = {
         bar: "6px",
         strand: "15px",
         "fab-clear": "112px",
+        "bank-card": "176px",
         slot: "64px",
         tile: "112px",
         "field-sm": "110px",

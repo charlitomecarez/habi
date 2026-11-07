@@ -64,6 +64,8 @@ Do not put these items here:
 - **Money:** A chart of this week and a Today list come first. Whole amounts drop ".00".
 - **Todos:** All is the first filter, and the list has Overdue, Today and Later groups.
 - **Vehicle:** Bars show the distance used, and Fuel shows the average and the last fill-up.
+- **Money:** Accounts are now swipeable cards with a woven edge, under the chart.
+- **App icon:** The icon and the favicon are now indigo and cream, to match the theme.
 - **Weather:** It is now in More too, and Home says "Add your weather" until you pick a place.
 - **Sports:** Standings use the design's columns, and NBA shows a win rate. Football teams show their crest, and NBA teams show their short code.
 

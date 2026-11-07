@@ -39,7 +39,7 @@ All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light
 - **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes.
 - **Font families:** Schibsted Grotesk. `font-sans` (400), `font-medium` (500), `font-semibold` (700), `font-bold` (900).
 - **Font sizes:** `say` 30, `display` 34, `amount-input` 32, `amount` 20, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 16, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
-- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 48, `input` 52, `button` 56, `slot` 64, `amount` 72, `fab-clear` 112 (space under a list with a FAB), `field-sm` 110, `tile` 112.
+- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 48, `input` 52, `button` 56, `slot` 64, `amount` 72, `fab-clear` 112 (space under a list with a FAB), `bank-card` 176, `field-sm` 110, `tile` 112.
 - **Radius:** `sm` 10, `md` 12, `input` 14, `card` 16, `fab` 18, `hero` 20, `sheet` 28, `pill` 999.
 
 Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28` or `h-1.5`. NativeWind uses rem = 14 px on native, so those classes give a different size on Android and web. Add a named token instead.
@@ -85,5 +85,6 @@ The source for the design is the Design canvas at https://claude.ai/artifact/7y3
 - Sizes between token steps snap to the nearest token.
 - `LetterAvatar` uses token colours only.
 - The expense form shows all categories, not six and "More…".
-- Some extra parts stay: Accounts, the calendar, goals and the Recent list on Money, "Mark services done" and "Log another service" on Vehicle, and the fingerprint switch on Vault. They sit below the parts that the design shows.
+- Some extra parts stay: the calendar, goals and the Recent list on Money, "Mark services done" and "Log another service" on Vehicle, and the fingerprint switch on Vault. They sit below the parts that the design shows.
+- Money shows accounts as indigo cards with a woven edge, under the chart. This extends "indigo marks the shell and the primary action" (design revision 9).
 - Todos and Habits keep a check box before each row, which the v1.3.0 mocks do not show. Without it, a row needs two taps to finish.

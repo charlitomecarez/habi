@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { AccountCards } from "@/components/money/AccountCards";
 import { AccountSheet } from "@/components/money/AccountSheet";
 import { CategorySpending } from "@/components/money/CategorySpending";
 import { GoalCard } from "@/components/money/GoalCard";
@@ -159,6 +160,13 @@ export default function MoneyScreen() {
               highlight={todayIndex(now)}
             />
 
+            <View className="gap-3">
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Accounts · {formatPeso(total)}
+              </Text>
+              <AccountCards accounts={accountList} onPress={setEditing} />
+            </View>
+
             <View>
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 Today
@@ -207,22 +215,6 @@ export default function MoneyScreen() {
               <DataRow title="Bills" onPress={() => router.push("/money/bills")} />
               <DataRow title="Income" value={formatPeso(month.data?.income ?? 0)} />
               <DataRow title="Import statement" onPress={() => router.push("/money/import")} last />
-            </View>
-
-            <View>
-              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-                Accounts
-              </Text>
-              <DataRow title="Total balance" value={formatPeso(total)} />
-              {accountList.map((a, index) => (
-                <DataRow
-                  key={a.id}
-                  title={a.name}
-                  value={formatMoney(a.balance, a.currency)}
-                  onPress={() => setEditing(a)}
-                  last={index === accountList.length - 1}
-                />
-              ))}
             </View>
 
             <SpendingCalendar accountName={accountName} categoryName={categoryName} />
