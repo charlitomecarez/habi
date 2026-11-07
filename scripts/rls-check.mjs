@@ -32,6 +32,11 @@ const SEEDS = [
   { table: "money_categories", row: { name: LABEL } },
   { table: "money_budgets", row: { monthly_limit: 1 }, from: { category_id: "money_categories" } },
   { table: "transactions", row: { amount: 1 }, from: { account_id: "money_accounts" } },
+  {
+    table: "recurring_transactions",
+    row: { name: LABEL, amount: 1, schedule: "daily", is_paused: true },
+    from: { account_id: "money_accounts" },
+  },
   { table: "savings_goals", row: { name: LABEL, target_amount: 1 } },
   { table: "savings_contributions", row: { amount: 1 }, from: { goal_id: "savings_goals" } },
   { table: "subscriptions", row: { name: LABEL, next_billing_on: FAR } },

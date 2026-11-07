@@ -30,6 +30,7 @@ export type Transaction = Pick<
   | "occurred_on"
   | "merchant"
   | "note"
+  | "external_ref"
 >;
 
 export type Subscription = Pick<
@@ -73,7 +74,7 @@ export const RENEWAL_LIST_DAYS = 30;
 const RECENT_LIMIT = 10;
 const HISTORY_LIMIT = 200;
 
-const MONEY_KEY = ["money"] as const;
+export const MONEY_KEY = ["money"] as const;
 const ACCOUNTS_KEY = [...MONEY_KEY, "accounts"] as const;
 const CATEGORIES_KEY = [...MONEY_KEY, "categories"] as const;
 const SUBSCRIPTIONS_KEY = [...MONEY_KEY, "subscriptions"] as const;
@@ -85,7 +86,7 @@ const monthTransactionsKey = (month: string) => [...MONEY_KEY, "month-transactio
 const namesKey = [...MONEY_KEY, "expense-names"] as const;
 
 const TRANSACTION_COLUMNS =
-  "id, kind, account_id, to_account_id, category_id, subscription_id, amount, occurred_on, merchant, note";
+  "id, kind, account_id, to_account_id, category_id, subscription_id, amount, occurred_on, merchant, note, external_ref";
 
 function formatNumber(value: number): string {
   return Math.abs(value).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

@@ -59,6 +59,10 @@ export default function AppLayout() {
         <Stack.Screen name="money/bill/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/transaction/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/transaction/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="money/recurring/index" />
+        <Stack.Screen name="money/recurring/[id]" />
+        <Stack.Screen name="money/recurring/new" options={{ presentation: "modal" }} />
+        <Stack.Screen name="money/recurring/edit" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/subscription/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="money/subscription/[id]" options={{ presentation: "modal" }} />
         <Stack.Screen name="vault/index" />

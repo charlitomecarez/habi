@@ -60,13 +60,14 @@ Deleting a location sets `parent_id` and `location_id` to null on the children. 
 
 ### Money (`20261103000700_money.sql`)
 
-| Table              | Purpose                                                                                                                                                           |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `money_accounts`   | `name`, `kind`, `opening_balance`, `currency`, `is_archived`, `sort_order`.                                                                                       |
-| `money_categories` | `name`, `kind` (`expense` or `income`), `icon`, `sort_order`.                                                                                                     |
-| `exchange_rates`   | One rate to PHP per foreign currency, set by the user.                                                                                                            |
-| `subscriptions`    | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                      |
-| `transactions`     | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`. |
+| Table                    | Purpose                                                                                                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `money_accounts`         | `name`, `kind`, `opening_balance`, `currency`, `is_archived`, `sort_order`.                                                                                       |
+| `money_categories`       | `name`, `kind` (`expense` or `income`), `icon`, `sort_order`.                                                                                                     |
+| `exchange_rates`         | One rate to PHP per foreign currency, set by the user.                                                                                                            |
+| `subscriptions`          | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                      |
+| `recurring_transactions` | A rule that saves its own row. `schedule`, `week_days`, `month_day`, `is_paused`, `last_run_on`. `add_due_recurring` runs each hour.                              |
+| `transactions`           | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`. |
 
 Views:
 

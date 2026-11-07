@@ -51,6 +51,7 @@ Do not put these items here:
 - **Project agents and skills:** `.claude/` holds the release skills and the review agents.
 - **Database backup:** A daily job saves an encrypted copy of the database for 30 days. Storage files are not in it. Add two GitHub secrets to turn it on.
 - **RLS check:** A script proves on the live project that one account cannot reach the rows of another. It needs two test accounts.
+- **Money:** Recurring expenses and income save themselves on the days you pick, with an Auto label. You can delete a day, or pause a rule.
 
 ### Changed
 
