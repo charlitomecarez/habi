@@ -20,6 +20,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 
 - `.env` (gitignored): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`. These three are safe in the app bundle; nothing else is.
 - Never put the Google client secret, Resend API key, Groq API key or Supabase service-role key in the app or the repo. They live only in the Supabase dashboard / Edge Function secrets.
+- `BACKUP_DB_URL` and `BACKUP_AGE_PUBLIC_KEY` live only in GitHub Actions secrets. See `docs/backup.md`.
 - Email sender (Supabase SMTP via Resend): noreply@email.blabbun.com.
 
 ## Commands

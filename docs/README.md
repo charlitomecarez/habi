@@ -4,34 +4,35 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 
 ## Pages
 
-| Page                                         | Read it when you change                                        |
-| -------------------------------------------- | -------------------------------------------------------------- |
-| [architecture.md](architecture.md)           | Routing, providers, auth, data fetching, adapters, theming     |
-| [database.md](database.md)                   | Tables, RLS, triggers, views, storage                          |
-| [reminders.md](reminders.md)                 | Push notifications, the reminder queue, the daily email digest |
-| [design-system.md](design-system.md)         | Tokens, shared UI components, layout rules                     |
-| [conventions.md](conventions.md)             | Project rules, commands, known problems                        |
-| [release-workflow.md](release-workflow.md)   | The five release steps, gates, artifact names                  |
-| [CHANGELOG.md](../CHANGELOG.md)              | The short list of changes in each release                      |
-| [releases/index.md](releases/index.md)       | Past and current releases, and their artifacts                 |
-| [modules/todos.md](modules/todos.md)         | Todos, repeats, todo reminders                                 |
-| [modules/vehicle.md](modules/vehicle.md)     | Odometer, service schedule, service log                        |
-| [modules/inventory.md](modules/inventory.md) | Items, nested locations, photos, QR labels                     |
-| [modules/money.md](modules/money.md)         | Accounts, transactions, subscriptions, exchange rates          |
-| [modules/vault.md](modules/vault.md)         | Master password, encryption, fingerprint unlock                |
-| [modules/habits.md](modules/habits.md)       | Habit schedules, streaks, habit reminders                      |
-| [modules/gym.md](modules/gym.md)             | Workout plans, sessions, sets                                  |
-| [modules/journal.md](modules/journal.md)     | Daily entries, moods, photos                                   |
-| [modules/health.md](modules/health.md)       | Medicines, doses, visits, weight                               |
-| [modules/people.md](modules/people.md)       | Yearly dates, gift ideas, the debts link                       |
-| [modules/debts.md](modules/debts.md)         | Debts, payments, balances                                      |
-| [modules/shopping.md](modules/shopping.md)   | The shopping list, checkout, past items                        |
-| [modules/documents.md](modules/documents.md) | Documents, expiry dates, encrypted photos                      |
-| [modules/content.md](modules/content.md)     | Videos, stages, video tasks                                    |
-| [modules/alarms.md](modules/alarms.md)       | The native alarm, the ringing screen, the setup check          |
-| [modules/ulam.md](modules/ulam.md)           | The daily ulam, prices, backup dishes, the 7-day log           |
-| [modules/travel.md](modules/travel.md)       | Trips, items, budget, reminders, PDF export                    |
-| [modules/inbox.md](modules/inbox.md)         | Voice access, voice messages, Groq text, audio cleanup         |
+| Page                                         | Read it when you change                                                 |
+| -------------------------------------------- | ----------------------------------------------------------------------- |
+| [architecture.md](architecture.md)           | Routing, providers, auth, data fetching, adapters, theming              |
+| [database.md](database.md)                   | Tables, RLS, triggers, views, storage                                   |
+| [reminders.md](reminders.md)                 | Push notifications, the reminder queue, the daily email digest          |
+| [backup.md](backup.md)                       | The daily encrypted database backup, its secrets and the restore steps. |
+| [design-system.md](design-system.md)         | Tokens, shared UI components, layout rules                              |
+| [conventions.md](conventions.md)             | Project rules, commands, known problems                                 |
+| [release-workflow.md](release-workflow.md)   | The five release steps, gates, artifact names                           |
+| [CHANGELOG.md](../CHANGELOG.md)              | The short list of changes in each release                               |
+| [releases/index.md](releases/index.md)       | Past and current releases, and their artifacts                          |
+| [modules/todos.md](modules/todos.md)         | Todos, repeats, todo reminders                                          |
+| [modules/vehicle.md](modules/vehicle.md)     | Odometer, service schedule, service log                                 |
+| [modules/inventory.md](modules/inventory.md) | Items, nested locations, photos, QR labels                              |
+| [modules/money.md](modules/money.md)         | Accounts, transactions, subscriptions, exchange rates                   |
+| [modules/vault.md](modules/vault.md)         | Master password, encryption, fingerprint unlock                         |
+| [modules/habits.md](modules/habits.md)       | Habit schedules, streaks, habit reminders                               |
+| [modules/gym.md](modules/gym.md)             | Workout plans, sessions, sets                                           |
+| [modules/journal.md](modules/journal.md)     | Daily entries, moods, photos                                            |
+| [modules/health.md](modules/health.md)       | Medicines, doses, visits, weight                                        |
+| [modules/people.md](modules/people.md)       | Yearly dates, gift ideas, the debts link                                |
+| [modules/debts.md](modules/debts.md)         | Debts, payments, balances                                               |
+| [modules/shopping.md](modules/shopping.md)   | The shopping list, checkout, past items                                 |
+| [modules/documents.md](modules/documents.md) | Documents, expiry dates, encrypted photos                               |
+| [modules/content.md](modules/content.md)     | Videos, stages, video tasks                                             |
+| [modules/alarms.md](modules/alarms.md)       | The native alarm, the ringing screen, the setup check                   |
+| [modules/ulam.md](modules/ulam.md)           | The daily ulam, prices, backup dishes, the 7-day log                    |
+| [modules/travel.md](modules/travel.md)       | Trips, items, budget, reminders, PDF export                             |
+| [modules/inbox.md](modules/inbox.md)         | Voice access, voice messages, Groq text, audio cleanup                  |
 
 ## Facts to know first
 
