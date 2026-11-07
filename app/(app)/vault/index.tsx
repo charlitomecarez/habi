@@ -130,14 +130,14 @@ function UnlockedVault() {
           <Text className="text-center font-sans text-body text-ink-muted">No logins match “{query.trim()}”.</Text>
         </View>
       ) : (
-        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+        <View className="overflow-hidden">
           {visible.map((entry, index) => {
             const data = entry.data;
             const title = data?.title || "Untitled";
             return (
               <View
                 key={entry.id}
-                className={`min-h-touch flex-row items-center gap-3 py-3 pl-4 pr-3 ${index < visible.length - 1 ? "border-b border-divider" : ""}`}
+                className={`min-h-touch flex-row items-center gap-3 py-3 pl-4 pr-3 ${index < visible.length - 1 ? "border-b-2 border-border" : ""}`}
               >
                 <Pressable
                   accessibilityRole="button"

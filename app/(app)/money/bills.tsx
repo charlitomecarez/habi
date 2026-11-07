@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
@@ -9,6 +8,7 @@ import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { cycleLabel, daysUntil, formatPeso, useSubscriptions, useTransactions, type Subscription } from "@/lib/money";
 
@@ -43,19 +43,11 @@ export default function BillsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar>
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Bills
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         <Text className="font-sans text-caption text-ink-muted">
@@ -70,7 +62,7 @@ export default function BillsScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => subscriptions.refetch()} />
           </View>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {bills.length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No bills yet.</Text>
             ) : (
@@ -80,7 +72,7 @@ export default function BillsScreen() {
                 return (
                   <View
                     key={s.id}
-                    className={`gap-3 px-4 py-3 ${i === bills.length - 1 ? "" : "border-b border-divider"}`}
+                    className={`gap-3 px-4 py-3 ${i === bills.length - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <Pressable
                       accessibilityRole="button"

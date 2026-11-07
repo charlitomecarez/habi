@@ -30,7 +30,7 @@ export function TransactionRow({ transaction: t, accountName, categoryName, last
       accessibilityRole="button"
       accessibilityLabel={`${title}, ${t.kind}, ${formatPeso(t.amount)}, ${where}, ${date}`}
       onPress={() => router.push({ pathname: "/money/transaction/[id]", params: { id: t.id } })}
-      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <BrandIcon name={title} />
       <View className="min-w-0 flex-1 gap-1">

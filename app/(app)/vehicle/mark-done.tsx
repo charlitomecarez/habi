@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import {
   dueText,
@@ -100,7 +101,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
         </View>
 
         <View className="gap-2">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {services.map((s, index) => {
               const isChecked = checked.includes(s.vehicleServiceId);
               return (
@@ -110,7 +111,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
                   accessibilityState={{ checked: isChecked }}
                   accessibilityLabel={`${s.item}, ${statusText(s)}`}
                   onPress={() => toggle(s.vehicleServiceId)}
-                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < services.length - 1 ? "border-b border-divider" : ""}`}
+                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${index < services.length - 1 ? "border-b-2 border-border" : ""}`}
                 >
                   <Ionicons
                     name={isChecked ? "checkbox" : "square-outline"}
@@ -154,19 +155,11 @@ export default function MarkDoneScreen() {
   return (
     <SafeAreaView className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
-        <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-            onPress={() => router.back()}
-            className="h-touch w-touch items-center justify-center"
-          >
-            <Ionicons name="chevron-back" size={22} color={colors.ink} />
-          </Pressable>
-          <Text accessibilityRole="header" className="font-bold text-title text-ink">
+        <ModuleBar>
+          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
             Mark services done
           </Text>
-        </View>
+        </ModuleBar>
 
         {vehicle.data && due.data ? (
           <MarkDoneForm vehicle={vehicle.data} services={due.data} />

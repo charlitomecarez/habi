@@ -13,7 +13,7 @@ export function BudgetRow({ b, name, last }: { b: BudgetMonth; name: string; las
     <View
       accessible
       accessibilityLabel={`${name}, ${over ? `over by ${formatPeso(-b.left)}` : `${formatPeso(b.left)} left`} of ${formatPeso(b.available)}${b.carried > 0 ? `, includes ${formatPeso(b.carried)} carried over` : ""}`}
-      className={`gap-2 px-4 py-3 ${last ? "" : "border-b border-divider"}`}
+      className={`gap-2 px-4 py-3 ${last ? "" : "border-b-2 border-border"}`}
     >
       <View className="flex-row items-center gap-2">
         <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">

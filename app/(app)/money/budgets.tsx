@@ -1,5 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +10,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { useBudgetMonths, useBudgets, useDeleteBudget, useSaveBudget, type Budget } from "@/lib/budgets";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { amountText, parseAmount, useCategories } from "@/lib/money";
 
@@ -48,19 +47,11 @@ export default function BudgetsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar>
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Budgets
         </Text>
-      </View>
+      </ModuleBar>
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         <Text className="font-sans text-caption text-ink-muted">
           Money you don&apos;t spend carries over to next month. Going over does not take from next month. You get a
@@ -71,7 +62,7 @@ export default function BudgetsScreen() {
         ) : budgets.error ? (
           <Notice tone="danger">Could not load your budgets. {budgets.error.message}</Notice>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {(months ?? []).length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">No budgets yet.</Text>
             ) : (

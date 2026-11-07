@@ -75,7 +75,7 @@ function RenewalRow({ s, accountName, last }: { s: Subscription; accountName: st
       accessibilityRole="button"
       accessibilityLabel={`${s.name}, ${amountLabel}, ${caption}`}
       onPress={() => router.push({ pathname: "/money/subscription/[id]", params: { id: s.id } })}
-      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <View className="min-w-0 flex-1 gap-1">
         <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
@@ -193,7 +193,7 @@ export default function MoneyScreen() {
                 onAction={() => router.push("/money/budgets")}
               />
               {budgets?.length ? (
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                <View className="overflow-hidden">
                   {budgets.map((b, i) => (
                     <BudgetRow
                       key={b.budget.id}
@@ -214,7 +214,7 @@ export default function MoneyScreen() {
 
             <View className="gap-2">
               <SectionHeader title="Savings goals" action="Add goal" onAction={() => router.push("/money/goal/new")} />
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {(goals.data?.goals ?? []).length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                     Set a goal, for example a new phone ₱30,000 by June.
@@ -231,7 +231,7 @@ export default function MoneyScreen() {
 
             <View className="gap-2">
               <SectionHeader title="Renewing and due soon" />
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {renewing.length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                     Nothing renews or is due in the next {RENEWAL_LIST_DAYS} days.
@@ -276,7 +276,7 @@ export default function MoneyScreen() {
 
             <View className="gap-2">
               <SectionHeader title="Recent" action="See all" onAction={() => router.push("/money/transactions")} />
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {(recent.data ?? []).length === 0 ? (
                   <View className="items-center gap-2 p-6">
                     <Ionicons name="wallet-outline" size={28} color={colors.accent} />

@@ -49,3 +49,33 @@ export function ModuleHeader({ title, subtitle, tone = "shell", backLabel = "Bac
     </View>
   );
 }
+
+/** The same field for a screen that lays out its own title and buttons. */
+export function ModuleBar({
+  tone = "shell",
+  backLabel = "Back",
+  children,
+}: {
+  tone?: HeaderTone;
+  backLabel?: string;
+  children: ReactNode;
+}) {
+  const colors = useColors();
+  const insets = useSafeAreaInsets();
+  return (
+    <View
+      className={`flex-row items-center gap-1 px-3 pb-3 ${FIELD[tone]}`}
+      style={{ marginTop: -insets.top, paddingTop: insets.top + 8 }}
+    >
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={backLabel}
+        onPress={() => router.back()}
+        className="h-touch w-touch items-center justify-center"
+      >
+        <Ionicons name="chevron-back" size={22} color={colors.onShell} />
+      </Pressable>
+      {children}
+    </View>
+  );
+}

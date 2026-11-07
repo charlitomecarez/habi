@@ -9,6 +9,7 @@ import { ExportSheet } from "@/components/travel/ExportSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useExchangeRates } from "@/lib/money";
 import {
@@ -72,16 +73,8 @@ export default function TripScreen() {
   const [exporting, setExporting] = useState(false);
 
   const header = (title: string) => (
-    <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Back"
-        onPress={() => router.back()}
-        className="h-touch w-touch items-center justify-center"
-      >
-        <Ionicons name="chevron-back" size={22} color={colors.ink} />
-      </Pressable>
-      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-ink">
+    <ModuleBar tone="home">
+      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-on-shell">
         {title}
       </Text>
       {trip.data ? (
@@ -91,10 +84,10 @@ export default function TripScreen() {
           onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
       ) : null}
-    </View>
+    </ModuleBar>
   );
 
   if (!trip.data) {

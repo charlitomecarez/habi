@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { documentStatus, typeLabel, useDocuments } from "@/lib/documents";
 
@@ -17,19 +18,11 @@ export default function DocumentsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="records">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Documents
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         {docs.isPending ? (
@@ -40,7 +33,7 @@ export default function DocumentsScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => docs.refetch()} />
           </View>
         ) : (
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {list.length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                 Add your LTO registration, license, passport, insurance and PhilHealth. Each one reminds you 30 days
@@ -55,7 +48,7 @@ export default function DocumentsScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={`${d.name}, ${typeLabel(d.type)}, ${status.text}`}
                     onPress={() => router.push({ pathname: "/documents/[id]", params: { id: d.id } })}
-                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === list.length - 1 ? "" : "border-b border-divider"}`}
+                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <View className="min-w-0 flex-1 gap-1">
                       <Text numberOfLines={1} className="font-semibold text-row-title text-ink">

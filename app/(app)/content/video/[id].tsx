@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { copyText } from "@/lib/clipboard";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useAddVideoTask, useDeleteVideo, useSaveVideo, useVideo, useVideoTasks, type Post } from "@/lib/content";
 import {
@@ -43,7 +44,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <View className="gap-1 border-b border-divider px-4 py-3">
+    <View className="gap-1 border-b-2 border-border px-4 py-3">
       <Text className="font-sans text-caption text-ink-muted">{label}</Text>
       <Text className="font-sans text-body text-ink">{value}</Text>
     </View>
@@ -135,16 +136,12 @@ export default function VideoScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar tone="records">
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {v.title}
         </Text>
         <Pressable
@@ -153,9 +150,9 @@ export default function VideoScreen() {
           onPress={() => router.push({ pathname: "/content/video/edit/[id]", params: { id: v.id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
         {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
@@ -183,14 +180,14 @@ export default function VideoScreen() {
 
         {steps.length > 0 ? (
           <Section title={`${current.label} checklist`}>
-            <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+            <View className="overflow-hidden">
               {steps.map((st, i) => {
                 const done = v.done_steps.includes(st.id);
                 const command = commandFor(st, v.project_slug);
                 return (
                   <View
                     key={st.id}
-                    className={`flex-row items-center gap-1 pr-2 ${i === steps.length - 1 ? "" : "border-b border-divider"}`}
+                    className={`flex-row items-center gap-1 pr-2 ${i === steps.length - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <Pressable
                       accessibilityRole="checkbox"
@@ -265,7 +262,7 @@ export default function VideoScreen() {
         </View>
 
         <Section title="Tasks">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {(tasks.data ?? []).length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">
                 No tasks. Tasks also show in Todos and get their reminders.
@@ -280,7 +277,7 @@ export default function VideoScreen() {
                     accessibilityLabel={`${t.title}${t.due_at ? `, due ${format(parseISO(t.due_at), "MMM d, h:mm a")}` : ""}`}
                     accessibilityState={{ checked: done }}
                     onPress={() => toggleTask.mutate({ id: t.id, done: !done })}
-                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === (tasks.data?.length ?? 0) - 1 ? "" : "border-b border-divider"}`}
+                    className={`min-h-touch flex-row items-center gap-3 px-4 py-3 active:bg-surface-muted ${i === (tasks.data?.length ?? 0) - 1 ? "" : "border-b-2 border-border"}`}
                   >
                     <Ionicons
                       name={done ? "checkbox" : "square-outline"}
@@ -308,13 +305,13 @@ export default function VideoScreen() {
         </Section>
 
         <Section title="Posts">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {POST_PLATFORMS.map((p, i) => {
               const post = v.posts.find((x) => x.platform === p.id);
               return (
                 <View
                   key={p.id}
-                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 ${i === POST_PLATFORMS.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`min-h-touch flex-row items-center gap-3 px-4 py-3 ${i === POST_PLATFORMS.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
                     <Text className="font-semibold text-row-title text-ink">{p.label}</Text>
@@ -341,7 +338,7 @@ export default function VideoScreen() {
         </Section>
 
         <Section title="Details">
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             <Detail
               label="Publish date"
               value={v.publish_on ? format(parseISO(v.publish_on), "EEEE, MMMM d, yyyy") : "Not set"}

@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Sheet } from "@/components/ui/Sheet";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useAddContribution, useDeleteContribution, useGoals } from "@/lib/goals";
 import { formatPeso, parseAmount, useAccounts } from "@/lib/money";
@@ -57,23 +58,25 @@ export default function GoalScreen() {
   async function onSave() {
     const value = parseAmount(amount);
     if (value === null) return setError("Enter an amount, such as 2,000.");
-    if (direction === "out" && value > g!.saved) return setError(`Only ${formatPeso(g!.saved)} is saved for this goal.`);
-    await add.mutateAsync({ goalId: id, amount: direction === "in" ? value : -value, on: on ?? new Date(), note: note.trim() || null });
+    if (direction === "out" && value > g!.saved)
+      return setError(`Only ${formatPeso(g!.saved)} is saved for this goal.`);
+    await add.mutateAsync({
+      goalId: id,
+      amount: direction === "in" ? value : -value,
+      on: on ?? new Date(),
+      note: note.trim() || null,
+    });
     setOpen(false);
   }
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
+      <ModuleBar>
+        <Text
+          accessibilityRole="header"
+          numberOfLines={1}
+          className="min-w-0 flex-1 font-bold text-title text-on-shell"
         >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {g.name}
         </Text>
         <Pressable
@@ -82,11 +85,11 @@ export default function GoalScreen() {
           onPress={() => router.push({ pathname: "/money/goal/edit/[id]", params: { id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
+          <Ionicons name="create-outline" size={22} color={colors.onShell} />
         </Pressable>
-      </View>
+      </ModuleBar>
       <ScrollView contentContainerClassName="gap-5 px-5 pb-10 pt-2">
-        <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+        <View className="overflow-hidden">
           <GoalCard g={g} last />
         </View>
         {account ? <Text className="font-sans text-caption text-ink-muted">Saved in {account}</Text> : null}
@@ -105,22 +108,26 @@ export default function GoalScreen() {
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
             History
           </Text>
-          <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+          <View className="overflow-hidden">
             {list.length === 0 ? (
               <Text className="px-4 py-3 font-sans text-caption text-ink-muted">Nothing marked for this goal yet.</Text>
             ) : (
               list.map((c, i) => (
                 <View
                   key={c.id}
-                  className={`min-h-touch flex-row items-center gap-3 py-1 pl-4 pr-1 ${i === list.length - 1 ? "" : "border-b border-divider"}`}
+                  className={`min-h-touch flex-row items-center gap-3 py-1 pl-4 pr-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
                 >
                   <View className="min-w-0 flex-1 gap-1">
-                    <Text className={`font-semibold text-row-title ${c.amount > 0 ? "text-accent-strong" : "text-ink"}`}>
+                    <Text
+                      className={`font-semibold text-row-title ${c.amount > 0 ? "text-accent-strong" : "text-ink"}`}
+                    >
                       {c.amount > 0 ? "+" : "−"}
                       {formatPeso(Math.abs(c.amount))}
                     </Text>
                     <Text className="font-sans text-caption text-ink-muted">
-                      {[format(parseISO(c.on_date), "MMM d, yyyy"), c.amount < 0 ? "Taken out" : null, c.note].filter(Boolean).join(" · ")}
+                      {[format(parseISO(c.on_date), "MMM d, yyyy"), c.amount < 0 ? "Taken out" : null, c.note]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </Text>
                   </View>
                   <Pressable
@@ -140,7 +147,15 @@ export default function GoalScreen() {
 
       <Sheet visible={open} onClose={() => setOpen(false)} title={g.name} subtitle={`${formatPeso(g.saved)} saved`}>
         <Segmented label="Add or take out" options={DIRECTION} value={direction} onChange={setDirection} />
-        <AmountInput label="Amount" unit="₱" unitPosition="start" value={amount} onChangeText={setAmount} inputMode="decimal" keyboardType="decimal-pad" />
+        <AmountInput
+          label="Amount"
+          unit="₱"
+          unitPosition="start"
+          value={amount}
+          onChangeText={setAmount}
+          inputMode="decimal"
+          keyboardType="decimal-pad"
+        />
         <DateTimeField label="Date" mode="date" value={on} onChange={setOn} />
         <Input label="Note" optional value={note} onChangeText={setNote} />
         {error || add.error ? <Notice tone="danger">{error ?? add.error?.message}</Notice> : null}

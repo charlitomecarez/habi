@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { day, isScheduled, scheduleText, streak, useHabits, useToggleCheck, weekCount, type Habit } from "@/lib/habits";
 
@@ -15,10 +16,11 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
   const today = day(new Date());
   const done = checks.has(today);
   const s = streak(h, checks);
-  const week = h.schedule === "times_per_week" ? `${weekCount(checks, new Date())} of ${h.times_per_week} this week` : null;
+  const week =
+    h.schedule === "times_per_week" ? `${weekCount(checks, new Date())} of ${h.times_per_week} this week` : null;
   const streakText = s.count ? `${s.count} ${s.unit}${s.count === 1 ? "" : "s"} in a row` : "No streak yet";
   return (
-    <View className={`flex-row items-center ${last ? "" : "border-b border-divider"}`}>
+    <View className={`flex-row items-center ${last ? "" : "border-b-2 border-border"}`}>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityLabel={`${h.name}, done today`}
@@ -26,7 +28,11 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
         onPress={() => toggle.mutate({ habitId: h.id, date: today, done: !done })}
         className="h-slot w-slot items-center justify-center"
       >
-        <Ionicons name={done ? "checkmark-circle" : "ellipse-outline"} size={30} color={done ? colors.accent : colors.inkMuted} />
+        <Ionicons
+          name={done ? "checkmark-circle" : "ellipse-outline"}
+          size={30}
+          color={done ? colors.accent : colors.inkMuted}
+        />
       </Pressable>
       <Pressable
         accessibilityRole="button"
@@ -52,25 +58,21 @@ export default function HabitsScreen() {
   const list = habits.data?.habits ?? [];
   const checksOf = (id: string) => habits.data?.checks.get(id) ?? new Set<string>();
   const dueToday = list.filter(
-    (h) => isScheduled(h, now) && (h.schedule !== "times_per_week" || weekCount(checksOf(h.id), now) < (h.times_per_week ?? 1) || checksOf(h.id).has(day(now))),
+    (h) =>
+      isScheduled(h, now) &&
+      (h.schedule !== "times_per_week" ||
+        weekCount(checksOf(h.id), now) < (h.times_per_week ?? 1) ||
+        checksOf(h.id).has(day(now))),
   );
   const notToday = list.filter((h) => !dueToday.includes(h));
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar tone="daily">
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Habits
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         {habits.isPending ? (
@@ -93,7 +95,7 @@ export default function HabitsScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 Today
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {dueToday.length === 0 ? (
                   <Text className="px-4 py-3 font-sans text-caption text-ink-muted">Nothing due today.</Text>
                 ) : (
@@ -108,14 +110,14 @@ export default function HabitsScreen() {
                 <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                   Not today
                 </Text>
-                <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+                <View className="overflow-hidden">
                   {notToday.map((h, i) => (
                     <Pressable
                       key={h.id}
                       accessibilityRole="button"
                       accessibilityLabel={`${h.name}, ${scheduleText(h)}. Open habit`}
                       onPress={() => router.push({ pathname: "/habits/[id]", params: { id: h.id } })}
-                      className={`min-h-touch justify-center gap-1 px-4 py-3 active:bg-surface-muted ${i === notToday.length - 1 ? "" : "border-b border-divider"}`}
+                      className={`min-h-touch justify-center gap-1 px-4 py-3 active:bg-surface-muted ${i === notToday.length - 1 ? "" : "border-b-2 border-border"}`}
                     >
                       <Text className="font-semibold text-row-title text-ink">{h.name}</Text>
                       <Text className="font-sans text-caption text-ink-muted">{scheduleText(h)}</Text>

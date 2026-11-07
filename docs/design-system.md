@@ -76,7 +76,7 @@ Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28
 | `FadeIn`        | A short fade for a list or section.                                                                             |
 | `PressScale`    | A `Pressable` that shrinks a little on press.                                                                   |
 
-Screens build cards and rows with token classes (`rounded-card border border-border bg-surface-card`). There is no `Card` or `ListRow` component.
+Lists are plain rows with 2 px rules (`border-b-2 border-border`). Only an object that you act on is a card (`rounded-card border border-border bg-surface-card`). There is no `Card` or `ListRow` component.
 
 The source for the design is the Design canvas at https://claude.ai/artifact/7y38Um2ktJD5s9uatQ3yFy (9 screens, 8 forms).
 

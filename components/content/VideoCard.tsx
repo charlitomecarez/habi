@@ -42,7 +42,7 @@ export function VideoCard({ video, last = false }: { video: Video; last?: boolea
         .filter(Boolean)
         .join(", ")}
       onPress={() => router.push({ pathname: "/content/video/[id]", params: { id: video.id } })}
-      className={`min-h-touch gap-2 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b border-divider"}`}
+      className={`min-h-touch gap-2 px-4 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
       <View className="flex-row items-center gap-2">
         <Text numberOfLines={1} className="min-w-0 flex-1 font-semibold text-row-title text-ink">

@@ -1,13 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
+import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useAccounts, useCategories, useTransactions, type Transaction } from "@/lib/money";
 
@@ -35,19 +35,11 @@ export default function TransactionsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <View className="flex-row items-center gap-1 px-3 pb-2 pt-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="chevron-back" size={22} color={colors.ink} />
-        </Pressable>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
+      <ModuleBar>
+        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
           Transactions
         </Text>
-      </View>
+      </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-32 pt-2">
         {transactions.isPending ? (
@@ -67,7 +59,7 @@ export default function TransactionsScreen() {
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 {group.month}
               </Text>
-              <View className="overflow-hidden rounded-card border border-border bg-surface-card">
+              <View className="overflow-hidden">
                 {group.rows.map((t, index) => (
                   <TransactionRow
                     key={t.id}

@@ -4,6 +4,8 @@ export type WeaveRow = {
   label: string;
   /** Seven strands, Monday first. */
   days: readonly Strand[];
+  /** One line for each day, for the day sheet. */
+  details?: readonly string[];
 };
 
 const count = (days: readonly Strand[], state: Strand) => days.filter((d) => d === state).length;
