@@ -17,7 +17,7 @@ const light = {
   danger: "#B4105A",
   daily: "#0F6E84",
   people: "#8A2D8F",
-  home: "#B5500B",
+  home: "#A34808",
   records: "#3D4FB5",
   shell: "#23205C",
   onShell: "#F7EFD9",

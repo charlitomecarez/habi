@@ -55,7 +55,7 @@ export default function GymScreen() {
                 Today
               </Text>
               {dueToday.length === 0 ? (
-                <View className="rounded-card border border-border bg-surface-card px-4 py-3">
+                <View className="py-1">
                   <Text className="font-sans text-caption text-ink-muted">Rest day. No workout on the plan today.</Text>
                 </View>
               ) : (

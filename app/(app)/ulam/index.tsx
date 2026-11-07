@@ -70,7 +70,14 @@ export default function UlamScreen() {
 
           <View className="gap-2">
             <Text className="font-bold text-title text-ink">{ulam.name}</Text>
-            <Text className="font-bold text-display text-ink">{formatPeso(ulam.cost)}</Text>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={1}
+              className="font-bold text-display text-ink"
+            >
+              {formatPeso(ulam.cost)}
+            </Text>
             <Text className="font-sans text-caption text-ink-muted">
               {ulam.cookMinutes} min to cook · ≈ {ulam.kcal} kcal, for one
             </Text>

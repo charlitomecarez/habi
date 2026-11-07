@@ -29,6 +29,7 @@ const service = (over: Partial<ServiceDue> = {}): ServiceDue => ({
   nextDueKm: 13000,
   nextDueOn: null,
   kmRemaining: 120,
+  intervalKm: null,
   daysRemaining: null,
   sortOrder: 1,
   ...over,

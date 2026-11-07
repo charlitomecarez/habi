@@ -59,7 +59,14 @@ export default function WeatherScreen() {
               </Notice>
             ) : null}
             <View className="gap-1">
-              <Text className="font-bold text-display text-ink">{forecast.temperature}°</Text>
+              <Text
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+                numberOfLines={1}
+                className="font-bold text-display text-ink"
+              >
+                {forecast.temperature}°
+              </Text>
               <Text className="font-semibold text-row-title text-ink">{forecast.word}</Text>
               <Text className="font-sans text-caption text-ink-muted">
                 Rain {forecast.rain}% · High {forecast.high}° · Low {forecast.low}°

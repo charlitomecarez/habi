@@ -39,7 +39,7 @@ All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light
 - **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes.
 - **Font families:** Schibsted Grotesk. `font-sans` (400), `font-medium` (500), `font-semibold` (700), `font-bold` (900).
 - **Font sizes:** `display` 34, `amount-input` 32, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 15, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
-- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 44, `input` 52, `button` 56, `slot` 64, `amount` 72, `field-sm` 110, `tile` 112.
+- **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 48, `input` 52, `button` 56, `slot` 64, `amount` 72, `field-sm` 110, `tile` 112.
 - **Radius:** `sm` 10, `md` 12, `input` 14, `card` 16, `fab` 18, `hero` 20, `sheet` 28, `pill` 999.
 
 Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28` or `h-1.5`. NativeWind uses rem = 14 px on native, so those classes give a different size on Android and web. Add a named token instead.

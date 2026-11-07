@@ -38,7 +38,7 @@ The app knows one real life: the ADV 160 and its kilometres, GCash and MariBank,
 
 - The name is my-app.
 - Status always has a word, not colour alone.
-- Touch targets are at least 44 px.
+- Touch targets are at least 48 px.
 - Copy uses sentence case, and buttons name the action.
 - The visual identity is open in v1.3.0: Charli approved a replacement of the colour, the type and the cards.
 

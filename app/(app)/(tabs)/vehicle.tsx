@@ -1,13 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { TabField } from "@/components/ui/ModuleHeader";
 import { AddVehicleSheet } from "@/components/vehicle/AddVehicleSheet";
 import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
 import { useColors } from "@/lib/colors";
@@ -18,32 +18,41 @@ import {
   formatKm,
   laterText,
   useLastReading,
+  usedShare,
   useServiceDue,
   useVehicle,
   vehicleName,
   type ServiceDue,
 } from "@/lib/vehicles";
 
-function DueRow({ service }: { service: ServiceDue }) {
+function ServiceRow({ service, last }: { service: ServiceDue; last: boolean }) {
   const overdue = service.status === "overdue";
+  const soon = service.status === "due_soon";
+  const used = usedShare(service);
+  const open = () => router.push({ pathname: "/vehicle/log-service", params: { serviceId: service.vehicleServiceId } });
   return (
-    <View className="flex-row items-center gap-3 rounded-card border border-border bg-surface-card px-4 py-3">
-      <View className="flex-1 gap-1">
-        <Text className="font-semibold text-row-title text-ink">{service.item}</Text>
-        <Text className={`font-medium text-caption ${overdue ? "text-danger" : "text-warning"}`}>
-          {dueText(service)}
-        </Text>
-      </View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Log service: ${service.item}`}
-        onPress={() =>
-          router.push({ pathname: "/vehicle/log-service", params: { serviceId: service.vehicleServiceId } })
+    <View className={last ? "" : "border-b-2 border-border"}>
+      <DataRow
+        title={service.item}
+        detail={service.nextDueKm !== null ? `At ${formatKm(service.nextDueKm)} km` : undefined}
+        status={
+          overdue
+            ? { label: dueText(service), tone: "over" }
+            : soon
+              ? { label: dueText(service), tone: "watch" }
+              : { label: laterText(service), tone: "muted" }
         }
-        className="h-chip justify-center rounded-md border border-border-input bg-surface-card px-4 active:bg-surface-muted"
-      >
-        <Text className="font-semibold text-label text-ink">Log service</Text>
-      </Pressable>
+        onPress={open}
+        last
+      />
+      {used !== null ? (
+        <View className="mb-3 h-1 overflow-hidden bg-surface-muted">
+          <View
+            className={`h-full ${overdue ? "bg-over-fill" : soon ? "bg-watch-fill" : "bg-accent"}`}
+            style={{ width: `${used * 100}%` }}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -79,20 +88,16 @@ export default function VehicleScreen() {
   if (!vehicle.data) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <View className="flex-1 gap-6 px-5 pt-6">
-          <ScreenHeader title="Vehicle" />
+        <TabField lead="Vehicle" />
+        <View className="flex-1 gap-4 px-5 pt-4">
           {error ? (
-            <Notice tone="danger">Could not load your vehicle. {error.message}</Notice>
+            <Notice tone="danger">Could not load your vehicle. Check your connection.</Notice>
           ) : (
-            <View className="items-center gap-4 rounded-hero border border-border bg-surface-card p-6">
-              <Ionicons name="bicycle-outline" size={32} color={colors.accent} />
-              <Text className="text-center font-sans text-body text-ink-muted">
-                Add your motorcycle to see which services are due.
-              </Text>
-              <View className="self-stretch">
-                <Button label="Add vehicle" onPress={() => setSheet("add")} />
-              </View>
-            </View>
+            <>
+              <Text className="font-bold text-title text-ink">Add your motorcycle</Text>
+              <Text className="font-sans text-body text-ink-muted">I tell you which services are due.</Text>
+              <Button label="Add vehicle" onPress={() => setSheet("add")} />
+            </>
           )}
         </View>
         <AddVehicleSheet visible={sheet === "add"} onClose={() => setSheet(null)} />
@@ -105,33 +110,12 @@ export default function VehicleScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-6">
-        <View className="gap-1">
-          <ScreenHeader title={vehicleName(v)} />
-          <Text className="font-sans text-caption text-ink-muted">
-            {v.make} {v.model}
-          </Text>
-        </View>
-
-        <View className="gap-4 rounded-hero border border-border bg-surface-card p-5">
-          <View className="gap-1">
-            <Text className="font-sans text-caption text-ink-muted">Odometer</Text>
-            <Text className="font-bold text-display text-ink">
-              {formatKm(v.current_odometer_km)} <Text className="font-semibold text-title text-ink-muted">km</Text>
-            </Text>
-            <Text className="font-sans text-caption text-ink-muted">
-              Last updated {format(parseISO(updatedAt), "MMM d")}
-            </Text>
-          </View>
-          <Button
-            label="Update odometer"
-            size="input"
-            icon={<Ionicons name="add" size={20} color={colors.onAccent} />}
-            onPress={() => setSheet("odometer")}
-          />
-        </View>
-
-        {error ? <Notice tone="danger">Could not load services. {error.message}</Notice> : null}
+      <TabField
+        lead={`${formatKm(v.current_odometer_km)} km`}
+        detail={`${vehicleName(v)} · ${v.make} ${v.model} · Updated ${format(parseISO(updatedAt), "MMM d")}`}
+      />
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-4">
+        {error ? <Notice tone="danger">Could not load services. Check your connection.</Notice> : null}
         {noIntervals ? (
           <Notice tone="warning">
             No service has an interval yet. Add the intervals from the owner&apos;s manual to see what is due.
@@ -142,59 +126,35 @@ export default function VehicleScreen() {
           <ActivityIndicator color={colors.accent} />
         ) : (
           <>
-            <View className="gap-3">
-              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-                Service due now
-              </Text>
+            <View>
               {dueNow.length === 0 ? (
-                <View className="rounded-card border border-border bg-surface-card px-4 py-3">
-                  <Text className="font-sans text-caption text-ink-muted">Nothing is due.</Text>
-                </View>
+                <Text className="py-3 font-sans text-body text-ink-muted">Nothing is due.</Text>
               ) : (
-                dueNow.map((s) => <DueRow key={s.vehicleServiceId} service={s} />)
+                dueNow.map((s, index) => (
+                  <ServiceRow
+                    key={s.vehicleServiceId}
+                    service={s}
+                    last={later.length === 0 && index === dueNow.length - 1}
+                  />
+                ))
               )}
+              {later.map((s, index) => (
+                <ServiceRow key={s.vehicleServiceId} service={s} last={index === later.length - 1} />
+              ))}
             </View>
 
-            {later.length > 0 ? (
-              <View className="gap-3">
-                <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-                  Later
-                </Text>
-                <View className="overflow-hidden">
-                  {later.map((s, index) => (
-                    <Pressable
-                      key={s.vehicleServiceId}
-                      accessibilityRole="button"
-                      accessibilityLabel={`Log service: ${s.item}, ${laterText(s)}`}
-                      onPress={() =>
-                        router.push({ pathname: "/vehicle/log-service", params: { serviceId: s.vehicleServiceId } })
-                      }
-                      className={`min-h-touch flex-row items-center justify-between gap-3 px-4 py-3 active:bg-surface-muted ${index < later.length - 1 ? "border-b-2 border-border" : ""}`}
-                    >
-                      <Text className="flex-1 font-medium text-row-title text-ink">{s.item}</Text>
-                      <Text className="font-sans text-caption text-ink-muted">{laterText(s)}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            ) : null}
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Fuel. ${fuelLatest ? `${fuelLatest.kmPerLitre.toFixed(1)} km per litre. ` : ""}${formatPeso(fuelMonth)} this month. Open fuel log`}
-              onPress={() => router.push("/vehicle/fuel")}
-              className="flex-row items-center gap-3 rounded-card border border-border bg-surface-card px-4 py-3 active:bg-surface-muted"
-            >
-              <Ionicons name="water-outline" size={22} color={colors.accent} />
-              <View className="min-w-0 flex-1 gap-1">
-                <Text className="font-semibold text-row-title text-ink">Fuel</Text>
-                <Text className="font-sans text-caption text-ink-muted">
-                  {fuelLatest ? `${fuelLatest.kmPerLitre.toFixed(1)} km/L · ` : ""}
-                  {formatPeso(fuelMonth)} this month
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
-            </Pressable>
+            <View>
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+                Fuel
+              </Text>
+              <DataRow
+                title="Fuel log"
+                detail={`${formatPeso(fuelMonth)} this month`}
+                value={fuelLatest ? `${fuelLatest.kmPerLitre.toFixed(1)} km/L` : undefined}
+                onPress={() => router.push("/vehicle/fuel")}
+                last
+              />
+            </View>
 
             <Button
               label="Mark services done"
@@ -211,6 +171,10 @@ export default function VehicleScreen() {
           </>
         )}
       </ScrollView>
+
+      <View className="border-t-2 border-border px-5 py-3">
+        <Button label="Update odometer" onPress={() => setSheet("odometer")} />
+      </View>
 
       <UpdateOdometerSheet
         visible={sheet === "odometer"}

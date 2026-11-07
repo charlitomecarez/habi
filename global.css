@@ -43,9 +43,9 @@
   --people: 138 45 143;
   --people-tint: 242 223 242;
   --people-field: 138 45 143;
-  --home: 181 80 11;
+  --home: 163 72 8;
   --home-tint: 248 227 210;
-  --home-field: 181 80 11;
+  --home-field: 163 72 8;
   --records: 61 79 181;
   --records-tint: 225 228 245;
   --records-field: 61 79 181;
@@ -90,7 +90,7 @@
     --people-field: 138 45 143;
     --home: 242 163 107;
     --home-tint: 62 38 21;
-    --home-field: 181 80 11;
+    --home-field: 163 72 8;
     --records: 169 180 242;
     --records-tint: 37 43 85;
     --records-field: 61 79 181;

@@ -183,7 +183,7 @@ export default function HomeScreen() {
               </Pressable>
             ) : null}
           </View>
-          <WeaveBand rows={rows} todayIndex={todayIndex(now)} onDayPress={(_, day) => setOpenDay(day)} />
+          <WeaveBand rows={rows} todayIndex={todayIndex(now)} onDayPress={setOpenDay} />
         </View>
 
         <View className="gap-6 px-5">
