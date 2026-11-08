@@ -54,9 +54,10 @@ export function useNews() {
 }
 
 /** The newest Philippine headlines, for Home. */
-export function useLatestNews(count = 3) {
+export function useLatestNews(count = 3, enabled = true) {
   return useQuery({
     queryKey: [...KEY, "latest", count],
+    enabled,
     staleTime: 10 * 60 * 1000,
     queryFn: async () => {
       const { data, error } = await section("ph", count);

@@ -2106,6 +2106,7 @@ export type Database = {
           digest_enabled: boolean;
           digest_hour: number;
           digest_last_sent_on: string | null;
+          followed_teams: string[];
           home_shortcuts: string[];
           timezone: string;
           ulam_avoid: string[];
@@ -2119,6 +2120,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_teams?: string[];
           home_shortcuts?: string[];
           timezone?: string;
           ulam_avoid?: string[];
@@ -2132,6 +2134,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_teams?: string[];
           home_shortcuts?: string[];
           timezone?: string;
           ulam_avoid?: string[];

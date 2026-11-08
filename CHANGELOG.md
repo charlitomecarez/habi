@@ -37,10 +37,7 @@ Do not put these items here:
 
 ### Added
 
-**News:** A new News module under Daily life shows headlines from Philippine and world outlets, with their images, every 2 hours. A story opens on its site.
-
-- **Sleep:** On Android, my-app finds last night's sleep from when your screen was off, with no prompt. A short phone check does not split the night. Tap the sleep to fix the times. It stays on the phone. Needs the v1.4.0 APK.
-- **Screen time:** A new Screen time screen lists every app you used today or this week. Open it from "See all apps" on the Home card. The data stays on the phone.
+**Home:** Your Google photo is back in the Home header, and it opens More. Home shows the latest games of the teams you follow and the 3 newest headlines. Follow up to 12 teams from "Teams you follow" in Sports.
 
 ### Fixed
 

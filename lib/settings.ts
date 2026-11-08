@@ -12,6 +12,8 @@ export type UserSettings = {
   ulamLimit: number;
   /** Food you never eat, for the daily ulam. */
   ulamAvoid: string[];
+  /** Teams whose games show on Home, as league:team, for example PL:Arsenal. At most 12. */
+  followedTeams: string[];
 };
 
 /** The database defaults, used until the first change creates the row. */
@@ -22,6 +24,7 @@ const DEFAULTS: UserSettings = {
   homeShortcuts: ["journal", "shopping", "inventory", "vault"],
   ulamLimit: 99,
   ulamAvoid: [],
+  followedTeams: [],
 };
 
 const SETTINGS_KEY = ["user-settings"] as const;
@@ -32,7 +35,7 @@ export function useUserSettings() {
     queryFn: async (): Promise<UserSettings> => {
       const { data, error } = await supabase
         .from("user_settings")
-        .select("timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid")
+        .select("timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams")
         .maybeSingle();
       if (error) throw error;
       if (!data) return DEFAULTS;
@@ -43,6 +46,7 @@ export function useUserSettings() {
         homeShortcuts: data.home_shortcuts,
         ulamLimit: data.ulam_limit,
         ulamAvoid: data.ulam_avoid,
+        followedTeams: data.followed_teams,
       };
     },
   });
@@ -62,6 +66,7 @@ export function useSaveUserSettings() {
         home_shortcuts: next.homeShortcuts,
         ulam_limit: next.ulamLimit,
         ulam_avoid: next.ulamAvoid,
+        followed_teams: next.followedTeams,
       });
       if (error) throw error;
     },
