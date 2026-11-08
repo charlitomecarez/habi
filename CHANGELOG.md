@@ -35,11 +35,9 @@ Do not put these items here:
 
 ## Unreleased
 
-### Added
-
-**Licence:** The code is under the MIT licence.
-
 ### Fixed
+
+**Home photo:** The photo in the Home header is smaller (32 px in a 48 px tap area), and it tries Google's second photo address before it shows the letter.
 
 - **Sports:** NBA teams show their logos in matches and standings, not only their short code.
 - **Find a work:** A search saves its jobs even when Groq is busy. Groq ranks 5 jobs at a time and waits when it asks to. A job it could not rank shows "Not ranked", and the next search ranks it. The screen says why the last search stopped.

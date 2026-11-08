@@ -92,7 +92,11 @@ export function SettingsSection() {
 
       <View className="flex-row items-center gap-4 border-b-2 border-border py-3">
         <View className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border">
-          <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
+          <ProfilePhoto
+            letter={name.charAt(0).toUpperCase()}
+            letterClassName="font-semibold text-title text-ink"
+            size={48}
+          />
         </View>
         <View className="flex-1 gap-1">
           <Text className="font-semibold text-heading text-ink" numberOfLines={1}>

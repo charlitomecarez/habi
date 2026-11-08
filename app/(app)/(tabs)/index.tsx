@@ -194,9 +194,11 @@ export default function HomeScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="More and settings"
                 onPress={() => router.push("/more")}
-                className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill border-2 border-on-shell bg-on-shell"
+                className="h-touch w-touch items-center justify-center"
               >
-                <ProfilePhoto letter={profileLetter} letterClassName="font-bold text-title text-shell" />
+                <View className="h-8 w-8 items-center justify-center overflow-hidden rounded-pill border-2 border-on-shell bg-on-shell">
+                  <ProfilePhoto letter={profileLetter} letterClassName="font-bold text-label text-shell" size={28} />
+                </View>
               </Pressable>
             </View>
             <Text
