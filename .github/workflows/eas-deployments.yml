@@ -1,0 +1,100 @@
+name: EAS deployments
+
+# Builds run on expo.dev, which does not tell GitHub about them. This job asks
+# expo.dev for finished Android builds and records each new one as a GitHub
+# deployment, so the repo page shows the latest APK with a link to it.
+# It only reads build info. It never starts a build.
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  deployments: write
+  contents: read
+
+concurrency:
+  group: eas-deployments
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      EAS_PROJECT_ID: fcfabf83-7cbd-4317-ba50-42daf9d6f6a7
+      EXPO_PROJECT_PATH: javaplum/projects/my-app
+    steps:
+      - name: Record new expo.dev builds
+        run: |
+          set -euo pipefail
+
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Add an EXPO_TOKEN secret (expo.dev > Account settings > Access tokens)."
+            exit 1
+          fi
+
+          query='query ($appId: String!) {
+            app { byId(appId: $appId) {
+              builds(offset: 0, limit: 10, filter: { platform: ANDROID, status: FINISHED }) {
+                id buildProfile gitCommitHash appVersion completedAt
+              }
+            } }
+          }'
+
+          jq -n --arg q "$query" --arg id "$EAS_PROJECT_ID" \
+            '{query: $q, variables: {appId: $id}}' > body.json
+
+          curl -sS --fail-with-body https://api.expo.dev/graphql \
+            -H "Authorization: Bearer $EXPO_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data @body.json > builds.json
+
+          if jq -e '.errors' builds.json > /dev/null; then
+            jq '.errors' builds.json
+            echo "::error::expo.dev returned an error."
+            exit 1
+          fi
+
+          # Builds already recorded, by expo.dev build id.
+          gh api --paginate "repos/$REPO/deployments?per_page=100" \
+            --jq '.[].payload.eas_build_id // empty' > seen.txt || true
+
+          # Oldest first, so the newest build ends up as the latest deployment.
+          jq -c '.data.app.byId.builds | reverse | .[]
+                 | select(.gitCommitHash != null and .buildProfile != "development")' builds.json |
+          while read -r build; do
+            id=$(jq -r '.id' <<< "$build")
+            if grep -qx "$id" seen.txt; then continue; fi
+
+            profile=$(jq -r '.buildProfile' <<< "$build")
+            sha=$(jq -r '.gitCommitHash' <<< "$build")
+            version=$(jq -r '.appVersion // ""' <<< "$build")
+            url="https://expo.dev/accounts/$EXPO_PROJECT_PATH/builds/$id"
+            if [ "$profile" = "production" ]; then env_name="Android APK"; prod=true
+            else env_name="Android $profile"; prod=false; fi
+
+            jq -n --arg ref "$sha" --arg env "$env_name" --arg id "$id" \
+                  --arg v "$version" --argjson prod "$prod" '{
+              ref: $ref, environment: $env, auto_merge: false,
+              required_contexts: [], production_environment: $prod,
+              description: ("APK " + $v + " built on expo.dev"),
+              payload: { eas_build_id: $id }
+            }' > deployment.json
+
+            # A build from a commit that is not on GitHub cannot be recorded; skip it.
+            if ! dep_id=$(gh api "repos/$REPO/deployments" --input deployment.json --jq '.id'); then
+              echo "::warning::Skipped build $id ($sha is not on GitHub)."
+              continue
+            fi
+
+            gh api "repos/$REPO/deployments/$dep_id/statuses" \
+              -f state=success -f environment_url="$url" -f log_url="$url" \
+              -f description="APK $version is ready to download" > /dev/null
+
+            echo "Recorded build $id ($profile, $version) as deployment $dep_id."
+          done
