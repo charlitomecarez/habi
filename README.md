@@ -8,7 +8,7 @@
 
 **Todos, money, the ADV 160's service schedule, a password vault and 18 more modules, in one Android app.**
 
-[![CI](https://img.shields.io/github/actions/workflow/status/charlitomecarez/my-app/ci.yml?style=flat-square&label=CI)](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml)
+[![CI](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml/badge.svg)](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-1.4.0-23205C?style=flat-square)](CHANGELOG.md)
 [![Expo SDK 58](https://img.shields.io/badge/Expo-SDK_58-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-free_tier-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
