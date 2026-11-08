@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TodoRow } from "@/components/todos/TodoRow";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
@@ -89,7 +90,15 @@ export default function TodosScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
           </View>
         ) : sections.length === 0 ? (
-          <Text className="py-4 font-sans text-body text-ink-muted">{EMPTY_TEXT[filter]}</Text>
+          filter === "all" ? (
+            <EmptyState
+              drawing="list"
+              title={EMPTY_TEXT.all}
+              body="Add one with the button, and I remind you when it is due."
+            />
+          ) : (
+            <Text className="py-4 font-sans text-body text-ink-muted">{EMPTY_TEXT[filter]}</Text>
+          )
         ) : (
           sections.map((section) => (
             <View key={section.title}>

@@ -223,7 +223,7 @@ export default function ShoppingScreen() {
           )}
         </KeyboardScrollView>
 
-        <View className="gap-2 border-t border-border px-5 pb-6 pt-3">
+        <View className="gap-2 border-t-2 border-border px-5 pb-6 pt-3">
           <Text className="font-sans text-caption text-ink-muted">
             {inCart.length
               ? `${inCart.length} in the cart · ${formatPeso(total)}`

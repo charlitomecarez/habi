@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
@@ -292,26 +293,19 @@ export default function PersonScreen() {
           />
         </Section>
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">
-              Delete {person.name}? Their dates and gift ideas are deleted. Debts stay, with the name.
-            </Text>
-            <Button
-              label="Delete person"
-              variant="destructive"
-              size="input"
-              loading={removePerson.isPending}
-              onPress={async () => {
-                await removePerson.mutateAsync(id);
-                goBack();
-              }}
-            />
-            <Button label="Keep person" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete person" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete person" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title={`Delete ${person.name}?`}
+          body="Their dates and gift ideas are deleted. Debts stay, with the name."
+          confirmLabel="Delete person"
+          loading={removePerson.isPending}
+          onConfirm={async () => {
+            await removePerson.mutateAsync(id);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
 
       <Sheet visible={sheet === "rename"} onClose={() => setSheet(null)} title="Edit person">

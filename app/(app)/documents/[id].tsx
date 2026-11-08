@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
@@ -117,25 +118,19 @@ export default function DocumentScreen() {
           }}
         />
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">Delete this document and its photos?</Text>
-            <Button
-              label="Delete document"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(d.id);
-                await removeEncryptedPhotos(d.photo_paths);
-                goBack();
-              }}
-            />
-            <Button label="Keep document" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete document" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete document" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title="Delete this document and its photos?"
+          confirmLabel="Delete document"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(d.id);
+            await removeEncryptedPhotos(d.photo_paths);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
     </SafeAreaView>
   );

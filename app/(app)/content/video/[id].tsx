@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { publishStatus } from "@/components/content/VideoCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
@@ -359,26 +360,19 @@ export default function VideoScreen() {
           </View>
         </Section>
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">
-              Delete this video? Its tasks stay in Todos without the link.
-            </Text>
-            <Button
-              label="Delete video"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(v.id);
-                goBack();
-              }}
-            />
-            <Button label="Keep video" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete video" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete video" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title="Delete this video?"
+          body="Its tasks stay in Todos without the link."
+          confirmLabel="Delete video"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(v.id);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
 
       <Sheet visible={sheet === "task"} onClose={() => setSheet(null)} title="Add task" subtitle={v.title}>

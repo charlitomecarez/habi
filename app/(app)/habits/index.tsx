@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
@@ -79,9 +80,11 @@ export default function HabitsScreen() {
             <Button label="Try again" variant="secondary" size="input" onPress={() => habits.refetch()} />
           </View>
         ) : list.length === 0 ? (
-          <Text className="py-4 font-sans text-body text-ink-muted">
-            I keep your streaks here. Add a habit, like reading or posting a video, and tick it each day.
-          </Text>
+          <EmptyState
+            drawing="calendar"
+            title="No habits yet"
+            body="I keep your streaks here. Add a habit, like reading or posting a video, and tick it each day."
+          />
         ) : (
           <>
             <View>

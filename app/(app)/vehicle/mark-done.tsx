@@ -140,7 +140,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
         </View>
       </KeyboardScrollView>
 
-      <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
+      <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
         {markDone.error ? <Notice tone="danger">{markDone.error.message}</Notice> : null}
         <Button label={label} loading={formState.isSubmitting} onPress={onSubmit} />
       </View>

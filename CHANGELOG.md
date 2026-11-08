@@ -42,7 +42,7 @@ Do not put these items here:
 
 ### Changed
 
-**Loading:** Screens show a placeholder in the shape of the screen while they load, in place of a spinner. It stays still when reduce motion is on.
+**Look:** Old parts now match the Banig design: the Settings heading and profile row, delete confirms in a bottom sheet, 2 px rules above Save, drawings on first-run screens, the scanned place as a filter chip in Inventory, and the spending calendar heading.
 
 ### Fixed
 

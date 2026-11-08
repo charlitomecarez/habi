@@ -6,6 +6,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
@@ -82,25 +83,19 @@ export default function VisitScreen() {
             await removeEncryptedPhotos([path]);
           }}
         />
-        {confirm ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">Delete this visit and its lab photos?</Text>
-            <Button
-              label="Delete visit"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(v.id);
-                await removeEncryptedPhotos(v.photo_paths);
-                goBack();
-              }}
-            />
-            <Button label="Keep visit" variant="secondary" size="input" onPress={() => setConfirm(false)} />
-          </View>
-        ) : (
-          <Button label="Delete visit" variant="destructive" size="input" onPress={() => setConfirm(true)} />
-        )}
+        <Button label="Delete visit" variant="destructive" size="input" onPress={() => setConfirm(true)} />
+        <ConfirmSheet
+          visible={confirm}
+          title="Delete this visit and its lab photos?"
+          confirmLabel="Delete visit"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(v.id);
+            await removeEncryptedPhotos(v.photo_paths);
+            goBack();
+          }}
+          onClose={() => setConfirm(false)}
+        />
       </ScrollView>
     </SafeAreaView>
   );

@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
@@ -123,7 +124,11 @@ function UnlockedVault() {
           <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
         </View>
       ) : entries.length === 0 ? (
-        <Text className="py-4 font-sans text-body text-ink-muted">I keep your logins here. Add your first one.</Text>
+        <EmptyState
+          drawing="box"
+          title="No logins yet"
+          body="I keep your logins here, locked on this phone. Add your first one with the button."
+        />
       ) : visible.length === 0 ? (
         <Text className="py-4 font-sans text-body text-ink-muted">No logins match “{query.trim()}”.</Text>
       ) : (

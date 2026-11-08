@@ -118,7 +118,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
           </KeyboardScrollView>
         }
 
-        <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
+        <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
           {(save.error ?? remove.error) ? <Notice tone="danger">{(save.error ?? remove.error)!.message}</Notice> : null}
           <Button label="Save entry" loading={save.isPending} onPress={onSave} />
         </View>

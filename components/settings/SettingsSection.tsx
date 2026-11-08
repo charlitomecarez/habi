@@ -86,11 +86,11 @@ export function SettingsSection() {
 
   return (
     <View className="gap-5">
-      <Text accessibilityRole="header" className="font-semibold text-caption uppercase tracking-wide text-ink-muted">
+      <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
         Settings
       </Text>
 
-      <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
+      <View className="flex-row items-center gap-4 border-b-2 border-border py-3">
         <View className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border">
           <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
         </View>

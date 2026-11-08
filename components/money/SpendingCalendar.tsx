@@ -93,7 +93,7 @@ export function SpendingCalendar({ accountName, categoryName }: SpendingCalendar
         ) : selected ? (
           <View className="gap-2">
             <View className="flex-row items-baseline justify-between gap-3 px-1">
-              <Text accessibilityRole="header" className="font-semibold text-label text-ink">
+              <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 {format(parseISO(selected), "EEEE, MMM d")}
               </Text>
               {selectedDay ? (

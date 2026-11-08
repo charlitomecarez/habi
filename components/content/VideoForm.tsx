@@ -220,7 +220,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
           />
         </KeyboardScrollView>
 
-        <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
+        <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
           {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
           <Button
             label={video ? "Save video" : stage === "idea" ? "Save idea" : "Add video"}
