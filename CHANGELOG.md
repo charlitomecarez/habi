@@ -35,9 +35,9 @@ Do not put these items here:
 
 ## Unreleased
 
-### Changed
+### Added
 
-**Email:** The sign-in emails and the daily digest use the Banig look: the indigo band, the woven strip and a cream card. Each status keeps its word in its colour. Paste the six templates in the Supabase dashboard.
+**Open source:** CONTRIBUTING.md sets up your own copy from nothing: Supabase, Google sign-in, Firebase and the Edge Functions. The README has badges. A gitleaks scan of the whole history found no secret. The repo stays private.
 
 ### Fixed
 

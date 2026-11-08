@@ -1,5 +1,9 @@
 # my-app
 
+[![CI](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml/badge.svg)](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml)
+![Expo](https://img.shields.io/badge/Expo-Android%20and%20web-23205C)
+![Supabase](https://img.shields.io/badge/Supabase-free%20tier-0B7A55)
+
 ![my-app on Android: the Money, Todos, Home, Vehicle and Weather screens, with sample data](docs/images/readme-banner.png)
 
 my-app is a personal app for its admin and the few people the admin adds. Sign-up is off, and each account has fully separate data. It runs on Android first and on the web second.
@@ -50,6 +54,8 @@ The app does not run in Expo Go, because it has its own native modules. Expo Go 
 - A daily encrypted database backup in GitHub Actions.
 
 ## Requirements
+
+To run your own copy from scratch, follow [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - Node 22. The version is in `.nvmrc`.
 - An expo.dev account connected to this GitHub repository, for APK builds.
@@ -116,6 +122,7 @@ Add a new migration file for each schema change. Do not edit a migration that is
 | `voice-cleanup`     | Deletes voice audio after 7 days and keeps the text        | pg_cron, 1:00 AM Manila time  |
 | `job-search`        | Finds and ranks jobs, and drafts a cover letter on request | pg_cron, 6:00 AM, and the app |
 | `sports-sync`       | Stores matches and standings for six leagues               | pg_cron, 7:00 AM and 3:00 PM  |
+| `news-sync`         | Stores headlines from public RSS feeds                     | pg_cron, every 2 hours        |
 | `import-statement`  | Reads one PDF statement in memory and stores nothing       | The app, for a signed-in user |
 | `voice-transcribe`  | Turns a voice message into text with Groq                  | The app, for a signed-in user |
 | `job-profile-draft` | Reads a resume PDF in memory and drafts a work profile     | The app, for the admin        |
