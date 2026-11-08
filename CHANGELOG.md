@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Added
+
+- **Screen time:** A new Screen time screen lists every app you used today or this week. Open it from "See all apps" on the Home card. The data stays on the phone.
+
 ### Fixed
 
 - **Sports:** NBA teams show their logos in matches and standings, not only their short code.

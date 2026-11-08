@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { addDays, startOfDay, subDays } from "date-fns";
+import { addDays, differenceInCalendarDays, startOfDay, startOfWeek, subDays } from "date-fns";
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 
@@ -49,6 +49,26 @@ export function useScreenTime(day: Date, enabled: boolean) {
         day: days[0],
         weekMs: days.reduce((s, d) => s + d.totalMs, 0),
         dailyMs: days.map((d) => d.totalMs).reverse(),
+      };
+    },
+  });
+}
+
+/** This week, Monday 00:00 to now, in one read. `days` counts today, for the average. */
+export function useWeekUsage(enabled: boolean) {
+  const monday = startOfWeek(new Date(), { weekStartsOn: 1 });
+  return useQuery({
+    queryKey: ["screen-time", "week", monday.toISOString()],
+    enabled: enabled && isScreenTimeSupported,
+    staleTime: 60 * 1000,
+    queryFn: async () => {
+      const now = new Date();
+      const apps = (await ScreenTimeModule?.getUsage(monday.getTime(), now.getTime())) ?? [];
+      return {
+        start: monday,
+        apps,
+        totalMs: apps.reduce((s, a) => s + a.totalMs, 0),
+        days: differenceInCalendarDays(now, monday) + 1,
       };
     },
   });

@@ -12,9 +12,19 @@ export function useUsageAccess(): boolean {
 export function openUsageSettings() {}
 
 export function useScreenTime(_day: Date, _enabled: boolean) {
-  return { data: undefined, isPending: false, error: null } as {
-    data: { day: DayUsage; weekMs: number } | undefined;
+  return { data: undefined, isPending: false, error: null, refetch: () => {} } as {
+    data: { day: DayUsage; weekMs: number; dailyMs: number[] } | undefined;
     isPending: boolean;
     error: Error | null;
+    refetch: () => void;
+  };
+}
+
+export function useWeekUsage(_enabled: boolean) {
+  return { data: undefined, isPending: false, error: null, refetch: () => {} } as {
+    data: { start: Date; apps: AppUsage[]; totalMs: number; days: number } | undefined;
+    isPending: boolean;
+    error: Error | null;
+    refetch: () => void;
   };
 }
