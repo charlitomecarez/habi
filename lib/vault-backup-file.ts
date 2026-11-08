@@ -5,11 +5,13 @@ import { z } from "zod";
 // in Drive or Messenger defeats the vault.
 
 const FORMAT = "my-app-vault-backup";
-const VERSION = 1;
+// Version 2 adds the locked copies of the vault key (v1.4.0). Version 1 files still restore.
+const VERSION = 2;
+const nullableText = z.string().min(1).nullable().optional();
 
 const schema = z.object({
   format: z.literal(FORMAT),
-  version: z.literal(VERSION),
+  version: z.union([z.literal(1), z.literal(2)]),
   exportedAt: z.string(),
   settings: z.object({
     kdf: z.string().min(1),
@@ -18,6 +20,12 @@ const schema = z.object({
     kdf_mem_limit: z.number().int().positive(),
     key_check: z.string().min(1),
     key_check_nonce: z.string().min(1),
+    wrap_version: z.number().int().min(1).max(2).optional(),
+    pw_wrap: nullableText,
+    pw_wrap_nonce: nullableText,
+    recovery_salt: nullableText,
+    recovery_wrap: nullableText,
+    recovery_wrap_nonce: nullableText,
   }),
   entries: z.array(
     z.object({

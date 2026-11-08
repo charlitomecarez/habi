@@ -37,7 +37,7 @@ Do not put these items here:
 
 ### Added
 
-**Modules:** Settings › Modules switches off modules you do not use, on your account only. A copy of my-app without a sports or Groq key hides Sports, Find a work and Inbox by itself.
+**Vault:** A 6-digit PIN unlocks the vault on your phone. A recovery key, with a code to your email, resets a forgotten master password, and you can now change the master password. Your logins are not encrypted again. Needs the v1.4.0 APK.
 
 ### Removed
 

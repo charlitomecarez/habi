@@ -13,6 +13,8 @@ import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { DataRow } from "@/components/ui/DataRow";
+import { PinSheet } from "@/components/vault/PinSheet";
 import { SetUpVault, UnlockVault } from "@/components/vault/VaultGate";
 import { copySecret } from "@/lib/clipboard";
 import { useColors } from "@/lib/colors";
@@ -22,6 +24,7 @@ import {
   IDLE_LOCK_MINUTES,
   useExportBackup,
   useBiometricUnlock,
+  usePinUnlock,
   useSetBiometricUnlock,
   useVaultEntries,
   useVaultSettings,
@@ -50,6 +53,10 @@ function UnlockedVault() {
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
   const [choosingUnlock, setChoosingUnlock] = useState(false);
+  const [pinOpen, setPinOpen] = useState(false);
+  const pin = usePinUnlock();
+  const settings = useVaultSettings();
+  const hasRecovery = !!settings.data?.recovery_wrap;
 
   async function copyPassword(title: string, password: string) {
     await copySecret(password, CLEAR_CLIPBOARD_SECONDS * 1000);
@@ -79,7 +86,11 @@ function UnlockedVault() {
                 ? "Unlocked with fingerprint"
                 : unlockedWith === "face"
                   ? "Unlocked with face or fingerprint"
-                  : "Unlocked"}
+                  : unlockedWith === "pin"
+                    ? "Unlocked with PIN"
+                    : unlockedWith === "recovery"
+                      ? "Unlocked with your recovery key"
+                      : "Unlocked"}
             </Text>
           </View>
         </View>
@@ -232,6 +243,29 @@ function UnlockedVault() {
         </>
       ) : null}
       {setBiometric.error ? <Notice tone="danger">{setBiometric.error.message}</Notice> : null}
+
+      <View>
+        <Text accessibilityRole="header" className="py-2 font-semibold text-heading text-ink">
+          Vault security
+        </Text>
+        <DataRow
+          title="Recovery key"
+          detail={hasRecovery ? "Opens the vault if you forget the master password" : "Set up a recovery key"}
+          status={hasRecovery ? { label: "Set up", tone: "good" } : { label: "Not set up", tone: "watch" }}
+          onPress={() => router.push("/vault/recovery-key")}
+          chevron
+        />
+        {pin.data?.available ? (
+          <DataRow
+            title="PIN unlock"
+            detail={pin.data.on ? "On, on this phone" : "Off"}
+            onPress={() => setPinOpen(true)}
+            chevron
+          />
+        ) : null}
+        <DataRow title="Change master password" onPress={() => router.push("/vault/change-password")} chevron last />
+      </View>
+      {pinOpen ? <PinSheet on={!!pin.data?.on} onClose={() => setPinOpen(false)} /> : null}
 
       <Button
         label="Export backup"

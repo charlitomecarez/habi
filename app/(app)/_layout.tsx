@@ -52,6 +52,9 @@ export default function AppLayout() {
         <Stack.Screen name="weather/place" />
         <Stack.Screen name="news/index" />
         <Stack.Screen name="news/[id]" />
+        <Stack.Screen name="vault/recovery-key" />
+        <Stack.Screen name="vault/change-password" />
+        <Stack.Screen name="vault/recover" />
         <Stack.Screen name="reports/index" />
         <Stack.Screen name="reports/[id]" />
         <Stack.Screen name="ulam/index" />

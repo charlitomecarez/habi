@@ -2190,8 +2190,14 @@ export type Database = {
           kdf_salt: string;
           key_check: string;
           key_check_nonce: string;
+          pw_wrap: string | null;
+          pw_wrap_nonce: string | null;
+          recovery_salt: string | null;
+          recovery_wrap: string | null;
+          recovery_wrap_nonce: string | null;
           updated_at: string;
           user_id: string;
+          wrap_version: number;
         };
         Insert: {
           created_at?: string;
@@ -2201,8 +2207,14 @@ export type Database = {
           kdf_salt: string;
           key_check: string;
           key_check_nonce: string;
+          pw_wrap?: string | null;
+          pw_wrap_nonce?: string | null;
+          recovery_salt?: string | null;
+          recovery_wrap?: string | null;
+          recovery_wrap_nonce?: string | null;
           updated_at?: string;
           user_id?: string;
+          wrap_version?: number;
         };
         Update: {
           created_at?: string;
@@ -2212,8 +2224,14 @@ export type Database = {
           kdf_salt?: string;
           key_check?: string;
           key_check_nonce?: string;
+          pw_wrap?: string | null;
+          pw_wrap_nonce?: string | null;
+          recovery_salt?: string | null;
+          recovery_wrap?: string | null;
+          recovery_wrap_nonce?: string | null;
           updated_at?: string;
           user_id?: string;
+          wrap_version?: number;
         };
         Relationships: [];
       };
