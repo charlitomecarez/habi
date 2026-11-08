@@ -35,9 +35,9 @@ Do not put these items here:
 
 ## Unreleased
 
-### Added
+### Changed
 
-**Home:** Your Google photo is back in the Home header, and it opens More. Home shows the latest games of the teams you follow and the 3 newest headlines. Follow up to 12 teams from "Teams you follow" in Sports.
+**Tabs:** The screen slides when you tap a tab. It does not slide with reduce motion on.
 
 ### Fixed
 
