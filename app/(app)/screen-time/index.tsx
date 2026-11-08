@@ -1,6 +1,6 @@
 import { format, subDays } from "date-fns";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppRow } from "@/components/screen-time/AppRow";
@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { openUsageSettings, useScreenTime, useUsageAccess, useWeekUsage } from "@/lib/screen-time";
 import { appList, duration, type UsageRow } from "@/lib/screen-time-list";
 
@@ -53,7 +53,6 @@ function Failed({ onRetry }: { onRetry: () => void }) {
 
 /** Every app used today or this week. Read-only, so it has no primary action. The data stays on the phone. */
 export default function ScreenTimeScreen() {
-  const colors = useColors();
   const access = useUsageAccess();
   const [range, setRange] = useState<Range>("today");
   const [today] = useState(() => new Date());
@@ -91,7 +90,7 @@ export default function ScreenTimeScreen() {
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <Segmented label="Range" options={RANGES} value={range} onChange={setRange} />
         {current.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton layout="home" />
         ) : current.error ? (
           <Failed onRetry={() => void current.refetch()} />
         ) : range === "today" && day.data ? (

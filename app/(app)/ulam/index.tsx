@@ -2,9 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Skeleton } from "@/components/ui/Skeleton";
 import { MealSheet } from "@/components/ulam/MealSheet";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { UlamPhoto } from "@/components/ulam/UlamPhoto";
@@ -54,7 +55,7 @@ export default function UlamScreen() {
       />
 
       {days.isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton layout="detail" />
       ) : (
         <ScrollView contentContainerClassName="pb-8">
           <UlamPhoto ulam={ulam} />

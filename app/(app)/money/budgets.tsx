@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BudgetRow } from "@/components/money/BudgetRow";
@@ -9,13 +9,12 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useBudgetMonths, useBudgets, useDeleteBudget, useSaveBudget, type Budget } from "@/lib/budgets";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
 import { amountText, parseAmount, useCategories } from "@/lib/money";
 
 export default function BudgetsScreen() {
-  const colors = useColors();
   const budgets = useBudgets();
   const months = useBudgetMonths();
   const categories = useCategories();
@@ -58,7 +57,7 @@ export default function BudgetsScreen() {
           notification at 80% and at 100%.
         </Text>
         {budgets.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : budgets.error ? (
           <Notice tone="danger">Could not load your budgets. {budgets.error.message}</Notice>
         ) : (

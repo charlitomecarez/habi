@@ -11,6 +11,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { SetUpVault, UnlockVault } from "@/components/vault/VaultGate";
 import { copySecret } from "@/lib/clipboard";
 import { useColors } from "@/lib/colors";
@@ -115,7 +116,7 @@ function UnlockedVault() {
       ) : null}
 
       {isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton />
       ) : error ? (
         <View className="gap-3">
           <Notice tone="danger">Could not load the vault. {error.message}</Notice>
@@ -248,7 +249,6 @@ function quickUnlockLabel(mode: BiometricMode | null | undefined): string {
 }
 
 export default function VaultScreen() {
-  const colors = useColors();
   const key = useVaultStore((s) => s.key);
   const settings = useVaultSettings();
   useSecureScreen("vault");
@@ -258,7 +258,7 @@ export default function VaultScreen() {
       <ModuleHeader title="Vault" tone="records" />
 
       {settings.isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton />
       ) : settings.error ? (
         <View className="gap-3 px-5">
           <Notice tone="danger">Could not load the vault. {settings.error.message}</Notice>

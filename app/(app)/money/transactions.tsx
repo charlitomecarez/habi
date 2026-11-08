@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TransactionRow } from "@/components/money/TransactionRow";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useAccounts, useCategories, useTransactions, type Transaction } from "@/lib/money";
 
 /** Groups transactions by month, keeping the newest-first order. */
@@ -24,7 +24,6 @@ function byMonth(transactions: Transaction[]): { month: string; rows: Transactio
 }
 
 export default function TransactionsScreen() {
-  const colors = useColors();
   const transactions = useTransactions("history");
   const accounts = useAccounts();
   const categories = useCategories();
@@ -43,7 +42,7 @@ export default function TransactionsScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {transactions.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load transactions. {error.message}</Notice>

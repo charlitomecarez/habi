@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -15,8 +15,8 @@ import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
-import { useColors } from "@/lib/colors";
 import type { LocalPhoto } from "@/lib/photos";
 import {
   parseKm,
@@ -227,7 +227,6 @@ function LogServiceForm({
 }
 
 export default function LogServiceScreen() {
-  const colors = useColors();
   const { serviceId } = useLocalSearchParams<{ serviceId?: string }>();
   const vehicle = useVehicle();
   const due = useServiceDue(vehicle.data?.id);
@@ -255,7 +254,7 @@ export default function LogServiceScreen() {
             <Notice tone="danger">Could not load the vehicle. {(vehicle.error ?? due.error)?.message}</Notice>
           </View>
         ) : (
-          <ActivityIndicator color={colors.accent} className="pt-8" />
+          <Skeleton />
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>

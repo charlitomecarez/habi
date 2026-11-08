@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { formatPeso, useAccounts } from "@/lib/money";
 import { monthlyAmount, nextDate, nextText, scheduleText, useRecurring, type Recurring } from "@/lib/recurring";
 
@@ -32,7 +32,6 @@ function RecurringRow({ rule, accountName, last }: { rule: Recurring; accountNam
 }
 
 export default function RecurringScreen() {
-  const colors = useColors();
   const rules = useRecurring();
   const accounts = useAccounts();
   const list = rules.data ?? [];
@@ -51,7 +50,7 @@ export default function RecurringScreen() {
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3">
         {rules.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : rules.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your recurring items. Check your connection.</Notice>

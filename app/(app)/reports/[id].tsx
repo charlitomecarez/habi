@@ -1,17 +1,16 @@
 import { format, isToday, parseISO } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useMarkReportRead, useReports } from "@/lib/feedback";
 
 export default function ReportScreen() {
-  const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const reports = useReports();
   const markRead = useMarkReportRead();
@@ -23,7 +22,9 @@ export default function ReportScreen() {
         <ModuleHeader title="Report" />
         <View className="flex-1 items-center justify-center px-5">
           {reports.isPending ? (
-            <ActivityIndicator color={colors.accent} />
+            <View className="w-full flex-1 self-stretch pt-4">
+              <Skeleton layout="detail" />
+            </View>
           ) : (
             <Text className="text-center font-sans text-body text-ink-muted">This item no longer exists.</Text>
           )}

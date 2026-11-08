@@ -15,6 +15,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { ModuleLine } from "@/components/ui/ModuleLine";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { WeaveBand } from "@/components/ui/WeaveBand";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
@@ -224,7 +225,9 @@ export default function HomeScreen() {
               </Text>
               <Button label="Add todo" onPress={() => router.push("/todo/new")} />
             </View>
-          ) : loading ? null : (
+          ) : loading ? (
+            <Skeleton rows={3} />
+          ) : (
             <View>
               {visible.map((item) => (
                 <DataRow

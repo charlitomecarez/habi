@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ItemPhoto } from "@/components/inventory/ItemPhoto";
@@ -11,6 +11,7 @@ import { Fab } from "@/components/ui/Fab";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
   descendantIds,
@@ -155,7 +156,7 @@ export default function InventoryScreen() {
         ) : null}
 
         {items.isPending || locations.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your inventory. {error.message}</Notice>

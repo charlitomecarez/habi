@@ -2,12 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { entryNeighbours, moodLabel, useJournal, type JournalEntry } from "@/lib/journal";
 import { usePhotoUrls } from "@/lib/photos";
@@ -88,7 +89,7 @@ export default function JournalReadScreen() {
       />
 
       {journal.isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton layout="detail" />
       ) : journal.error ? (
         <View className="gap-3 p-5">
           <Notice tone="danger">Could not load this entry. Check your connection.</Notice>

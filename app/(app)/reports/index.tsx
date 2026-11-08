@@ -1,7 +1,7 @@
 import { format, isToday, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -10,7 +10,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useReports, type Report } from "@/lib/feedback";
 
 type Filter = "new" | "read" | "all";
@@ -30,7 +30,6 @@ function detail(r: Report): string {
 }
 
 export default function ReportsScreen() {
-  const colors = useColors();
   const reports = useReports();
   const [filter, setFilter] = useState<Filter>("new");
   const all = reports.data ?? [];
@@ -42,7 +41,7 @@ export default function ReportsScreen() {
       <ModuleHeader title="Reports" subtitle={`${fresh} new`} />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {reports.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : reports.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load reports. Check your connection.</Notice>

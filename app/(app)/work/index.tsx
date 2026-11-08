@@ -11,6 +11,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
   filterJobs,
@@ -86,7 +87,7 @@ export default function FindWorkScreen() {
       />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {jobs.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : jobs.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your jobs. Check your connection.</Notice>

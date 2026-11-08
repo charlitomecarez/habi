@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
@@ -9,7 +9,7 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { DIRECTION_OPTIONS, debtStatus, useDebts, type Debt, type DebtDirection } from "@/lib/debts";
 import { formatPeso } from "@/lib/money";
 
@@ -39,7 +39,6 @@ function DebtRow({ d, last }: { d: Debt; last: boolean }) {
 }
 
 export default function DebtsScreen() {
-  const colors = useColors();
   const [direction, setDirection] = useState<DebtDirection>("owed_to_me");
   const debts = useDebts();
   const all = debts.data ?? [];
@@ -60,7 +59,7 @@ export default function DebtsScreen() {
         <Segmented label="Show" options={DIRECTION_OPTIONS} value={direction} onChange={setDirection} />
 
         {debts.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : debts.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your debts. {debts.error.message}</Notice>

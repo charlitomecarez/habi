@@ -40,6 +40,10 @@ Do not put these items here:
 - **Sleep:** On Android, my-app finds last night's sleep from when your screen was off, with no prompt. A short phone check does not split the night. Tap the sleep to fix the times. It stays on the phone. Needs the v1.4.0 APK.
 - **Screen time:** A new Screen time screen lists every app you used today or this week. Open it from "See all apps" on the Home card. The data stays on the phone.
 
+### Changed
+
+**Loading:** Screens show a placeholder in the shape of the screen while they load, in place of a spinner. It stays still when reduce motion is on.
+
 ### Fixed
 
 - **Sports:** NBA teams show their logos in matches and standings, not only their short code.

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountCards } from "@/components/money/AccountCards";
@@ -17,6 +17,7 @@ import { DataRow, type RowStatus } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import { useGoals } from "@/lib/goals";
@@ -134,7 +135,7 @@ export default function MoneyScreen() {
       />
       <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
         {accounts.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your money. Check your connection.</Notice>

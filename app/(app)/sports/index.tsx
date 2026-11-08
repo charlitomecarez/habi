@@ -1,6 +1,6 @@
 import { format, isBefore, isToday, parseISO, startOfDay } from "date-fns";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TeamMark } from "@/components/sports/TeamMark";
@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   groupByDay,
   LEAGUES,
@@ -67,7 +67,6 @@ function StandingsTable({ rows, nba }: { rows: Standing[]; nba: boolean }) {
 }
 
 export default function SportsScreen() {
-  const colors = useColors();
   const [league, setLeague] = useState<LeagueId>("PL");
   const [view, setView] = useState<Mode>("matches");
   const sports = useSports(league);
@@ -105,7 +104,7 @@ export default function SportsScreen() {
         ) : null}
 
         {sports.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : sports.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load sports. Check your connection.</Notice>

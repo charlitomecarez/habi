@@ -46,7 +46,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 ## Design system
 
 - Use token classes only (see `tailwind.config.js`). No hex codes or bare px values in screens.
-- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ModuleHeader, DataRow, BarChart, WeaveBand, Sheet, ModuleLine, EmptyState, FadeIn, PressScale.
+- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ModuleHeader, DataRow, BarChart, WeaveBand, Sheet, ModuleLine, EmptyState, Skeleton, FadeIn, PressScale.
 - At most one primary action per screen. Read-only screens have none. Indigo marks the shell and the primary action. The open tab is a cream pill on indigo.
 - Section colours (`daily`, `people`, `home`, `records`) are for icons, tiles and module header fields, never for status.
 - Minimum touch target 48px; icon-only buttons need an accessibility label.

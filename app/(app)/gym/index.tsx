@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { addMonths, isSameMonth } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -10,6 +10,7 @@ import { Fab } from "@/components/ui/Fab";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { isGymDay, today, trainedOrMissed, useGym } from "@/lib/gym";
 import { scheduleText, timeLabel } from "@/lib/habits";
@@ -35,7 +36,7 @@ export default function GymScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {gym.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : gym.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your workouts. {gym.error.message}</Notice>

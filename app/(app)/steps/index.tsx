@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, subDays } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SleepSheet } from "@/components/steps/SleepSheet";
@@ -10,6 +10,7 @@ import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { openHealthConnect } from "@/lib/health-connect";
 import { sleepMinutes, sleepStrand, sleepText, useSleepLog } from "@/lib/sleep";
@@ -42,7 +43,7 @@ export default function StepsScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader title="Steps and sleep" subtitle="Today" tone="daily" />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
-        {steps.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
+        {steps.isPending ? <Skeleton layout="home" /> : null}
 
         {!steps.isPending && !access && !asked ? (
           <View className="gap-3">

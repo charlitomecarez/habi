@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -12,6 +12,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { MOODS, useDeleteEntry, useJournal, useSaveEntry, type JournalEntry, type Mood } from "@/lib/journal";
@@ -22,12 +23,13 @@ const ENTRY_LINES = 8;
 
 export default function JournalEntryScreen() {
   const { date } = useLocalSearchParams<{ date: string }>();
-  const colors = useColors();
   const journal = useJournal();
   if (journal.isPending) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page">
-        <ActivityIndicator color={colors.accent} />
+        <View className="w-full flex-1 self-stretch pt-4">
+          <Skeleton layout="detail" />
+        </View>
       </SafeAreaView>
     );
   }

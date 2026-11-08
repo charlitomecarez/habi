@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TodoRow } from "@/components/todos/TodoRow";
@@ -9,7 +9,7 @@ import { Chip } from "@/components/ui/Chip";
 import { Fab } from "@/components/ui/Fab";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { groupTodos, isOverdue, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
 
 type Filter = "all" | "today" | "upcoming" | "done";
@@ -45,7 +45,6 @@ function TodoList({ todos, onToggle }: { todos: Todo[]; onToggle: (todo: Todo) =
 }
 
 export default function TodosScreen() {
-  const colors = useColors();
   const [filter, setFilter] = useState<Filter>("all");
   const { data, isPending, error, refetch } = useTodos();
   const toggle = useToggleTodo();
@@ -83,7 +82,7 @@ export default function TodosScreen() {
         </View>
 
         {isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load todos. Check your connection.</Notice>

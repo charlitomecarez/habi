@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -13,6 +13,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { amountText, formatPeso, parseBalance, useAccounts, useCategories } from "@/lib/money";
 import { useAddItem, useCheckout, useRemoveItem, useShopping, useUpdateItem, type ShoppingItem } from "@/lib/shopping";
@@ -88,7 +89,6 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
 }
 
 export default function ShoppingScreen() {
-  const colors = useColors();
   const shopping = useShopping();
   const add = useAddItem();
   const checkout = useCheckout();
@@ -192,7 +192,7 @@ export default function ShoppingScreen() {
           </View>
 
           {shopping.isPending ? (
-            <ActivityIndicator color={colors.accent} className="py-8" />
+            <Skeleton />
           ) : (
             <>
               <View className="gap-2">

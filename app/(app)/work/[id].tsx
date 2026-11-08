@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -10,7 +10,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   jobScore,
   openApplication,
@@ -124,7 +124,6 @@ function JobBody({ job }: { job: JobMatch }) {
 }
 
 export default function JobScreen() {
-  const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const jobs = useJobs();
   const job = jobs.data?.matches.find((j) => j.id === id);
@@ -139,7 +138,7 @@ export default function JobScreen() {
       {job ? (
         <JobBody job={job} />
       ) : jobs.isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton layout="detail" />
       ) : (
         <Text className="p-5 text-center font-sans text-body text-ink-muted">This item no longer exists.</Text>
       )}

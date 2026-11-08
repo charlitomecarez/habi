@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DataRow } from "@/components/ui/DataRow";
@@ -7,11 +7,10 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { tripDatesText, tripLength, useTrips } from "@/lib/travel";
 
 export default function TravelScreen() {
-  const colors = useColors();
   const trips = useTrips();
   const list = trips.data ?? [];
 
@@ -26,7 +25,7 @@ export default function TravelScreen() {
       <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
         {trips.error ? <Notice tone="danger">Could not load your trips. {trips.error.message}</Notice> : null}
         {trips.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : list.length === 0 ? (
           <EmptyState
             drawing="calendar"

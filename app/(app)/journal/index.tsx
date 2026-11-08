@@ -1,18 +1,17 @@
 import { addMonths, format, isSameMonth, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { moodLabel, useJournal } from "@/lib/journal";
 
 export default function JournalScreen() {
-  const colors = useColors();
   const journal = useJournal();
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
@@ -33,7 +32,7 @@ export default function JournalScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {journal.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : journal.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your journal. {journal.error.message}</Notice>

@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
@@ -10,6 +10,7 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
   canRetry,
@@ -97,7 +98,7 @@ export default function InboxScreen() {
 
         <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 
-        {list.isPending || access.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
+        {list.isPending || access.isPending ? <Skeleton /> : null}
         {!list.isPending && !access.isPending && messages.length === 0 ? (
           isAdmin && !canRecord ? (
             <EmptyState
