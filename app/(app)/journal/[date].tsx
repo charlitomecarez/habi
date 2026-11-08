@@ -27,7 +27,7 @@ export default function JournalEntryScreen() {
   if (journal.isPending) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page">
-        <View className="w-full flex-1 self-stretch pt-4">
+        <View className="w-full flex-1 self-stretch px-5 pt-4">
           <Skeleton layout="detail" />
         </View>
       </SafeAreaView>
