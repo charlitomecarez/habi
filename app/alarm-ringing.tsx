@@ -6,6 +6,7 @@ import { BackHandler, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { Notice } from "@/components/ui/Notice";
 import { ringingAlarmId, scheduleAwakeCheck, stopRinging } from "@/lib/alarm";
 import {
@@ -121,7 +122,7 @@ function SumStep({
   const colors = useColors();
   const [text, setText] = useState("");
   return (
-    <View className="flex-1 items-center justify-center gap-4">
+    <KeyboardAvoidingView className="flex-1 items-center justify-center gap-4">
       <Text className="font-sans text-label text-ink-muted">
         Sum {position} of {total}
       </Text>
@@ -142,7 +143,7 @@ function SumStep({
         }}
         className="h-input w-full rounded-input border border-border-input bg-surface-card px-4 text-center font-sans text-body text-ink"
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

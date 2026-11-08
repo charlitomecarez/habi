@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ReportSheet } from "@/components/more/ReportSheet";
 import { SettingsSection } from "@/components/settings/SettingsSection";
 import { Button } from "@/components/ui/Button";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleLine } from "@/components/ui/ModuleLine";
 import { FadeIn } from "@/components/ui/Motion";
 import { TabField } from "@/components/ui/ModuleHeader";
@@ -33,7 +34,7 @@ export default function MoreScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <TabField lead="More" />
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-5 pb-8 pt-4">
+      <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-5 pb-8 pt-4">
         <View className="px-5">
           <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
             <TextInput
@@ -101,7 +102,7 @@ export default function MoreScreen() {
         <View className="px-5">
           <SettingsSection />
         </View>
-      </ScrollView>
+      </KeyboardScrollView>
       <ReportSheet visible={reporting} onClose={() => setReporting(false)} />
     </SafeAreaView>
   );

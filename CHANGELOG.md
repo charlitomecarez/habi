@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Fixed
+
+- **Keyboard:** The keyboard no longer covers the text field on More search, Inventory search, Vault search, Content, Weather place, a job, and the alarm sums. A test now fails when a screen has a text field and no keyboard handling.
+
 ## [v1.3.0](docs/releases/v1.3.0.md) - 2026-11-07
 
 ### Added

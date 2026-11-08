@@ -1,11 +1,12 @@
 import { format, parseISO } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
@@ -49,7 +50,7 @@ function JobBody({ job }: { job: JobMatch }) {
   }
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+    <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
       <View className="flex-row items-center justify-between gap-3">
         <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} className="font-bold text-display text-ink">
           {job.score.toFixed(1)}
@@ -98,7 +99,7 @@ function JobBody({ job }: { job: JobMatch }) {
           </Text>
         ) : null}
       </View>
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 

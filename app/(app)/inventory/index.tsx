@@ -1,13 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ItemPhoto } from "@/components/inventory/ItemPhoto";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Fab } from "@/components/ui/Fab";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
@@ -105,7 +106,7 @@ export default function InventoryScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2" keyboardShouldPersistTaps="handled">
+      <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2" keyboardShouldPersistTaps="handled">
         <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
           <Ionicons name="search" size={18} color={colors.inkMuted} />
           <TextInput
@@ -189,7 +190,7 @@ export default function InventoryScreen() {
             ))}
           </View>
         )}
-      </ScrollView>
+      </KeyboardScrollView>
 
       <Fab
         label="Add item"

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { addMonths, format, isSameMonth } from "date-fns";
 import { router } from "expo-router";
 import { useState, type ReactNode } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { nextActionText, publishStatus, VideoCard } from "@/components/content/VideoCard";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Input } from "@/components/ui/Input";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
@@ -307,7 +308,7 @@ export default function ContentPlannerScreen() {
         </Text>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <Segmented label="View" options={VIEWS} value={view} onChange={setView} />
         {videos.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-8" />
@@ -325,7 +326,7 @@ export default function ContentPlannerScreen() {
         ) : (
           <Ideas videos={videos.data} />
         )}
-      </ScrollView>
+      </KeyboardScrollView>
 
       <Fab
         label={view === "ideas" ? "Add idea" : "Add video"}

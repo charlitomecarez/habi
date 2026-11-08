@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
@@ -56,7 +57,7 @@ function UnlockedVault() {
   const visible = entries.filter((e) => matches(e, query));
 
   return (
-    <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3" keyboardShouldPersistTaps="handled">
+    <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3" keyboardShouldPersistTaps="handled">
       <View className="flex-row items-start justify-between gap-3">
         <View className="flex-1 gap-1">
           <View className="flex-row items-center gap-1">
@@ -238,7 +239,7 @@ function UnlockedVault() {
         a copy from now.
       </Text>
       {exportBackup.error ? <Notice tone="danger">{exportBackup.error.message}</Notice> : null}
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 
