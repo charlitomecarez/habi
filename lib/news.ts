@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { Linking } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 
 import { downFeeds } from "@/lib/news-time";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
 // Headlines that news-sync reads from public RSS feeds. Every signed-in account reads the same rows,
-// and only the Edge Function writes them. A story opens in the browser.
+// and only the Edge Function writes them. A story opens a story page; the full article opens in an
+// in-app browser (Chrome Custom Tabs on Android, a new tab on the web). No article body is stored.
 
 export type NewsItem = Tables<"news_items">;
 export type NewsSection = "ph" | "world";
@@ -67,4 +68,29 @@ export function useLatestNews(count = 3, enabled = true) {
   });
 }
 
-export const openStory = (item: Pick<NewsItem, "url">) => Linking.openURL(item.url);
+/** One story, for the story page. Null when it is gone (older than 3 days). */
+export function useStory(id: string | undefined) {
+  return useQuery({
+    queryKey: [...KEY, "story", id],
+    enabled: !!id,
+    staleTime: 10 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("news_items").select("*").eq("id", id!).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+/** The site's name for the line under the button, such as "inquirer.net". */
+export function siteName(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "the outlet's site";
+  }
+}
+
+/** The full article in an in-app browser that slides over my-app. Back returns to the story. */
+export const readFullStory = (item: Pick<NewsItem, "url">) =>
+  WebBrowser.openBrowserAsync(item.url, { showTitle: true, enableBarCollapsing: true });

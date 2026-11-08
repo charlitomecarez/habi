@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { decodeEntities, httpsUrl, parseFeed, pickImage, plainText, publishedAt, type Feed } from "./news";
+import {
+  decodeEntities,
+  httpsUrl,
+  MAX_SUMMARY,
+  parseFeed,
+  pickImage,
+  plainText,
+  publishedAt,
+  summaryText,
+  type Feed,
+} from "./news";
 
 // Every outlet, headline and address here is made up.
 const feed: Feed = { source: "Example News", section: "ph", url: "https://example.com/feed" };
@@ -100,5 +110,43 @@ describe("helpers", () => {
     expect(publishedAt(null, now)).toBe(new Date(now).toISOString());
     expect(publishedAt("Mon, 09 Nov 2026 10:00:00 GMT", now)).toBe(new Date(now).toISOString());
     expect(publishedAt("not a date", now)).toBe(new Date(now).toISOString());
+  });
+});
+
+describe("summaryText", () => {
+  it("keeps the feed's short text as plain text", () => {
+    expect(summaryText("<![CDATA[<p>Rain closed <b>two</b> roads.</p>]]>")).toBe("Rain closed two roads.");
+  });
+
+  it("removes the WordPress footer and read-more lines", () => {
+    expect(summaryText("Rain closed two roads. The post Rain in the city appeared first on Example News.")).toBe(
+      "Rain closed two roads.",
+    );
+    expect(summaryText("Rain closed two roads. Continue reading...")).toBe("Rain closed two roads.");
+    expect(summaryText("Rain closed two roads and [&#8230;]")).toBe("Rain closed two roads and…");
+  });
+
+  it("cuts a long text at a sentence end under the limit", () => {
+    const long = `${"A sentence that goes on for a while. ".repeat(20)}`;
+    const out = summaryText(long)!;
+    expect(out.length).toBeLessThanOrEqual(MAX_SUMMARY);
+    expect(out.endsWith(".")).toBe(true);
+  });
+
+  it("keeps only the first paragraph", () => {
+    expect(summaryText("&lt;p&gt;The standfirst.&lt;/p&gt;&lt;p&gt;The article starts here.&lt;/p&gt;")).toBe(
+      "The standfirst.",
+    );
+  });
+
+  it("is null when empty or the same as the title", () => {
+    expect(summaryText(null)).toBeNull();
+    expect(summaryText("   ")).toBeNull();
+    expect(summaryText("Same words", "Same words")).toBeNull();
+  });
+
+  it("is part of each parsed story", () => {
+    const xml = `<rss><item><title>T</title><link>https://example.com/a</link><description>Short text.</description></item></rss>`;
+    expect(parseFeed(xml, { source: "X", section: "ph", url: "" })[0].summary).toBe("Short text.");
   });
 });

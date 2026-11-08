@@ -1045,6 +1045,7 @@ export type Database = {
           published_at: string;
           section: string;
           source: string;
+          summary: string | null;
           title: string;
           url: string;
         };
@@ -1055,6 +1056,7 @@ export type Database = {
           published_at: string;
           section: string;
           source: string;
+          summary?: string | null;
           title: string;
           url: string;
         };
@@ -1065,6 +1067,7 @@ export type Database = {
           published_at?: string;
           section?: string;
           source?: string;
+          summary?: string | null;
           title?: string;
           url?: string;
         };

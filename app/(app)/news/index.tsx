@@ -1,4 +1,5 @@
 import { format, parseISO } from "date-fns";
+import { router } from "expo-router";
 import { useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +12,7 @@ import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
-import { NEWS_SECTIONS, openStory, useNews, type NewsItem } from "@/lib/news";
+import { NEWS_SECTIONS, useNews, type NewsItem } from "@/lib/news";
 import { timeAgo } from "@/lib/news-time";
 
 function Story({ item, last, now }: { item: NewsItem; last: boolean; now: Date }) {
@@ -20,13 +21,13 @@ function Story({ item, last, now }: { item: NewsItem; last: boolean; now: Date }
       title={item.title}
       detail={`${item.source} · ${timeAgo(parseISO(item.published_at), now)}`}
       trailing={item.image_url ? <NewsImage uri={item.image_url} /> : null}
-      onPress={() => void openStory(item)}
+      onPress={() => router.push({ pathname: "/news/[id]", params: { id: item.id } })}
       last={last}
     />
   );
 }
 
-/** Headlines from public feeds, Philippines first. Read-only: a story opens in the browser. */
+/** Headlines from public feeds, Philippines first. Read-only: a story opens its story page. */
 export default function NewsScreen() {
   const colors = useColors();
   const news = useNews();
@@ -85,7 +86,7 @@ export default function NewsScreen() {
               );
             })}
             <Text className="font-sans text-caption text-ink-muted">
-              Headlines from each outlet&apos;s public feed. A story opens on its site.
+              Headlines and summaries from each outlet&apos;s public feed. The full story opens on its site.
             </Text>
           </>
         )}

@@ -51,6 +51,7 @@ export default function AppLayout() {
         <Stack.Screen name="weather/index" />
         <Stack.Screen name="weather/place" />
         <Stack.Screen name="news/index" />
+        <Stack.Screen name="news/[id]" />
         <Stack.Screen name="reports/index" />
         <Stack.Screen name="reports/[id]" />
         <Stack.Screen name="ulam/index" />

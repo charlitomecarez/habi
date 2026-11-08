@@ -26,6 +26,7 @@ export type NewsItem = {
   title: string;
   url: string;
   image_url: string | null;
+  summary: string | null;
   published_at: string;
 };
 
@@ -137,6 +138,31 @@ export function publishedAt(raw: string | null, now: number): string {
 }
 
 const MAX_TITLE = 300;
+/** The most summary kept. It is the feed's own short text, never the article body. */
+export const MAX_SUMMARY = 400;
+
+/**
+ * The feed's short description as plain text, cut at a sentence end under 400 characters. WordPress
+ * lines such as "The post … appeared first on …" and "Continue reading" are removed. Null when empty.
+ */
+export function summaryText(raw: string | null, title = ""): string | null {
+  if (!raw) return null;
+  // A description in paragraphs (The Guardian) leads with its standfirst. Keep only that one.
+  const html = decodeEntities(unwrapCdata(raw));
+  const first = html.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1];
+  let text = plainText(first && plainText(first) ? first : raw)
+    .replace(/The post .{0,400}? appeared first on .{0,120}?\.?$/i, "")
+    .replace(/\s*(Continue reading|Read more|Read full story)\b.*$/i, "")
+    .replace(/\s*\[(…|\.\.\.)\]\s*$/, "…")
+    .trim();
+  if (!text || text === title) return null;
+  if (text.length > MAX_SUMMARY) {
+    const cut = text.slice(0, MAX_SUMMARY);
+    const end = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+    text = end > 80 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(" ")).trimEnd()}…`;
+  }
+  return text;
+}
 
 /** The stories in one RSS feed, newest first, at most PER_FEED. A story with no title or no https link is skipped. */
 export function parseFeed(xml: string, feed: Feed, now = Date.now()): NewsItem[] {
@@ -157,6 +183,7 @@ export function parseFeed(xml: string, feed: Feed, now = Date.now()): NewsItem[]
       title,
       url,
       image_url: pickImage(item),
+      summary: summaryText(field(item, "description"), title),
       published_at: publishedAt(field(item, "pubDate") ?? field(item, "dc:date"), now),
     });
   }

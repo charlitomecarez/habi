@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 
 import { NewsImage } from "@/components/news/NewsImage";
 import { DataRow } from "@/components/ui/DataRow";
-import { openStory, useLatestNews } from "@/lib/news";
+import { useLatestNews } from "@/lib/news";
 import { timeAgo } from "@/lib/news-time";
 
 /** The 3 newest Philippine headlines and a row to News. It hides, heading too, when there is no news. */
@@ -25,7 +25,7 @@ export function LatestNews({ ready }: { ready: boolean }) {
           title={item.title}
           detail={`${item.source} · ${timeAgo(parseISO(item.published_at), now)}`}
           trailing={item.image_url ? <NewsImage uri={item.image_url} /> : null}
-          onPress={() => void openStory(item)}
+          onPress={() => router.push({ pathname: "/news/[id]", params: { id: item.id } })}
         />
       ))}
       <DataRow title="All news" onPress={() => router.push("/news")} chevron last />
