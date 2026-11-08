@@ -12,7 +12,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { useColors } from "@/lib/colors";
 import {
-  fitWord,
+  jobScore,
   openApplication,
   useDraftLetter,
   useJobs,
@@ -34,6 +34,7 @@ function JobBody({ job }: { job: JobMatch }) {
   const update = useUpdateJob();
   const [edited, setEdited] = useState<string | null>(null);
   const [openFailed, setOpenFailed] = useState(false);
+  const score = jobScore(job);
   const letter = edited ?? job.letter;
 
   async function apply(text: string | null) {
@@ -51,20 +52,39 @@ function JobBody({ job }: { job: JobMatch }) {
 
   return (
     <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
-      <View className="flex-row items-center justify-between gap-3">
-        <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} className="font-bold text-display text-ink">
-          {job.score.toFixed(1)}
-        </Text>
-        <Text className={`font-semibold text-label ${job.score >= 3.5 ? "text-good" : "text-watch"}`}>
-          {fitWord(job.score)}
-        </Text>
-      </View>
-      <View className="gap-1">
-        <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-          Why it fits
-        </Text>
-        <Text className="font-sans text-body text-ink">{job.reason}</Text>
-      </View>
+      {job.score === null ? (
+        <View className="gap-2">
+          <View className="flex-row items-center justify-between gap-3">
+            <Text className="font-bold text-display text-ink">—</Text>
+            <Text className="font-semibold text-label text-ink-muted">Not ranked yet</Text>
+          </View>
+          <Text className="font-sans text-body text-ink">
+            I could not rank this job yet. I try again on the next search at 6 AM.
+          </Text>
+        </View>
+      ) : (
+        <>
+          <View className="flex-row items-center justify-between gap-3">
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={1}
+              className="font-bold text-display text-ink"
+            >
+              {score.value}
+            </Text>
+            <Text className={`font-semibold text-label ${score.status.tone === "good" ? "text-good" : "text-watch"}`}>
+              {score.status.label}
+            </Text>
+          </View>
+          <View className="gap-1">
+            <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+              Why it fits
+            </Text>
+            <Text className="font-sans text-body text-ink">{job.reason}</Text>
+          </View>
+        </>
+      )}
 
       {draft.error ? <Notice tone="danger">{draft.error.message}</Notice> : null}
       {openFailed ? <Notice tone="danger">Could not open this link.</Notice> : null}

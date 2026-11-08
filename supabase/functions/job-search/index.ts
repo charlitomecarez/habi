@@ -7,15 +7,22 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import {
+  chunk,
   countryCode,
   dedupe,
+  jobsToKeep,
   letterPrompt,
   parseScores,
+  RANK_BATCH,
+  RANK_TRIES,
+  retryWaitMs,
   scorePrompt,
   toJob,
+  TOTAL_WAIT_MS,
   type FreehireJob,
   type Job,
   type JobProfile,
+  type Ranked,
 } from "../_shared/jobs.ts";
 
 const DEFAULT_MODEL = "openai/gpt-oss-120b";
@@ -23,8 +30,9 @@ const SEARCH_URL = "https://freehire.me/api/v1/jobs/search";
 const MAX_SEARCHES = 4;
 const PER_SEARCH = 25;
 const MAX_SCORED = 40;
-const SCORE_BATCH = 20;
 const KEEP_NEW = 20;
+// Saved jobs with no rank that the next run ranks first.
+const RERANK = 10;
 const CLEAN_DAYS = 30;
 const POSTED_WITHIN_DAYS = "14";
 
@@ -35,12 +43,23 @@ const CORS = {
 };
 const reply = (body: unknown, status = 200) => Response.json(body, { status, headers: CORS });
 
+/** The job site did not answer. */
+class SearchDown extends Error {}
+/** Groq said 429. It carries the wait that Groq asked for. */
+class GroqBusy extends Error {
+  constructor(readonly waitMs: number) {
+    super("Groq 429");
+  }
+}
+type LastError = "groq_busy" | "search_down" | "failed";
+const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
+
 async function search(params: Record<string, string>, flags: { remote?: boolean; visa?: boolean }): Promise<Job[]> {
   const query = new URLSearchParams({ limit: String(PER_SEARCH), posted_within_days: POSTED_WITHIN_DAYS, ...params });
   const res = await fetch(`${SEARCH_URL}?${query}`, {
     headers: { "User-Agent": "javaplum/my-app/1.3 (private app; personal job search)" },
   });
-  if (!res.ok) throw new Error(`freehire ${res.status}`);
+  if (!res.ok) throw new SearchDown(`freehire ${res.status}`);
   const json = (await res.json()) as { data: FreehireJob[]; meta?: { ignored_params?: unknown[] } };
   // An unknown filter is ignored, and it would return the whole catalogue.
   if (json.meta?.ignored_params?.length) throw new Error("freehire ignored a filter");
@@ -74,6 +93,7 @@ async function askGroq(prompt: string, json: boolean): Promise<string> {
       temperature: 0.3,
     }),
   });
+  if (res.status === 429) throw new GroqBusy(retryWaitMs(res.headers.get("retry-after")));
   if (!res.ok) throw new Error(`Groq ${res.status}`);
   const body = await res.json();
   const text: string | undefined = body?.choices?.[0]?.message?.content;
@@ -81,12 +101,99 @@ async function askGroq(prompt: string, json: boolean): Promise<string> {
   return text;
 }
 
+/**
+ * Ranks jobs 5 at a time. After a 429 it waits as Groq asks and tries again, up to 3 tries a batch,
+ * and all waits in one run stay under 60 seconds. When ranking stops, the rest stay unranked.
+ */
+async function rank(
+  profile: JobProfile,
+  jobs: readonly Job[],
+  budget: { waitedMs: number },
+): Promise<{ ranked: Ranked[]; unranked: Job[]; error: LastError | null }> {
+  const ranked: Ranked[] = [];
+  const unranked: Job[] = [];
+  let error: LastError | null = null;
+  for (const batch of chunk(jobs, RANK_BATCH)) {
+    if (error) {
+      unranked.push(...batch);
+      continue;
+    }
+    for (let tries = 1; ; tries++) {
+      try {
+        const scores = parseScores(await askGroq(scorePrompt(profile, batch), true), batch.length);
+        const done = new Set(scores.map((s) => s.i));
+        for (const s of scores) ranked.push({ ...batch[s.i], score: s.score, reason: s.reason });
+        // A job that Groq left out of its reply stays unranked.
+        unranked.push(...batch.filter((_, i) => !done.has(i)));
+        break;
+      } catch (failure) {
+        const busy = failure instanceof GroqBusy;
+        if (busy && tries < RANK_TRIES && budget.waitedMs + failure.waitMs <= TOTAL_WAIT_MS) {
+          budget.waitedMs += failure.waitMs;
+          await sleep(failure.waitMs);
+          continue;
+        }
+        error = busy ? "groq_busy" : "failed";
+        unranked.push(...batch);
+        break;
+      }
+    }
+  }
+  return { ranked, unranked, error };
+}
+
 async function runFor(supabase: SupabaseClient, userId: string): Promise<number> {
   const { data: profile, error } = await supabase.from("job_profiles").select("*").eq("user_id", userId).maybeSingle();
   if (error) throw error;
   if (!profile) return 0;
-  const now = new Date().toISOString();
-  await supabase.from("job_profiles").update({ last_run_at: now }).eq("user_id", userId);
+  await supabase.from("job_profiles").update({ last_run_at: new Date().toISOString() }).eq("user_id", userId);
+  try {
+    const saved = await searchAndSave(supabase, userId, profile as JobProfile);
+    await supabase
+      .from("job_profiles")
+      .update({ last_ok_at: new Date().toISOString(), last_new_count: saved.count, last_error: saved.error })
+      .eq("user_id", userId);
+    return saved.count;
+  } catch (failure) {
+    const code: LastError = failure instanceof SearchDown ? "search_down" : "failed";
+    await supabase.from("job_profiles").update({ last_error: code }).eq("user_id", userId);
+    throw failure;
+  }
+}
+
+async function searchAndSave(
+  supabase: SupabaseClient,
+  userId: string,
+  profile: JobProfile,
+): Promise<{ count: number; error: LastError | null }> {
+  const budget = { waitedMs: 0 };
+
+  // First, rank saved jobs that the last run could not rank.
+  const { data: waiting, error: waitingError } = await supabase
+    .from("job_matches")
+    .select("external_id, title, company, location, is_remote, visa_offered, summary, url, posted_on")
+    .eq("user_id", userId)
+    .eq("status", "new")
+    .is("score", null)
+    .order("created_at", { ascending: false })
+    .limit(RERANK);
+  if (waitingError) throw waitingError;
+  let lastError: LastError | null = null;
+  if (waiting.length > 0) {
+    const again = await rank(
+      profile,
+      waiting.map((j) => ({ ...j, summary: j.summary ?? "" }) as Job),
+      budget,
+    );
+    lastError = again.error;
+    for (const job of again.ranked) {
+      await supabase
+        .from("job_matches")
+        .update({ score: job.score, reason: job.reason })
+        .eq("user_id", userId)
+        .eq("external_id", job.external_id);
+    }
+  }
 
   const { data: known, error: knownError } = await supabase
     .from("job_matches")
@@ -95,19 +202,14 @@ async function runFor(supabase: SupabaseClient, userId: string): Promise<number>
   if (knownError) throw knownError;
   const seen = new Set(known.map((k) => k.external_id));
 
-  const fresh = (await findJobs(profile as JobProfile)).filter((j) => !seen.has(j.external_id)).slice(0, MAX_SCORED);
+  const fresh = (await findJobs(profile)).filter((j) => !seen.has(j.external_id)).slice(0, MAX_SCORED);
+  // Once Groq is busy, the new jobs are saved unranked with no more waiting.
+  const result = lastError ? { ranked: [], unranked: fresh, error: lastError } : await rank(profile, fresh, budget);
+  const keep = jobsToKeep(result.ranked, result.unranked, KEEP_NEW);
 
-  const scored: (Job & { score: number; reason: string })[] = [];
-  for (let start = 0; start < fresh.length; start += SCORE_BATCH) {
-    const batch = fresh.slice(start, start + SCORE_BATCH);
-    const text = await askGroq(scorePrompt(profile as JobProfile, batch), true);
-    for (const s of parseScores(text, batch.length)) scored.push({ ...batch[s.i], score: s.score, reason: s.reason });
-  }
-  const best = scored.sort((a, b) => b.score - a.score).slice(0, KEEP_NEW);
-
-  if (best.length > 0) {
+  if (keep.length > 0) {
     const { error: saveError } = await supabase.from("job_matches").upsert(
-      best.map((j) => ({ ...j, user_id: userId })),
+      keep.map((j) => ({ ...j, user_id: userId })),
       { onConflict: "user_id,external_id", ignoreDuplicates: true },
     );
     if (saveError) throw saveError;
@@ -120,11 +222,7 @@ async function runFor(supabase: SupabaseClient, userId: string): Promise<number>
     .eq("user_id", userId)
     .in("status", ["new", "hidden"])
     .lt("created_at", oldest);
-  await supabase
-    .from("job_profiles")
-    .update({ last_ok_at: new Date().toISOString(), last_new_count: best.length })
-    .eq("user_id", userId);
-  return best.length;
+  return { count: keep.length, error: result.error };
 }
 
 Deno.serve(async (req) => {

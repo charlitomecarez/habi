@@ -214,3 +214,48 @@ export function fitWord(score: number): string {
   if (score >= 3.5) return "Good fit";
   return score >= 2.5 ? "Weak fit" : "Poor fit";
 }
+
+/** Jobs per Groq ranking request. 20 went over the free model's tokens a minute. */
+export const RANK_BATCH = 5;
+/** Longest single wait after a Groq 429. */
+export const MAX_RETRY_WAIT_MS = 20_000;
+/** All waits in one run stay under this, so the run ends inside the cron time limit. */
+export const TOTAL_WAIT_MS = 60_000;
+/** Tries for one batch, the first one included. */
+export const RANK_TRIES = 3;
+
+export function chunk<T>(list: readonly T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let start = 0; start < list.length; start += size) out.push(list.slice(start, start + size));
+  return out;
+}
+
+/**
+ * How long to wait after a 429, from Groq's retry-after header (seconds, or an HTTP date).
+ * With no usable header, it waits 5 seconds. Never longer than MAX_RETRY_WAIT_MS.
+ */
+export function retryWaitMs(retryAfter: string | null, now = Date.now()): number {
+  let ms = 5_000;
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds)) ms = seconds * 1000;
+    else {
+      const at = Date.parse(retryAfter);
+      if (Number.isFinite(at)) ms = at - now;
+    }
+  }
+  return Math.min(Math.max(Math.ceil(ms), 0), MAX_RETRY_WAIT_MS);
+}
+
+export type Ranked = Job & { score: number; reason: string };
+export type Unranked = Job & { score: null; reason: null };
+
+/** The jobs to save: ranked jobs best first, then unranked ones in search order, at most `keep`. */
+export function jobsToKeep(ranked: readonly Ranked[], unranked: readonly Job[], keep: number): (Ranked | Unranked)[] {
+  const best = [...ranked].sort((a, b) => b.score - a.score);
+  const rest = unranked.map((j) => ({ ...j, score: null, reason: null }) as Unranked);
+  return [...best, ...rest].slice(0, keep);
+}
+
+/** The words for a job that Groq has not ranked. */
+export const NOT_RANKED = "Not ranked";

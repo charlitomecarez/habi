@@ -717,8 +717,8 @@ export type Database = {
           letter: string | null;
           location: string | null;
           posted_on: string | null;
-          reason: string;
-          score: number;
+          reason: string | null;
+          score: number | null;
           status: string;
           summary: string | null;
           title: string;
@@ -737,8 +737,8 @@ export type Database = {
           letter?: string | null;
           location?: string | null;
           posted_on?: string | null;
-          reason: string;
-          score: number;
+          reason?: string | null;
+          score?: number | null;
           status?: string;
           summary?: string | null;
           title: string;
@@ -757,8 +757,8 @@ export type Database = {
           letter?: string | null;
           location?: string | null;
           posted_on?: string | null;
-          reason?: string;
-          score?: number;
+          reason?: string | null;
+          score?: number | null;
           status?: string;
           summary?: string | null;
           title?: string;
@@ -774,6 +774,7 @@ export type Database = {
           countries: string[];
           created_at: string;
           id: string;
+          last_error: string | null;
           last_new_count: number;
           last_ok_at: string | null;
           last_run_at: string | null;
@@ -789,6 +790,7 @@ export type Database = {
           countries?: string[];
           created_at?: string;
           id?: string;
+          last_error?: string | null;
           last_new_count?: number;
           last_ok_at?: string | null;
           last_run_at?: string | null;
@@ -804,6 +806,7 @@ export type Database = {
           countries?: string[];
           created_at?: string;
           id?: string;
+          last_error?: string | null;
           last_new_count?: number;
           last_ok_at?: string | null;
           last_run_at?: string | null;

@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  chunk,
   countryCode,
   dedupe,
   fitWord,
+  jobsToKeep,
+  MAX_RETRY_WAIT_MS,
   parseDraft,
   parseScores,
+  RANK_BATCH,
+  retryWaitMs,
   safeUrl,
   scorePrompt,
   scrubContacts,
@@ -113,5 +118,47 @@ describe("words", () => {
   it("finds country codes", () => {
     expect(countryCode(" Philippines ")).toBe("ph");
     expect(countryCode("Atlantis")).toBeNull();
+  });
+});
+
+describe("ranking under the Groq limit", () => {
+  const job = (n: number) => ({ ...toJob({ ...row, public_slug: `job-${n}` })!, external_id: `job-${n}` });
+
+  it("splits jobs into batches of 5", () => {
+    const sizes = chunk(
+      Array.from({ length: 12 }, (_, i) => i),
+      RANK_BATCH,
+    ).map((b) => b.length);
+    expect(sizes).toEqual([5, 5, 2]);
+    expect(chunk([], RANK_BATCH)).toEqual([]);
+  });
+
+  it("waits what retry-after says, at most 20 seconds", () => {
+    expect(retryWaitMs("3")).toBe(3000);
+    expect(retryWaitMs("0.5")).toBe(500);
+    expect(retryWaitMs("90")).toBe(MAX_RETRY_WAIT_MS);
+    expect(retryWaitMs(null)).toBe(5000);
+    expect(retryWaitMs("not a time")).toBe(5000);
+    const now = Date.parse("2026-11-08T00:00:00Z");
+    expect(retryWaitMs("Sun, 08 Nov 2026 00:00:07 GMT", now)).toBe(7000);
+    expect(retryWaitMs("Sun, 08 Nov 2026 00:00:00 GMT", now + 4000)).toBe(0);
+  });
+
+  it("keeps ranked jobs first, then unranked ones", () => {
+    const ranked = [
+      { ...job(1), score: 3.1, reason: "Some fit" },
+      { ...job(2), score: 4.6, reason: "Strong fit" },
+    ];
+    const kept = jobsToKeep(ranked, [job(3), job(4)], 3);
+    expect(kept.map((j) => [j.external_id, j.score])).toEqual([
+      ["job-2", 4.6],
+      ["job-1", 3.1],
+      ["job-3", null],
+    ]);
+    expect(kept[2].reason).toBeNull();
+  });
+
+  it("saves every job unranked when Groq ranked none", () => {
+    expect(jobsToKeep([], [job(1), job(2)], 20).every((j) => j.score === null)).toBe(true);
   });
 });
