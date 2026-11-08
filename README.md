@@ -124,6 +124,7 @@ Add a new migration file for each schema change. Do not edit a migration that is
 | `job-search`        | Finds and ranks jobs, and drafts a cover letter on request | pg_cron, 6:00 AM, and the app |
 | `sports-sync`       | Stores matches and standings for six leagues               | pg_cron, 7:00 AM and 3:00 PM  |
 | `news-sync`         | Stores headlines from public RSS feeds                     | pg_cron, every 2 hours        |
+| `app-features`      | Says which keyed modules this server can run (yes or no)   | The app, on start             |
 | `import-statement`  | Reads one PDF statement in memory and stores nothing       | The app, for a signed-in user |
 | `voice-transcribe`  | Turns a voice message into text with Groq                  | The app, for a signed-in user |
 | `job-profile-draft` | Reads a resume PDF in memory and drafts a work profile     | The app, for the admin        |

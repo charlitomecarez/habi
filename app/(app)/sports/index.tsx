@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ModuleGate } from "@/components/ui/ModuleGate";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
@@ -70,7 +71,7 @@ function StandingsTable({ rows, nba }: { rows: Standing[]; nba: boolean }) {
   );
 }
 
-export default function SportsScreen() {
+function SportsScreen() {
   const params = useLocalSearchParams<{ follow?: string }>();
   const [league, setLeague] = useState<LeagueId>("PL");
   const [following, setFollowing] = useState(params.follow === "1");
@@ -187,5 +188,14 @@ export default function SportsScreen() {
         startLeague={league}
       />
     </SafeAreaView>
+  );
+}
+
+/** Needs a server key; see ModuleGate. */
+export default function SportsScreenGated() {
+  return (
+    <ModuleGate id="sports" tone="daily">
+      <SportsScreen />
+    </ModuleGate>
   );
 }

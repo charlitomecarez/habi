@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ModuleGate } from "@/components/ui/ModuleGate";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -29,7 +30,7 @@ function detail(job: JobMatch): string {
   return [job.company, job.location, job.visa_offered ? "Visa offered" : null].filter(Boolean).join(" · ");
 }
 
-export default function FindWorkScreen() {
+function FindWorkScreen() {
   const colors = useColors();
   const access = useVoiceAccess();
   const jobs = useJobs();
@@ -150,5 +151,14 @@ export default function FindWorkScreen() {
         )}
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** Needs a server key; see ModuleGate. */
+export default function FindWorkScreenGated() {
+  return (
+    <ModuleGate id="work" tone="records">
+      <FindWorkScreen />
+    </ModuleGate>
   );
 }

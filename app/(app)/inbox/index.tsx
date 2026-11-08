@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MessageCard } from "@/components/inbox/MessageCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
+import { ModuleGate } from "@/components/ui/ModuleGate";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
@@ -38,7 +39,7 @@ function sentBadge(message: VoiceMessage) {
   return { label: "Making text", tone: "warning" } as const;
 }
 
-export default function InboxScreen() {
+function InboxScreen() {
   const colors = useColors();
   const access = useVoiceAccess();
   const inbox = useInbox();
@@ -145,5 +146,14 @@ export default function InboxScreen() {
         <Fab label="Record a voice message" icon="mic" onPress={() => router.push("/inbox/record")} />
       ) : null}
     </SafeAreaView>
+  );
+}
+
+/** Needs a server key; see ModuleGate. */
+export default function InboxScreenGated() {
+  return (
+    <ModuleGate id="inbox" tone="people">
+      <InboxScreen />
+    </ModuleGate>
   );
 }

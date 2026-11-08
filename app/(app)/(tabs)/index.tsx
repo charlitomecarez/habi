@@ -27,7 +27,8 @@ import { todaysDoses, useHealth } from "@/lib/health";
 import { buildAttention, todaySentence } from "@/lib/home";
 import { useHabits } from "@/lib/habits";
 import { dayTotals, formatPeso, toDateString, useMonthTransactions, useSubscriptions } from "@/lib/money";
-import { shortcutModules } from "@/lib/modules";
+import { useModuleFilter } from "@/lib/features";
+import { hiddenReason, shortcutModules } from "@/lib/modules";
 import { usePeople } from "@/lib/people";
 import { useUserSettings } from "@/lib/settings";
 import { groupTodos, useTodos } from "@/lib/todos";
@@ -125,7 +126,9 @@ export default function HomeScreen() {
   const { ulam } = todayChoice(ulamRow, now, ulamLimit);
 
   const shortcutIds = settings.data?.homeShortcuts ?? [];
-  const shortcuts = shortcutModules(shortcutIds);
+  const moduleFilter = useModuleFilter();
+  // A module the server cannot run, or that you switched off, leaves Home too.
+  const shortcuts = shortcutModules(shortcutIds).filter((m) => hiddenReason(m, moduleFilter) === null);
 
   const loading = todos.isPending || vehicle.isPending;
   const error = todos.error ?? vehicle.error ?? due.error ?? subscriptions.error ?? debts.error ?? people.error;

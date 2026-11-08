@@ -4,6 +4,7 @@ import { Pressable, Text, View } from "react-native";
 
 import { TeamMark } from "@/components/sports/TeamMark";
 import { DataRow } from "@/components/ui/DataRow";
+import { useFeatures } from "@/lib/features";
 import { useUserSettings } from "@/lib/settings";
 import { LEAGUES, matchStatus, matchTitle, openMatch, useFollowedGames, type Match } from "@/lib/sports";
 
@@ -21,10 +22,13 @@ function when(m: Match): string {
  */
 export function LatestGames({ ready }: { ready: boolean }) {
   const settings = useUserSettings();
+  const features = useFeatures();
+  // Not set up on this server, or switched off in Settings › Modules: no Games block.
+  const off = !features.sports || (settings.data?.hiddenModules ?? []).includes("sports");
   const follows = settings.data?.followedTeams ?? [];
-  const games = useFollowedGames(ready ? follows : []);
+  const games = useFollowedGames(ready && !off ? follows : []);
 
-  if (!ready || !settings.data) return null;
+  if (!ready || !settings.data || off) return null;
   if (follows.length > 0 && (games.isPending || games.error || (games.data ?? []).length === 0)) return null;
 
   return (

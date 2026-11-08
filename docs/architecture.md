@@ -105,3 +105,10 @@ Android-only APIs live behind a file pair: `name.ts` for native and `name.web.ts
 - `lib/colors.ts` and `global.css` hold the same values. Change both together.
 
 See [design-system.md](design-system.md) for the token list.
+
+## Optional modules
+
+- `lib/modules.ts` marks a module that needs a server key with `needs`: Sports needs `sports` (both sports keys); Find a work and Inbox need `ai` (Groq). News and Weather need none. A test fails if a module names an unknown feature.
+- The `app-features` Edge Function answers which features are set up, as yes or no only. It never returns a key. `useFeatures` asks once an hour; while it loads, or if it fails, every feature counts as set up, so nothing flickers out.
+- `useModuleFilter` joins the features, Settings › Modules (`user_settings.hidden_modules`) and the admin flag. More, the Home shortcuts, the Shortcuts sheet and the Home Games and News blocks use it.
+- `ModuleGate` wraps the Sports, Find a work and Inbox screens. An old link to a module the server cannot run shows "… is not set up on this server". A module you only switched off still opens from a link.

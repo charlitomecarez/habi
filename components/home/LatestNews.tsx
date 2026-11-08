@@ -5,13 +5,15 @@ import { Text, View } from "react-native";
 import { NewsImage } from "@/components/news/NewsImage";
 import { DataRow } from "@/components/ui/DataRow";
 import { useLatestNews } from "@/lib/news";
+import { useUserSettings } from "@/lib/settings";
 import { timeAgo } from "@/lib/news-time";
 
 /** The 3 newest Philippine headlines and a row to News. It hides, heading too, when there is no news. */
 export function LatestNews({ ready }: { ready: boolean }) {
-  const news = useLatestNews(3, ready);
+  const off = (useUserSettings().data?.hiddenModules ?? []).includes("news");
+  const news = useLatestNews(3, ready && !off);
   const items = news.data ?? [];
-  if (!ready || items.length === 0) return null;
+  if (!ready || off || items.length === 0) return null;
   const now = new Date();
 
   return (

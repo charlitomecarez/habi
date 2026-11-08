@@ -35,13 +35,9 @@ Do not put these items here:
 
 ## Unreleased
 
-### Fixed
+### Added
 
-**Home photo:** The photo in the Home header is smaller (32 px in a 48 px tap area), and it tries Google's second photo address before it shows the letter.
-
-- **Sports:** NBA teams show their logos in matches and standings, not only their short code.
-- **Find a work:** A search saves its jobs even when Groq is busy. Groq ranks 5 jobs at a time and waits when it asks to. A job it could not rank shows "Not ranked", and the next search ranks it. The screen says why the last search stopped.
-- **Keyboard:** The keyboard no longer covers the text field on More search, Inventory search, Vault search, Content, Weather place, a job, and the alarm sums. A test now fails when a screen has a text field and no keyboard handling.
+**Modules:** Settings › Modules switches off modules you do not use, on your account only. A copy of my-app without a sports or Groq key hides Sports, Find a work and Inbox by itself.
 
 ### Removed
 

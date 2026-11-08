@@ -14,6 +14,8 @@ export type UserSettings = {
   ulamAvoid: string[];
   /** Teams whose games show on Home, as league:team, for example PL:Arsenal. At most 12. */
   followedTeams: string[];
+  /** Modules switched off in Settings › Modules, by id from lib/modules.ts. */
+  hiddenModules: string[];
 };
 
 /** The database defaults, used until the first change creates the row. */
@@ -25,6 +27,7 @@ const DEFAULTS: UserSettings = {
   ulamLimit: 99,
   ulamAvoid: [],
   followedTeams: [],
+  hiddenModules: [],
 };
 
 const SETTINGS_KEY = ["user-settings"] as const;
@@ -35,7 +38,9 @@ export function useUserSettings() {
     queryFn: async (): Promise<UserSettings> => {
       const { data, error } = await supabase
         .from("user_settings")
-        .select("timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams")
+        .select(
+          "timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams, hidden_modules",
+        )
         .maybeSingle();
       if (error) throw error;
       if (!data) return DEFAULTS;
@@ -47,6 +52,7 @@ export function useUserSettings() {
         ulamLimit: data.ulam_limit,
         ulamAvoid: data.ulam_avoid,
         followedTeams: data.followed_teams,
+        hiddenModules: data.hidden_modules,
       };
     },
   });
@@ -67,6 +73,7 @@ export function useSaveUserSettings() {
         ulam_limit: next.ulamLimit,
         ulam_avoid: next.ulamAvoid,
         followed_teams: next.followedTeams,
+        hidden_modules: next.hiddenModules,
       });
       if (error) throw error;
     },

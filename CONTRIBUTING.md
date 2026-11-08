@@ -11,7 +11,7 @@ Read [CLAUDE.md](CLAUDE.md) and [docs/conventions.md](docs/conventions.md) befor
 - A Google Cloud project, for Google sign-in.
 - A Firebase project, for Android push notifications.
 - An expo.dev account, for APK builds.
-- Optional keys for the parts that use them: Resend (email), Groq (ulam, voice text, Find a work), Gemini (daily tip), football-data.org and balldontlie (Sports). A part with no key does not run; the rest of the app still works.
+- Optional keys for the parts that use them: Resend (email), Groq (ulam, voice text, Find a work), Gemini (daily tip), football-data.org and balldontlie (Sports). A module with no key hides itself: the `app-features` function tells the app which keys are set (yes or no, never the key), and Sports, Find a work and Inbox leave More until you add theirs. News and Weather need no key.
 
 Docker and a local Supabase server are not used. Every database command runs against your live project with `--remote`.
 
