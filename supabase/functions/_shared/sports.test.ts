@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { footballMatch, footballStanding, nbaMatch, nbaStandings, type MatchRow } from "./sports";
+import { footballMatch, footballStanding, nbaCrest, nbaMatch, nbaStandings, type MatchRow } from "./sports";
 
 // Every team here is made up.
 const team = (name: string) => ({ name, shortName: name });
@@ -115,5 +115,18 @@ describe("nbaStandings", () => {
   it("ignores a game that is not final", () => {
     const later = { ...final("C", "D", 0, 0), status: "scheduled" as const, home_score: null, away_score: null };
     expect(nbaStandings([later])).toEqual([]);
+  });
+});
+
+describe("nbaCrest", () => {
+  it("gives a logo for each NBA code, with ESPN's own short names", () => {
+    expect(nbaCrest("BOS")).toBe("https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bos.png&h=96&w=96");
+    expect(nbaCrest("GSW")).toContain("/gs.png");
+    expect(nbaCrest("uta")).toContain("/utah.png");
+  });
+
+  it("gives null for an unknown code, so the short code shows", () => {
+    expect(nbaCrest("TMA")).toBeNull();
+    expect(nbaCrest(null)).toBeNull();
   });
 });

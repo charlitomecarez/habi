@@ -108,6 +108,47 @@ export type NbaGame = {
   visitor_team_score: number;
 };
 
+// balldontlie has no logos. These are ESPN's public team logo images, keyed by the code that
+// balldontlie sends. ESPN uses its own short name for 8 teams.
+const NBA_LOGO_SLUG: Record<string, string> = {
+  ATL: "atl",
+  BOS: "bos",
+  BKN: "bkn",
+  CHA: "cha",
+  CHI: "chi",
+  CLE: "cle",
+  DAL: "dal",
+  DEN: "den",
+  DET: "det",
+  GSW: "gs",
+  HOU: "hou",
+  IND: "ind",
+  LAC: "lac",
+  LAL: "lal",
+  MEM: "mem",
+  MIA: "mia",
+  MIL: "mil",
+  MIN: "min",
+  NOP: "no",
+  NYK: "ny",
+  OKC: "okc",
+  ORL: "orl",
+  PHI: "phi",
+  PHX: "phx",
+  POR: "por",
+  SAC: "sac",
+  SAS: "sa",
+  TOR: "tor",
+  UTA: "utah",
+  WAS: "wsh",
+};
+
+/** A 96 px logo for an NBA team code, or null for a code it does not know, so TeamMark shows the code. */
+export function nbaCrest(code: string | null | undefined): string | null {
+  const slug = code ? NBA_LOGO_SLUG[code.toUpperCase()] : undefined;
+  return slug ? `https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/${slug}.png&h=96&w=96` : null;
+}
+
 function nbaStatus(status: string): MatchStatus {
   if (/^final/i.test(status)) return "final";
   return /postponed|cancel/i.test(status) ? "postponed" : "scheduled";
@@ -125,8 +166,8 @@ export function nbaMatch(g: NbaGame): MatchRow {
     away_team: g.visitor_team.full_name,
     home_score: final ? g.home_team_score : null,
     away_score: final ? g.visitor_team_score : null,
-    home_crest: null,
-    away_crest: null,
+    home_crest: nbaCrest(g.home_team.abbreviation),
+    away_crest: nbaCrest(g.visitor_team.abbreviation),
     home_code: g.home_team.abbreviation ?? null,
     away_code: g.visitor_team.abbreviation ?? null,
   };
@@ -163,7 +204,7 @@ export function nbaStandings(matches: readonly MatchRow[]): StandingRow[] {
       lost: t.lost,
       points: null,
       is_calculated: true,
-      crest: null,
+      crest: nbaCrest(t.code),
       code: t.code,
     }));
 }

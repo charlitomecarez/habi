@@ -11,4 +11,4 @@ Sports shows matches and standings for the Premier League, La Liga, Ligue 1, Bun
 
 ## Team marks
 
-`sports-sync` stores each team's `crest` and short code. football-data.org sends both. balldontlie sends only the abbreviation, so an NBA team shows its code. A crest that cannot load falls back to the code. The name is always beside the mark, so TalkBack skips the mark.
+`sports-sync` stores each team's `crest` and short code. football-data.org sends both. balldontlie sends only the abbreviation, so `nbaCrest` maps the 30 NBA codes to ESPN's public logo images. An unknown code has no crest and shows its code. A crest that cannot load falls back to the code. The name is always beside the mark, so TalkBack skips the mark.
