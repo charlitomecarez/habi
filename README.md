@@ -14,7 +14,7 @@ The tabs are Home, Money, Todos, Vehicle and More.
 
 The More tab holds the other modules:
 
-- **Daily life:** Habits, Gym, Journal (a calendar, and a page to read each entry), Health (medicine, doctor visits, steps and sleep), Alarms, Ulam (a daily dish under your limit, with a photo), Sports (five football leagues with crests, and the NBA) and Weather (the forecast for a place you pick).
+- **Daily life:** Habits, Gym, Journal (a calendar, and a page to read each entry), Health (medicine, doctor visits, steps and sleep), Alarms, Ulam (a daily dish under your limit, with a photo), Sports (five football leagues and the NBA, with crests), Weather (the forecast for a place you pick) and News (headlines from the Philippines and the world).
 - **People:** People and dates (birthdays, yearly dates and gift ideas), Debts, and Inbox (voice messages with text).
 - **Home and plans:** Inventory (items, photos, locations, warranties and QR box labels), Shopping list and Travel.
 - **Records and work:** Find a work (admin only), Documents (expiry dates, renewal reminders and encrypted photos), Vault (passwords encrypted on the phone) and Content planner.

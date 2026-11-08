@@ -37,12 +37,10 @@ Do not put these items here:
 
 ### Added
 
+**News:** A new News module under Daily life shows headlines from Philippine and world outlets, with their images, every 2 hours. A story opens on its site.
+
 - **Sleep:** On Android, my-app finds last night's sleep from when your screen was off, with no prompt. A short phone check does not split the night. Tap the sleep to fix the times. It stays on the phone. Needs the v1.4.0 APK.
 - **Screen time:** A new Screen time screen lists every app you used today or this week. Open it from "See all apps" on the Home card. The data stays on the phone.
-
-### Changed
-
-**Look:** Old parts now match the Banig design: the Settings heading and profile row, delete confirms in a bottom sheet, 2 px rules above Save, drawings on first-run screens, the scanned place as a filter chip in Inventory, and the spending calendar heading.
 
 ### Fixed
 

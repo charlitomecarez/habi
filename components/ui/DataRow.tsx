@@ -29,10 +29,23 @@ type DataRowProps = {
   leading?: ReactNode;
   /** A chevron at the end, for a row that opens more, such as "See all apps". */
   chevron?: boolean;
+  /** A small part after the title, such as a news image. It stays beside the title at every text size. */
+  trailing?: ReactNode;
 };
 
 /** Title and detail on the left, number and status word on the right. The number moves under the title when text is large. */
-export function DataRow({ title, detail, value, status, onPress, last, done, leading, chevron }: DataRowProps) {
+export function DataRow({
+  title,
+  detail,
+  value,
+  status,
+  onPress,
+  last,
+  done,
+  leading,
+  chevron,
+  trailing,
+}: DataRowProps) {
   const colors = useColors();
   // Large text moves the number under the title. A long title alone never does.
   const stacked = useWindowDimensions().fontScale >= STACK_SCALE;
@@ -51,6 +64,7 @@ export function DataRow({ title, detail, value, status, onPress, last, done, lea
           </Text>
           {detail ? <Text className="font-sans text-caption text-ink-muted">{detail}</Text> : null}
         </View>
+        {trailing}
       </View>
       {value || status || chevron ? (
         <View className={`flex-row items-center gap-2 ${stacked ? "self-start" : ""}`}>

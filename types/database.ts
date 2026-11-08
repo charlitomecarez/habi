@@ -1037,6 +1037,60 @@ export type Database = {
         };
         Relationships: [];
       };
+      news_items: {
+        Row: {
+          fetched_at: string;
+          id: string;
+          image_url: string | null;
+          published_at: string;
+          section: string;
+          source: string;
+          title: string;
+          url: string;
+        };
+        Insert: {
+          fetched_at?: string;
+          id?: string;
+          image_url?: string | null;
+          published_at: string;
+          section: string;
+          source: string;
+          title: string;
+          url: string;
+        };
+        Update: {
+          fetched_at?: string;
+          id?: string;
+          image_url?: string | null;
+          published_at?: string;
+          section?: string;
+          source?: string;
+          title?: string;
+          url?: string;
+        };
+        Relationships: [];
+      };
+      news_sync: {
+        Row: {
+          last_error_at: string | null;
+          last_ok_at: string | null;
+          section: string;
+          source: string;
+        };
+        Insert: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          section: string;
+          source: string;
+        };
+        Update: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          section?: string;
+          source?: string;
+        };
+        Relationships: [];
+      };
       odometer_logs: {
         Row: {
           id: string;

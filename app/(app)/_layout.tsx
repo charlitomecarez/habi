@@ -50,6 +50,7 @@ export default function AppLayout() {
         <Stack.Screen name="screen-time/index" />
         <Stack.Screen name="weather/index" />
         <Stack.Screen name="weather/place" />
+        <Stack.Screen name="news/index" />
         <Stack.Screen name="reports/index" />
         <Stack.Screen name="reports/[id]" />
         <Stack.Screen name="ulam/index" />

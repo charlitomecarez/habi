@@ -85,6 +85,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "daily",
         keywords: "rain forecast temperature ulan panahon",
       },
+      {
+        id: "news",
+        label: "News",
+        href: "/news",
+        icon: { name: "newspaper-outline" },
+        tone: "daily",
+        keywords: "headlines balita philippines world",
+      },
     ],
   },
   {
