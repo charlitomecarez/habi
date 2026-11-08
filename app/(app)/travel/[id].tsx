@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, type ComponentProps } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ExportSheet } from "@/components/travel/ExportSheet";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useExchangeRates } from "@/lib/money";
@@ -96,7 +97,7 @@ export default function TripScreen() {
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
         {header("Trip")}
         {trip.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton layout="detail" />
         ) : (
           <View className="px-5">
             <Notice tone="danger">{trip.error ? trip.error.message : "This trip was deleted."}</Notice>

@@ -1,7 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { format, subDays } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SleepSheet } from "@/components/steps/SleepSheet";
@@ -9,11 +10,19 @@ import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
-import { Notice } from "@/components/ui/Notice";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { openHealthConnect } from "@/lib/health-connect";
-import { sleepMinutes, sleepText, useSleepLog } from "@/lib/sleep";
+import { sleepMinutes, sleepStrand, sleepText, useSleepLog } from "@/lib/sleep";
 import { stepsAverage, useAllowSteps, useSteps } from "@/lib/steps";
+
+// The sleep strand: 7 hours or more is good, 6 to 7 is short, under 6 is too short.
+const SLEEP_STATUS = {
+  good: { label: "Good", tone: "good" },
+  watch: { label: "Short", tone: "watch" },
+  over: { label: "Too short", tone: "over" },
+  empty: undefined,
+} as const;
 
 export default function StepsScreen() {
   const colors = useColors();
@@ -28,18 +37,20 @@ export default function StepsScreen() {
   const week = steps.data?.week ?? [];
   const today = week[week.length - 1] ?? 0;
   const entry = sleep.data?.[format(now, "yyyy-MM-dd")];
+  const minutes = entry ? sleepMinutes(entry) : 0;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader title="Steps and sleep" subtitle="Today" tone="daily" />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
-        {steps.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
+        {steps.isPending ? <Skeleton layout="home" /> : null}
 
         {!steps.isPending && !access && !asked ? (
           <View className="gap-3">
             <Text className="font-bold text-title text-ink">See your steps on Home</Text>
             <Text className="font-sans text-body text-ink-muted">
-              my-app reads your steps from Health Connect. You type your sleep. All of it stays on this phone.
+              my-app reads your steps from Health Connect, and your sleep from when your screen is off. All of it stays
+              on this phone.
             </Text>
             <Button
               label="Allow steps"
@@ -89,23 +100,48 @@ export default function StepsScreen() {
             Last night
           </Text>
           {entry ? (
-            <DataRow
-              title="Sleep"
-              detail={`${entry.bed} to ${entry.wake}`}
-              value={sleepText(sleepMinutes(entry))}
-              onPress={() => setLogging(true)}
-              last
-            />
+            <>
+              <DataRow
+                title="Sleep"
+                detail={`${entry.bed} to ${entry.wake}`}
+                value={sleepText(minutes)}
+                status={SLEEP_STATUS[sleepStrand(minutes)]}
+                onPress={() => setLogging(true)}
+                chevron
+                last
+              />
+              {entry.source === "screen" ? (
+                <>
+                  <View className="flex-row items-center gap-1">
+                    <Ionicons name="phone-portrait-outline" size={14} color={colors.inkMuted} />
+                    <Text className="font-semibold text-badge text-ink-muted">From your screen</Text>
+                  </View>
+                  <Text className="font-sans text-caption text-ink-muted">
+                    I read when your screen was off. Tap the sleep to fix the times. It stays on this phone.
+                  </Text>
+                </>
+              ) : (
+                <Text className="font-sans text-caption text-ink-muted">
+                  You set these times. It stays on this phone.
+                </Text>
+              )}
+            </>
           ) : (
             <>
-              <Notice tone="warning">No sleep logged for last night.</Notice>
-              <Button label="Log last night's sleep" onPress={() => setLogging(true)} />
+              <Text className="font-sans text-body text-ink">
+                I found no sleep last night. Your screen was on for most of the night, or off for under 3 hours.
+              </Text>
+              <Button label="Add sleep" variant="secondary" size="input" onPress={() => setLogging(true)} />
             </>
           )}
-          <Text className="font-sans text-caption text-ink-muted">You typed this sleep. It stays on this phone.</Text>
         </View>
       </ScrollView>
-      <SleepSheet visible={logging} onClose={() => setLogging(false)} />
+      <SleepSheet
+        key={entry ? `${entry.bed}-${entry.wake}` : "new"}
+        visible={logging}
+        entry={entry}
+        onClose={() => setLogging(false)}
+      />
     </SafeAreaView>
   );
 }

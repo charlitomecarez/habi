@@ -191,7 +191,7 @@ export function PlanForm({ plan, exercises = [] }: { plan?: Plan; exercises?: Ex
           ) : null}
         </KeyboardScrollView>
 
-        <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
+        <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
           {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
           <Button label="Save workout day" loading={save.isPending} onPress={onSave} />
         </View>

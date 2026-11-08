@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useState, type ReactNode } from "react";
 import { Text, View } from "react-native";
 
@@ -12,7 +13,14 @@ import { checkMasterPassword } from "@/lib/master-password";
 import { suggestPassphrase } from "@/lib/password";
 import { pickBackupFile } from "@/lib/vault-backup";
 import { parseBackup, type VaultBackup } from "@/lib/vault-backup-file";
-import { useBiometricUnlock, useSetUpVault, useUnlockVault, useUnlockWithFingerprint } from "@/lib/vault";
+import {
+  useBiometricUnlock,
+  usePinUnlock,
+  useSetUpVault,
+  useUnlockVault,
+  useUnlockWithFingerprint,
+  useUnlockWithPin,
+} from "@/lib/vault";
 import type { VaultSettingsRow } from "@/lib/vault-crypto";
 
 /** The shared layout: a centred lock, title and text, fields, then the actions at the bottom. */
@@ -125,8 +133,8 @@ export function SetUpVault() {
             </Text>
           ) : null}
           <Notice tone="warning">
-            Nobody can reset this password. If you forget it, the vault cannot be opened. Keep it on paper in a safe
-            place.
+            Nobody can reset this password for you. Make a recovery key on the next screen: it is the only other way in.
+            Keep both on paper in a safe place.
           </Notice>
           {setUp.error ? <Notice tone="danger">{setUp.error.message}</Notice> : null}
           {backupProblem ? <Notice tone="danger">{backupProblem}</Notice> : null}
@@ -143,42 +151,71 @@ export function SetUpVault() {
   );
 }
 
-/** Locked: master password, or fingerprint or face on Android when quick unlock is on. */
+/** Locked: the PIN when it is on, else the master password; fingerprint or face when quick unlock is on. */
 export function UnlockVault({ settings }: { settings: VaultSettingsRow }) {
   const colors = useColors();
   const unlock = useUnlockVault();
   const fingerprint = useUnlockWithFingerprint();
   const biometric = useBiometricUnlock();
+  const pinUnlock = usePinUnlock();
+  const withPin = useUnlockWithPin();
   const [password, setPassword] = useState("");
+  const [pin, setPin] = useState("");
+  const [usePassword, setUsePassword] = useState(false);
+  const pinMode = !!pinUnlock.data?.on && !usePassword;
+  const hasRecovery = !!settings.recovery_wrap;
 
   function onUnlock() {
     if (!password) return;
     unlock.mutate({ password, settings }, { onSuccess: () => setPassword("") });
   }
 
-  const failure = unlock.error ?? fingerprint.error;
+  function onPin(next: string) {
+    const digits = next.replace(/\D/g, "").slice(0, 6);
+    setPin(digits);
+    // The vault opens on the sixth digit.
+    if (digits.length === 6) withPin.mutate({ pin: digits, settings }, { onSettled: () => setPin("") });
+  }
+
+  const failure = pinMode ? (withPin.error ?? fingerprint.error) : (unlock.error ?? fingerprint.error);
 
   return (
     <GateLayout
       title="Vault is locked"
-      text="Enter your master password. It's separate from your Google sign-in."
+      text={pinMode ? "Enter your 6-digit PIN." : "Enter your master password. It's separate from your Google sign-in."}
       fields={
         <>
-          <PasswordInput
-            label="Master password"
-            emphasis
-            value={password}
-            onChangeText={setPassword}
-            textContentType="password"
-            autoFocus={!biometric.data?.on}
-            onSubmitEditing={onUnlock}
-          />
+          {pinMode ? (
+            <PasswordInput
+              label="PIN"
+              emphasis
+              value={pin}
+              onChangeText={onPin}
+              keyboardType="number-pad"
+              maxLength={6}
+              textContentType="oneTimeCode"
+              autoFocus={!biometric.data?.on}
+              editable={!withPin.isPending}
+            />
+          ) : (
+            <PasswordInput
+              label="Master password"
+              emphasis
+              value={password}
+              onChangeText={setPassword}
+              textContentType="password"
+              autoFocus={!biometric.data?.on}
+              onSubmitEditing={onUnlock}
+            />
+          )}
           {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
         </>
       }
       actions={
         <>
-          <Button label="Unlock" loading={unlock.isPending} disabled={!password} onPress={onUnlock} />
+          {pinMode ? null : (
+            <Button label="Unlock" loading={unlock.isPending} disabled={!password} onPress={onUnlock} />
+          )}
           {biometric.data?.on ? (
             <Button
               label={biometric.data.mode === "face" ? "Use face or fingerprint" : "Use fingerprint"}
@@ -194,9 +231,21 @@ export function UnlockVault({ settings }: { settings: VaultSettingsRow }) {
               onPress={() => fingerprint.mutate(settings)}
             />
           ) : null}
-          <Text className="text-center font-sans text-badge text-ink-muted">
-            A forgotten master password can&apos;t be recovered.
-          </Text>
+          {pinUnlock.data?.on ? (
+            <Button
+              label={pinMode ? "Use master password" : "Use PIN"}
+              variant="secondary"
+              size="input"
+              onPress={() => setUsePassword(!usePassword)}
+            />
+          ) : null}
+          {hasRecovery ? (
+            <Button label="Forgot master password?" variant="plain" onPress={() => router.push("/vault/recover")} />
+          ) : (
+            <Text className="text-center font-sans text-badge text-ink-muted">
+              With no recovery key, a forgotten master password can&apos;t be recovered.
+            </Text>
+          )}
         </>
       }
     />

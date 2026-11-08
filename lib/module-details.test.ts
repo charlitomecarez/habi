@@ -11,6 +11,7 @@ vi.mock("@/lib/documents", () => ({ useDocuments: vi.fn() }));
 vi.mock("@/lib/inventory", () => ({ useItems: vi.fn() }));
 vi.mock("@/lib/journal", () => ({ useJournal: vi.fn() }));
 vi.mock("@/lib/weather", () => ({ useWeather: vi.fn() }));
+vi.mock("@/lib/news", () => ({ useNews: vi.fn() }));
 
 describe("countText", () => {
   it("shows only the number", () => {

@@ -8,19 +8,29 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ModuleGate } from "@/components/ui/ModuleGate";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
-import { filterJobs, fitWord, JOB_FILTERS, useJobs, useRefreshJobs, type JobFilter, type JobMatch } from "@/lib/jobs";
+import {
+  filterJobs,
+  JOB_FILTERS,
+  jobScore,
+  lastErrorNotice,
+  useJobs,
+  useRefreshJobs,
+  type JobFilter,
+  type JobMatch,
+} from "@/lib/jobs";
 import { useVoiceAccess } from "@/lib/voice";
 
 function detail(job: JobMatch): string {
   return [job.company, job.location, job.visa_offered ? "Visa offered" : null].filter(Boolean).join(" · ");
 }
 
-const tone = (score: number) => (score >= 3.5 ? "good" : "watch") as "good" | "watch";
-
-export default function FindWorkScreen() {
+function FindWorkScreen() {
   const colors = useColors();
   const access = useVoiceAccess();
   const jobs = useJobs();
@@ -30,16 +40,23 @@ export default function FindWorkScreen() {
   const profile = jobs.data?.profile;
   const list = filterJobs(jobs.data?.matches ?? [], filter);
   const lastOk = profile?.last_ok_at ? parseISO(profile.last_ok_at) : null;
-  const failed = profile?.last_run_at && (!profile.last_ok_at || profile.last_run_at > profile.last_ok_at);
-  const updated = lastOk
-    ? `Updated ${isToday(lastOk) ? "today" : format(lastOk, "MMM d")}, ${format(lastOk, "h:mm a")} · ${profile?.last_new_count} new ${profile?.last_new_count === 1 ? "match" : "matches"}`
-    : undefined;
+  const lastRun = profile?.last_run_at ? parseISO(profile.last_run_at) : null;
+  const notice = lastErrorNotice(profile?.last_error ?? null);
+  // A run that stopped before it saved anything: the header says when it stopped.
+  const stopped = notice?.tone === "danger" && lastRun && (!lastOk || lastRun > lastOk);
+  const when = (date: Date) => `${isToday(date) ? "today" : format(date, "MMM d")}, ${format(date, "h:mm a")}`;
+  const updated =
+    stopped && lastRun
+      ? `Last search stopped ${when(lastRun)}`
+      : lastOk
+        ? `Updated ${when(lastOk)} · ${profile?.last_new_count} new ${profile?.last_new_count === 1 ? "match" : "matches"}`
+        : undefined;
 
   if (access.data && !access.data.isAdmin) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
         <ModuleHeader title="Find a work" tone="records" />
-        <Text className="p-5 font-sans text-body text-ink-muted">Find a work is for the admin.</Text>
+        <EmptyState drawing="box" title="Find a work is for the admin." />
       </SafeAreaView>
     );
   }
@@ -71,7 +88,7 @@ export default function FindWorkScreen() {
       />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {jobs.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : jobs.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your jobs. Check your connection.</Notice>
@@ -91,9 +108,7 @@ export default function FindWorkScreen() {
           </View>
         ) : (
           <>
-            {failed && list.length > 0 ? (
-              <Notice tone="warning">Could not search today. These are your last jobs.</Notice>
-            ) : null}
+            {notice ? <Notice tone={notice.tone}>{notice.text}</Notice> : null}
             {refresh.error ? <Notice tone="danger">{refresh.error.message}</Notice> : null}
             <View accessibilityRole="radiogroup" accessibilityLabel="Filter" className="flex-row flex-wrap gap-2">
               {JOB_FILTERS.map((item) => (
@@ -106,7 +121,9 @@ export default function FindWorkScreen() {
                 />
               ))}
             </View>
-            {list.length === 0 ? (
+            {list.length === 0 && stopped && filter === "all" ? (
+              <EmptyState drawing="box" title="No jobs yet" body="You can search now with the refresh button." />
+            ) : list.length === 0 ? (
               <View className="gap-3">
                 <Text className="font-bold text-title text-ink">No new matches today</Text>
                 <Text className="font-sans text-body text-ink-muted">
@@ -121,8 +138,7 @@ export default function FindWorkScreen() {
                     key={job.id}
                     title={job.title}
                     detail={detail(job)}
-                    value={job.score.toFixed(1)}
-                    status={{ label: fitWord(job.score), tone: tone(job.score) }}
+                    {...jobScore(job)}
                     onPress={() => router.push({ pathname: "/work/[id]", params: { id: job.id } })}
                     last={index === list.length - 1}
                   />
@@ -135,5 +151,14 @@ export default function FindWorkScreen() {
         )}
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** Needs a server key; see ModuleGate. */
+export default function FindWorkScreenGated() {
+  return (
+    <ModuleGate id="work" tone="records">
+      <FindWorkScreen />
+    </ModuleGate>
   );
 }

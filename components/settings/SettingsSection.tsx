@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
+import { ModulesSheet } from "@/components/settings/ModulesSheet";
 import { useColors } from "@/lib/colors";
 import { useAccounts, useExchangeRates } from "@/lib/money";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
@@ -60,7 +61,7 @@ export function SettingsSection() {
   const colors = useColors();
   const { session, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
-  const [sheet, setSheet] = useState<"rate" | "timezone" | "theme" | null>(null);
+  const [sheet, setSheet] = useState<"rate" | "timezone" | "theme" | "modules" | null>(null);
   const theme = useThemeStore((s) => s.preference);
   const setTheme = useThemeStore((s) => s.setPreference);
 
@@ -86,13 +87,17 @@ export function SettingsSection() {
 
   return (
     <View className="gap-5">
-      <Text accessibilityRole="header" className="font-semibold text-caption uppercase tracking-wide text-ink-muted">
+      <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
         Settings
       </Text>
 
-      <View className="flex-row items-center gap-4 rounded-card border border-border bg-surface-card px-4 py-3">
+      <View className="flex-row items-center gap-4 border-b-2 border-border py-3">
         <View className="h-touch w-touch items-center justify-center overflow-hidden rounded-pill bg-border">
-          <ProfilePhoto letter={name.charAt(0).toUpperCase()} letterClassName="font-semibold text-title text-ink" />
+          <ProfilePhoto
+            letter={name.charAt(0).toUpperCase()}
+            letterClassName="font-semibold text-title text-ink"
+            size={48}
+          />
         </View>
         <View className="flex-1 gap-1">
           <Text className="font-semibold text-heading text-ink" numberOfLines={1}>
@@ -105,6 +110,11 @@ export function SettingsSection() {
       <View className="gap-3">
         <View>
           <Row icon="contrast-outline" title="Theme" detail={themeLabel(theme)} onPress={() => setSheet("theme")} />
+          <Row
+            title="Modules"
+            detail={prefs?.hiddenModules.length ? `${prefs.hiddenModules.length} hidden` : "Every module shows"}
+            onPress={prefs ? () => setSheet("modules") : undefined}
+          />
           <Row
             title="Daily email digest"
             detail={prefs ? (prefs.digestEnabled ? hourLabel(prefs.digestHour) : "Off") : "Loading…"}
@@ -139,6 +149,11 @@ export function SettingsSection() {
       </View>
 
       <Button label="Sign out" variant="destructive" size="input" loading={signingOut} onPress={onSignOut} />
+      <ModulesSheet
+        key={`${sheet === "modules"}-${(prefs?.hiddenModules ?? []).join(",")}`}
+        visible={sheet === "modules"}
+        onClose={() => setSheet(null)}
+      />
       <ExchangeRateSheet
         visible={sheet === "rate"}
         onClose={() => setSheet(null)}

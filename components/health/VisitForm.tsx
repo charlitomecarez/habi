@@ -65,7 +65,7 @@ export function VisitForm({ visit }: { visit?: Visit }) {
             placeholder="What the doctor said, results"
           />
         </KeyboardScrollView>
-        <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
+        <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
           {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
           <Button label="Save visit" loading={save.isPending} onPress={onSave} />
         </View>

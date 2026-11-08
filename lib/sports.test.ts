@@ -1,6 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { groupByDay, matchSearchUrl, matchStatus, matchTitle, type Match } from "@/lib/sports";
+import {
+  followKey,
+  groupByDay,
+  latestGames,
+  matchSearchUrl,
+  matchStatus,
+  matchTitle,
+  MAX_FOLLOWED,
+  parseFollow,
+  toggleFollow,
+  type Match,
+} from "@/lib/sports";
 
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
 vi.mock("react-native", () => ({ Linking: {} }));
@@ -44,5 +55,47 @@ describe("matches", () => {
     ]);
     expect(days).toHaveLength(2);
     expect(days[0].matches[0].starts_at).toBe("2026-11-07T03:00:00Z");
+  });
+});
+
+describe("following", () => {
+  const now = new Date("2026-11-08T06:00:00Z");
+  const games = [
+    match({ external_id: "old", home_team: "Arsenal", status: "final", starts_at: "2026-11-01T12:00:00Z" }),
+    match({ external_id: "won", home_team: "Arsenal", status: "final", starts_at: "2026-11-07T12:00:00Z" }),
+    match({ external_id: "next", away_team: "Arsenal", starts_at: "2026-11-10T12:00:00Z" }),
+    match({ external_id: "later", home_team: "Arsenal", starts_at: "2026-11-20T12:00:00Z" }),
+    match({ external_id: "lakers", league: "NBA", home_team: "Lakers", starts_at: "2026-11-08T08:30:00Z" }),
+  ];
+
+  it("reads league:team", () => {
+    expect(followKey("PL", "Arsenal")).toBe("PL:Arsenal");
+    expect(parseFollow("PL:Brighton & Hove Albion")).toEqual({ league: "PL", team: "Brighton & Hove Albion" });
+    expect(parseFollow("Arsenal")).toBeNull();
+    expect(parseFollow("PL:")).toBeNull();
+  });
+
+  it("adds and removes, and stops at 12", () => {
+    expect(toggleFollow([], "PL:Arsenal")).toEqual(["PL:Arsenal"]);
+    expect(toggleFollow(["PL:Arsenal"], "PL:Arsenal")).toEqual([]);
+    const full = Array.from({ length: MAX_FOLLOWED }, (_, i) => `PL:Team ${i}`);
+    expect(toggleFollow(full, "PL:Arsenal")).toEqual(full);
+  });
+
+  it("shows the last result and the next match, soonest to now first", () => {
+    const ids = latestGames(games, ["PL:Arsenal", "NBA:Lakers"], now).map((m) => m.external_id);
+    expect(ids).toEqual(["lakers", "won", "next"]);
+  });
+
+  it("drops a result older than 3 days and a team in another league", () => {
+    expect(latestGames(games.slice(0, 1), ["PL:Arsenal"], now)).toEqual([]);
+    expect(latestGames(games, ["PD:Arsenal"], now)).toEqual([]);
+  });
+
+  it("shows a game between two followed teams once", () => {
+    const derby = [
+      match({ external_id: "d", home_team: "Arsenal", away_team: "Chelsea", starts_at: "2026-11-09T12:00:00Z" }),
+    ];
+    expect(latestGames(derby, ["PL:Arsenal", "PL:Chelsea"], now)).toHaveLength(1);
   });
 });

@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { addDays, startOfDay, subDays } from "date-fns";
+import { addDays, differenceInCalendarDays, startOfDay, startOfWeek, subDays } from "date-fns";
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 
-import { ScreenTimeModule, type AppUsage } from "@/modules/screen-time";
+import { ScreenTimeModule, type AppUsage, type ScreenEvent } from "@/modules/screen-time";
 
 // Android: screen time from UsageStatsManager through the local screen-time module.
 // The data stays on the phone. Nothing goes to Supabase.
@@ -52,4 +52,33 @@ export function useScreenTime(day: Date, enabled: boolean) {
       };
     },
   });
+}
+
+/** This week, Monday 00:00 to now, in one read. `days` counts today, for the average. */
+export function useWeekUsage(enabled: boolean) {
+  const monday = startOfWeek(new Date(), { weekStartsOn: 1 });
+  return useQuery({
+    queryKey: ["screen-time", "week", monday.toISOString()],
+    enabled: enabled && isScreenTimeSupported,
+    staleTime: 60 * 1000,
+    queryFn: async () => {
+      const now = new Date();
+      const apps = (await ScreenTimeModule?.getUsage(monday.getTime(), now.getTime())) ?? [];
+      return {
+        start: monday,
+        apps,
+        totalMs: apps.reduce((s, a) => s + a.totalMs, 0),
+        days: differenceInCalendarDays(now, monday) + 1,
+      };
+    },
+  });
+}
+
+/**
+ * Screen on and off events, for the sleep rule. Null when there is no usage access or no native
+ * module (an older APK), so the typed sheet stays the way in.
+ */
+export async function readScreenEvents(startMs: number, endMs: number): Promise<ScreenEvent[] | null> {
+  if (!ScreenTimeModule?.hasAccess() || typeof ScreenTimeModule.getScreenEvents !== "function") return null;
+  return ScreenTimeModule.getScreenEvents(startMs, endMs);
 }

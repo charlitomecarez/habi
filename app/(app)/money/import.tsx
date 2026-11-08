@@ -197,7 +197,7 @@ export default function ImportStatementScreen() {
             ) : null}
           </ScrollView>
 
-          <View className="gap-2 border-t border-border px-5 pb-6 pt-3">
+          <View className="gap-2 border-t-2 border-border px-5 pb-6 pt-3">
             {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
             <Button
               label={`Save ${ticked.length} ${ticked.length === 1 ? "transaction" : "transactions"}`}

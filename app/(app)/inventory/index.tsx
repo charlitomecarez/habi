@@ -1,15 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ItemPhoto } from "@/components/inventory/ItemPhoto";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
   descendantIds,
@@ -105,7 +108,7 @@ export default function InventoryScreen() {
         </Pressable>
       </ModuleBar>
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2" keyboardShouldPersistTaps="handled">
+      <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2" keyboardShouldPersistTaps="handled">
         <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
           <Ionicons name="search" size={18} color={colors.inkMuted} />
           <TextInput
@@ -130,31 +133,56 @@ export default function InventoryScreen() {
           ) : null}
         </View>
 
-        {scanned ? (
-          <View className="min-h-touch flex-row items-center gap-3 rounded-input bg-surface-muted py-1 pl-4 pr-1">
-            <Ionicons name="qr-code-outline" size={18} color={colors.ink} />
-            <Text numberOfLines={2} className="flex-1 font-medium text-label text-ink">
-              In {pathById.get(scanned) ?? "a deleted location"}
-            </Text>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.setParams({ location: undefined })}
-              className="h-touch justify-center px-3"
-            >
-              <Text className="font-semibold text-label text-ink">Show all</Text>
-            </Pressable>
-          </View>
-        ) : rooms.length > 0 ? (
-          <View accessibilityRole="radiogroup" accessibilityLabel="Filter by room" className="flex-row flex-wrap gap-2">
-            <Chip variant="filter" label="All" selected={room === ALL} onPress={() => setRoom(ALL)} />
+        {scanned || rooms.length > 0 ? (
+          <View
+            accessibilityRole="radiogroup"
+            accessibilityLabel="Filter by place"
+            className="flex-row flex-wrap gap-2"
+          >
+            <Chip
+              variant="filter"
+              label="All"
+              selected={!scanned && room === ALL}
+              onPress={() => {
+                router.setParams({ location: undefined });
+                setRoom(ALL);
+              }}
+            />
+            {scanned ? (
+              <View className="flex-row items-center">
+                <Chip
+                  variant="filter"
+                  label={pathById.get(scanned) ?? "A deleted location"}
+                  selected
+                  onPress={() => router.setParams({ location: undefined })}
+                />
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Clear the scanned place"
+                  onPress={() => router.setParams({ location: undefined })}
+                  className="h-touch w-touch items-center justify-center"
+                >
+                  <Ionicons name="close-circle" size={20} color={colors.inkMuted} />
+                </Pressable>
+              </View>
+            ) : null}
             {rooms.map((r) => (
-              <Chip key={r.id} variant="filter" label={r.name} selected={room === r.id} onPress={() => setRoom(r.id)} />
+              <Chip
+                key={r.id}
+                variant="filter"
+                label={r.name}
+                selected={!scanned && room === r.id}
+                onPress={() => {
+                  router.setParams({ location: undefined });
+                  setRoom(r.id);
+                }}
+              />
             ))}
           </View>
         ) : null}
 
         {items.isPending || locations.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your inventory. {error.message}</Notice>
@@ -169,9 +197,11 @@ export default function InventoryScreen() {
             />
           </View>
         ) : total === 0 ? (
-          <Text className="py-4 font-sans text-body text-ink-muted">
-            I keep track of your things here. Add each one with a photo and where it is.
-          </Text>
+          <EmptyState
+            drawing="box"
+            title="No items yet"
+            body="I keep track of your things here. Add each one with a photo and where it is."
+          />
         ) : visible.length === 0 ? (
           <Text className="py-4 font-sans text-body text-ink-muted">
             {query.trim() ? `No items match “${query.trim()}”.` : "No items here yet."}
@@ -189,7 +219,7 @@ export default function InventoryScreen() {
             ))}
           </View>
         )}
-      </ScrollView>
+      </KeyboardScrollView>
 
       <Fab
         label="Add item"

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ExchangeRateSheet } from "@/components/money/ExchangeRateSheet";
@@ -11,6 +11,7 @@ import { Fab } from "@/components/ui/Fab";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
   cycleLabel,
@@ -64,7 +65,7 @@ export default function SubscriptionsScreen() {
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {subscriptions.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load subscriptions. {error.message}</Notice>

@@ -46,34 +46,36 @@ Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28
 
 ## Shared components (`components/ui/`)
 
-| Component       | Use                                                                                                                                      |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `Button`        | Variants `primary`, `secondary`, `destructive`, `plain` (a text action). Sizes `button` (56) and `input` (52). Has `loading` and `icon`. |
-| `Input`         | Labelled text field with an error line.                                                                                                  |
-| `PasswordInput` | Text field with a show or hide button. `emphasis` adds a 2 px accent border.                                                             |
-| `AmountInput`   | Large amount field. `unitPosition` puts the currency before or after.                                                                    |
-| `Select`        | Field that opens an `OptionSheet`. `optional` allows no value.                                                                           |
-| `OptionSheet`   | Radio list in a `Sheet`.                                                                                                                 |
-| `Segmented`     | Segmented control for two to four choices.                                                                                               |
-| `Chip`          | `choice` (form) or `filter` (list filter, indigo when selected). Filter chips wrap, and they never scroll.                               |
-| `DateTimeField` | Date or date-and-time field. Has a `.web.tsx` version.                                                                                   |
-| `Stepper`       | − and + buttons around a number field.                                                                                                   |
-| `PhotoField`    | Photo picker. `tiles` layout (camera and library tiles) or `single` layout (one button that asks).                                       |
-| `DashedButton`  | Dashed "add" button. Shapes `tall` and `wide`.                                                                                           |
-| `LetterAvatar`  | First letter on a token colour picked from a hash of the name.                                                                           |
-| `Badge`         | Status word. Tones `danger`, `warning`, `neutral`, `good`.                                                                               |
-| `Notice`        | Message box. Tones `warning`, `danger` and `neutral`.                                                                                    |
-| `Fab`           | Floating action button. The one primary action on a list screen.                                                                         |
-| `Sheet`         | Bottom sheet.                                                                                                                            |
-| `TabBar`        | The app's tab bar. The open tab has a filled icon on a tinted pill. Its height follows the bottom inset.                                 |
-| `ModuleHeader`  | A field of section colour with the back button and the title. Reaches under the status bar.                                              |
-| `DataRow`       | Title and detail, then number and status word. Stacks at 1.3 times text. It never cuts a number.                                         |
-| `BarChart`      | Bars of exact length, drawn with `View`.                                                                                                 |
-| `WeaveBand`     | The week: a row for each area, a strand for each day. Solid is good, split is watch, a dot is over.                                      |
-| `ModuleLine`    | A module on More or in the Home shortcuts: an icon, a name and how much is inside.                                                       |
-| `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                                                        |
-| `FadeIn`        | A short fade for a list or section.                                                                                                      |
-| `PressScale`    | A `Pressable` that shrinks a little on press.                                                                                            |
+| Component       | Use                                                                                                                                                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Button`        | Variants `primary`, `secondary`, `destructive`, `plain` (a text action). Sizes `button` (56) and `input` (52). Has `loading` and `icon`.                                                                                                   |
+| `Input`         | Labelled text field with an error line.                                                                                                                                                                                                    |
+| `PasswordInput` | Text field with a show or hide button. `emphasis` adds a 2 px accent border.                                                                                                                                                               |
+| `AmountInput`   | Large amount field. `unitPosition` puts the currency before or after.                                                                                                                                                                      |
+| `Select`        | Field that opens an `OptionSheet`. `optional` allows no value.                                                                                                                                                                             |
+| `OptionSheet`   | Radio list in a `Sheet`.                                                                                                                                                                                                                   |
+| `Segmented`     | Segmented control for two to four choices.                                                                                                                                                                                                 |
+| `Chip`          | `choice` (form) or `filter` (list filter, indigo when selected). Filter chips wrap, and they never scroll.                                                                                                                                 |
+| `DateTimeField` | Date or date-and-time field. Has a `.web.tsx` version.                                                                                                                                                                                     |
+| `Stepper`       | − and + buttons around a number field.                                                                                                                                                                                                     |
+| `PhotoField`    | Photo picker. `tiles` layout (camera and library tiles) or `single` layout (one button that asks).                                                                                                                                         |
+| `DashedButton`  | Dashed "add" button. Shapes `tall` and `wide`.                                                                                                                                                                                             |
+| `LetterAvatar`  | First letter on a token colour picked from a hash of the name.                                                                                                                                                                             |
+| `Badge`         | Status word. Tones `danger`, `warning`, `neutral`, `good`.                                                                                                                                                                                 |
+| `Notice`        | Message box. Tones `warning`, `danger` and `neutral`.                                                                                                                                                                                      |
+| `Fab`           | Floating action button. The one primary action on a list screen.                                                                                                                                                                           |
+| `Sheet`         | Bottom sheet.                                                                                                                                                                                                                              |
+| `ConfirmSheet`  | A destructive choice in a `Sheet`: the question, what else happens, the destructive button and Cancel. Every delete confirm uses it.                                                                                                       |
+| `TabBar`        | The app's tab bar. The open tab has a filled icon on a tinted pill. Its height follows the bottom inset.                                                                                                                                   |
+| `ModuleHeader`  | A field of section colour with the back button and the title. Reaches under the status bar.                                                                                                                                                |
+| `DataRow`       | Title and detail, then number and status word. Stacks at 1.3 times text. It never cuts a number.                                                                                                                                           |
+| `BarChart`      | Bars of exact length, drawn with `View`.                                                                                                                                                                                                   |
+| `WeaveBand`     | The week: a row for each area, a strand for each day. Solid is good, split is watch, a dot is over.                                                                                                                                        |
+| `ModuleLine`    | A module on More or in the Home shortcuts: an icon, a name and how much is inside.                                                                                                                                                         |
+| `EmptyState`    | A drawing, a sentence and one action. Drawings `list`, `box`, `calendar`, `bowl`.                                                                                                                                                          |
+| `Skeleton`      | A loading placeholder in the shape of the screen: layouts `list`, `detail`, `grid`, `home`, or `Skeleton.Line` and `Skeleton.Block`. A slow pulse that stops with reduce motion. TalkBack hears "Loading". A button keeps its own spinner. |
+| `FadeIn`        | A short fade for a list or section.                                                                                                                                                                                                        |
+| `PressScale`    | A `Pressable` that shrinks a little on press.                                                                                                                                                                                              |
 
 Lists are plain rows with 2 px rules (`border-b-2 border-border`). Only an object that you act on is a card (`rounded-card border border-border bg-surface-card`). There is no `Card` or `ListRow` component.
 

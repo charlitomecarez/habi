@@ -1,17 +1,16 @@
 import { format, parseISO } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { formatKg, useExerciseHistory, useGym } from "@/lib/gym";
 
 /** Every session you did this exercise, newest first, so you can see reps and weight go up. */
 export default function ExerciseHistoryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colors = useColors();
   const gym = useGym();
   const history = useExerciseHistory(id);
   const exercise = gym.data?.exercises.find((e) => e.id === id);
@@ -37,7 +36,7 @@ export default function ExerciseHistoryScreen() {
       </ModuleBar>
       <ScrollView contentContainerClassName="gap-3 px-5 pb-8 pt-2">
         {history.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton layout="detail" />
         ) : history.error ? (
           <Notice tone="danger">Could not load the history. {history.error.message}</Notice>
         ) : bySession.length === 0 ? (

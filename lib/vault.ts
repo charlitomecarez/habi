@@ -13,10 +13,26 @@ import {
   isVaultKey,
   keyFromBase64,
   keyToBase64,
+  newRecoveryCode,
+  openWithPin,
+  openWithRecovery,
   unlockVault,
+  VAULT_SETTINGS_COLUMNS,
+  wrapWithPassword,
+  wrapWithPin,
+  wrapWithRecovery,
   type VaultEntryData,
   type VaultSettingsRow,
 } from "@/lib/vault-crypto";
+import {
+  clearWrongPins,
+  MAX_PIN_TRIES,
+  noteWrongPin,
+  pinSupported,
+  readPinLocked,
+  savePinLocked,
+  turnOffPin,
+} from "@/lib/vault-pin";
 import { saveBackupFile } from "@/lib/vault-backup";
 import { buildBackup, type VaultBackup } from "@/lib/vault-backup-file";
 import {
@@ -43,13 +59,14 @@ const IDLE_CHECK_MS = 10 * 1000;
 const SETTINGS_KEY = ["vault-settings"] as const;
 const ENTRIES_KEY = ["vault-entries"] as const;
 const BIOMETRIC_KEY = ["vault-biometric"] as const;
+const PIN_KEY = ["vault-pin"] as const;
 
 type VaultState = {
   /** The vault key. Only in memory; null while locked. */
   key: Uint8Array | null;
   /** How the vault was last unlocked, for the "Unlocked with fingerprint" line. */
-  unlockedWith: "password" | BiometricMode | null;
-  setKey: (key: Uint8Array, unlockedWith?: "password" | BiometricMode) => void;
+  unlockedWith: "password" | "pin" | "recovery" | BiometricMode | null;
+  setKey: (key: Uint8Array, unlockedWith?: "password" | "pin" | "recovery" | BiometricMode) => void;
   lock: () => void;
 };
 
@@ -101,10 +118,7 @@ export function useVaultSettings() {
   return useQuery({
     queryKey: SETTINGS_KEY,
     queryFn: async (): Promise<VaultSettingsRow | null> => {
-      const { data, error } = await supabase
-        .from("vault_settings")
-        .select("kdf, kdf_salt, kdf_ops_limit, kdf_mem_limit, key_check, key_check_nonce")
-        .maybeSingle();
+      const { data, error } = await supabase.from("vault_settings").select(VAULT_SETTINGS_COLUMNS).maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -253,10 +267,7 @@ export function useExportBackup() {
   return useMutation({
     mutationFn: async () => {
       const [settings, entries] = await Promise.all([
-        supabase
-          .from("vault_settings")
-          .select("kdf, kdf_salt, kdf_ops_limit, kdf_mem_limit, key_check, key_check_nonce")
-          .single(),
+        supabase.from("vault_settings").select(VAULT_SETTINGS_COLUMNS).single(),
         supabase.from("vault_entries").select("ciphertext, nonce, version").order("created_at"),
       ]);
       if (settings.error) throw settings.error;
@@ -305,5 +316,143 @@ export function useRestoreBackup() {
       client.invalidateQueries({ queryKey: SETTINGS_KEY });
       client.invalidateQueries({ queryKey: ENTRIES_KEY });
     },
+  });
+}
+
+// ---- PIN unlock (this phone only) -----------------------------------------------------------------
+
+/** Whether this device offers PIN unlock, and whether it is on for this account. */
+export function usePinUnlock() {
+  return useQuery({
+    queryKey: PIN_KEY,
+    queryFn: async () => ({
+      available: pinSupported,
+      on: pinSupported && (await readPinLocked(await currentUserId())) !== null,
+    }),
+  });
+}
+
+/** Turns PIN unlock on with a new PIN (the vault must be unlocked), or off with null. */
+export function useSetPin() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async (pin: string | null) => {
+      const userId = await currentUserId();
+      if (pin === null) return turnOffPin(userId);
+      const key = useVaultStore.getState().key;
+      if (!key) throw new Error("Unlock the vault first.");
+      await savePinLocked(userId, await wrapWithPin(key, pin));
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: PIN_KEY }),
+  });
+}
+
+export function useUnlockWithPin() {
+  const setKey = useVaultStore((s) => s.setKey);
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ pin, settings }: { pin: string; settings: VaultSettingsRow }) => {
+      const userId = await currentUserId();
+      const locked = await readPinLocked(userId);
+      if (!locked) throw new Error("PIN unlock is off. Use your master password.");
+      const key = await openWithPin(pin, locked, settings);
+      if (!key) {
+        const left = await noteWrongPin(userId);
+        throw new Error(
+          left === 0
+            ? `That PIN was wrong ${MAX_PIN_TRIES} times, so PIN unlock is off. Use your master password.`
+            : `That PIN is not right. ${left} ${left === 1 ? "try" : "tries"} left.`,
+        );
+      }
+      await clearWrongPins(userId);
+      setKey(key, "pin");
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: PIN_KEY }),
+  });
+}
+
+// ---- Recovery key and master password ---------------------------------------------------------------
+
+/** A new recovery code for the open vault. It is saved only by useSaveRecoveryKey, after you write it down. */
+export async function makeRecoveryCode(): Promise<string> {
+  return newRecoveryCode();
+}
+
+/** Saves the recovery copy of the vault key. A new one replaces the old, so the old code stops working. */
+export function useSaveRecoveryKey() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async (code: string) => {
+      const key = useVaultStore.getState().key;
+      if (!key) throw new Error("The vault locked. Unlock it and try again.");
+      const userId = await currentUserId();
+      const { error } = await supabase
+        .from("vault_settings")
+        .update(await wrapWithRecovery(key, code))
+        .eq("user_id", userId);
+      if (error) throw error;
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: SETTINGS_KEY }),
+  });
+}
+
+/**
+ * Changes the master password. It proves the current one first, then locks the same vault key with
+ * the new one, so entries, photos, the fingerprint, the PIN and the recovery key keep working.
+ */
+export function useChangeMasterPassword() {
+  const client = useQueryClient();
+  const setKey = useVaultStore((s) => s.setKey);
+  return useMutation({
+    mutationFn: async ({ current, next, settings }: { current: string; next: string; settings: VaultSettingsRow }) => {
+      const key = await unlockVault(current, settings);
+      if (!key) throw new Error("That current master password is not right.");
+      await writePassword(key, next);
+      setKey(key);
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: SETTINGS_KEY }),
+  });
+}
+
+async function writePassword(key: Uint8Array, password: string): Promise<void> {
+  const userId = await currentUserId();
+  const { error } = await supabase
+    .from("vault_settings")
+    .update(await wrapWithPassword(key, password))
+    .eq("user_id", userId);
+  if (error) throw error;
+}
+
+/** Forgot master password, step 1: a code to the sign-in email. It proves this account. */
+export async function sendRecoveryEmail(): Promise<string> {
+  const { data } = await supabase.auth.getSession();
+  const email = data.session?.user.email;
+  if (!email) throw new Error("This account has no email, so I cannot send a code.");
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+  if (error) throw new Error("Could not send the code. Wait a minute and try again.");
+  return email;
+}
+
+/** Step 1, the code you typed. */
+export async function checkRecoveryEmail(email: string, code: string): Promise<void> {
+  const { error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: "email" });
+  if (error) throw new Error("That code is not right, or it is too old. Send a new one.");
+}
+
+/** Step 2: the recovery key opens the vault. Null when it is wrong. */
+export async function checkRecoveryKey(code: string, settings: VaultSettingsRow): Promise<Uint8Array | null> {
+  return openWithRecovery(code, settings);
+}
+
+/** Step 3: the new master password. The vault opens. */
+export function useFinishRecovery() {
+  const client = useQueryClient();
+  const setKey = useVaultStore((s) => s.setKey);
+  return useMutation({
+    mutationFn: async ({ key, password }: { key: Uint8Array; password: string }) => {
+      await writePassword(key, password);
+      setKey(key, "recovery");
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: SETTINGS_KEY }),
   });
 }

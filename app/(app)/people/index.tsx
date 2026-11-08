@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -10,13 +10,12 @@ import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { dateLabel, occurrenceText, usePeople, useSavePerson } from "@/lib/people";
 
 const UPCOMING_DAYS = 60;
 
 export default function PeopleScreen() {
-  const colors = useColors();
   const people = usePeople();
   const save = useSavePerson();
   const [adding, setAdding] = useState(false);
@@ -49,7 +48,7 @@ export default function PeopleScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {people.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : people.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load people. {people.error.message}</Notice>

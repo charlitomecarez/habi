@@ -717,8 +717,8 @@ export type Database = {
           letter: string | null;
           location: string | null;
           posted_on: string | null;
-          reason: string;
-          score: number;
+          reason: string | null;
+          score: number | null;
           status: string;
           summary: string | null;
           title: string;
@@ -737,8 +737,8 @@ export type Database = {
           letter?: string | null;
           location?: string | null;
           posted_on?: string | null;
-          reason: string;
-          score: number;
+          reason?: string | null;
+          score?: number | null;
           status?: string;
           summary?: string | null;
           title: string;
@@ -757,8 +757,8 @@ export type Database = {
           letter?: string | null;
           location?: string | null;
           posted_on?: string | null;
-          reason?: string;
-          score?: number;
+          reason?: string | null;
+          score?: number | null;
           status?: string;
           summary?: string | null;
           title?: string;
@@ -774,6 +774,7 @@ export type Database = {
           countries: string[];
           created_at: string;
           id: string;
+          last_error: string | null;
           last_new_count: number;
           last_ok_at: string | null;
           last_run_at: string | null;
@@ -789,6 +790,7 @@ export type Database = {
           countries?: string[];
           created_at?: string;
           id?: string;
+          last_error?: string | null;
           last_new_count?: number;
           last_ok_at?: string | null;
           last_run_at?: string | null;
@@ -804,6 +806,7 @@ export type Database = {
           countries?: string[];
           created_at?: string;
           id?: string;
+          last_error?: string | null;
           last_new_count?: number;
           last_ok_at?: string | null;
           last_run_at?: string | null;
@@ -1031,6 +1034,63 @@ export type Database = {
           name?: string;
           sort_order?: number;
           user_id?: string;
+        };
+        Relationships: [];
+      };
+      news_items: {
+        Row: {
+          fetched_at: string;
+          id: string;
+          image_url: string | null;
+          published_at: string;
+          section: string;
+          source: string;
+          summary: string | null;
+          title: string;
+          url: string;
+        };
+        Insert: {
+          fetched_at?: string;
+          id?: string;
+          image_url?: string | null;
+          published_at: string;
+          section: string;
+          source: string;
+          summary?: string | null;
+          title: string;
+          url: string;
+        };
+        Update: {
+          fetched_at?: string;
+          id?: string;
+          image_url?: string | null;
+          published_at?: string;
+          section?: string;
+          source?: string;
+          summary?: string | null;
+          title?: string;
+          url?: string;
+        };
+        Relationships: [];
+      };
+      news_sync: {
+        Row: {
+          last_error_at: string | null;
+          last_ok_at: string | null;
+          section: string;
+          source: string;
+        };
+        Insert: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          section: string;
+          source: string;
+        };
+        Update: {
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+          section?: string;
+          source?: string;
         };
         Relationships: [];
       };
@@ -2049,6 +2109,8 @@ export type Database = {
           digest_enabled: boolean;
           digest_hour: number;
           digest_last_sent_on: string | null;
+          followed_teams: string[];
+          hidden_modules: string[];
           home_shortcuts: string[];
           timezone: string;
           ulam_avoid: string[];
@@ -2062,6 +2124,8 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_teams?: string[];
+          hidden_modules?: string[];
           home_shortcuts?: string[];
           timezone?: string;
           ulam_avoid?: string[];
@@ -2075,6 +2139,8 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_teams?: string[];
+          hidden_modules?: string[];
           home_shortcuts?: string[];
           timezone?: string;
           ulam_avoid?: string[];
@@ -2124,8 +2190,14 @@ export type Database = {
           kdf_salt: string;
           key_check: string;
           key_check_nonce: string;
+          pw_wrap: string | null;
+          pw_wrap_nonce: string | null;
+          recovery_salt: string | null;
+          recovery_wrap: string | null;
+          recovery_wrap_nonce: string | null;
           updated_at: string;
           user_id: string;
+          wrap_version: number;
         };
         Insert: {
           created_at?: string;
@@ -2135,8 +2207,14 @@ export type Database = {
           kdf_salt: string;
           key_check: string;
           key_check_nonce: string;
+          pw_wrap?: string | null;
+          pw_wrap_nonce?: string | null;
+          recovery_salt?: string | null;
+          recovery_wrap?: string | null;
+          recovery_wrap_nonce?: string | null;
           updated_at?: string;
           user_id?: string;
+          wrap_version?: number;
         };
         Update: {
           created_at?: string;
@@ -2146,8 +2224,14 @@ export type Database = {
           kdf_salt?: string;
           key_check?: string;
           key_check_nonce?: string;
+          pw_wrap?: string | null;
+          pw_wrap_nonce?: string | null;
+          recovery_salt?: string | null;
+          recovery_wrap?: string | null;
+          recovery_wrap_nonce?: string | null;
           updated_at?: string;
           user_id?: string;
+          wrap_version?: number;
         };
         Relationships: [];
       };

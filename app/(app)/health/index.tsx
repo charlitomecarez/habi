@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState, type ReactNode } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DoseRow } from "@/components/health/DoseRow";
@@ -14,6 +14,7 @@ import { LineChart } from "@/components/ui/LineChart";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { isActive, timeText, todaysDoses, useDeleteWeight, useHealth, useLogWeight } from "@/lib/health";
 
@@ -64,7 +65,7 @@ export default function HealthScreen() {
 
       <ScrollView contentContainerClassName="gap-6 px-5 pb-8 pt-2">
         {health.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : health.error || !data ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your health records. {health.error?.message}</Notice>

@@ -6,6 +6,8 @@ import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { InboxCard } from "@/components/home/InboxCard";
+import { LatestGames } from "@/components/home/LatestGames";
+import { LatestNews } from "@/components/home/LatestNews";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { ShortcutsSheet } from "@/components/home/ShortcutsSheet";
 import { TipCard } from "@/components/home/TipCard";
@@ -13,8 +15,10 @@ import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { ModuleLine } from "@/components/ui/ModuleLine";
+import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { WeaveBand } from "@/components/ui/WeaveBand";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
@@ -23,7 +27,8 @@ import { todaysDoses, useHealth } from "@/lib/health";
 import { buildAttention, todaySentence } from "@/lib/home";
 import { useHabits } from "@/lib/habits";
 import { dayTotals, formatPeso, toDateString, useMonthTransactions, useSubscriptions } from "@/lib/money";
-import { shortcutModules } from "@/lib/modules";
+import { useModuleFilter } from "@/lib/features";
+import { hiddenReason, shortcutModules } from "@/lib/modules";
 import { usePeople } from "@/lib/people";
 import { useUserSettings } from "@/lib/settings";
 import { groupTodos, useTodos } from "@/lib/todos";
@@ -33,6 +38,7 @@ import { sleepMinutes, sleepRow, sleepText, useSleepLog } from "@/lib/sleep";
 import { stepsAverage, useSteps } from "@/lib/steps";
 import { useWeather, weatherIcon } from "@/lib/weather";
 import { habitRow, moneyRow, todayIndex, todoRow, weekDays } from "@/lib/week";
+import { useAuth } from "@/providers/auth-provider";
 import { STRAND_WORD, type WeaveRow } from "@/lib/weave";
 
 /** Home shows this many rows, then "See all". */
@@ -58,6 +64,11 @@ export default function HomeScreen() {
   const colors = useColors();
   const now = new Date();
   const insets = useSafeAreaInsets();
+  const { session } = useAuth();
+  const user = session?.user;
+  const profileLetter = (
+    ((user?.user_metadata.full_name as string | undefined) ?? user?.email ?? "?").charAt(0) || "?"
+  ).toUpperCase();
 
   const [showAll, setShowAll] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -115,7 +126,9 @@ export default function HomeScreen() {
   const { ulam } = todayChoice(ulamRow, now, ulamLimit);
 
   const shortcutIds = settings.data?.homeShortcuts ?? [];
-  const shortcuts = shortcutModules(shortcutIds);
+  const moduleFilter = useModuleFilter();
+  // A module the server cannot run, or that you switched off, leaves Home too.
+  const shortcuts = shortcutModules(shortcutIds).filter((m) => hiddenReason(m, moduleFilter) === null);
 
   const loading = todos.isPending || vehicle.isPending;
   const error = todos.error ?? vehicle.error ?? due.error ?? subscriptions.error ?? debts.error ?? people.error;
@@ -168,17 +181,29 @@ export default function HomeScreen() {
       >
         <View>
           <View className="gap-1 bg-shell px-5 pb-2" style={{ paddingTop: insets.top + 8 }}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Weather. ${weatherLine}`}
-              onPress={() => router.push("/weather")}
-              className="h-touch justify-center"
-            >
-              <View className="flex-row items-center gap-2">
-                {lineIcon ? <Ionicons name={lineIcon} size={18} color={colors.onShell} /> : null}
-                <Text className="min-w-0 shrink font-sans text-label text-on-shell">{weatherLine}</Text>
-              </View>
-            </Pressable>
+            <View className="flex-row items-center gap-3">
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Weather. ${weatherLine}`}
+                onPress={() => router.push("/weather")}
+                className="min-h-touch min-w-0 flex-1 justify-center"
+              >
+                <View className="flex-row items-center gap-2">
+                  {lineIcon ? <Ionicons name={lineIcon} size={18} color={colors.onShell} /> : null}
+                  <Text className="min-w-0 shrink font-sans text-label text-on-shell">{weatherLine}</Text>
+                </View>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="More and settings"
+                onPress={() => router.push("/more")}
+                className="h-touch w-touch items-center justify-center"
+              >
+                <View className="h-8 w-8 items-center justify-center overflow-hidden rounded-pill border-2 border-on-shell bg-on-shell">
+                  <ProfilePhoto letter={profileLetter} letterClassName="font-bold text-label text-shell" size={28} />
+                </View>
+              </Pressable>
+            </View>
             <Text
               accessibilityRole="header"
               adjustsFontSizeToFit
@@ -224,7 +249,9 @@ export default function HomeScreen() {
               </Text>
               <Button label="Add todo" onPress={() => router.push("/todo/new")} />
             </View>
-          ) : loading ? null : (
+          ) : loading ? (
+            <Skeleton rows={3} />
+          ) : (
             <View>
               {visible.map((item) => (
                 <DataRow
@@ -258,7 +285,7 @@ export default function HomeScreen() {
               />
               <DataRow
                 title={steps.data?.access ? "Steps" : "Sleep"}
-                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "Log last night's sleep"}
+                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "No sleep found"}
                 value={steps.data?.access ? stepsToday.toLocaleString("en-PH") : undefined}
                 status={
                   steps.data?.access && stepsToday >= stepsAverage(stepWeek)
@@ -303,6 +330,9 @@ export default function HomeScreen() {
               </View>
             )}
           </View>
+
+          <LatestGames ready={!loading} />
+          <LatestNews ready={!loading} />
 
           <WeeklyReviewCard />
           <TipCard />

@@ -1,15 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { DataRow } from "@/components/ui/DataRow";
+import { PinSheet } from "@/components/vault/PinSheet";
 import { SetUpVault, UnlockVault } from "@/components/vault/VaultGate";
 import { copySecret } from "@/lib/clipboard";
 import { useColors } from "@/lib/colors";
@@ -19,6 +24,7 @@ import {
   IDLE_LOCK_MINUTES,
   useExportBackup,
   useBiometricUnlock,
+  usePinUnlock,
   useSetBiometricUnlock,
   useVaultEntries,
   useVaultSettings,
@@ -47,6 +53,10 @@ function UnlockedVault() {
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
   const [choosingUnlock, setChoosingUnlock] = useState(false);
+  const [pinOpen, setPinOpen] = useState(false);
+  const pin = usePinUnlock();
+  const settings = useVaultSettings();
+  const hasRecovery = !!settings.data?.recovery_wrap;
 
   async function copyPassword(title: string, password: string) {
     await copySecret(password, CLEAR_CLIPBOARD_SECONDS * 1000);
@@ -56,7 +66,7 @@ function UnlockedVault() {
   const visible = entries.filter((e) => matches(e, query));
 
   return (
-    <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3" keyboardShouldPersistTaps="handled">
+    <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3" keyboardShouldPersistTaps="handled">
       <View className="flex-row items-start justify-between gap-3">
         <View className="flex-1 gap-1">
           <View className="flex-row items-center gap-1">
@@ -76,7 +86,11 @@ function UnlockedVault() {
                 ? "Unlocked with fingerprint"
                 : unlockedWith === "face"
                   ? "Unlocked with face or fingerprint"
-                  : "Unlocked"}
+                  : unlockedWith === "pin"
+                    ? "Unlocked with PIN"
+                    : unlockedWith === "recovery"
+                      ? "Unlocked with your recovery key"
+                      : "Unlocked"}
             </Text>
           </View>
         </View>
@@ -114,14 +128,18 @@ function UnlockedVault() {
       ) : null}
 
       {isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton />
       ) : error ? (
         <View className="gap-3">
           <Notice tone="danger">Could not load the vault. {error.message}</Notice>
           <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
         </View>
       ) : entries.length === 0 ? (
-        <Text className="py-4 font-sans text-body text-ink-muted">I keep your logins here. Add your first one.</Text>
+        <EmptyState
+          drawing="box"
+          title="No logins yet"
+          body="I keep your logins here, locked on this phone. Add your first one with the button."
+        />
       ) : visible.length === 0 ? (
         <Text className="py-4 font-sans text-body text-ink-muted">No logins match “{query.trim()}”.</Text>
       ) : (
@@ -226,6 +244,29 @@ function UnlockedVault() {
       ) : null}
       {setBiometric.error ? <Notice tone="danger">{setBiometric.error.message}</Notice> : null}
 
+      <View>
+        <Text accessibilityRole="header" className="py-2 font-semibold text-heading text-ink">
+          Vault security
+        </Text>
+        <DataRow
+          title="Recovery key"
+          detail={hasRecovery ? "Opens the vault if you forget the master password" : "Set up a recovery key"}
+          status={hasRecovery ? { label: "Set up", tone: "good" } : { label: "Not set up", tone: "watch" }}
+          onPress={() => router.push("/vault/recovery-key")}
+          chevron
+        />
+        {pin.data?.available ? (
+          <DataRow
+            title="PIN unlock"
+            detail={pin.data.on ? "On, on this phone" : "Off"}
+            onPress={() => setPinOpen(true)}
+            chevron
+          />
+        ) : null}
+        <DataRow title="Change master password" onPress={() => router.push("/vault/change-password")} chevron last />
+      </View>
+      {pinOpen ? <PinSheet on={!!pin.data?.on} onClose={() => setPinOpen(false)} /> : null}
+
       <Button
         label="Export backup"
         variant="secondary"
@@ -238,7 +279,7 @@ function UnlockedVault() {
         a copy from now.
       </Text>
       {exportBackup.error ? <Notice tone="danger">{exportBackup.error.message}</Notice> : null}
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 
@@ -247,7 +288,6 @@ function quickUnlockLabel(mode: BiometricMode | null | undefined): string {
 }
 
 export default function VaultScreen() {
-  const colors = useColors();
   const key = useVaultStore((s) => s.key);
   const settings = useVaultSettings();
   useSecureScreen("vault");
@@ -257,7 +297,7 @@ export default function VaultScreen() {
       <ModuleHeader title="Vault" tone="records" />
 
       {settings.isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton />
       ) : settings.error ? (
         <View className="gap-3 px-5">
           <Notice tone="danger">Could not load the vault. {settings.error.message}</Notice>

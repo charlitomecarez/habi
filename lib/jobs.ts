@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 
 import { copyText } from "@/lib/clipboard";
 import { supabase } from "@/lib/supabase";
-import { safeUrl, type ProfileDraft } from "@/supabase/functions/_shared/jobs";
+import { fitWord, NOT_RANKED, safeUrl, type ProfileDraft } from "@/supabase/functions/_shared/jobs";
 import type { Tables } from "@/types/database";
 
 export { fitWord } from "@/supabase/functions/_shared/jobs";
@@ -41,6 +41,37 @@ export function filterJobs(jobs: readonly JobMatch[], filter: JobFilter): JobMat
   }
 }
 
+/** The number and the status word of a job. A job that Groq has not ranked shows a dash. */
+export function jobScore(job: Pick<JobMatch, "score">): {
+  value: string;
+  status: { label: string; tone: "good" | "watch" | "muted" };
+} {
+  if (job.score === null) return { value: "—", status: { label: NOT_RANKED, tone: "muted" } };
+  return {
+    value: job.score.toFixed(1),
+    status: { label: fitWord(job.score), tone: job.score >= 3.5 ? "good" : "watch" },
+  };
+}
+
+export type LastSearchError = "groq_busy" | "search_down" | "failed";
+
+/** Why the last search stopped, in the words of the Find a work notice. */
+export function lastErrorNotice(code: string | null): { tone: "warning" | "danger"; text: string } | null {
+  switch (code) {
+    case "groq_busy":
+      return {
+        tone: "warning",
+        text: "My last search could not rank every job, because Groq was busy. I rank them on the next search.",
+      };
+    case "search_down":
+      return { tone: "danger", text: "My last search stopped: the job site did not answer. I try again at 6 AM." };
+    case "failed":
+      return { tone: "danger", text: "My last search stopped. I try again at 6 AM." };
+    default:
+      return null;
+  }
+}
+
 /** "React Native, Supabase" to a clean list. */
 export const splitList = (text: string) =>
   text
@@ -64,7 +95,12 @@ export function useJobs() {
     queryFn: async () => {
       const [profile, matches] = await Promise.all([
         supabase.from("job_profiles").select("*").maybeSingle(),
-        supabase.from("job_matches").select("*").order("score", { ascending: false }),
+        supabase
+          .from("job_matches")
+          .select("*")
+          // Unranked jobs come after ranked ones, newest first.
+          .order("score", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false }),
       ]);
       if (profile.error) throw profile.error;
       if (matches.error) throw matches.error;

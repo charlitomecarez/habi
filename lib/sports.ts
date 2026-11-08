@@ -67,3 +67,95 @@ export function useSports(league: LeagueId) {
     },
   });
 }
+
+// Following teams. A follow is "league:team", for example "PL:Arsenal", with the same team name that
+// sports_matches holds. If a feed renames a team, the follow stops matching and the sheet shows it unticked.
+
+export const MAX_FOLLOWED = 12;
+/** Results this old or newer show on Home. */
+export const RESULT_DAYS = 3;
+/** Games shown on Home. */
+export const HOME_GAMES = 3;
+
+export const followKey = (league: string, team: string) => `${league}:${team}`;
+
+export function parseFollow(key: string): { league: string; team: string } | null {
+  const at = key.indexOf(":");
+  if (at < 1 || at === key.length - 1) return null;
+  return { league: key.slice(0, at), team: key.slice(at + 1) };
+}
+
+/** Adds or removes a team. Adds nothing past the limit. */
+export function toggleFollow(list: readonly string[], key: string, max = MAX_FOLLOWED): string[] {
+  if (list.includes(key)) return list.filter((k) => k !== key);
+  return list.length >= max ? [...list] : [...list, key];
+}
+
+/**
+ * For each followed team, its last result from the past 3 days and its next match. A game between two
+ * followed teams shows once. Soonest to now first, at most 3.
+ */
+export function latestGames(
+  matches: readonly Match[],
+  follows: readonly string[],
+  now = new Date(),
+  limit = HOME_GAMES,
+): Match[] {
+  const since = now.getTime() - RESULT_DAYS * 24 * 60 * 60 * 1000;
+  const picked = new Map<string, Match>();
+  for (const key of follows) {
+    const follow = parseFollow(key);
+    if (!follow) continue;
+    const mine = matches.filter(
+      (m) => m.league === follow.league && (m.home_team === follow.team || m.away_team === follow.team),
+    );
+    const last = mine
+      .filter((m) => m.status === "final" && Date.parse(m.starts_at) >= since)
+      .sort((a, b) => b.starts_at.localeCompare(a.starts_at))[0];
+    const next = mine
+      .filter((m) => m.status === "scheduled" && Date.parse(m.starts_at) >= now.getTime() - 3 * 60 * 60 * 1000)
+      .sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
+    for (const m of [last, next]) if (m) picked.set(`${m.league}:${m.external_id}`, m);
+  }
+  const gap = (m: Match) => Math.abs(Date.parse(m.starts_at) - now.getTime());
+  return [...picked.values()].sort((a, b) => gap(a) - gap(b)).slice(0, limit);
+}
+
+/** The followed teams' games from the last 3 days and the next 14, for Home. */
+export function useFollowedGames(follows: readonly string[]) {
+  const leagues = [...new Set(follows.map((k) => parseFollow(k)?.league).filter((l): l is string => !!l))];
+  return useQuery({
+    queryKey: ["sports", "followed", [...follows].sort().join(",")],
+    enabled: leagues.length > 0,
+    staleTime: 10 * 60 * 1000,
+    queryFn: async () => {
+      const now = Date.now();
+      const { data, error } = await supabase
+        .from("sports_matches")
+        .select("*")
+        .in("league", leagues)
+        .gte("starts_at", new Date(now - RESULT_DAYS * 24 * 60 * 60 * 1000).toISOString())
+        .lte("starts_at", new Date(now + 14 * 24 * 60 * 60 * 1000).toISOString())
+        .order("starts_at");
+      if (error) throw error;
+      return latestGames(data, follows);
+    },
+  });
+}
+
+/** Every team in a league, A to Z, with its mark, from the standings. */
+export function useLeagueTeams(league: LeagueId) {
+  return useQuery({
+    queryKey: ["sports", "teams", league],
+    staleTime: 60 * 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sports_standings")
+        .select("team, crest, code")
+        .eq("league", league)
+        .order("team");
+      if (error) throw error;
+      return data;
+    },
+  });
+}

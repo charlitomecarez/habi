@@ -1,21 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { addDays, format, isToday, subDays } from "date-fns";
+import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
+import { AppRow } from "@/components/screen-time/AppRow";
 import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
+import { DataRow } from "@/components/ui/DataRow";
 import { useColors } from "@/lib/colors";
 import { isScreenTimeSupported, openUsageSettings, useScreenTime, useUsageAccess } from "@/lib/screen-time";
-
-/** "2 h 15 min", "45 min", "under a minute" */
-export function duration(ms: number): string {
-  const minutes = Math.round(ms / 60000);
-  if (minutes < 1) return "under a minute";
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return h ? `${h} h${m ? ` ${m} min` : ""}` : `${m} min`;
-}
+import { duration } from "@/lib/screen-time-list";
 
 const TOP_APPS = 3;
 
@@ -105,19 +100,22 @@ export function ScreenTimeCard() {
                   Average {duration(usage.data.weekMs / 7)} a day
                 </Text>
                 {usage.data.day.apps.slice(0, TOP_APPS).map((a) => (
-                  <View key={a.packageName} className="gap-1">
-                    <View className="flex-row justify-between gap-3">
-                      <Text className="min-w-0 shrink font-sans text-label text-ink">{a.label}</Text>
-                      <Text className="font-sans text-label text-ink-muted">{duration(a.totalMs)}</Text>
-                    </View>
-                    <View className="h-bar bg-surface-muted">
-                      <View
-                        className="h-full bg-accent"
-                        style={{ width: `${Math.min(100, (a.totalMs / Math.max(usage.data.day.totalMs, 1)) * 100)}%` }}
-                      />
-                    </View>
-                  </View>
+                  <AppRow
+                    key={a.packageName}
+                    label={a.label}
+                    totalMs={a.totalMs}
+                    share={a.totalMs / Math.max(usage.data.day.totalMs, 1)}
+                  />
                 ))}
+                <DataRow
+                  title="See all apps"
+                  detail={
+                    usage.data.day.apps.length > TOP_APPS ? `${usage.data.day.apps.length - TOP_APPS} more` : undefined
+                  }
+                  onPress={() => router.push("/screen-time")}
+                  chevron
+                  last
+                />
               </>
             ) : null}
           </>

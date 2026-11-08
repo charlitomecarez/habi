@@ -12,7 +12,15 @@ export type ModuleEntry = {
   keywords: string;
   /** Only the admin sees this tile. The server checks too. */
   adminOnly?: boolean;
+  /** A keyed part of the server this module cannot run without. See lib/features.ts. */
+  needs?: Feature;
 };
+
+/** Keyed parts of the server. app-features says which ones are set up. */
+export type Feature = "sports" | "ai" | "tip" | "email";
+export type Features = Record<Feature, boolean>;
+/** Until the server answers, or if it cannot, every module shows. */
+export const ALL_FEATURES: Features = { sports: true, ai: true, tip: true, email: true };
 
 export type ModuleSection = { title: string; modules: readonly ModuleEntry[] };
 
@@ -76,6 +84,7 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         icon: { name: "football-outline" },
         tone: "daily",
         keywords: "football nba basketball standings",
+        needs: "sports",
       },
       {
         id: "weather",
@@ -84,6 +93,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         icon: { name: "partly-sunny-outline" },
         tone: "daily",
         keywords: "rain forecast temperature ulan panahon",
+      },
+      {
+        id: "news",
+        label: "News",
+        href: "/news",
+        icon: { name: "newspaper-outline" },
+        tone: "daily",
+        keywords: "headlines balita philippines world",
       },
     ],
   },
@@ -113,6 +130,7 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         icon: { name: "mic-outline" },
         tone: "people",
         keywords: "voice message record taglish",
+        needs: "ai",
       },
     ],
   },
@@ -156,6 +174,7 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         tone: "records",
         keywords: "job career resume cover letter apply",
         adminOnly: true,
+        needs: "ai",
       },
       {
         id: "documents",
@@ -211,4 +230,25 @@ export function searchModules(query: string): ModuleSection[] {
     ...section,
     modules: section.modules.filter((m) => `${m.label} ${m.keywords}`.toLowerCase().includes(typed)),
   })).filter((section) => section.modules.length > 0);
+}
+
+export type ModuleFilter = { features: Features; hidden: readonly string[]; isAdmin: boolean };
+
+/** Why a module does not show, or null when it shows. */
+export function hiddenReason(m: ModuleEntry, f: ModuleFilter): "admin" | "server" | "hidden" | null {
+  if (m.adminOnly && !f.isAdmin) return "admin";
+  if (m.needs && !f.features[m.needs]) return "server";
+  return f.hidden.includes(m.id) ? "hidden" : null;
+}
+
+/** The sections of More with only the modules this account can and wants to see. */
+export function visibleSections(sections: readonly ModuleSection[], f: ModuleFilter): ModuleSection[] {
+  return sections
+    .map((s) => ({ ...s, modules: s.modules.filter((m) => hiddenReason(m, f) === null) }))
+    .filter((s) => s.modules.length > 0);
+}
+
+/** Switches a module off or back on in Settings › Modules. */
+export function toggleHidden(hidden: readonly string[], id: string): string[] {
+  return hidden.includes(id) ? hidden.filter((x) => x !== id) : [...hidden, id];
 }

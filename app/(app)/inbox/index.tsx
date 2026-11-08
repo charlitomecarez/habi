@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
+import { ModuleGate } from "@/components/ui/ModuleGate";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
   canRetry,
@@ -37,7 +39,7 @@ function sentBadge(message: VoiceMessage) {
   return { label: "Making text", tone: "warning" } as const;
 }
 
-export default function InboxScreen() {
+function InboxScreen() {
   const colors = useColors();
   const access = useVoiceAccess();
   const inbox = useInbox();
@@ -97,7 +99,7 @@ export default function InboxScreen() {
 
         <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 
-        {list.isPending || access.isPending ? <ActivityIndicator color={colors.accent} className="py-8" /> : null}
+        {list.isPending || access.isPending ? <Skeleton /> : null}
         {!list.isPending && !access.isPending && messages.length === 0 ? (
           isAdmin && !canRecord ? (
             <EmptyState
@@ -144,5 +146,14 @@ export default function InboxScreen() {
         <Fab label="Record a voice message" icon="mic" onPress={() => router.push("/inbox/record")} />
       ) : null}
     </SafeAreaView>
+  );
+}
+
+/** Needs a server key; see ModuleGate. */
+export default function InboxScreenGated() {
+  return (
+    <ModuleGate id="inbox" tone="people">
+      <InboxScreen />
+    </ModuleGate>
   );
 }

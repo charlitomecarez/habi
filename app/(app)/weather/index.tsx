@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { format, parse, parseISO } from "date-fns";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useWeather, weatherIcon } from "@/lib/weather";
 
@@ -50,7 +51,7 @@ export default function WeatherScreen() {
       />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {weather.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton layout="home" />
         ) : !place ? (
           <EmptyState
             drawing="calendar"

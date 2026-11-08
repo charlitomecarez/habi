@@ -1,13 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { day, isScheduled, scheduleText, streak, useHabits, useToggleCheck, weekCount, type Habit } from "@/lib/habits";
 
@@ -47,7 +49,6 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
 }
 
 export default function HabitsScreen() {
-  const colors = useColors();
   const habits = useHabits();
   const now = new Date();
   const list = habits.data?.habits ?? [];
@@ -72,16 +73,18 @@ export default function HabitsScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
         {habits.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : habits.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your habits. {habits.error.message}</Notice>
             <Button label="Try again" variant="secondary" size="input" onPress={() => habits.refetch()} />
           </View>
         ) : list.length === 0 ? (
-          <Text className="py-4 font-sans text-body text-ink-muted">
-            I keep your streaks here. Add a habit, like reading or posting a video, and tick it each day.
-          </Text>
+          <EmptyState
+            drawing="calendar"
+            title="No habits yet"
+            body="I keep your streaks here. Add a habit, like reading or posting a video, and tick it each day."
+          />
         ) : (
           <>
             <View>

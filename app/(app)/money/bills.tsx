@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { cycleLabel, daysUntil, formatPeso, useSubscriptions, useTransactions, type Subscription } from "@/lib/money";
 
 /** Always a word: Overdue, Due today, Due soon, Due Nov 5. */
@@ -23,7 +23,6 @@ function dueStatus(s: Subscription) {
 }
 
 export default function BillsScreen() {
-  const colors = useColors();
   const subscriptions = useSubscriptions();
   const history = useTransactions("history");
   const bills = (subscriptions.data ?? []).filter((s) => s.kind === "bill");
@@ -55,7 +54,7 @@ export default function BillsScreen() {
           the amount when you pay.
         </Text>
         {subscriptions.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : subscriptions.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your bills. {subscriptions.error.message}</Notice>

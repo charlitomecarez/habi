@@ -4,21 +4,37 @@ import { Text } from "react-native";
 
 import { useAuth } from "@/providers/auth-provider";
 
-/** The Google photo of the signed-in user. Shows the letter for email sign-in, or when the image fails to load. */
-export function ProfilePhoto({ letter, letterClassName }: { letter: string; letterClassName: string }) {
+type ProfilePhotoProps = {
+  letter: string;
+  letterClassName: string;
+  /** The circle's size in px. The photo is drawn at exactly this size. */
+  size: number;
+};
+
+/**
+ * The Google photo of the signed-in user. Google gives two addresses (avatar_url and picture); if one
+ * fails, it tries the other. It shows the letter for email sign-in, or when both fail to load.
+ */
+export function ProfilePhoto({ letter, letterClassName, size }: ProfilePhotoProps) {
   const { session } = useAuth();
   const metadata = session?.user.user_metadata;
-  const photo = (metadata?.avatar_url ?? metadata?.picture) as string | undefined;
-  const [photoFailed, setPhotoFailed] = useState(false);
+  const photos = [...new Set([metadata?.avatar_url, metadata?.picture].filter((u): u is string => !!u))];
+  const [tries, setTries] = useState<{ key: string; failed: number }>({ key: "", failed: 0 });
+  // A new sign-in brings new addresses, so the count of failures starts again.
+  const key = photos.join(" ");
+  const failed = tries.key === key ? tries.failed : 0;
+  const photo = photos[failed];
 
-  if (!photo || photoFailed) return <Text className={letterClassName}>{letter}</Text>;
+  if (!photo) return <Text className={letterClassName}>{letter}</Text>;
   return (
     <Image
+      key={photo}
       source={{ uri: photo }}
       accessibilityLabel="Your Google photo"
       contentFit="cover"
-      onError={() => setPhotoFailed(true)}
-      style={{ width: "100%", height: "100%" }}
+      cachePolicy="disk"
+      onError={() => setTries({ key, failed: failed + 1 })}
+      style={{ width: size, height: size }}
     />
   );
 }

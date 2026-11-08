@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AddLocationSheet } from "@/components/inventory/AddLocationSheet";
@@ -10,6 +10,7 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useDeleteLocation, useItems, useLocations, type LocationWithPath } from "@/lib/inventory";
 import { locationLink } from "@/lib/qr";
@@ -53,7 +54,7 @@ export default function LocationsScreen() {
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {locations.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : locations.error ? (
           <Notice tone="danger">Could not load locations. {locations.error.message}</Notice>
         ) : list.length === 0 ? (

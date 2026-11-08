@@ -2,15 +2,15 @@ import { Text, View } from "react-native";
 
 import { Chip } from "@/components/ui/Chip";
 import { Sheet } from "@/components/ui/Sheet";
-import { ALL_MODULES, MAX_SHORTCUTS, toggleShortcut } from "@/lib/modules";
-import { useVoiceAccess } from "@/lib/voice";
+import { useModuleFilter } from "@/lib/features";
+import { ALL_MODULES, hiddenReason, MAX_SHORTCUTS, toggleShortcut } from "@/lib/modules";
 import { useSaveUserSettings } from "@/lib/settings";
 
 type ShortcutsSheetProps = { visible: boolean; onClose: () => void; selected: readonly string[] };
 
 /** Picks the modules on Home. Each tap saves, so the phone and web match. */
 export function ShortcutsSheet({ visible, onClose, selected }: ShortcutsSheetProps) {
-  const isAdmin = useVoiceAccess().data?.isAdmin ?? false;
+  const filter = useModuleFilter();
   const save = useSaveUserSettings();
   return (
     <Sheet
@@ -20,7 +20,7 @@ export function ShortcutsSheet({ visible, onClose, selected }: ShortcutsSheetPro
       subtitle={`Pick up to ${MAX_SHORTCUTS} modules for Home.`}
     >
       <View className="flex-row flex-wrap gap-2 px-5 pb-5 pt-3">
-        {ALL_MODULES.filter((m) => isAdmin || !m.adminOnly).map((m) => (
+        {ALL_MODULES.filter((m) => hiddenReason(m, filter) === null).map((m) => (
           <Chip
             key={m.id}
             label={m.label}

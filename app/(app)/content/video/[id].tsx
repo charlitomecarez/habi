@@ -2,17 +2,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, type ReactNode } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { publishStatus } from "@/components/content/VideoCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { copyText } from "@/lib/clipboard";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
@@ -80,7 +82,9 @@ export default function VideoScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page px-5">
         {video.isPending ? (
-          <ActivityIndicator color={colors.accent} />
+          <View className="w-full flex-1 self-stretch pt-4">
+            <Skeleton layout="detail" />
+          </View>
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{video.error ? video.error.message : "This video was deleted."}</Notice>
@@ -356,26 +360,19 @@ export default function VideoScreen() {
           </View>
         </Section>
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">
-              Delete this video? Its tasks stay in Todos without the link.
-            </Text>
-            <Button
-              label="Delete video"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(v.id);
-                goBack();
-              }}
-            />
-            <Button label="Keep video" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete video" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete video" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title="Delete this video?"
+          body="Its tasks stay in Todos without the link."
+          confirmLabel="Delete video"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(v.id);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
 
       <Sheet visible={sheet === "task"} onClose={() => setSheet(null)} title="Add task" subtitle={v.title}>

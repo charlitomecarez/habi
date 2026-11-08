@@ -1,3 +1,4 @@
+import { isToday, parseISO } from "date-fns";
 import { getAlarms } from "@/lib/alarm";
 import { isUserAlarm } from "@/lib/alarm-rules";
 import { useVideos } from "@/lib/content";
@@ -17,6 +18,7 @@ import { todayChoice, useUlamDays } from "@/lib/ulam";
 import { useVaultEntries, useVaultStore } from "@/lib/vault";
 import { unreadCount, useInbox } from "@/lib/voice";
 import { useWeather } from "@/lib/weather";
+import { useNews } from "@/lib/news";
 
 /** The count at the end of a line on More. Undefined while it is loading. */
 export function countText(count: number | undefined): string | undefined {
@@ -40,6 +42,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
   const documents = useDocuments();
   const videos = useVideos();
   const weather = useWeather();
+  const news = useNews();
   const unlocked = useVaultStore((s) => s.key !== null);
   const vault = useVaultEntries();
 
@@ -53,6 +56,9 @@ export function useModuleDetails(): Record<string, string | undefined> {
     alarms: countText(getAlarms().filter(isUserAlarm).length),
     ulam: ulam.data ? formatPeso(todayChoice(ulamToday, now, settings.data?.ulamLimit ?? 99).ulam.cost) : undefined,
     weather: weather.data?.forecast ? `${weather.data.forecast.temperature}°` : undefined,
+    news: news.data
+      ? `${[...news.data.ph, ...news.data.world].filter((n) => isToday(parseISO(n.published_at))).length} today`
+      : undefined,
     people: countText(people.data?.people.length),
     debts: countText(debts.data?.filter((d) => d.balance > 0).length),
     inbox: inbox.data ? `${unreadCount(inbox.data)} new` : undefined,

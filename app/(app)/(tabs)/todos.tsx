@@ -1,15 +1,16 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TodoRow } from "@/components/todos/TodoRow";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { groupTodos, isOverdue, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
 
 type Filter = "all" | "today" | "upcoming" | "done";
@@ -45,7 +46,6 @@ function TodoList({ todos, onToggle }: { todos: Todo[]; onToggle: (todo: Todo) =
 }
 
 export default function TodosScreen() {
-  const colors = useColors();
   const [filter, setFilter] = useState<Filter>("all");
   const { data, isPending, error, refetch } = useTodos();
   const toggle = useToggleTodo();
@@ -83,14 +83,22 @@ export default function TodosScreen() {
         </View>
 
         {isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load todos. Check your connection.</Notice>
             <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
           </View>
         ) : sections.length === 0 ? (
-          <Text className="py-4 font-sans text-body text-ink-muted">{EMPTY_TEXT[filter]}</Text>
+          filter === "all" ? (
+            <EmptyState
+              drawing="list"
+              title={EMPTY_TEXT.all}
+              body="Add one with the button, and I remind you when it is due."
+            />
+          ) : (
+            <Text className="py-4 font-sans text-body text-ink-muted">{EMPTY_TEXT[filter]}</Text>
+          )
         ) : (
           sections.map((section) => (
             <View key={section.title}>

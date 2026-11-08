@@ -1,7 +1,7 @@
 import { format, isSameMonth, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -9,8 +9,8 @@ import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
-import { useColors } from "@/lib/colors";
 import { formatPeso, useAccounts } from "@/lib/money";
 import {
   nextDate,
@@ -23,7 +23,6 @@ import {
 } from "@/lib/recurring";
 
 export default function RecurringRuleScreen() {
-  const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const rules = useRecurring();
   const accounts = useAccounts();
@@ -56,7 +55,9 @@ export default function RecurringRuleScreen() {
       {!rule ? (
         <View className="flex-1 items-center justify-center px-5">
           {rules.isPending ? (
-            <ActivityIndicator color={colors.accent} />
+            <View className="w-full flex-1 self-stretch pt-4">
+              <Skeleton layout="detail" />
+            </View>
           ) : (
             <Text className="text-center font-sans text-body text-ink-muted">This rule no longer exists.</Text>
           )}

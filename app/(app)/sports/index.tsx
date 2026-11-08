@@ -1,20 +1,25 @@
 import { format, isBefore, isToday, parseISO, startOfDay } from "date-fns";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { FollowSheet } from "@/components/sports/FollowSheet";
 import { TeamMark } from "@/components/sports/TeamMark";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ModuleGate } from "@/components/ui/ModuleGate";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { useUserSettings } from "@/lib/settings";
 import {
   groupByDay,
   LEAGUES,
+  parseFollow,
   matchStatus,
   matchTitle,
   openMatch,
@@ -66,9 +71,12 @@ function StandingsTable({ rows, nba }: { rows: Standing[]; nba: boolean }) {
   );
 }
 
-export default function SportsScreen() {
-  const colors = useColors();
+function SportsScreen() {
+  const params = useLocalSearchParams<{ follow?: string }>();
   const [league, setLeague] = useState<LeagueId>("PL");
+  const [following, setFollowing] = useState(params.follow === "1");
+  const followed = useUserSettings().data?.followedTeams ?? [];
+  const followedNames = followed.map((k) => parseFollow(k)?.team).filter(Boolean);
   const [view, setView] = useState<Mode>("matches");
   const sports = useSports(league);
   const data = sports.data;
@@ -98,6 +106,13 @@ export default function SportsScreen() {
             />
           ))}
         </View>
+        <DataRow
+          title="Teams you follow"
+          detail={followedNames.length ? followedNames.join(", ") : "None yet. Their games show on Home."}
+          onPress={() => setFollowing(true)}
+          chevron
+          last
+        />
         <Segmented label="Show" options={VIEWS} value={view} onChange={setView} />
 
         {failed ? (
@@ -105,7 +120,7 @@ export default function SportsScreen() {
         ) : null}
 
         {sports.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : sports.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load sports. Check your connection.</Notice>
@@ -165,6 +180,22 @@ export default function SportsScreen() {
           </>
         )}
       </ScrollView>
+      <FollowSheet
+        key={`${following}-${followed.join(",")}`}
+        visible={following}
+        onClose={() => setFollowing(false)}
+        followed={followed}
+        startLeague={league}
+      />
     </SafeAreaView>
+  );
+}
+
+/** Needs a server key; see ModuleGate. */
+export default function SportsScreenGated() {
+  return (
+    <ModuleGate id="sports" tone="daily">
+      <SportsScreen />
+    </ModuleGate>
   );
 }

@@ -1,17 +1,18 @@
 import { format, parseISO } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
-  fitWord,
+  jobScore,
   openApplication,
   useDraftLetter,
   useJobs,
@@ -33,6 +34,7 @@ function JobBody({ job }: { job: JobMatch }) {
   const update = useUpdateJob();
   const [edited, setEdited] = useState<string | null>(null);
   const [openFailed, setOpenFailed] = useState(false);
+  const score = jobScore(job);
   const letter = edited ?? job.letter;
 
   async function apply(text: string | null) {
@@ -49,21 +51,40 @@ function JobBody({ job }: { job: JobMatch }) {
   }
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
-      <View className="flex-row items-center justify-between gap-3">
-        <Text adjustsFontSizeToFit minimumFontScale={0.7} numberOfLines={1} className="font-bold text-display text-ink">
-          {job.score.toFixed(1)}
-        </Text>
-        <Text className={`font-semibold text-label ${job.score >= 3.5 ? "text-good" : "text-watch"}`}>
-          {fitWord(job.score)}
-        </Text>
-      </View>
-      <View className="gap-1">
-        <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
-          Why it fits
-        </Text>
-        <Text className="font-sans text-body text-ink">{job.reason}</Text>
-      </View>
+    <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      {job.score === null ? (
+        <View className="gap-2">
+          <View className="flex-row items-center justify-between gap-3">
+            <Text className="font-bold text-display text-ink">—</Text>
+            <Text className="font-semibold text-label text-ink-muted">Not ranked yet</Text>
+          </View>
+          <Text className="font-sans text-body text-ink">
+            I could not rank this job yet. I try again on the next search at 6 AM.
+          </Text>
+        </View>
+      ) : (
+        <>
+          <View className="flex-row items-center justify-between gap-3">
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={1}
+              className="font-bold text-display text-ink"
+            >
+              {score.value}
+            </Text>
+            <Text className={`font-semibold text-label ${score.status.tone === "good" ? "text-good" : "text-watch"}`}>
+              {score.status.label}
+            </Text>
+          </View>
+          <View className="gap-1">
+            <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+              Why it fits
+            </Text>
+            <Text className="font-sans text-body text-ink">{job.reason}</Text>
+          </View>
+        </>
+      )}
 
       {draft.error ? <Notice tone="danger">{draft.error.message}</Notice> : null}
       {openFailed ? <Notice tone="danger">Could not open this link.</Notice> : null}
@@ -98,12 +119,11 @@ function JobBody({ job }: { job: JobMatch }) {
           </Text>
         ) : null}
       </View>
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 
 export default function JobScreen() {
-  const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const jobs = useJobs();
   const job = jobs.data?.matches.find((j) => j.id === id);
@@ -118,7 +138,7 @@ export default function JobScreen() {
       {job ? (
         <JobBody job={job} />
       ) : jobs.isPending ? (
-        <ActivityIndicator color={colors.accent} className="py-8" />
+        <Skeleton layout="detail" />
       ) : (
         <Text className="p-5 text-center font-sans text-body text-ink-muted">This item no longer exists.</Text>
       )}

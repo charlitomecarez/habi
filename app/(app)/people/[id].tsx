@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, type ReactNode } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Input } from "@/components/ui/Input";
@@ -15,6 +16,7 @@ import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebts } from "@/lib/debts";
@@ -85,7 +87,9 @@ export default function PersonScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page px-5">
         {people.isPending ? (
-          <ActivityIndicator color={colors.accent} />
+          <View className="w-full flex-1 self-stretch pt-4">
+            <Skeleton layout="detail" />
+          </View>
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{people.error ? people.error.message : "This person was deleted."}</Notice>
@@ -289,26 +293,19 @@ export default function PersonScreen() {
           />
         </Section>
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">
-              Delete {person.name}? Their dates and gift ideas are deleted. Debts stay, with the name.
-            </Text>
-            <Button
-              label="Delete person"
-              variant="destructive"
-              size="input"
-              loading={removePerson.isPending}
-              onPress={async () => {
-                await removePerson.mutateAsync(id);
-                goBack();
-              }}
-            />
-            <Button label="Keep person" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete person" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete person" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title={`Delete ${person.name}?`}
+          body="Their dates and gift ideas are deleted. Debts stay, with the name."
+          confirmLabel="Delete person"
+          loading={removePerson.isPending}
+          onConfirm={async () => {
+            await removePerson.mutateAsync(id);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
 
       <Sheet visible={sheet === "rename"} onClose={() => setSheet(null)} title="Edit person">

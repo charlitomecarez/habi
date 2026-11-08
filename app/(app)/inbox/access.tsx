@@ -1,10 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useSetVoiceAccess, useVoiceAccounts } from "@/lib/voice";
 
@@ -30,7 +31,7 @@ export default function VoiceAccessScreen() {
         {accounts.error ? <Notice tone="danger">{accounts.error.message}</Notice> : null}
         {setAccess.error ? <Notice tone="danger">{setAccess.error.message}</Notice> : null}
         {accounts.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : !accounts.error && list.length === 0 ? (
           <EmptyState drawing="list" title="No other accounts yet" body="Accounts show here after they sign up." />
         ) : (

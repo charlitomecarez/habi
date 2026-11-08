@@ -2,14 +2,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { documentStatus, typeLabel, useDeleteDocument, useDocument, useSetDocumentPhotos } from "@/lib/documents";
@@ -39,7 +41,9 @@ export default function DocumentScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page px-5">
         {doc.isPending ? (
-          <ActivityIndicator color={colors.accent} />
+          <View className="w-full flex-1 self-stretch pt-4">
+            <Skeleton layout="detail" />
+          </View>
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{doc.error ? doc.error.message : "This document was deleted."}</Notice>
@@ -114,25 +118,19 @@ export default function DocumentScreen() {
           }}
         />
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">Delete this document and its photos?</Text>
-            <Button
-              label="Delete document"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(d.id);
-                await removeEncryptedPhotos(d.photo_paths);
-                goBack();
-              }}
-            />
-            <Button label="Keep document" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete document" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete document" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title="Delete this document and its photos?"
+          confirmLabel="Delete document"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(d.id);
+            await removeEncryptedPhotos(d.photo_paths);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
     </SafeAreaView>
   );

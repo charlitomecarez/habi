@@ -2,13 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { addMonths, format, isAfter, isSameMonth, parseISO, startOfDay } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
@@ -40,7 +42,9 @@ export default function HabitScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page px-5">
         {habits.isPending ? (
-          <ActivityIndicator color={colors.accent} />
+          <View className="w-full flex-1 self-stretch pt-4">
+            <Skeleton layout="detail" />
+          </View>
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{habits.error ? habits.error.message : "This habit was archived or deleted."}</Notice>
@@ -146,26 +150,19 @@ export default function HabitScreen() {
             goBack();
           }}
         />
-        {confirm === "delete" ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">
-              Delete this habit and its history? Archive keeps the history.
-            </Text>
-            <Button
-              label="Delete habit"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(h.id);
-                goBack();
-              }}
-            />
-            <Button label="Keep habit" variant="secondary" size="input" onPress={() => setConfirm(null)} />
-          </View>
-        ) : (
-          <Button label="Delete habit" variant="destructive" size="input" onPress={() => setConfirm("delete")} />
-        )}
+        <Button label="Delete habit" variant="destructive" size="input" onPress={() => setConfirm("delete")} />
+        <ConfirmSheet
+          visible={confirm === "delete"}
+          title="Delete this habit and its history?"
+          body="Archive keeps the history."
+          confirmLabel="Delete habit"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(h.id);
+            goBack();
+          }}
+          onClose={() => setConfirm(null)}
+        />
       </ScrollView>
     </SafeAreaView>
   );

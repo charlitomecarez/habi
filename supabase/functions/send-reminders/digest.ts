@@ -79,41 +79,82 @@ export function renderEmail(subject: string, sections: Section[], appUrl: string
     "Sent by my-app. Turn off the digest in More > Settings.",
   ].join("\n\n");
 
-  // Tables and inline styles only: Gmail removes <style> blocks and web fonts.
+  // Tables and inline styles only: Gmail removes <style> blocks and web fonts. The Banig look:
+  // a cream ground, the indigo shell band, the woven strip, then one cream card.
   const C = {
-    accent: "#0F766E",
-    ink: "#1A1C1E",
-    muted: "#5B6168",
-    page: "#F6F6F3",
-    card: "#FFFFFF",
-    border: "#E3E5E0",
+    page: "#F4ECD6",
+    card: "#FFFBF0",
+    border: "#D8CBA6",
+    divider: "#E4D8B8",
+    ink: "#1E1B3A",
+    muted: "#5A5578",
+    shell: "#23205C",
+    onShell: "#F7EFD9",
+    good: "#0B7A55",
+    watch: "#8A5A00",
+    over: "#B4105A",
+    goodFill: "#12A071",
+    watchFill: "#F5B301",
+    overFill: "#D6176E",
   };
-  const font = "font-family:Arial,Helvetica,sans-serif;";
-  const card = (s: Section) =>
-    `<tr><td style="padding:0 0 12px;">` +
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.card};border:1px solid ${C.border};border-radius:16px;">` +
-    `<tr><td style="padding:18px 20px;${font}">` +
-    `<p style="margin:0 0 10px;font-size:13px;line-height:19px;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;color:${C.muted};">${escapeHtml(s.heading)}</p>` +
-    s.lines
-      .map((l) => `<p style="margin:0 0 8px;font-size:16px;line-height:24px;color:${C.ink};">${escapeHtml(l)}</p>`)
-      .join("") +
-    `</td></tr></table></td></tr>`;
+  const font = "font-family:'Schibsted Grotesk',Roboto,'Helvetica Neue',Arial,sans-serif;";
+  // A status word at the end of a line, such as "(Overdue)", keeps its word and gets its colour.
+  const STATUS: Record<string, string> = { Overdue: C.over, Taken: C.good, Skipped: C.watch };
+  const line = (l: string) => {
+    const m = l.match(/^(.*) \((Overdue|Taken|Skipped)\)$/);
+    const body = escapeHtml(m ? m[1] : l);
+    const word = m
+      ? `<td align="right" style="${font}font-size:13px;line-height:24px;font-weight:bold;color:${STATUS[m[2]]};white-space:nowrap;padding-left:12px;">${m[2]}</td>`
+      : "";
+    return (
+      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>` +
+      `<td style="${font}font-size:16px;line-height:24px;color:${C.ink};padding:0 0 8px;">${body}</td>${word}</tr></table>`
+    );
+  };
+  const section = (s: Section, index: number) =>
+    `<tr><td style="padding:${index === 0 ? "0" : "12px"} 0 4px;${index === 0 ? "" : `border-top:2px solid ${C.divider};`}${font}">` +
+    `<p style="margin:0 0 8px;font-size:16px;line-height:22px;font-weight:bold;color:${C.ink};">${escapeHtml(s.heading)}</p>` +
+    s.lines.map(line).join("") +
+    `</td></tr>`;
+  const strands: [string, number][] = [
+    [C.goodFill, 18],
+    [C.onShell, 6],
+    [C.watchFill, 18],
+    [C.onShell, 6],
+    [C.overFill, 18],
+    [C.onShell, 6],
+  ];
+  const weave =
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="table-layout:fixed;"><tr>` +
+    Array.from({ length: 7 }, () =>
+      strands
+        .map(
+          ([color, w]) =>
+            `<td width="${((w * 100) / 504).toFixed(2)}%" style="background:${color};height:8px;line-height:8px;font-size:0;">&nbsp;</td>`,
+        )
+        .join(""),
+    ).join("") +
+    `</tr></table>`;
   const button = appUrl
-    ? `<tr><td style="padding:8px 0 4px;"><table role="presentation" cellpadding="0" cellspacing="0"><tr>` +
-      `<td style="background:${C.accent};border-radius:12px;"><a href="${escapeHtml(appUrl)}" ` +
+    ? `<tr><td style="padding:16px 0 0;"><table role="presentation" cellpadding="0" cellspacing="0"><tr>` +
+      `<td style="background:${C.shell};border-radius:12px;"><a href="${escapeHtml(appUrl)}" ` +
       `style="display:inline-block;padding:14px 22px;${font}font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Open my-app</a>` +
       `</td></tr></table></td></tr>`
     : "";
   const html = [
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">`,
-    `<meta name="color-scheme" content="light only"><title>${escapeHtml(subject)}</title></head>`,
+    `<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only"><title>${escapeHtml(subject)}</title></head>`,
     `<body style="margin:0;padding:0;background:${C.page};">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.page};"><tr><td align="center" style="padding:32px 16px;">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">`,
-    `<tr><td style="padding:0 4px 4px;${font}font-size:18px;font-weight:bold;color:${C.accent};">my-app</td></tr>`,
-    `<tr><td style="padding:0 4px 16px;${font}font-size:22px;line-height:28px;font-weight:bold;color:${C.ink};">${escapeHtml(subject)}</td></tr>`,
-    ...sections.map(card),
+    `<tr><td style="background:${C.shell};border-radius:16px 16px 0 0;padding:16px 20px;${font}font-size:20px;font-weight:900;color:${C.onShell};">my-app</td></tr>`,
+    `<tr><td style="padding:0;">${weave}</td></tr>`,
+    `<tr><td style="background:${C.card};border:2px solid ${C.border};border-top:0;border-radius:0 0 16px 16px;padding:24px 20px;">`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">`,
+    `<tr><td style="padding:0 0 16px;${font}font-size:22px;line-height:28px;font-weight:900;color:${C.ink};">${escapeHtml(subject)}</td></tr>`,
+    ...sections.map(section),
     button,
+    `</table></td></tr>`,
     `<tr><td style="padding:16px 4px 0;${font}font-size:12px;line-height:18px;color:${C.muted};">Sent by my-app. Turn off the digest in More &gt; Settings.</td></tr>`,
     `</table></td></tr></table></body></html>`,
   ].join("");

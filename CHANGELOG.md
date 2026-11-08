@@ -35,6 +35,14 @@ Do not put these items here:
 
 ## Unreleased
 
+### Added
+
+**Vault:** A 6-digit PIN unlocks the vault on your phone. A recovery key, with a code to your email, resets a forgotten master password, and you can now change the master password. Your logins are not encrypted again. Needs the v1.4.0 APK.
+
+### Removed
+
+- **Sleep:** The daily "Log last night's sleep" prompt on Home and in Steps and sleep.
+
 ## [v1.3.0](docs/releases/v1.3.0.md) - 2026-11-07
 
 ### Added

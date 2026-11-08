@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
@@ -12,6 +12,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
@@ -139,7 +140,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
         </View>
       </KeyboardScrollView>
 
-      <View className="gap-3 border-t border-border px-5 pb-6 pt-3">
+      <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
         {markDone.error ? <Notice tone="danger">{markDone.error.message}</Notice> : null}
         <Button label={label} loading={formState.isSubmitting} onPress={onSubmit} />
       </View>
@@ -148,7 +149,6 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
 }
 
 export default function MarkDoneScreen() {
-  const colors = useColors();
   const vehicle = useVehicle();
   const due = useServiceDue(vehicle.data?.id);
 
@@ -168,7 +168,7 @@ export default function MarkDoneScreen() {
             <Notice tone="danger">Could not load the vehicle. {(vehicle.error ?? due.error)?.message}</Notice>
           </View>
         ) : (
-          <ActivityIndicator color={colors.accent} className="pt-8" />
+          <Skeleton />
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>

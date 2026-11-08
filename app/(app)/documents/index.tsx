@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
@@ -7,13 +7,12 @@ import { DataRow } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
-import { useColors } from "@/lib/colors";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { documentStatus, typeLabel, useDocuments } from "@/lib/documents";
 
 const STATUS_TONE = { danger: "over", warning: "watch", neutral: "muted", good: "good" } as const;
 
 export default function DocumentsScreen() {
-  const colors = useColors();
   const docs = useDocuments();
   const list = docs.data ?? [];
 
@@ -27,7 +26,7 @@ export default function DocumentsScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {docs.isPending ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : docs.error ? (
           <View className="gap-3">
             <Notice tone="danger">Could not load your documents. {docs.error.message}</Notice>

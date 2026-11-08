@@ -1,19 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ReportSheet } from "@/components/more/ReportSheet";
 import { SettingsSection } from "@/components/settings/SettingsSection";
 import { Button } from "@/components/ui/Button";
+import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleLine } from "@/components/ui/ModuleLine";
 import { FadeIn } from "@/components/ui/Motion";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useModuleDetails } from "@/lib/module-details";
-import { searchModules } from "@/lib/modules";
-import { useVoiceAccess } from "@/lib/voice";
+import { useModuleFilter } from "@/lib/features";
+import { searchModules, visibleSections } from "@/lib/modules";
 
 const SECTION_FIELD: Record<string, string> = {
   daily: "bg-daily-field",
@@ -25,15 +26,16 @@ const SECTION_FIELD: Record<string, string> = {
 export default function MoreScreen() {
   const colors = useColors();
   const [query, setQuery] = useState("");
-  const sections = searchModules(query);
+  const filter = useModuleFilter();
+  const sections = visibleSections(searchModules(query), filter);
   const details = useModuleDetails();
-  const isAdmin = useVoiceAccess().data?.isAdmin ?? false;
+  const isAdmin = filter.isAdmin;
   const [reporting, setReporting] = useState(false);
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <TabField lead="More" />
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-5 pb-8 pt-4">
+      <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-5 pb-8 pt-4">
         <View className="px-5">
           <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
             <TextInput
@@ -70,18 +72,16 @@ export default function MoreScreen() {
                   {section.title}
                 </Text>
                 <View className="flex-row flex-wrap px-5">
-                  {section.modules
-                    .filter((m) => isAdmin || !m.adminOnly)
-                    .map((m) => (
-                      <ModuleLine
-                        key={m.id}
-                        label={m.label}
-                        icon={m.icon}
-                        tone={m.tone}
-                        detail={details[m.id]}
-                        onPress={() => router.push(m.href)}
-                      />
-                    ))}
+                  {section.modules.map((m) => (
+                    <ModuleLine
+                      key={m.id}
+                      label={m.label}
+                      icon={m.icon}
+                      tone={m.tone}
+                      detail={details[m.id]}
+                      onPress={() => router.push(m.href)}
+                    />
+                  ))}
                 </View>
               </View>
             ))}
@@ -101,7 +101,7 @@ export default function MoreScreen() {
         <View className="px-5">
           <SettingsSection />
         </View>
-      </ScrollView>
+      </KeyboardScrollView>
       <ReportSheet visible={reporting} onClose={() => setReporting(false)} />
     </SafeAreaView>
   );

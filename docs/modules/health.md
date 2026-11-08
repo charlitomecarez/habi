@@ -25,7 +25,9 @@ Source `medicine`. Each pending dose has its own push. Taken, Skipped or deletin
 ## Steps and sleep
 
 - `lib/health-connect.ts` reads steps through `react-native-health-connect`, and `.web.ts` is the adapter. The app asks only for `READ_STEPS`, and `minSdkVersion` is 26.
-- A phone alone cannot measure sleep, so you type it. `lib/sleep.ts` keeps 30 days in AsyncStorage, and sign-out clears it.
+- Sleep comes from the screen on Android. When the app opens or comes back to the front, `useSleepFromScreen` reads screen on and off events (`getScreenEvents` in `modules/screen-time`, Android 9 and later) from 8 PM to noon. `lib/sleep-detect.ts` joins dark stretches split by a screen check under 5 minutes, and takes the longest stretch of 3 hours or more. It needs the usage access that screen time already has.
+- Each entry has a `source`: `screen` or `typed`. The screen never writes over a typed entry, and an entry from v1.3.0 with no source counts as typed. Before noon, a screen entry can grow. Editing a screen entry in the sheet makes it typed.
+- The web, a phone with no usage access, and an APK older than v1.4.0 keep the typed sheet. `lib/sleep.ts` keeps 30 days in AsyncStorage, and sign-out clears it.
 - Nothing here goes to Supabase, so this needs no table.
 
 ## Widgets

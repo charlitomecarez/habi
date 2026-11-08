@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { economy, monthFuelCost, useDeleteFuel, useFuelLogs } from "@/lib/fuel";
 import { formatPeso } from "@/lib/money";
@@ -48,7 +49,7 @@ export default function FuelScreen() {
         </Text>
         {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
         {logs.isPending && vehicle.data ? (
-          <ActivityIndicator color={colors.accent} className="py-8" />
+          <Skeleton />
         ) : (
           <View>
             {list.length === 0 ? (

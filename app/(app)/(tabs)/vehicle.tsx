@@ -1,16 +1,16 @@
 import { format, isToday, parseISO } from "date-fns";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
 import { TabField } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { AddVehicleSheet } from "@/components/vehicle/AddVehicleSheet";
 import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
-import { useColors } from "@/lib/colors";
 import { economy, useFuelLogs } from "@/lib/fuel";
 import { formatPeso } from "@/lib/money";
 import { DAILY_CHECKS, useVehicleChecks, WEEKLY_CHECKS } from "@/lib/vehicle-checks";
@@ -67,7 +67,6 @@ function ServiceRow({ service }: { service: ServiceDue }) {
 }
 
 export default function VehicleScreen() {
-  const colors = useColors();
   const [sheet, setSheet] = useState<"odometer" | "add" | null>(null);
   const checks = useVehicleChecks();
   const vehicle = useVehicle();
@@ -98,7 +97,9 @@ export default function VehicleScreen() {
   if (vehicle.isPending) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page">
-        <ActivityIndicator color={colors.accent} />
+        <View className="w-full flex-1 self-stretch px-5 pt-4">
+          <Skeleton layout="detail" />
+        </View>
       </SafeAreaView>
     );
   }
@@ -141,7 +142,9 @@ export default function VehicleScreen() {
         ) : null}
 
         {due.isPending ? (
-          <ActivityIndicator color={colors.accent} />
+          <View className="w-full flex-1 self-stretch pt-4">
+            <Skeleton layout="detail" />
+          </View>
         ) : (
           <>
             <View>

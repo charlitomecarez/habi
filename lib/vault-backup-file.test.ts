@@ -36,9 +36,24 @@ describe("vault backup file", () => {
   it.each([
     ["bad JSON", "not json"],
     ["another file", JSON.stringify({ hello: "world" })],
-    ["a newer version", JSON.stringify({ ...JSON.parse(buildBackup(settings, entries, NOW)), version: 2 })],
+    ["a newer version", JSON.stringify({ ...JSON.parse(buildBackup(settings, entries, NOW)), version: 3 })],
     ["missing settings", JSON.stringify({ ...JSON.parse(buildBackup(settings, entries, NOW)), settings: {} })],
   ])("refuses %s", (_label, text) => {
     expect(parseBackup(text)).toBeNull();
+  });
+});
+
+describe("version 2 backups", () => {
+  it("keeps the locked copies of the vault key", () => {
+    const v2 = { ...settings, wrap_version: 2, pw_wrap: "d3JhcA==", pw_wrap_nonce: "bm9uY2U=" };
+    expect(parseBackup(buildBackup(v2, entries, NOW))?.settings).toMatchObject({
+      wrap_version: 2,
+      pw_wrap: "d3JhcA==",
+    });
+  });
+
+  it("still reads a version 1 file", () => {
+    const text = JSON.stringify({ ...JSON.parse(buildBackup(settings, entries, NOW)), version: 1 });
+    expect(parseBackup(text)?.settings.kdf_salt).toBe(settings.kdf_salt);
   });
 });

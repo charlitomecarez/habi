@@ -2,16 +2,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebt, useDebtPayments, useDeleteDebt, useDeletePayment, useRecordPayment } from "@/lib/debts";
@@ -36,7 +38,9 @@ export default function DebtScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-surface-page px-5">
         {debt.isPending ? (
-          <ActivityIndicator color={colors.accent} />
+          <View className="w-full flex-1 self-stretch pt-4">
+            <Skeleton layout="detail" />
+          </View>
         ) : (
           <View className="w-full gap-3">
             <Notice tone="danger">{debt.error ? debt.error.message : "This debt was deleted."}</Notice>
@@ -145,24 +149,19 @@ export default function DebtScreen() {
           </View>
         </View>
 
-        {confirmDelete ? (
-          <View className="gap-3 rounded-card border border-danger bg-danger-tint p-4">
-            <Text className="font-sans text-body text-danger">Delete this debt? Its payments are deleted too.</Text>
-            <Button
-              label="Delete debt"
-              variant="destructive"
-              size="input"
-              loading={remove.isPending}
-              onPress={async () => {
-                await remove.mutateAsync(d.id);
-                goBack();
-              }}
-            />
-            <Button label="Keep debt" variant="secondary" size="input" onPress={() => setConfirmDelete(false)} />
-          </View>
-        ) : (
-          <Button label="Delete debt" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
-        )}
+        <Button label="Delete debt" variant="destructive" size="input" onPress={() => setConfirmDelete(true)} />
+        <ConfirmSheet
+          visible={confirmDelete}
+          title="Delete this debt?"
+          body="Its payments are deleted too."
+          confirmLabel="Delete debt"
+          loading={remove.isPending}
+          onConfirm={async () => {
+            await remove.mutateAsync(d.id);
+            goBack();
+          }}
+          onClose={() => setConfirmDelete(false)}
+        />
       </ScrollView>
 
       <Sheet
