@@ -37,7 +37,7 @@ Do not put these items here:
 
 ### Added
 
-**Open source:** CONTRIBUTING.md sets up your own copy from nothing: Supabase, Google sign-in, Firebase and the Edge Functions. The README has badges. A gitleaks scan of the whole history found no secret. The repo stays private.
+**Licence:** The code is under the MIT licence.
 
 ### Fixed
 

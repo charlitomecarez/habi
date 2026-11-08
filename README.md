@@ -3,6 +3,7 @@
 [![CI](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml/badge.svg)](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml)
 ![Expo](https://img.shields.io/badge/Expo-Android%20and%20web-23205C)
 ![Supabase](https://img.shields.io/badge/Supabase-free%20tier-0B7A55)
+[![License: MIT](https://img.shields.io/badge/License-MIT-8A5A00)](LICENSE)
 
 ![my-app on Android: the Money, Todos, Home, Vehicle and Weather screens, with sample data](docs/images/readme-banner.png)
 
@@ -194,3 +195,7 @@ The build profiles are in `eas.json`:
 ## Vault security
 
 The phone encrypts each vault entry before it goes to Supabase. The key comes from the master password with Argon2id. Supabase never gets the plaintext or the key. Nobody can reset a forgotten master password.
+
+## License
+
+[MIT](LICENSE). You can use, copy, change and share the code, as long as you keep the copyright notice.
