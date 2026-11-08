@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="my-app icon">
+  <!-- The app icon (assets/icon.png) as a vector, with rounded corners for the README. -->
+  <rect width="256" height="256" rx="58" fill="#23205C"/>
+  <g fill="#F7EFD9">
+    <rect x="64" y="64" width="56" height="56" rx="16"/>
+    <rect x="136" y="64" width="56" height="56" rx="16"/>
+    <rect x="64" y="136" width="56" height="56" rx="16"/>
+    <rect x="136" y="136" width="56" height="56" rx="16"/>
+  </g>
+  <path d="M149.5 164 L160 174.5 L178 153" fill="none" stroke="#23205C" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
