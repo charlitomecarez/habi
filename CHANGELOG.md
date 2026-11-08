@@ -37,7 +37,7 @@ Do not put these items here:
 
 ### Changed
 
-**Tabs:** The screen slides when you tap a tab. It does not slide with reduce motion on.
+**Email:** The sign-in emails and the daily digest use the Banig look: the indigo band, the woven strip and a cream card. Each status keeps its word in its colour. Paste the six templates in the Supabase dashboard.
 
 ### Fixed
 
