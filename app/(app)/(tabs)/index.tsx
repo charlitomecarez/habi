@@ -258,7 +258,7 @@ export default function HomeScreen() {
               />
               <DataRow
                 title={steps.data?.access ? "Steps" : "Sleep"}
-                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "Log last night's sleep"}
+                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "No sleep found"}
                 value={steps.data?.access ? stepsToday.toLocaleString("en-PH") : undefined}
                 status={
                   steps.data?.access && stepsToday >= stepsAverage(stepWeek)

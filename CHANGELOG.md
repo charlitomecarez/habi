@@ -37,6 +37,7 @@ Do not put these items here:
 
 ### Added
 
+- **Sleep:** On Android, my-app finds last night's sleep from when your screen was off, with no prompt. A short phone check does not split the night. Tap the sleep to fix the times. It stays on the phone. Needs the v1.4.0 APK.
 - **Screen time:** A new Screen time screen lists every app you used today or this week. Open it from "See all apps" on the Home card. The data stays on the phone.
 
 ### Fixed
@@ -44,6 +45,10 @@ Do not put these items here:
 - **Sports:** NBA teams show their logos in matches and standings, not only their short code.
 - **Find a work:** A search saves its jobs even when Groq is busy. Groq ranks 5 jobs at a time and waits when it asks to. A job it could not rank shows "Not ranked", and the next search ranks it. The screen says why the last search stopped.
 - **Keyboard:** The keyboard no longer covers the text field on More search, Inventory search, Vault search, Content, Weather place, a job, and the alarm sums. A test now fails when a screen has a text field and no keyboard handling.
+
+### Removed
+
+- **Sleep:** The daily "Log last night's sleep" prompt on Home and in Steps and sleep.
 
 ## [v1.3.0](docs/releases/v1.3.0.md) - 2026-11-07
 

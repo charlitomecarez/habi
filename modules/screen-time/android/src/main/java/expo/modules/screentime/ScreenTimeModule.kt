@@ -6,6 +6,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import expo.modules.kotlin.modules.Module
@@ -33,6 +34,26 @@ class ScreenTimeModule : Module() {
     Function("openSettings") {
       val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       context.startActivity(intent)
+    }
+
+    /**
+     * Screen on and off times between startMs and endMs, oldest first, as { at, on }. The sleep rule
+     * in lib/sleep-detect.ts reads the dark stretches from them. Needs Android 9; older phones get none.
+     */
+    AsyncFunction("getScreenEvents") { startMs: Double, endMs: Double ->
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return@AsyncFunction emptyList<Map<String, Any>>()
+      val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+      val events = usm.queryEvents(startMs.toLong(), endMs.toLong())
+      val event = UsageEvents.Event()
+      val out = ArrayList<Map<String, Any>>()
+      while (events.hasNextEvent()) {
+        events.getNextEvent(event)
+        when (event.eventType) {
+          UsageEvents.Event.SCREEN_INTERACTIVE -> out.add(mapOf("at" to event.timeStamp.toDouble(), "on" to true))
+          UsageEvents.Event.SCREEN_NON_INTERACTIVE -> out.add(mapOf("at" to event.timeStamp.toDouble(), "on" to false))
+        }
+      }
+      out
     }
 
     /**

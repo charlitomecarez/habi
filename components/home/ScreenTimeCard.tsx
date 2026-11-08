@@ -113,6 +113,7 @@ export function ScreenTimeCard() {
                     usage.data.day.apps.length > TOP_APPS ? `${usage.data.day.apps.length - TOP_APPS} more` : undefined
                   }
                   onPress={() => router.push("/screen-time")}
+                  chevron
                   last
                 />
               </>

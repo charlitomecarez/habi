@@ -4,9 +4,16 @@ import { View } from "react-native";
 
 import { onPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
 import { reminderRoute } from "@/lib/reminder-route";
+import { useSleepFromScreen } from "@/lib/sleep";
 import { noteVaultActivity } from "@/lib/vault";
+import { refreshWidgets } from "@/lib/widgets";
+
+const onSleepSaved = () => void refreshWidgets();
 
 export default function AppLayout() {
+  // Last night's sleep from when the screen was off. Android only; it stays on this phone.
+  useSleepFromScreen(onSleepSaved);
+
   useEffect(() => {
     registerForPushNotifications().catch((error: unknown) => {
       console.warn("Push registration failed", error instanceof Error ? error.message : error);

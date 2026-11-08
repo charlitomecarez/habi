@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { sleepMinutes, sleepRow, sleepStrand, sleepText, trimLog } from "@/lib/sleep";
+import { screenMayWrite, sleepMinutes, sleepRow, sleepStrand, sleepText, trimLog } from "@/lib/sleep";
 
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: {} }));
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
+vi.mock("react-native", () => ({ AppState: {} }));
+vi.mock("@/lib/screen-time", () => ({ readScreenEvents: vi.fn() }));
 
 describe("sleepMinutes", () => {
   it("crosses midnight", () => {
@@ -42,5 +44,18 @@ describe("trimLog", () => {
     const entry = { bed: "23:00", wake: "06:00" };
     const log = trimLog({ "2026-01-01": entry, "2026-11-06": entry }, new Date(2026, 10, 7));
     expect(Object.keys(log)).toEqual(["2026-11-06"]);
+  });
+});
+
+describe("screenMayWrite", () => {
+  it("never writes over a typed sleep", () => {
+    expect(screenMayWrite({ bed: "23:00", wake: "06:00", source: "typed" })).toBe(false);
+    // v1.3.0 saved typed entries with no source.
+    expect(screenMayWrite({ bed: "23:00", wake: "06:00" })).toBe(false);
+  });
+
+  it("writes a new night, or grows its own entry", () => {
+    expect(screenMayWrite(undefined)).toBe(true);
+    expect(screenMayWrite({ bed: "23:00", wake: "04:00", source: "screen" })).toBe(true);
   });
 });

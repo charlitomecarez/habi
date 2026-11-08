@@ -3,7 +3,7 @@ import { addDays, differenceInCalendarDays, startOfDay, startOfWeek, subDays } f
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 
-import { ScreenTimeModule, type AppUsage } from "@/modules/screen-time";
+import { ScreenTimeModule, type AppUsage, type ScreenEvent } from "@/modules/screen-time";
 
 // Android: screen time from UsageStatsManager through the local screen-time module.
 // The data stays on the phone. Nothing goes to Supabase.
@@ -72,4 +72,13 @@ export function useWeekUsage(enabled: boolean) {
       };
     },
   });
+}
+
+/**
+ * Screen on and off events, for the sleep rule. Null when there is no usage access or no native
+ * module (an older APK), so the typed sheet stays the way in.
+ */
+export async function readScreenEvents(startMs: number, endMs: number): Promise<ScreenEvent[] | null> {
+  if (!ScreenTimeModule?.hasAccess() || typeof ScreenTimeModule.getScreenEvents !== "function") return null;
+  return ScreenTimeModule.getScreenEvents(startMs, endMs);
 }

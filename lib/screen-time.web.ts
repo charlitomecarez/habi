@@ -28,3 +28,8 @@ export function useWeekUsage(_enabled: boolean) {
     refetch: () => void;
   };
 }
+
+/** The web has no screen events, so sleep stays typed. */
+export async function readScreenEvents(_startMs: number, _endMs: number): Promise<null> {
+  return null;
+}
