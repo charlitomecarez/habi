@@ -1,4 +1,4 @@
-import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
+import { differenceInMinutes, format, isSameDay, subDays } from "date-fns";
 
 // Pure helpers for News, so the tests can run them without React Native.
 
@@ -7,8 +7,8 @@ export function timeAgo(at: Date, now = new Date()): string {
   const minutes = Math.max(differenceInMinutes(now, at), 0);
   if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes} min ago`;
-  if (isToday(at) && minutes < 24 * 60) return `${Math.floor(minutes / 60)} h ago`;
-  if (isYesterday(at)) return `Yesterday, ${format(at, "h:mm a")}`;
+  if (isSameDay(at, now)) return `${Math.floor(minutes / 60)} h ago`;
+  if (isSameDay(at, subDays(now, 1))) return `Yesterday, ${format(at, "h:mm a")}`;
   return format(at, "MMM d, h:mm a");
 }
 
