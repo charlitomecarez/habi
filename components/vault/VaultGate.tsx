@@ -75,7 +75,7 @@ export function SetUpVault() {
       if (text === null) return;
       const parsed = parseBackup(text);
       if (parsed) setBackup(parsed);
-      else setBackupProblem("That file is not a my-app vault backup.");
+      else setBackupProblem("That file is not a Habi vault backup.");
     } catch (error) {
       setBackupProblem(error instanceof Error ? error.message : "Could not read that file.");
     }

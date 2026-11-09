@@ -1,6 +1,6 @@
 ---
 name: add-migration
-description: Use when a my-app change needs a new table, column, view, trigger, policy or any other Supabase schema change
+description: Use when a Habi change needs a new table, column, view, trigger, policy or any other Supabase schema change
 ---
 
 # Add a migration

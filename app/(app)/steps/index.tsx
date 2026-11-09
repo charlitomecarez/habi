@@ -49,8 +49,8 @@ export default function StepsScreen() {
           <View className="gap-3">
             <Text className="font-bold text-title text-ink">See your steps on Home</Text>
             <Text className="font-sans text-body text-ink-muted">
-              my-app reads your steps from Health Connect, and your sleep from when your screen is off. All of it stays
-              on this phone.
+              Habi reads your steps from Health Connect, and your sleep from when your screen is off. All of it stays on
+              this phone.
             </Text>
             <Button
               label="Allow steps"

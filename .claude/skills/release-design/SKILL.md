@@ -1,6 +1,6 @@
 ---
 name: release-design
-description: Use when Charli confirms a my-app plan and asks for the design, the UI design or the DB design of a release, or asks for a revision of a design artifact
+description: Use when Charli confirms a Habi plan and asks for the design, the UI design or the DB design of a release, or asks for a revision of a design artifact
 ---
 
 # Release design
@@ -19,7 +19,7 @@ The output is one artifact. This step changes no code. Do not add a migration fi
 6. Write the design page in the scratchpad folder. "Step 2: Design" in the workflow lists what the UI design and the DB design hold.
 7. Do the design checks. Fix each real finding.
 8. Read the format source with the Artifact `read` action: https://claude.ai/artifact/Pgj6aMdVVFKq7myHSRisj5
-9. Publish a new artifact with the same layout and the same tokens. Set the `<title>` to exactly `my-app v<version> design`.
+9. Publish a new artifact with the same layout and the same tokens. Set the `<title>` to exactly `Habi v<version> design`.
 10. Give the page the `db` capability, so that revision requests save to the `revisions` collection.
 11. Link the artifact in `docs/releases/v<version>.md` and `docs/releases/index.md`. Set the status to `Design`.
 12. Send Charli the link, then stop.

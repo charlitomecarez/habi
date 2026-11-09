@@ -39,6 +39,10 @@ Do not put these items here:
 
 **Vault:** A 6-digit PIN unlocks the vault on your phone. A recovery key, with a code to your email, resets a forgotten master password, and you can now change the master password. Your logins are not encrypted again. Needs the v1.4.0 APK.
 
+### Changed
+
+- **Name:** The app is now called Habi, Tagalog for "weave". The package and the link scheme stay the same, so the new APK installs over the old one.
+
 ### Removed
 
 - **Sleep:** The daily "Log last night's sleep" prompt on Home and in Steps and sleep.

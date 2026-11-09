@@ -12,7 +12,7 @@ Charli is the admin and the primary user. Charli is a rider in the Philippines (
 
 ## Product Purpose
 
-my-app is one private personal assistant. It remembers todos, services, bills, money, meals and documents, and it tells Charli when to act. Success means that Charli does not have to remember these things, and opens the app to act on what it says.
+Habi is one private personal assistant. It remembers todos, services, bills, money, meals and documents, and it tells Charli when to act. Success means that Charli does not have to remember these things, and opens the app to act on what it says.
 
 ## Positioning
 
@@ -36,7 +36,7 @@ The app knows one real life: the ADV 160 and its kilometres, GCash and MariBank,
 
 ## Brand Commitments
 
-- The name is my-app.
+- The name is Habi.
 - Status always has a word, not colour alone.
 - Touch targets are at least 48 px.
 - Copy uses sentence case, and buttons name the action.

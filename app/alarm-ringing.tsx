@@ -99,7 +99,7 @@ function ScanStep({ onScanned, onBackup }: { onScanned: () => void; onBackup: ()
             />
           </View>
         ) : (
-          <Notice tone="warning">The camera is off for my-app, so use the sums.</Notice>
+          <Notice tone="warning">The camera is off for Habi, so use the sums.</Notice>
         )}
         {problem ? <Notice tone="warning">{problem}</Notice> : null}
       </View>

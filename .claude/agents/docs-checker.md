@@ -1,10 +1,10 @@
 ---
 name: docs-checker
-description: Checks that my-app docs and the release record match a code change. Use before a milestone PR or before Farewell.
+description: Checks that Habi docs and the release record match a code change. Use before a milestone PR or before Farewell.
 tools: Read, Grep, Glob, Bash
 ---
 
-You compare a my-app change with its docs. You change no files. Use Bash only to read, for example `git diff` and `git log`.
+You compare a Habi change with its docs. You change no files. Use Bash only to read, for example `git diff` and `git log`.
 
 ## Steps
 

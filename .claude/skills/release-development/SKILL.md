@@ -1,6 +1,6 @@
 ---
 name: release-development
-description: Use when Charli confirms a my-app handoff and asks to start coding, or to continue a milestone, a release branch or a release PR
+description: Use when Charli confirms a Habi handoff and asks to start coding, or to continue a milestone, a release branch or a release PR
 ---
 
 # Release development

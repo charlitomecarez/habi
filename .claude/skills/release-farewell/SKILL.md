@@ -1,6 +1,6 @@
 ---
 name: release-farewell
-description: Use when Charli says that a my-app release is done and asks for Farewell, the release notes, the tag or the GitHub release
+description: Use when Charli says that a Habi release is done and asks for Farewell, the release notes, the tag or the GitHub release
 ---
 
 # Release farewell
@@ -12,7 +12,7 @@ This skill is step 5 of `docs/release-workflow.md`. Read that page first. It win
 1. Set the status to `Farewell` in `docs/releases/v<version>.md` and `docs/releases/index.md`.
 2. Compare the handoff with the release branch. List what is done, what moved and what has no phone test result.
 3. Read the format source with the Artifact `read` action: https://claude.ai/artifact/ChHjbRDoj3FuWZdXXoVi74
-4. Publish a new artifact with that layout. Set the `<title>` to exactly `my-app v<version> release notes`.
+4. Publish a new artifact with that layout. Set the `<title>` to exactly `Habi v<version> release notes`.
 5. Write the same notes as markdown under "Release notes" in the release record. Keep the sections from `docs/releases/v1.2.2.md`, and keep "Not tested yet" when any test has no result.
 6. Move the `Unreleased` lines in `CHANGELOG.md` to a new section for the version. Follow the rules at the top of that page.
 7. Link the artifact in the record and the index. Set the status to `Released`, and fill in the date and the GitHub release link.

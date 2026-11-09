@@ -58,7 +58,7 @@ export function PhotoField({
       if (source === "camera") {
         const permission = await ImagePicker.requestCameraPermissionsAsync();
         if (!permission.granted) {
-          setError("Camera access is off. Turn it on in Settings › Apps › my-app › Permissions.");
+          setError("Camera access is off. Turn it on in Settings › Apps › Habi › Permissions.");
           return;
         }
       }

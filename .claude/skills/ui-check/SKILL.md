@@ -1,6 +1,6 @@
 ---
 name: ui-check
-description: Use when a my-app change adds or edits a screen, component, layout, style, token, icon, motion or UI copy, in app/, components/, tailwind.config.js or global.css
+description: Use when a Habi change adds or edits a screen, component, layout, style, token, icon, motion or UI copy, in app/, components/, tailwind.config.js or global.css
 ---
 
 # UI check

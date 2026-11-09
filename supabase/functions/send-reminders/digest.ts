@@ -29,7 +29,7 @@ function formatDay(day: string): string {
 
 /**
  * Subject, HTML and text for one digest email, or null when there is nothing to report.
- * `appUrl` (the APP_URL secret) adds an Open my-app button; without it there is no button.
+ * `appUrl` (the APP_URL secret) adds an Open Habi button; without it there is no button.
  */
 export function buildDigest(input: DigestInput, appUrl: string | null = null) {
   const sections: Section[] = [];
@@ -72,11 +72,11 @@ export function buildWeeklyReview(today: string, sections: Section[], appUrl: st
   return renderEmail(`Your week to ${formatDay(today)}`, sections, appUrl);
 }
 
-/** Subject, HTML and plain text in the my-app email look. */
+/** Subject, HTML and plain text in the Habi email look. */
 export function renderEmail(subject: string, sections: Section[], appUrl: string | null) {
   const text = [
     ...sections.map((s) => [s.heading, ...s.lines.map((l) => `- ${l}`)].join("\n")),
-    "Sent by my-app. Turn off the digest in More > Settings.",
+    "Sent by Habi. Turn off the digest in More > Settings.",
   ].join("\n\n");
 
   // Tables and inline styles only: Gmail removes <style> blocks and web fonts. The Banig look:
@@ -138,7 +138,7 @@ export function renderEmail(subject: string, sections: Section[], appUrl: string
   const button = appUrl
     ? `<tr><td style="padding:16px 0 0;"><table role="presentation" cellpadding="0" cellspacing="0"><tr>` +
       `<td style="background:${C.shell};border-radius:12px;"><a href="${escapeHtml(appUrl)}" ` +
-      `style="display:inline-block;padding:14px 22px;${font}font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Open my-app</a>` +
+      `style="display:inline-block;padding:14px 22px;${font}font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Open Habi</a>` +
       `</td></tr></table></td></tr>`
     : "";
   const html = [
@@ -147,7 +147,7 @@ export function renderEmail(subject: string, sections: Section[], appUrl: string
     `<body style="margin:0;padding:0;background:${C.page};">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.page};"><tr><td align="center" style="padding:32px 16px;">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">`,
-    `<tr><td style="background:${C.shell};border-radius:16px 16px 0 0;padding:16px 20px;${font}font-size:20px;font-weight:900;color:${C.onShell};">my-app</td></tr>`,
+    `<tr><td style="background:${C.shell};border-radius:16px 16px 0 0;padding:16px 20px;${font}font-size:20px;font-weight:900;color:${C.onShell};">Habi</td></tr>`,
     `<tr><td style="padding:0;">${weave}</td></tr>`,
     `<tr><td style="background:${C.card};border:2px solid ${C.border};border-top:0;border-radius:0 0 16px 16px;padding:24px 20px;">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">`,
@@ -155,7 +155,7 @@ export function renderEmail(subject: string, sections: Section[], appUrl: string
     ...sections.map(section),
     button,
     `</table></td></tr>`,
-    `<tr><td style="padding:16px 4px 0;${font}font-size:12px;line-height:18px;color:${C.muted};">Sent by my-app. Turn off the digest in More &gt; Settings.</td></tr>`,
+    `<tr><td style="padding:16px 4px 0;${font}font-size:12px;line-height:18px;color:${C.muted};">Sent by Habi. Turn off the digest in More &gt; Settings.</td></tr>`,
     `</table></td></tr></table></body></html>`,
   ].join("");
 

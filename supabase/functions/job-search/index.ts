@@ -57,7 +57,7 @@ const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
 async function search(params: Record<string, string>, flags: { remote?: boolean; visa?: boolean }): Promise<Job[]> {
   const query = new URLSearchParams({ limit: String(PER_SEARCH), posted_within_days: POSTED_WITHIN_DAYS, ...params });
   const res = await fetch(`${SEARCH_URL}?${query}`, {
-    headers: { "User-Agent": "javaplum/my-app/1.3 (private app; personal job search)" },
+    headers: { "User-Agent": "javaplum/habi/1.3 (private app; personal job search)" },
   });
   if (!res.ok) throw new SearchDown(`freehire ${res.status}`);
   const json = (await res.json()) as { data: FreehireJob[]; meta?: { ignored_params?: unknown[] } };

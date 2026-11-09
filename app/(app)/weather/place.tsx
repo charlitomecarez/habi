@@ -73,7 +73,7 @@ export default function ChoosePlaceScreen() {
           autoCorrect={false}
           placeholder="Tagaytay"
         />
-        {refused ? <Notice tone="warning">Location is off for my-app, so search for your town.</Notice> : null}
+        {refused ? <Notice tone="warning">Location is off for Habi, so search for your town.</Notice> : null}
         {failed ? <Notice tone="danger">Could not search. Check your connection.</Notice> : null}
         {searching ? <ActivityIndicator color={colors.accent} /> : null}
         {results && results.length === 0 && !searching ? (

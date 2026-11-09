@@ -8,7 +8,7 @@ export function locationLink(locationId: string): string {
   return `myapp://inventory?location=${locationId}`;
 }
 
-/** The location id in a scanned label, or null when the code is not a my-app label. */
+/** The location id in a scanned label, or null when the code is not a Habi label. */
 export function parseLocationLink(text: string): string | null {
   return LOCATION_LINK.exec(text.trim())?.[1]?.toLowerCase() ?? null;
 }

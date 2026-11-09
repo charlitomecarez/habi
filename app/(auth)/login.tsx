@@ -72,7 +72,7 @@ export default function LoginScreen() {
             </View>
             <View className="gap-2">
               <Text accessibilityRole="header" className="font-bold text-display text-ink">
-                my-app
+                Habi
               </Text>
               <Text className="font-sans text-body text-ink-muted">
                 Todos, your bike, your room and your passwords, in one place.

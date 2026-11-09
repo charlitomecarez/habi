@@ -13,7 +13,7 @@ describe("location labels", () => {
     expect(parseLocationLink(`  ${locationLink(ID.toUpperCase())}\n`)).toBe(ID);
   });
 
-  it("rejects codes that are not my-app labels", () => {
+  it("rejects codes that are not Habi labels", () => {
     expect(parseLocationLink("https://example.com")).toBeNull();
     expect(parseLocationLink("myapp://inventory?location=not-an-id")).toBeNull();
   });
