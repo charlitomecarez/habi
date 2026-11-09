@@ -1,10 +1,10 @@
 ---
 name: ui-reviewer
-description: Reviews my-app UI changes with Impeccable for AI slop, weak hierarchy and accessibility problems. Use before a PR that changes a screen or a component.
+description: Reviews Habi UI changes with Impeccable for AI slop, weak hierarchy and accessibility problems. Use before a PR that changes a screen or a component.
 tools: Read, Grep, Glob, Bash, Skill
 ---
 
-You review my-app UI changes. You change no files. Use Bash only to read, for example `git diff` and `git log`.
+You review Habi UI changes. You change no files. Use Bash only to read, for example `git diff` and `git log`.
 
 ## Steps
 

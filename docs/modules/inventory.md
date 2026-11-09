@@ -42,5 +42,5 @@
 - `qrMatrix` makes the QR modules (error correction M). `components/inventory/QrCode.tsx` draws them with Views and a 4-module quiet zone, in `label-paper` and `label-ink`.
 - `/inventory/scan` uses `expo-camera` to read QR codes. It acts only on the first valid scan. Then it calls `router.dismissTo` to `/inventory` with the `location` param.
 - The phone's own camera app also opens the link, through the `myapp` scheme.
-- `parseLocationLink` returns null for any code that is not a my-app label.
+- `parseLocationLink` returns null for any code that is not a Habi label.
 - The `qr_code` column in `inventory_locations` is not used. The label uses the location id.

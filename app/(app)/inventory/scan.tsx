@@ -24,7 +24,7 @@ export default function ScanLabelScreen() {
     if (handled.current) return;
     const id = parseLocationLink(data);
     if (!id) {
-      setProblem("That code is not a my-app box label.");
+      setProblem("That code is not a Habi box label.");
       return;
     }
     if (locations.data && !locations.data.some((l) => l.id === id)) {
@@ -70,14 +70,12 @@ export default function ScanLabelScreen() {
         ) : (
           <View className="gap-4">
             <Text className="font-sans text-body text-ink-muted">
-              my-app needs the camera to read box labels. Nothing is recorded or uploaded.
+              Habi needs the camera to read box labels. Nothing is recorded or uploaded.
             </Text>
             {permission.canAskAgain ? (
               <Button label="Allow camera" onPress={requestPermission} />
             ) : (
-              <Notice tone="warning">
-                Camera access is off. Turn it on in Settings › Apps › my-app › Permissions.
-              </Notice>
+              <Notice tone="warning">Camera access is off. Turn it on in Settings › Apps › Habi › Permissions.</Notice>
             )}
           </View>
         )}

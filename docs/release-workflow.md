@@ -23,17 +23,17 @@ Every release has five steps: Planning, Design, Handoff, Development and Farewel
 
 Use the release version in every name, so that each item is easy to find.
 
-| Item                   | Name                              |
-| ---------------------- | --------------------------------- |
-| Plan artifact          | `my-app v<version> plan`          |
-| Design artifact        | `my-app v<version> design`        |
-| Handoff artifact       | `my-app v<version> handoff`       |
-| Release notes artifact | `my-app v<version> release notes` |
-| Release branch         | `r/v<version>`                    |
-| Milestone branch       | `feat/<name>` or `fix/<name>`     |
-| Release record         | `docs/releases/v<version>.md`     |
-| Changelog              | `CHANGELOG.md`                    |
-| Tag and GitHub release | `v<version>`                      |
+| Item                   | Name                            |
+| ---------------------- | ------------------------------- |
+| Plan artifact          | `Habi v<version> plan`          |
+| Design artifact        | `Habi v<version> design`        |
+| Handoff artifact       | `Habi v<version> handoff`       |
+| Release notes artifact | `Habi v<version> release notes` |
+| Release branch         | `r/v<version>`                  |
+| Milestone branch       | `feat/<name>` or `fix/<name>`   |
+| Release record         | `docs/releases/v<version>.md`   |
+| Changelog              | `CHANGELOG.md`                  |
+| Tag and GitHub release | `v<version>`                    |
 
 ## Docs during each step
 

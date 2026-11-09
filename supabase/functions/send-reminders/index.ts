@@ -14,7 +14,7 @@ import { buildDigest, buildWeeklyReview, type DigestInput } from "./digest.ts";
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 const EXPO_BATCH_SIZE = 100;
 const MAX_REMINDERS_PER_RUN = 500;
-const DIGEST_FROM = "my-app <noreply@email.blabbun.com>";
+const DIGEST_FROM = "Habi <noreply@email.blabbun.com>";
 
 type Reminder = {
   id: string;

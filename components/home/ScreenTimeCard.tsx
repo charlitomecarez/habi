@@ -38,7 +38,7 @@ export function ScreenTimeCard() {
         {!access ? (
           <>
             <Text className="font-sans text-body text-ink">
-              Turn on Usage access for my-app to see your screen time here. It stays on this phone.
+              Turn on Usage access for Habi to see your screen time here. It stays on this phone.
             </Text>
             <Button label="Turn on usage access" variant="secondary" size="input" onPress={openUsageSettings} />
           </>

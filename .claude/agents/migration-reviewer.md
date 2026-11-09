@@ -1,6 +1,6 @@
 ---
 name: migration-reviewer
-description: Reviews new my-app Supabase migrations for RLS, ownership and safety. Use before a migration goes to the live project.
+description: Reviews new Habi Supabase migrations for RLS, ownership and safety. Use before a migration goes to the live project.
 tools: Read, Grep, Glob, Bash
 ---
 

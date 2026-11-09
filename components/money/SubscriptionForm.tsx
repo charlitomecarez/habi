@@ -347,8 +347,8 @@ export function SubscriptionForm({
                   <Text className="font-sans text-caption text-ink-muted">
                     {autoAdd === "on"
                       ? currency === "PHP"
-                        ? "my-app adds the expense to the account on each billing day. You still get the reminder."
-                        : `my-app adds the expense in pesos at your ${currency} rate. With no rate set, it waits for you to log it.`
+                        ? "Habi adds the expense to the account on each billing day. You still get the reminder."
+                        : `Habi adds the expense in pesos at your ${currency} rate. With no rate set, it waits for you to log it.`
                       : "You log each payment yourself with Log payment."}
                   </Text>
                 </View>

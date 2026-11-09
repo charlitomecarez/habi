@@ -1,6 +1,6 @@
-# my-app docs
+# Habi docs
 
-These docs explain how my-app is built and how it behaves. Read this page first. Then open only the page for the area you change.
+These docs explain how Habi is built and how it behaves. Read this page first. Then open only the page for the area you change.
 
 ## Pages
 
@@ -39,7 +39,7 @@ These docs explain how my-app is built and how it behaves. Read this page first.
 
 ## Facts to know first
 
-- my-app belongs to Charli (Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account sees only its own data. Only the admin turns on voice messages for an account. Android is the first target. Web is the second. Both use one codebase.
+- Habi belongs to Charli (Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account sees only its own data. Only the admin turns on voice messages for an account. Android is the first target. Web is the second. Both use one codebase.
 - Expo SDK 58, expo-router, NativeWind 4, TypeScript.
 - Supabase holds all data. Every user-owned table has row-level security (RLS) on `user_id`.
 - The database does most of the business logic with triggers and views. The app reads and writes rows with `@supabase/supabase-js`.

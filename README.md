@@ -1,14 +1,16 @@
 <div align="center">
 
-<img src="docs/images/readme-icon.svg" alt="my-app icon: four cream tiles on indigo, one with a check" width="112" />
+<img src="docs/images/readme-icon.svg" alt="Habi icon: four cream tiles on indigo, one with a check" width="112" />
 
-# my-app
+# Habi
 
 ### One private app that tells you what needs you today.
 
-**Todos, money, the ADV 160's service schedule, a password vault and 18 more modules, in one Android app.**
+_Habi_ is Tagalog for "weave". The app weaves each part of your day into one Home.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/charlitomecarez/my-app/ci.yml?style=flat-square&label=CI)](https://github.com/charlitomecarez/my-app/actions/workflows/ci.yml)
+**Todos, money, your vehicle's service schedule, a password vault and 18 more modules, in one Android app.**
+
+[![CI](https://img.shields.io/github/actions/workflow/status/charlitomecarez/habi/ci.yml?style=flat-square&label=CI)](https://github.com/charlitomecarez/habi/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-1.4.0-23205C?style=flat-square)](CHANGELOG.md)
 [![Expo SDK 58](https://img.shields.io/badge/Expo-SDK_58-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-free_tier-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
@@ -22,14 +24,14 @@
 </div>
 
 > [!IMPORTANT]
-> my-app is a private app. Sign-up is off: only people the admin adds can sign in, and each account has fully separate data.
+> Habi is a private app. Sign-up is off: only people the admin adds can sign in, and each account has fully separate data.
 > The APK comes from Build from GitHub in expo.dev, not the Play Store. To run your own copy, follow [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <div align="center">
 
 <br />
 
-<img src="docs/images/readme-banner.png" alt="my-app on Android: the Money, Todos, Home, Vehicle and Weather screens, with sample data" width="1200" />
+<img src="docs/images/readme-banner.png" alt="Habi on Android: the Money, Todos, Home, Vehicle and Weather screens, with sample data" width="1200" />
 
 <br /><br />
 
@@ -37,7 +39,7 @@
 
 ---
 
-my-app is one personal assistant for a real life in the Philippines: the ADV 160 and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. Home says in one sentence what needs you, and every module feeds it. It runs on Android first and on the web second, and everything stays on free tiers.
+Habi is one personal assistant for a real life in the Philippines: the vehicle and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. Home says in one sentence what needs you, and every module feeds it. It runs on Android first and on the web second, and everything stays on free tiers.
 
 > **[Read the release records](docs/releases/index.md)** for each version's plan, design, handoff and release notes.
 
@@ -48,7 +50,7 @@ my-app is one personal assistant for a real life in the Philippines: the ADV 160
 1. On the phone, sign in to expo.dev and open the latest `preview` or `production` build.
 2. Download the APK, and open the file.
 3. If Android asks, allow installs from that app, then tap **Install**.
-4. Open my-app and sign in with Google.
+4. Open Habi and sign in with Google.
 
 To update, install the APK from a newer build over the current app. Your data stays in Supabase, but checks, sleep, steps, screen time and the saved weather place stay on the phone.
 
@@ -57,8 +59,8 @@ The app does not run in Expo Go, because it has its own native modules. Expo Go 
 ### Run your own copy
 
 ```sh
-git clone https://github.com/charlitomecarez/my-app.git
-cd my-app
+git clone https://github.com/charlitomecarez/habi.git
+cd habi
 npm install
 cp .env.example .env   # then fill in the three values
 ```
@@ -73,11 +75,11 @@ npm run web
 
 The web build covers most screens. Widgets, Health Connect, sleep, screen time, alarms and the vault PIN need the APK. Stop the dev server when you finish.
 
-## How my-app works
+## How Habi works
 
 ```mermaid
 flowchart LR
-  phone["my-app on the phone<br/>(Expo, React Native)"] -- "RLS: each account sees only its rows" --> db[("Supabase Postgres")]
+  phone["Habi on the phone<br/>(Expo, React Native)"] -- "RLS: each account sees only its rows" --> db[("Supabase Postgres")]
   cron["pg_cron"] --> fns["Edge Functions"]
   fns --> db
   fns -- "push" --> expo["Expo Push"]
@@ -102,7 +104,7 @@ The tabs are Home, Money, Todos, Vehicle and More. More is a searchable grid of 
 | **Money**                       | Week chart, account cards, transactions, bills, budgets, savings goals, subscriptions, recurring entries and exchange rates                                                                | —                                         |
 | **Statement import**            | GoTyme, GCash and MariBank PDFs, with a review before anything saves                                                                                                                       | `GOTYME_KEY`, `GCASH_KEY` for locked PDFs |
 | **Todos**                       | Due dates, repeats and reminders                                                                                                                                                           | —                                         |
-| **Vehicle**                     | Odometer, service schedule and log, fuel logs, and before-riding and weekly checks. Honda ADV 160 by default                                                                               | —                                         |
+| **Vehicle**                     | Odometer, service schedule and log, fuel logs, and before-riding and weekly checks                                                                                                         | —                                         |
 | **Habits, Gym, Journal**        | Streaks, workout plans and sessions, and a journal calendar                                                                                                                                | —                                         |
 | **Health**                      | Medicine doses, doctor visits, steps from Health Connect, and sleep from when your screen is off                                                                                           | Android for steps and sleep               |
 | **Screen time**                 | Every app you used today or this week                                                                                                                                                      | Android usage access                      |
@@ -132,7 +134,7 @@ The phone encrypts each vault entry with XChaCha20-Poly1305 before it goes to Su
 ## FAQ
 
 <details>
-<summary><strong>Is my-app on the Play Store?</strong></summary>
+<summary><strong>Is Habi on the Play Store?</strong></summary>
 
 No. The APK comes from Build from GitHub in expo.dev. GitHub releases hold only the source code.
 

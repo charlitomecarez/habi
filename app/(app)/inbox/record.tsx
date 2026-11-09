@@ -144,7 +144,7 @@ export default function RecordScreen() {
           {stage === "recording" ? "Recording. Up to 5 minutes." : stage === "starting" ? "Starting" : "Stopped"}
         </Text>
         {stage === "denied" ? (
-          <Notice tone="warning">Allow the microphone for my-app in your phone settings, then try again.</Notice>
+          <Notice tone="warning">Allow the microphone for Habi in your phone settings, then try again.</Notice>
         ) : null}
         {startError ? <Notice tone="danger">{startError}</Notice> : null}
         {send.error ? <Notice tone="danger">Could not send. {send.error.message}</Notice> : null}

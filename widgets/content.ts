@@ -27,4 +27,4 @@ export function screenTimeLine(todayMs: number | null, averageMs: number): Widge
   return { lead: hours(todayMs), note: todayMs <= averageMs ? `${gap} under average` : `${gap} over average` };
 }
 
-export const SIGNED_OUT: WidgetLine = { lead: "my-app", note: "Open the app to sign in." };
+export const SIGNED_OUT: WidgetLine = { lead: "Habi", note: "Open the app to sign in." };

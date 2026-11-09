@@ -1,4 +1,4 @@
-// Values from the my-app design system tokens.
+// Values from the Habi design system tokens.
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],

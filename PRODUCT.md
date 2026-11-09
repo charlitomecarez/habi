@@ -8,15 +8,15 @@ android
 
 ## Users
 
-Charli is the admin and the primary user. Charli is a rider in the Philippines (Asia/Manila) with a Honda ADV 160 and a Galaxy A56. Charli uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
+Charli is the admin and the primary user. Charli is a rider in the Philippines (Asia/Manila) with a motorbike and a Galaxy A56. Charli uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
 
 ## Product Purpose
 
-my-app is one private personal assistant. It remembers todos, services, bills, money, meals and documents, and it tells Charli when to act. Success means that Charli does not have to remember these things, and opens the app to act on what it says.
+Habi is one private personal assistant. It remembers todos, services, bills, money, meals and documents, and it tells Charli when to act. Success means that Charli does not have to remember these things, and opens the app to act on what it says.
 
 ## Positioning
 
-The app knows one real life: the ADV 160 and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. A general todo or finance app cannot join these facts in one view.
+The app knows one real life: the vehicle and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. A general todo or finance app cannot join these facts in one view.
 
 ## Operating Context
 
@@ -36,7 +36,7 @@ The app knows one real life: the ADV 160 and its kilometres, GCash and MariBank,
 
 ## Brand Commitments
 
-- The name is my-app.
+- The name is Habi.
 - Status always has a word, not colour alone.
 - Touch targets are at least 48 px.
 - Copy uses sentence case, and buttons name the action.

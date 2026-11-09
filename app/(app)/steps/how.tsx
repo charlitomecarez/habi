@@ -12,10 +12,10 @@ export default function HowItWorksScreen() {
       <ScrollView contentContainerClassName="px-5 pb-8 pt-4">
         <View>
           <DataRow
-            title="What my-app reads"
+            title="What Habi reads"
             detail="Steps, from Health Connect. Sleep, from when your screen is off. You can fix the times."
           />
-          <DataRow title="Where it goes" detail="Nowhere. my-app sends none of it to Supabase or any other service." />
+          <DataRow title="Where it goes" detail="Nowhere. Habi sends none of it to Supabase or any other service." />
           <DataRow title="How to stop" detail="Turn off access in Health Connect at any time." last />
         </View>
       </ScrollView>

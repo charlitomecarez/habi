@@ -1,6 +1,6 @@
 ---
 name: release-handoff
-description: Use when Charli confirms a my-app design and asks for the handoff, the milestones or the developer artifact of a release
+description: Use when Charli confirms a Habi design and asks for the handoff, the milestones or the developer artifact of a release
 ---
 
 # Release handoff
@@ -16,7 +16,7 @@ The output is one new artifact. Keep the plan and design artifacts as they are. 
 3. If a plan question has no answer, ask Charli before you continue.
 4. Check the repo again. Note the commit that you read.
 5. Read the format source with the Artifact `read` action: https://claude.ai/artifact/UFZThwwvdcztdnyvFiWHB7
-6. Publish a new artifact with that layout. Set the `<title>` to exactly `my-app v<version> handoff`.
+6. Publish a new artifact with that layout. Set the `<title>` to exactly `Habi v<version> handoff`.
 7. Link the artifact in `docs/releases/v<version>.md` and `docs/releases/index.md`. Set the status to `Handoff`.
 8. Send Charli the link, then stop.
 

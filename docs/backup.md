@@ -13,7 +13,7 @@ These two GitHub Actions secrets are the only backup secrets. Neither goes in `.
 | `BACKUP_DB_URL`         | The session pooler connection string, with a password |
 | `BACKUP_AGE_PUBLIC_KEY` | The `age` public key                                  |
 
-Charli keeps the private key outside my-app. If the database is lost, the Vault is lost too, so the key must not live there. Without the private key, no backup can be read.
+Charli keeps the private key outside Habi. If the database is lost, the Vault is lost too, so the key must not live there. Without the private key, no backup can be read.
 
 ## Restore
 

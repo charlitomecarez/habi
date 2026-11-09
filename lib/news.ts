@@ -91,6 +91,6 @@ export function siteName(url: string): string {
   }
 }
 
-/** The full article in an in-app browser that slides over my-app. Back returns to the story. */
+/** The full article in an in-app browser that slides over Habi. Back returns to the story. */
 export const readFullStory = (item: Pick<NewsItem, "url">) =>
   WebBrowser.openBrowserAsync(item.url, { showTitle: true, enableBarCollapsing: true });

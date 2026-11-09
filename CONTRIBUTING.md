@@ -1,6 +1,6 @@
 # Contributing
 
-This page sets up your own copy of my-app from nothing: your own Supabase project, your own Google sign-in and your own Firebase project for push notifications. Nothing here uses the owner's accounts, and everything stays on free tiers.
+This page sets up your own copy of Habi from nothing: your own Supabase project, your own Google sign-in and your own Firebase project for push notifications. Nothing here uses the owner's accounts, and everything stays on free tiers.
 
 Read [CLAUDE.md](CLAUDE.md) and [docs/conventions.md](docs/conventions.md) before you change code. They hold the project rules.
 
@@ -18,8 +18,8 @@ Docker and a local Supabase server are not used. Every database command runs aga
 ## 1. Get the code
 
 ```sh
-git clone https://github.com/charlitomecarez/my-app.git
-cd my-app
+git clone https://github.com/charlitomecarez/habi.git
+cd habi
 npm install
 cp .env.example .env
 ```

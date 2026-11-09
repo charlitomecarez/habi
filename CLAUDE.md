@@ -1,8 +1,8 @@
-# my-app
+# Habi
 
-Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance (Honda ADV 160 default), room inventory, money and subscriptions, password vault.
+Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance, room inventory, money and subscriptions, password vault.
 
-- Display name: my-app
+- Display name and GitHub repo: Habi (`charlitomecarez/habi`). The expo.dev slug, package and scheme stay `my-app` / `com.charli.myapp` / `myapp`.
 - Android package: `com.charli.myapp` (app.json `android.package`; Google OAuth Android client IDs and FCM use it)
 - URL scheme: `myapp`
 
@@ -68,7 +68,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 - Every release has five steps: Planning → Design → Handoff → Development → Farewell. `docs/release-workflow.md` has the full steps.
 - Charli gates each step. Stop at the end of a step, and start the next step only when Charli asks.
 - Design covers the UI and the DB of every milestone in the plan, unless a milestone does not need it. Charli can ask for revisions, and each revision follows the Impeccable rules.
-- Each artifact name holds the version: `my-app v<version> plan`, `my-app v<version> design`, `my-app v<version> handoff`, `my-app v<version> release notes`.
+- Each artifact name holds the version: `Habi v<version> plan`, `Habi v<version> design`, `Habi v<version> handoff`, `Habi v<version> release notes`.
 - Link each artifact in `docs/releases/v<version>.md` and `docs/releases/index.md` as soon as you publish it.
 - `CHANGELOG.md` has a short entry for each release. Add each change to `Unreleased` during Development.
 - A GitHub release holds only the source code archives. Never attach the APK.
