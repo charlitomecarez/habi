@@ -35,7 +35,7 @@ export function AddVehicleSheet({ visible, onClose }: { visible: boolean; onClos
   });
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Add vehicle" subtitle="Honda ADV 160 with its service schedule">
+    <Sheet visible={visible} onClose={onClose} title="Add vehicle" subtitle="Your vehicle, with its service schedule">
       <Controller
         control={control}
         name="odometer"

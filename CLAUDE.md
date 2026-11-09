@@ -1,6 +1,6 @@
 # Habi
 
-Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance (Honda ADV 160 default), room inventory, money and subscriptions, password vault.
+Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance, room inventory, money and subscriptions, password vault.
 
 - Display name and GitHub repo: Habi (`charlitomecarez/habi`). The expo.dev slug, package and scheme stay `my-app` / `com.charli.myapp` / `myapp`.
 - Android package: `com.charli.myapp` (app.json `android.package`; Google OAuth Android client IDs and FCM use it)

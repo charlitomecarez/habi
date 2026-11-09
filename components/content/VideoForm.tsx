@@ -109,7 +109,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
                 value={field.value}
                 onChangeText={field.onChange}
                 onBlur={field.onBlur}
-                placeholder="How I fixed my ADV 160 idle"
+                placeholder="How I fixed my scooter idle"
                 maxLength={200}
                 error={fieldState.error?.message}
               />

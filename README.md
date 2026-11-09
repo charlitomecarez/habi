@@ -6,7 +6,9 @@
 
 ### One private app that tells you what needs you today.
 
-**Todos, money, the ADV 160's service schedule, a password vault and 18 more modules, in one Android app.**
+_Habi_ is Tagalog for "weave". The app weaves each part of your day into one Home.
+
+**Todos, money, your vehicle's service schedule, a password vault and 18 more modules, in one Android app.**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/charlitomecarez/habi/ci.yml?style=flat-square&label=CI)](https://github.com/charlitomecarez/habi/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-1.4.0-23205C?style=flat-square)](CHANGELOG.md)
@@ -37,7 +39,7 @@
 
 ---
 
-Habi is one personal assistant for a real life in the Philippines: the ADV 160 and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. Home says in one sentence what needs you, and every module feeds it. It runs on Android first and on the web second, and everything stays on free tiers.
+Habi is one personal assistant for a real life in the Philippines: the vehicle and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. Home says in one sentence what needs you, and every module feeds it. It runs on Android first and on the web second, and everything stays on free tiers.
 
 > **[Read the release records](docs/releases/index.md)** for each version's plan, design, handoff and release notes.
 
@@ -102,7 +104,7 @@ The tabs are Home, Money, Todos, Vehicle and More. More is a searchable grid of 
 | **Money**                       | Week chart, account cards, transactions, bills, budgets, savings goals, subscriptions, recurring entries and exchange rates                                                                | —                                         |
 | **Statement import**            | GoTyme, GCash and MariBank PDFs, with a review before anything saves                                                                                                                       | `GOTYME_KEY`, `GCASH_KEY` for locked PDFs |
 | **Todos**                       | Due dates, repeats and reminders                                                                                                                                                           | —                                         |
-| **Vehicle**                     | Odometer, service schedule and log, fuel logs, and before-riding and weekly checks. Honda ADV 160 by default                                                                               | —                                         |
+| **Vehicle**                     | Odometer, service schedule and log, fuel logs, and before-riding and weekly checks                                                                                                         | —                                         |
 | **Habits, Gym, Journal**        | Streaks, workout plans and sessions, and a journal calendar                                                                                                                                | —                                         |
 | **Health**                      | Medicine doses, doctor visits, steps from Health Connect, and sleep from when your screen is off                                                                                           | Android for steps and sleep               |
 | **Screen time**                 | Every app you used today or this week                                                                                                                                                      | Android usage access                      |

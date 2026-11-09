@@ -124,7 +124,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
                 value={field.value}
                 onChangeText={field.onChange}
                 onBlur={field.onBlur}
-                placeholder="ADV 160 registration"
+                placeholder="Vehicle registration"
                 maxLength={120}
                 error={fieldState.error?.message}
               />

@@ -8,7 +8,7 @@ android
 
 ## Users
 
-Charli is the admin and the primary user. Charli is a rider in the Philippines (Asia/Manila) with a Honda ADV 160 and a Galaxy A56. Charli uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
+Charli is the admin and the primary user. Charli is a rider in the Philippines (Asia/Manila) with a motorbike and a Galaxy A56. Charli uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
 
 ## Product Purpose
 
@@ -16,7 +16,7 @@ Habi is one private personal assistant. It remembers todos, services, bills, mon
 
 ## Positioning
 
-The app knows one real life: the ADV 160 and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. A general todo or finance app cannot join these facts in one view.
+The app knows one real life: the vehicle and its kilometres, GCash and MariBank, ulam under ₱99, and voice messages in Taglish. A general todo or finance app cannot join these facts in one view.
 
 ## Operating Context
 
