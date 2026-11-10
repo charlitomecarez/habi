@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { differenceInCalendarDays, format, isLeapYear, startOfDay } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables } from "@/types/database";
 
@@ -46,18 +47,26 @@ export function occurrenceText(d: PersonDate, now = new Date()): { when: string;
 export function usePeople() {
   return useQuery({
     queryKey: PEOPLE_KEY,
-    queryFn: async () => {
-      const [people, dates, gifts] = await Promise.all([
-        supabase.from("people").select("id, name, note").order("name"),
-        supabase.from("person_dates").select("id, person_id, kind, label, month, day, year"),
-        supabase.from("gift_ideas").select("id, person_id, title, price, bought_at").order("created_at"),
-      ]);
-      if (people.error) throw people.error;
-      if (dates.error) throw dates.error;
-      if (gifts.error) throw gifts.error;
-      return { people: people.data as Person[], dates: dates.data as PersonDate[], gifts: gifts.data as GiftIdea[] };
-    },
+    queryFn: () =>
+      fromHomeSummary((s) => {
+        const people = slice<Person[]>(s, "people");
+        const dates = slice<PersonDate[]>(s, "person_dates");
+        const gifts = slice<GiftIdea[]>(s, "gift_ideas");
+        return people && dates && gifts ? { people, dates, gifts } : undefined;
+      }, fetchPeople),
   });
+}
+
+async function fetchPeople() {
+  const [people, dates, gifts] = await Promise.all([
+    supabase.from("people").select("id, name, note").order("name"),
+    supabase.from("person_dates").select("id, person_id, kind, label, month, day, year"),
+    supabase.from("gift_ideas").select("id, person_id, title, price, bought_at").order("created_at"),
+  ]);
+  if (people.error) throw people.error;
+  if (dates.error) throw dates.error;
+  if (gifts.error) throw gifts.error;
+  return { people: people.data as Person[], dates: dates.data as PersonDate[], gifts: gifts.data as GiftIdea[] };
 }
 
 function useInvalidate() {

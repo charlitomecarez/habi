@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { currentUserId } from "@/lib/photos";
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -37,15 +38,27 @@ export function canRetry(message: VoiceMessage, now = Date.now()): boolean {
 export function useVoiceAccess() {
   return useQuery({
     queryKey: [...VOICE_KEY, "access"],
-    queryFn: async () => {
-      const [admin, access, contacts] = await Promise.all([
-        supabase.from("app_admins").select("user_id").maybeSingle(),
-        supabase.rpc("has_voice_access"),
-        supabase.rpc("voice_contacts"),
-      ]);
-      const error = admin.error ?? access.error ?? contacts.error;
-      if (error) throw error;
-      return { isAdmin: admin.data !== null, hasAccess: access.data === true, contacts: contacts.data ?? [] };
+    queryFn: () => {
+      type Access = { isAdmin: boolean; hasAccess: boolean; contacts: { user_id: string; name: string }[] };
+      return fromHomeSummary<Access>(
+        (s) => {
+          const admin = slice<{ user_id: string } | null>(s, "admin");
+          const hasAccess = slice<boolean>(s, "has_voice_access");
+          const contacts = slice<Access["contacts"]>(s, "voice_contacts");
+          if (admin === undefined || hasAccess === undefined || !contacts) return undefined;
+          return { isAdmin: admin !== null, hasAccess: hasAccess === true, contacts };
+        },
+        async () => {
+          const [admin, access, contacts] = await Promise.all([
+            supabase.from("app_admins").select("user_id").maybeSingle(),
+            supabase.rpc("has_voice_access"),
+            supabase.rpc("voice_contacts"),
+          ]);
+          const error = admin.error ?? access.error ?? contacts.error;
+          if (error) throw error;
+          return { isAdmin: admin.data !== null, hasAccess: access.data === true, contacts: contacts.data ?? [] };
+        },
+      );
     },
   });
 }
@@ -66,16 +79,20 @@ export function useVoiceAccounts() {
 export function useInbox() {
   return useQuery({
     queryKey: [...VOICE_KEY, "inbox"],
-    queryFn: async (): Promise<VoiceMessage[]> => {
-      const { data, error } = await supabase
-        .from("voice_messages")
-        .select(MESSAGE_COLUMNS)
-        .eq("recipient_id", await currentUserId())
-        .order("created_at", { ascending: false })
-        .limit(LIST_LIMIT);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () =>
+      fromHomeSummary(
+        (s) => slice<VoiceMessage[]>(s, "inbox"),
+        async (): Promise<VoiceMessage[]> => {
+          const { data, error } = await supabase
+            .from("voice_messages")
+            .select(MESSAGE_COLUMNS)
+            .eq("recipient_id", await currentUserId())
+            .order("created_at", { ascending: false })
+            .limit(LIST_LIMIT);
+          if (error) throw error;
+          return data;
+        },
+      ),
   });
 }
 

@@ -2754,6 +2754,21 @@ export type Database = {
         Returns: undefined;
       };
       has_voice_access: { Args: never; Returns: boolean };
+      home_summary: {
+        Args: {
+          p_done_since: string;
+          p_dose_from: string;
+          p_dose_to: string;
+          p_games_from: string;
+          p_games_to: string;
+          p_habits_since: string;
+          p_month_end: string;
+          p_month_start: string;
+          p_today: string;
+          p_ulam_from: string;
+        };
+        Returns: Json;
+      };
       import_transactions: { Args: { p_rows: Json }; Returns: number };
       log_fuel: {
         Args: {

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 
 import { uploadPhoto, type LocalPhoto } from "@/lib/photos";
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -47,17 +48,21 @@ export function parseKm(text: string): number | null {
 export function useVehicle() {
   return useQuery({
     queryKey: VEHICLE_KEY,
-    queryFn: async (): Promise<Vehicle | null> => {
-      const { data, error } = await supabase
-        .from("vehicles")
-        .select("id, nickname, make, model, current_odometer_km, created_at")
-        .order("is_primary", { ascending: false })
-        .order("created_at")
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () =>
+      fromHomeSummary(
+        (s) => slice<Vehicle | null>(s, "vehicle"),
+        async (): Promise<Vehicle | null> => {
+          const { data, error } = await supabase
+            .from("vehicles")
+            .select("id, nickname, make, model, current_odometer_km, created_at")
+            .order("is_primary", { ascending: false })
+            .order("created_at")
+            .limit(1)
+            .maybeSingle();
+          if (error) throw error;
+          return data;
+        },
+      ),
   });
 }
 
@@ -66,14 +71,22 @@ export function useServiceDue(vehicleId: string | undefined) {
     queryKey: dueKey(vehicleId ?? ""),
     enabled: vehicleId !== undefined,
     queryFn: async (): Promise<ServiceDue[]> => {
-      const { data, error } = await supabase
-        .from("vehicle_service_due")
-        .select(
-          "vehicle_service_id, item, status, next_due_km, next_due_on, km_remaining, days_remaining, sort_order, interval_km",
-        )
-        .eq("vehicle_id", vehicleId!)
-        .order("sort_order");
-      if (error) throw error;
+      type Row = Tables<"vehicle_service_due">;
+      const data = await fromHomeSummary(
+        // The summary holds the services of the first vehicle only.
+        (s) => (slice<Vehicle | null>(s, "vehicle")?.id === vehicleId ? slice<Row[]>(s, "services_due") : undefined),
+        async () => {
+          const { data, error } = await supabase
+            .from("vehicle_service_due")
+            .select(
+              "vehicle_service_id, item, status, next_due_km, next_due_on, km_remaining, days_remaining, sort_order, interval_km",
+            )
+            .eq("vehicle_id", vehicleId!)
+            .order("sort_order");
+          if (error) throw error;
+          return data;
+        },
+      );
       return data.map((row) => ({
         vehicleServiceId: row.vehicle_service_id!,
         item: row.item!,

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, isBefore, isSameDay, startOfDay, subDays } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables } from "@/types/database";
 
@@ -22,17 +23,21 @@ const DONE_HISTORY_DAYS = 30;
 export function useTodos() {
   return useQuery({
     queryKey: TODOS_KEY,
-    queryFn: async (): Promise<Todo[]> => {
-      const since = subDays(new Date(), DONE_HISTORY_DAYS).toISOString();
-      const { data, error } = await supabase
-        .from("todos")
-        .select(COLUMNS)
-        .or(`completed_at.is.null,completed_at.gte.${since}`)
-        .order("due_at", { ascending: true, nullsFirst: false })
-        .order("created_at", { ascending: true });
-      if (error) throw error;
-      return data as Todo[];
-    },
+    queryFn: () =>
+      fromHomeSummary(
+        (s) => slice<Todo[]>(s, "todos"),
+        async (): Promise<Todo[]> => {
+          const since = subDays(new Date(), DONE_HISTORY_DAYS).toISOString();
+          const { data, error } = await supabase
+            .from("todos")
+            .select(COLUMNS)
+            .or(`completed_at.is.null,completed_at.gte.${since}`)
+            .order("due_at", { ascending: true, nullsFirst: false })
+            .order("created_at", { ascending: true });
+          if (error) throw error;
+          return data as Todo[];
+        },
+      ),
   });
 }
 

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
 
 import { downFeeds } from "@/lib/news-time";
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -34,7 +35,7 @@ function section(id: NewsSection, limit: number) {
 export function useNews() {
   return useQuery({
     queryKey: KEY,
-    staleTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       const [ph, world, sync] = await Promise.all([
         section("ph", PER_SECTION),
@@ -59,12 +60,17 @@ export function useLatestNews(count = 3, enabled = true) {
   return useQuery({
     queryKey: [...KEY, "latest", count],
     enabled,
-    staleTime: 10 * 60 * 1000,
-    queryFn: async () => {
-      const { data, error } = await section("ph", count);
-      if (error) throw error;
-      return data;
-    },
+    staleTime: 30 * 60 * 1000,
+    queryFn: () =>
+      fromHomeSummary(
+        // The summary holds the newest 3, the count Home shows.
+        (s) => (count === 3 ? slice<Tables<"news_items">[]>(s, "news") : undefined),
+        async () => {
+          const { data, error } = await section("ph", count);
+          if (error) throw error;
+          return data;
+        },
+      ),
   });
 }
 
@@ -73,7 +79,7 @@ export function useStory(id: string | undefined) {
   return useQuery({
     queryKey: [...KEY, "story", id],
     enabled: !!id,
-    staleTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       const { data, error } = await supabase.from("news_items").select("*").eq("id", id!).maybeSingle();
       if (error) throw error;

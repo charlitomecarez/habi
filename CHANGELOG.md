@@ -43,6 +43,7 @@ Do not put these items here:
 
 ### Changed
 
+- **Speed:** The app keeps your last data on the phone for a week, so screens open with data at once and refresh behind it. Home loads in one request instead of about 25. Sign out clears the saved data.
 - **Server:** The database moved to Singapore, closer to the Philippines, so each request is faster. Install the v1.5.0 APK: older APKs stop working when the old server pauses.
 - **Photos:** New photos save as WebP, about half the size, and Inventory lists load a small copy. A photo you have seen once opens from the phone without a new download. Older photos stay as they are.
 - **Ulam:** Three dish photos load a smaller copy from Wikimedia.

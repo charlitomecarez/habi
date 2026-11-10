@@ -26,6 +26,7 @@ Sending the same file again returns the first result, so a lost reply cannot sen
 
 ## Rules
 
+- One select policy, `select_sent_or_received`, shows a message to its sender, and to its recipient once it is `ready`.
 - Only `voice-transcribe` writes `voice_messages`. The app has no insert, update or delete policy, so it cannot set a transcript, a status or a recipient.
 - The receiver sees a row only when it is `ready`. The sender sees all their rows.
 - The push says only "New voice message". The text stays out of Expo Push, the lock screen and the digest.

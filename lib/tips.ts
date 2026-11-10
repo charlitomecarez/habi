@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { differenceInCalendarDays, format } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 
 export type Tip = { topic: string; tip: string; bundled: boolean };
@@ -37,8 +38,19 @@ export function useDailyTip() {
     queryKey: ["daily-tip", today],
     staleTime: 60 * 60 * 1000,
     queryFn: async (): Promise<Tip> => {
-      const { data, error } = await supabase.from("daily_tips").select("topic, tip").eq("on_date", today).maybeSingle();
-      if (error || !data) return bundledTip();
+      type Row = { topic: string; tip: string } | null;
+      const data = await fromHomeSummary<Row>(
+        (s, p) => (p.p_today === today ? slice<Row>(s, "tip") : undefined),
+        async () => {
+          const { data, error } = await supabase
+            .from("daily_tips")
+            .select("topic, tip")
+            .eq("on_date", today)
+            .maybeSingle();
+          return error ? null : data;
+        },
+      );
+      if (!data) return bundledTip();
       return { topic: data.topic, tip: data.tip, bundled: false };
     },
   });

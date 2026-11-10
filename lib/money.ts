@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMonths, differenceInCalendarDays, format, parseISO, startOfMonth } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables } from "@/types/database";
 
@@ -277,17 +278,21 @@ export function useMonthTransactions(month: Date) {
   const from = toDateString(start);
   return useQuery({
     queryKey: monthTransactionsKey(from),
-    queryFn: async (): Promise<Transaction[]> => {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select(TRANSACTION_COLUMNS)
-        .gte("occurred_on", from)
-        .lt("occurred_on", toDateString(addMonths(start, 1)))
-        .order("occurred_on")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () =>
+      fromHomeSummary(
+        (s, p) => (p.p_month_start === from ? slice<Transaction[]>(s, "month_transactions") : undefined),
+        async (): Promise<Transaction[]> => {
+          const { data, error } = await supabase
+            .from("transactions")
+            .select(TRANSACTION_COLUMNS)
+            .gte("occurred_on", from)
+            .lt("occurred_on", toDateString(addMonths(start, 1)))
+            .order("occurred_on")
+            .order("created_at", { ascending: false });
+          if (error) throw error;
+          return data;
+        },
+      ),
     // Keep the last month on screen while the next one loads, so the calendar does not flash.
     placeholderData: keepPreviousData,
   });
@@ -327,14 +332,20 @@ export function useSubscriptions() {
   return useQuery({
     queryKey: SUBSCRIPTIONS_KEY,
     queryFn: async (): Promise<Subscription[]> => {
-      const { data, error } = await supabase
-        .from("subscription_costs")
-        .select(
-          "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, auto_add, kind, monthly_php, rate_to_php",
-        )
-        .eq("is_active", true)
-        .order("next_billing_on");
-      if (error) throw error;
+      const data = await fromHomeSummary(
+        (s) => slice<Tables<"subscription_costs">[]>(s, "subscriptions"),
+        async () => {
+          const { data, error } = await supabase
+            .from("subscription_costs")
+            .select(
+              "id, name, amount, currency, billing_cycle, next_billing_on, account_id, category_id, remind_days_before, notes, auto_add, kind, monthly_php, rate_to_php",
+            )
+            .eq("is_active", true)
+            .order("next_billing_on");
+          if (error) throw error;
+          return data;
+        },
+      );
       // The view marks every column nullable; these come from not-null table columns.
       return data.map((s) => ({
         id: s.id!,
