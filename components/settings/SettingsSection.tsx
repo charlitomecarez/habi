@@ -9,8 +9,10 @@ import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { ModulesSheet } from "@/components/settings/ModulesSheet";
+import { SpeedBadge, SpeedCheckSheet } from "@/components/settings/SpeedCheckSheet";
 import { useColors } from "@/lib/colors";
 import { useAccounts, useExchangeRates } from "@/lib/money";
+import { formatSeconds, speedStatus, summarize, useTimings } from "@/lib/speed";
 import { hourLabel, timeZoneOptions, useSaveUserSettings, useUserSettings } from "@/lib/settings";
 import { THEME_OPTIONS, themeLabel, useThemeStore } from "@/lib/theme";
 import { useAuth } from "@/providers/auth-provider";
@@ -24,10 +26,12 @@ type RowProps = {
   onPress?: () => void;
   /** Replaces the chevron, e.g. a switch. */
   trailing?: ReactNode;
+  /** A status word in `trailing`, so TalkBack reads it too. */
+  status?: string;
   last?: boolean;
 };
 
-function Row({ title, detail, icon, onPress, trailing, last = false }: RowProps) {
+function Row({ title, detail, icon, onPress, trailing, status, last = false }: RowProps) {
   const colors = useColors();
   const content = (
     <>
@@ -45,7 +49,7 @@ function Row({ title, detail, icon, onPress, trailing, last = false }: RowProps)
   return onPress ? (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${title}, ${detail}`}
+      accessibilityLabel={[title, detail, status].filter(Boolean).join(", ")}
       onPress={onPress}
       className={`${className} active:bg-surface-muted`}
     >
@@ -61,7 +65,7 @@ export function SettingsSection() {
   const colors = useColors();
   const { session, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
-  const [sheet, setSheet] = useState<"rate" | "timezone" | "theme" | "modules" | null>(null);
+  const [sheet, setSheet] = useState<"rate" | "timezone" | "theme" | "modules" | "speed" | null>(null);
   const theme = useThemeStore((s) => s.preference);
   const setTheme = useThemeStore((s) => s.setPreference);
 
@@ -75,6 +79,7 @@ export function SettingsSection() {
   const provider = user?.app_metadata.provider === "google" ? "Signed in with Google" : "Signed in with email";
   const usd = rates.data?.find((r) => r.currency === FOREIGN) ?? null;
   const prefs = settings.data;
+  const speed = summarize(useTimings());
 
   async function onSignOut() {
     setSigningOut(true);
@@ -116,6 +121,20 @@ export function SettingsSection() {
             onPress={prefs ? () => setSheet("modules") : undefined}
           />
           <Row
+            title="Speed check"
+            detail={speed ? `${formatSeconds(speed.median)} typical, last ${speed.count} requests` : "No requests yet"}
+            status={speed ? speedStatus(speed.median).label : undefined}
+            onPress={() => setSheet("speed")}
+            trailing={
+              speed ? (
+                <View className="flex-row items-center gap-2">
+                  <SpeedBadge ms={speed.median} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.inkMuted} />
+                </View>
+              ) : undefined
+            }
+          />
+          <Row
             title="Daily email digest"
             detail={prefs ? (prefs.digestEnabled ? hourLabel(prefs.digestHour) : "Off") : "Loading…"}
             trailing={
@@ -154,6 +173,7 @@ export function SettingsSection() {
         visible={sheet === "modules"}
         onClose={() => setSheet(null)}
       />
+      <SpeedCheckSheet visible={sheet === "speed"} onClose={() => setSheet(null)} />
       <ExchangeRateSheet
         visible={sheet === "rate"}
         onClose={() => setSheet(null)}

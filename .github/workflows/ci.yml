@@ -35,3 +35,32 @@ jobs:
           for config in supabase/functions/*/deno.json; do
             deno check --no-lock --config "$config" "$(dirname "$config")/index.ts"
           done
+
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: 0
+      # Placeholders: the export only needs the names. The page never reaches a real project.
+      EXPO_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+      EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: ci-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Export the web app
+        run: npx expo export --platform web
+      - name: Check the bundle budget
+        run: node scripts/bundle-size.mjs dist
+      - name: Lighthouse
+        run: npx --yes @lhci/cli@0.15.1 autorun
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse
+          path: lighthouse
+          if-no-files-found: ignore
