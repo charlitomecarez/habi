@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMonths, format, isBefore, parseISO, startOfMonth } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -55,29 +56,39 @@ export function useBudgets() {
   return useQuery({
     queryKey: KEY,
     queryFn: async () => {
-      const budgets = await supabase.from("money_budgets").select("id, category_id, monthly_limit, starts_on");
-      if (budgets.error) throw budgets.error;
-      const list = budgets.data as Budget[];
+      type Spending = { category_id: string | null; amount: number; occurred_on: string };
+      const { list, rows } = await fromHomeSummary<{ list: Budget[]; rows: Spending[] }>(
+        (s) => {
+          const list = slice<Budget[]>(s, "budgets");
+          const rows = slice<Spending[]>(s, "budget_spending");
+          return list && rows ? { list, rows } : undefined;
+        },
+        async () => {
+          const budgets = await supabase.from("money_budgets").select("id, category_id, monthly_limit, starts_on");
+          if (budgets.error) throw budgets.error;
+          const list = budgets.data as Budget[];
+          if (!list.length) return { list, rows: [] };
+          const since = list.map((b) => b.starts_on).sort()[0];
+          const tx = await supabase
+            .from("transactions")
+            .select("category_id, amount, occurred_on")
+            .eq("kind", "expense")
+            .in(
+              "category_id",
+              list.map((b) => b.category_id),
+            )
+            .gte("occurred_on", since);
+          if (tx.error) throw tx.error;
+          return { list, rows: tx.data };
+        },
+      );
       const spent = new Map<string, Map<string, number>>();
-      if (list.length) {
-        const since = list.map((b) => b.starts_on).sort()[0];
-        const tx = await supabase
-          .from("transactions")
-          .select("category_id, amount, occurred_on")
-          .eq("kind", "expense")
-          .in(
-            "category_id",
-            list.map((b) => b.category_id),
-          )
-          .gte("occurred_on", since);
-        if (tx.error) throw tx.error;
-        for (const t of tx.data) {
-          if (!t.category_id) continue;
-          const byMonth = spent.get(t.category_id) ?? new Map<string, number>();
-          const k = t.occurred_on.slice(0, 7);
-          byMonth.set(k, (byMonth.get(k) ?? 0) + t.amount);
-          spent.set(t.category_id, byMonth);
-        }
+      for (const t of rows) {
+        if (!t.category_id) continue;
+        const byMonth = spent.get(t.category_id) ?? new Map<string, number>();
+        const k = t.occurred_on.slice(0, 7);
+        byMonth.set(k, (byMonth.get(k) ?? 0) + t.amount);
+        spent.set(t.category_id, byMonth);
       }
       return { budgets: list, spent };
     },

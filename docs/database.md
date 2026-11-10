@@ -60,18 +60,18 @@ Deleting a location sets `parent_id` and `location_id` to null on the children. 
 
 ### Money (`20261103000700_money.sql`)
 
-| Table                                               | Purpose                                                                                                                                                                                         |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `money_accounts`                                    | `name`, `kind`, `opening_balance`, `currency`, `is_archived`, `sort_order`.                                                                                                                     |
-| `money_categories`                                  | `name`, `kind` (`expense` or `income`), `icon`, `sort_order`.                                                                                                                                   |
-| `exchange_rates`                                    | One rate to PHP per foreign currency, set by the user.                                                                                                                                          |
-| `subscriptions`                                     | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                                                    |
-| `recurring_transactions`                            | A rule that saves its own row. `schedule`, `week_days`, `month_day`, `is_paused`, `last_run_on`. `add_due_recurring` runs each hour.                                                            |
-| `feedback`                                          | Report a bug. A sent report cannot change. `admin_select` and `admin_update` let `app_admins` read every row. 20 reports a day for each account.                                                |
-| `sports_matches`, `sports_standings`, `sports_sync` | Shared. RLS allows signed-in reads, and only the service role in `sports-sync` writes.                                                                                                          |
-| `news_items`, `news_sync`                           | Shared, like Sports. RLS allows signed-in reads, and only the service role in `news-sync` writes. No `user_id`, because a headline is not personal.                                             |
-| `job_profiles`, `job_matches`                       | Find a work. No name, phone or address column. Only `job-search` adds matches, so `owner_insert` is dropped on `job_matches`. `score` and `reason` are null for a job that Groq could not rank. |
-| `transactions`                                      | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`.                               |
+| Table                                               | Purpose                                                                                                                                                                                                                  |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `money_accounts`                                    | `name`, `kind`, `opening_balance`, `currency`, `is_archived`, `sort_order`.                                                                                                                                              |
+| `money_categories`                                  | `name`, `kind` (`expense` or `income`), `icon`, `sort_order`.                                                                                                                                                            |
+| `exchange_rates`                                    | One rate to PHP per foreign currency, set by the user.                                                                                                                                                                   |
+| `subscriptions`                                     | `amount`, `currency`, `billing_cycle`, `next_billing_on`, `remind_days_before`, `account_id`, `category_id`.                                                                                                             |
+| `recurring_transactions`                            | A rule that saves its own row. `schedule`, `week_days`, `month_day`, `is_paused`, `last_run_on`. `add_due_recurring` runs each hour.                                                                                     |
+| `feedback`                                          | Report a bug. A sent report cannot change. `select_own_or_admin` lets each account read its own reports and `app_admins` read every row; `admin_update` lets `app_admins` change one. 20 reports a day for each account. |
+| `sports_matches`, `sports_standings`, `sports_sync` | Shared. RLS allows signed-in reads, and only the service role in `sports-sync` writes.                                                                                                                                   |
+| `news_items`, `news_sync`                           | Shared, like Sports. RLS allows signed-in reads, and only the service role in `news-sync` writes. No `user_id`, because a headline is not personal.                                                                      |
+| `job_profiles`, `job_matches`                       | Find a work. No name, phone or address column. Only `job-search` adds matches, so `owner_insert` is dropped on `job_matches`. `score` and `reason` are null for a job that Groq could not rank.                          |
+| `transactions`                                      | `kind`, `amount` (always positive), `account_id`, `to_account_id`, `category_id`, `subscription_id`, `occurred_on`, `merchant`, `note`, `source`, `external_ref`.                                                        |
 
 Views:
 
@@ -95,7 +95,13 @@ Views:
 
 The odometer goes down only through an `odometer_logs` row with `is_correction`. Every other log uses `greatest(current, new)`, so an old fuel or service entry never lowers it. A correction also deletes pending `vehicle_service` reminders that are no longer overdue.
 
+## Indexes
+
+Every foreign key has an index (migration `20261110000100`), so a delete of a parent row and a join on the key stay fast. A new foreign key gets its own index in the same migration. The performance advisors must show no unindexed foreign key.
+
 ## RPC
+
+`home_summary(...)` returns every read on Home in one `jsonb`: a key for each module's rows (`todos`, `vehicle`, `services_due`, `subscriptions`, `medicines`, `doses`, `visits`, `weights`, `debts`, `debt_balances`, `people`, `person_dates`, `gift_ideas`, `month_transactions`, `settings`, `budgets`, `budget_spending`, `habits`, `habit_checks`, `ulam_days`, `admin`, `has_voice_access`, `voice_contacts`, `inbox`, `tip`, `news`, `game_leagues`, `games`). Each key holds the same columns and order as the module's own query. The phone sends its own dates (today, the month, the dose and history windows), because they are local to the phone. It is `security invoker`, so RLS of the caller applies, and only `authenticated` can call it. `lib/home-summary.ts` explains how the app uses it.
 
 `seed_money_defaults()` adds four accounts (Cash on hand, GCash, MariBank, GoTyme) and 13 categories when the user has none. The app calls it after each sign-in. A second call does nothing.
 

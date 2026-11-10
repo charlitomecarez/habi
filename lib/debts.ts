@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
 
 import { formatPeso, toDateString } from "@/lib/money";
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables } from "@/types/database";
 
@@ -22,17 +23,31 @@ export function useDebts() {
   return useQuery({
     queryKey: DEBTS_KEY,
     queryFn: async (): Promise<Debt[]> => {
-      const [debts, balances] = await Promise.all([
-        supabase
-          .from("debts")
-          .select("id, person_name, person_id, direction, amount, occurred_on, due_on, note, created_at")
-          .order("occurred_on", { ascending: false }),
-        supabase.from("debt_balances").select("debt_id, paid, balance"),
-      ]);
-      if (debts.error) throw debts.error;
-      if (balances.error) throw balances.error;
-      const byId = new Map(balances.data.map((b) => [b.debt_id, b]));
-      return debts.data.map((d) => ({
+      type Rows = {
+        debts: Omit<Debt, "paid" | "balance">[];
+        balances: Pick<Tables<"debt_balances">, "debt_id" | "paid" | "balance">[];
+      };
+      const rows = await fromHomeSummary<Rows>(
+        (s) => {
+          const debts = slice<Rows["debts"]>(s, "debts");
+          const balances = slice<Rows["balances"]>(s, "debt_balances");
+          return debts && balances ? { debts, balances } : undefined;
+        },
+        async () => {
+          const [debts, balances] = await Promise.all([
+            supabase
+              .from("debts")
+              .select("id, person_name, person_id, direction, amount, occurred_on, due_on, note, created_at")
+              .order("occurred_on", { ascending: false }),
+            supabase.from("debt_balances").select("debt_id, paid, balance"),
+          ]);
+          if (debts.error) throw debts.error;
+          if (balances.error) throw balances.error;
+          return { debts: debts.data, balances: balances.data };
+        },
+      );
+      const byId = new Map(rows.balances.map((b) => [b.debt_id, b]));
+      return rows.debts.map((d) => ({
         ...d,
         paid: byId.get(d.id)?.paid ?? 0,
         balance: byId.get(d.id)?.balance ?? d.amount,

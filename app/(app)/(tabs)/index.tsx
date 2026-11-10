@@ -25,6 +25,7 @@ import { useColors } from "@/lib/colors";
 import { useDebts } from "@/lib/debts";
 import { todaysDoses, useHealth } from "@/lib/health";
 import { buildAttention, todaySentence } from "@/lib/home";
+import { startHomeSummary } from "@/lib/home-summary";
 import { useHabits } from "@/lib/habits";
 import { dayTotals, formatPeso, toDateString, useMonthTransactions, useSubscriptions } from "@/lib/money";
 import { useModuleFilter } from "@/lib/features";
@@ -70,6 +71,8 @@ export default function HomeScreen() {
     ((user?.user_metadata.full_name as string | undefined) ?? user?.email ?? "?").charAt(0) || "?"
   ).toUpperCase();
 
+  // One request for every Home row. It starts before the module queries below, which read from it.
+  useState(() => startHomeSummary(now));
   const [showAll, setShowAll] = useState(false);
   const [editing, setEditing] = useState(false);
   const [openDay, setOpenDay] = useState<number | null>(null);
@@ -151,6 +154,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const refresh = async () => {
     setRefreshing(true);
+    startHomeSummary(new Date(), true);
     await Promise.all([
       todos.refetch(),
       vehicle.refetch(),

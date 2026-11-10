@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, endOfDay, format, startOfDay, subDays } from "date-fns";
 
 import { toDateString } from "@/lib/money";
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables } from "@/types/database";
 
@@ -22,31 +23,45 @@ export function timeText(time: string): string {
 export function useHealth() {
   return useQuery({
     queryKey: HEALTH_KEY,
-    queryFn: async () => {
-      const now = new Date();
-      const [medicines, doses, visits, weights] = await Promise.all([
-        supabase.from("medicines").select("id, name, dose, times, start_on, end_on, note, created_at").order("name"),
-        supabase
-          .from("medicine_doses")
-          .select("id, medicine_id, medicine_name, dose, scheduled_at, status, marked_at")
-          .gte("scheduled_at", startOfDay(subDays(now, 1)).toISOString())
-          .lte("scheduled_at", endOfDay(addDays(now, 1)).toISOString())
-          .order("scheduled_at"),
-        supabase
-          .from("health_visits")
-          .select("id, visited_on, doctor, reason, notes, photo_paths, created_at")
-          .order("visited_on", { ascending: false }),
-        supabase.from("weight_logs").select("id, on_date, weight_kg").order("on_date"),
-      ]);
-      for (const r of [medicines, doses, visits, weights]) if (r.error) throw r.error;
-      return {
-        medicines: medicines.data as Medicine[],
-        doses: doses.data as Dose[],
-        visits: visits.data as Visit[],
-        weights: weights.data as WeightLog[],
+    queryFn: () => {
+      const fromSummary = (s: Record<string, unknown>) => {
+        const [medicines, doses, visits, weights] = ["medicines", "doses", "visits", "weights"].map((k) => slice(s, k));
+        if (!medicines || !doses || !visits || !weights) return undefined;
+        return {
+          medicines: medicines as Medicine[],
+          doses: doses as Dose[],
+          visits: visits as Visit[],
+          weights: weights as WeightLog[],
+        };
       };
+      return fromHomeSummary(fromSummary, fetchHealth);
     },
   });
+}
+
+async function fetchHealth() {
+  const now = new Date();
+  const [medicines, doses, visits, weights] = await Promise.all([
+    supabase.from("medicines").select("id, name, dose, times, start_on, end_on, note, created_at").order("name"),
+    supabase
+      .from("medicine_doses")
+      .select("id, medicine_id, medicine_name, dose, scheduled_at, status, marked_at")
+      .gte("scheduled_at", startOfDay(subDays(now, 1)).toISOString())
+      .lte("scheduled_at", endOfDay(addDays(now, 1)).toISOString())
+      .order("scheduled_at"),
+    supabase
+      .from("health_visits")
+      .select("id, visited_on, doctor, reason, notes, photo_paths, created_at")
+      .order("visited_on", { ascending: false }),
+    supabase.from("weight_logs").select("id, on_date, weight_kg").order("on_date"),
+  ]);
+  for (const r of [medicines, doses, visits, weights]) if (r.error) throw r.error;
+  return {
+    medicines: medicines.data as Medicine[],
+    doses: doses.data as Dose[],
+    visits: visits.data as Visit[],
+    weights: weights.data as WeightLog[],
+  };
 }
 
 /** Today's doses, in time order. */
