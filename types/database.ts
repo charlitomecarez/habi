@@ -576,6 +576,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      health_days: {
+        Row: {
+          bed_time: string | null;
+          day: string;
+          id: string;
+          sleep_minutes: number | null;
+          sleep_source: string | null;
+          steps: number | null;
+          updated_at: string;
+          user_id: string;
+          wake_time: string | null;
+        };
+        Insert: {
+          bed_time?: string | null;
+          day: string;
+          id?: string;
+          sleep_minutes?: number | null;
+          sleep_source?: string | null;
+          steps?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          wake_time?: string | null;
+        };
+        Update: {
+          bed_time?: string | null;
+          day?: string;
+          id?: string;
+          sleep_minutes?: number | null;
+          sleep_source?: string | null;
+          steps?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          wake_time?: string | null;
+        };
+        Relationships: [];
+      };
+      health_insights: {
+        Row: {
+          based_on: string;
+          created_at: string;
+          day: string;
+          id: string;
+          tips: string[];
+          user_id: string;
+        };
+        Insert: {
+          based_on: string;
+          created_at?: string;
+          day: string;
+          id?: string;
+          tips: string[];
+          user_id?: string;
+        };
+        Update: {
+          based_on?: string;
+          created_at?: string;
+          day?: string;
+          id?: string;
+          tips?: string[];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       health_visits: {
         Row: {
           created_at: string;
@@ -2110,6 +2173,7 @@ export type Database = {
           digest_hour: number;
           digest_last_sent_on: string | null;
           followed_teams: string[];
+          health_check: boolean;
           hidden_modules: string[];
           home_shortcuts: string[];
           timezone: string;
@@ -2125,6 +2189,7 @@ export type Database = {
           digest_hour?: number;
           digest_last_sent_on?: string | null;
           followed_teams?: string[];
+          health_check?: boolean;
           hidden_modules?: string[];
           home_shortcuts?: string[];
           timezone?: string;
@@ -2140,6 +2205,7 @@ export type Database = {
           digest_hour?: number;
           digest_last_sent_on?: string | null;
           followed_teams?: string[];
+          health_check?: boolean;
           hidden_modules?: string[];
           home_shortcuts?: string[];
           timezone?: string;
@@ -2748,6 +2814,7 @@ export type Database = {
         Args: { p_account_id: string; p_amount: number; p_gift_id: string };
         Returns: undefined;
       };
+      clear_health_check: { Args: never; Returns: undefined };
       fill_all_medicine_doses: { Args: never; Returns: undefined };
       fill_medicine_doses: {
         Args: { p_medicine_id: string };
@@ -2879,7 +2946,8 @@ export type Database = {
         | "inventory"
         | "trip_item"
         | "inbox"
-        | "feedback";
+        | "feedback"
+        | "health";
       subscription_kind: "subscription" | "bill";
       todo_repeat: "none" | "daily" | "weekly" | "monthly";
       transaction_kind: "expense" | "income" | "transfer";
@@ -3033,6 +3101,7 @@ export const Constants = {
         "trip_item",
         "inbox",
         "feedback",
+        "health",
       ],
       subscription_kind: ["subscription", "bill"],
       todo_repeat: ["none", "daily", "weekly", "monthly"],

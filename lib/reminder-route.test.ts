@@ -16,6 +16,7 @@ describe("reminderRoute", () => {
   it("opens the list when the ID belongs to a child row", () => {
     expect(reminderRoute("person_date", "d1")).toBe("/people");
     expect(reminderRoute("medicine", "m1")).toBe("/health");
+    expect(reminderRoute("health", "i1")).toBe("/steps");
     expect(reminderRoute("workout", "w1")).toBe("/gym");
   });
 
