@@ -3,11 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 import { AppState, Platform } from "react-native";
 
 import { env } from "@/lib/env";
+import { timedFetch } from "@/lib/speed";
 import type { Database } from "@/types/database";
 
 const isWeb = Platform.OS === "web";
 
 export const supabase = createClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
+  // The Speed check in Settings times each request. It keeps no URL, body or row.
+  global: { fetch: timedFetch() },
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,

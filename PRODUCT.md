@@ -52,7 +52,7 @@ Real content exists in the app: pesos, kilometres, service intervals, Filipino d
 2. One view of today beats a list of modules.
 3. Numbers are the content. Money, kilometres and hours lead each screen.
 4. A log takes seconds, with one hand, outside.
-5. Private by default. Personal data stays in the account, and health data stays on the phone.
+5. Private by default. Personal data stays in the account, and health data stays on the phone unless you turn on the health check.
 
 ## Accessibility & Inclusion
 

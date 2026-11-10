@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 
 import { uploadPhoto, type LocalPhoto } from "@/lib/photos";
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -47,17 +48,21 @@ export function parseKm(text: string): number | null {
 export function useVehicle() {
   return useQuery({
     queryKey: VEHICLE_KEY,
-    queryFn: async (): Promise<Vehicle | null> => {
-      const { data, error } = await supabase
-        .from("vehicles")
-        .select("id, nickname, make, model, current_odometer_km, created_at")
-        .order("is_primary", { ascending: false })
-        .order("created_at")
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () =>
+      fromHomeSummary(
+        (s) => slice<Vehicle | null>(s, "vehicle"),
+        async (): Promise<Vehicle | null> => {
+          const { data, error } = await supabase
+            .from("vehicles")
+            .select("id, nickname, make, model, current_odometer_km, created_at")
+            .order("is_primary", { ascending: false })
+            .order("created_at")
+            .limit(1)
+            .maybeSingle();
+          if (error) throw error;
+          return data;
+        },
+      ),
   });
 }
 
@@ -66,14 +71,22 @@ export function useServiceDue(vehicleId: string | undefined) {
     queryKey: dueKey(vehicleId ?? ""),
     enabled: vehicleId !== undefined,
     queryFn: async (): Promise<ServiceDue[]> => {
-      const { data, error } = await supabase
-        .from("vehicle_service_due")
-        .select(
-          "vehicle_service_id, item, status, next_due_km, next_due_on, km_remaining, days_remaining, sort_order, interval_km",
-        )
-        .eq("vehicle_id", vehicleId!)
-        .order("sort_order");
-      if (error) throw error;
+      type Row = Tables<"vehicle_service_due">;
+      const data = await fromHomeSummary(
+        // The summary holds the services of the first vehicle only.
+        (s) => (slice<Vehicle | null>(s, "vehicle")?.id === vehicleId ? slice<Row[]>(s, "services_due") : undefined),
+        async () => {
+          const { data, error } = await supabase
+            .from("vehicle_service_due")
+            .select(
+              "vehicle_service_id, item, status, next_due_km, next_due_on, km_remaining, days_remaining, sort_order, interval_km",
+            )
+            .eq("vehicle_id", vehicleId!)
+            .order("sort_order");
+          if (error) throw error;
+          return data;
+        },
+      );
       return data.map((row) => ({
         vehicleServiceId: row.vehicle_service_id!,
         item: row.item!,
@@ -118,16 +131,42 @@ function useInvalidateVehicle() {
 }
 
 /** Adds the first vehicle as the default model. The database copies that model's service schedule. */
+export type VehicleModel = { id: string; make: string; model: string; isDefault: boolean };
+
+/** The models with a service schedule, the default first. They change only with a migration. */
+export function useVehicleModels() {
+  return useQuery({
+    queryKey: ["vehicle-models"],
+    staleTime: 24 * 60 * 60 * 1000,
+    queryFn: async (): Promise<VehicleModel[]> => {
+      const { data, error } = await supabase
+        .from("vehicle_models")
+        .select("id, make, model, is_default")
+        .order("is_default", { ascending: false })
+        .order("make")
+        .order("model");
+      if (error) throw error;
+      return data.map((m) => ({ id: m.id, make: m.make, model: m.model, isDefault: m.is_default }));
+    },
+  });
+}
+
+export function modelLabel(m: Pick<VehicleModel, "make" | "model">): string {
+  return `${m.make} ${m.model}`;
+}
+
 export function useAddVehicle() {
   const invalidate = useInvalidateVehicle();
   return useMutation({
-    mutationFn: async ({ nickname, odometerKm }: { nickname: string | null; odometerKm: number }) => {
-      const { data: model, error: modelError } = await supabase
-        .from("vehicle_models")
-        .select("id, make, model")
-        .eq("is_default", true)
-        .single();
-      if (modelError) throw modelError;
+    mutationFn: async ({
+      model,
+      nickname,
+      odometerKm,
+    }: {
+      model: Pick<VehicleModel, "id" | "make" | "model">;
+      nickname: string | null;
+      odometerKm: number;
+    }) => {
       const { error } = await supabase.from("vehicles").insert({
         model_id: model.id,
         make: model.make,

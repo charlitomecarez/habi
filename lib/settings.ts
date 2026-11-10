@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
+import type { Tables } from "@/types/database";
 
 export type UserSettings = {
   timezone: string;
@@ -16,6 +18,8 @@ export type UserSettings = {
   followedTeams: string[];
   /** Modules switched off in Settings › Modules, by id from lib/modules.ts. */
   hiddenModules: string[];
+  /** The 6 PM health check. Off until you turn it on; while on, sleep and steps go to your account. */
+  healthCheck: boolean;
 };
 
 /** The database defaults, used until the first change creates the row. */
@@ -28,6 +32,7 @@ const DEFAULTS: UserSettings = {
   ulamAvoid: [],
   followedTeams: [],
   hiddenModules: [],
+  healthCheck: false,
 };
 
 const SETTINGS_KEY = ["user-settings"] as const;
@@ -36,13 +41,31 @@ export function useUserSettings() {
   return useQuery({
     queryKey: SETTINGS_KEY,
     queryFn: async (): Promise<UserSettings> => {
-      const { data, error } = await supabase
-        .from("user_settings")
-        .select(
-          "timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams, hidden_modules",
-        )
-        .maybeSingle();
-      if (error) throw error;
+      type Row = Pick<
+        Tables<"user_settings">,
+        | "timezone"
+        | "digest_enabled"
+        | "digest_hour"
+        | "home_shortcuts"
+        | "ulam_limit"
+        | "ulam_avoid"
+        | "followed_teams"
+        | "hidden_modules"
+        | "health_check"
+      >;
+      const data = await fromHomeSummary(
+        (s) => slice<Row | null>(s, "settings"),
+        async () => {
+          const { data, error } = await supabase
+            .from("user_settings")
+            .select(
+              "timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams, hidden_modules, health_check",
+            )
+            .maybeSingle();
+          if (error) throw error;
+          return data;
+        },
+      );
       if (!data) return DEFAULTS;
       return {
         timezone: data.timezone,
@@ -53,6 +76,8 @@ export function useUserSettings() {
         ulamAvoid: data.ulam_avoid,
         followedTeams: data.followed_teams,
         hiddenModules: data.hidden_modules,
+        // A summary from before v1.5.0 milestone 9 has no health_check.
+        healthCheck: data.health_check ?? false,
       };
     },
   });
@@ -74,6 +99,7 @@ export function useSaveUserSettings() {
         ulam_avoid: next.ulamAvoid,
         followed_teams: next.followedTeams,
         hidden_modules: next.hiddenModules,
+        health_check: next.healthCheck,
       });
       if (error) throw error;
     },

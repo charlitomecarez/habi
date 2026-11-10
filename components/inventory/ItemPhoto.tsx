@@ -10,10 +10,13 @@ type ItemPhotoProps = {
   className: string;
   label: string;
   iconSize?: number;
+  /** The storage path of a saved photo. The disk cache keys on it, so a new signed URL does not
+   * download the same photo again. Leave it out for a photo that is still on the phone. */
+  cacheKey?: string | null;
 };
 
 /** A photo inside a bordered frame, or a placeholder icon when there is none. */
-export function ItemPhoto({ uri, className, label, iconSize = 20 }: ItemPhotoProps) {
+export function ItemPhoto({ uri, className, label, iconSize = 20, cacheKey }: ItemPhotoProps) {
   const colors = useColors();
   return (
     <View
@@ -22,7 +25,13 @@ export function ItemPhoto({ uri, className, label, iconSize = 20 }: ItemPhotoPro
       className={`items-center justify-center overflow-hidden border border-border bg-surface-muted ${className}`}
     >
       {uri ? (
-        <Image source={{ uri }} style={StyleSheet.absoluteFill} contentFit="cover" transition={150} />
+        <Image
+          source={cacheKey ? { uri, cacheKey } : { uri }}
+          cachePolicy="disk"
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={150}
+        />
       ) : (
         <Ionicons name="cube-outline" size={iconSize} color={colors.inkMuted} />
       )}

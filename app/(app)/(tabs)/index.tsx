@@ -10,6 +10,7 @@ import { LatestGames } from "@/components/home/LatestGames";
 import { LatestNews } from "@/components/home/LatestNews";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { ShortcutsSheet } from "@/components/home/ShortcutsSheet";
+import { useAdvice } from "@/components/steps/HealthCheck";
 import { TipCard } from "@/components/home/TipCard";
 import { WeeklyReviewCard } from "@/components/home/WeeklyReviewCard";
 import { Button } from "@/components/ui/Button";
@@ -24,7 +25,9 @@ import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import { useDebts } from "@/lib/debts";
 import { todaysDoses, useHealth } from "@/lib/health";
+import { useHealthDaysSync } from "@/lib/health-check";
 import { buildAttention, todaySentence } from "@/lib/home";
+import { startHomeSummary } from "@/lib/home-summary";
 import { useHabits } from "@/lib/habits";
 import { dayTotals, formatPeso, toDateString, useMonthTransactions, useSubscriptions } from "@/lib/money";
 import { useModuleFilter } from "@/lib/features";
@@ -70,6 +73,8 @@ export default function HomeScreen() {
     ((user?.user_metadata.full_name as string | undefined) ?? user?.email ?? "?").charAt(0) || "?"
   ).toUpperCase();
 
+  // One request for every Home row. It starts before the module queries below, which read from it.
+  useState(() => startHomeSummary(now));
   const [showAll, setShowAll] = useState(false);
   const [editing, setEditing] = useState(false);
   const [openDay, setOpenDay] = useState<number | null>(null);
@@ -89,6 +94,10 @@ export default function HomeScreen() {
   const weather = useWeather();
   const sleepLog = useSleepLog();
   const steps = useSteps();
+  const advice = useAdvice(now);
+  useHealthDaysSync();
+  // From 6 PM to midnight, while today's advice exists.
+  const adviceToday = advice.state.kind === "today" ? advice.state.insight : null;
 
   const openToday = groupTodos(todos.data ?? [], now).today.filter((t) => !t.completed_at);
   const bills = subscriptions.data ?? [];
@@ -151,6 +160,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const refresh = async () => {
     setRefreshing(true);
+    startHomeSummary(new Date(), true);
     await Promise.all([
       todos.refetch(),
       vehicle.refetch(),
@@ -293,8 +303,17 @@ export default function HomeScreen() {
                     : undefined
                 }
                 onPress={() => router.push("/steps")}
-                last
+                last={!adviceToday}
               />
+              {adviceToday ? (
+                <DataRow
+                  title="Your health check is ready"
+                  detail={`${adviceToday.tips.length} ${adviceToday.tips.length === 1 ? "tip" : "tips"} · Sleep, steps and weight`}
+                  onPress={() => router.push("/steps")}
+                  chevron
+                  last
+                />
+              ) : null}
             </View>
           )}
 

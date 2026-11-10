@@ -489,3 +489,7 @@ verify_jwt = true
 # Called by pg_cron with the x-cron-secret header, not a user JWT.
 [functions.voice-cleanup]
 verify_jwt = false
+
+# Called by pg_cron with the x-cron-secret header, not a user JWT.
+[functions.health-insight]
+verify_jwt = false

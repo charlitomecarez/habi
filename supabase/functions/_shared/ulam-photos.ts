@@ -3,7 +3,7 @@
 
 const CHECKED: Record<string, string> = {
   "bicol express":
-    "https://upload.wikimedia.org/wikipedia/commons/e/e8/Bicol_Express.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Bicol_Express.jpg/960px-Bicol_Express.jpg",
   "chicken adobo":
     "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Chicken_adobo.jpg/960px-Chicken_adobo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "chicken afritada":
@@ -26,10 +26,9 @@ const CHECKED: Record<string, string> = {
     "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Ginisang_sayote_at_carrots.jpg/960px-Ginisang_sayote_at_carrots.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   kaldereta:
     "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Beef_caldereta.jpg/960px-Beef_caldereta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "kare-kare":
-    "https://upload.wikimedia.org/wikipedia/commons/5/5a/Kare-kare.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "kare-kare": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Kare-kare.jpg/960px-Kare-kare.jpg",
   "lumpiang shanghai":
-    "https://upload.wikimedia.org/wikipedia/commons/9/95/Lumpiang_Shanghai_%28Philippines%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Lumpiang_Shanghai_%28Philippines%29.jpg/960px-Lumpiang_Shanghai_%28Philippines%29.jpg",
   menudo:
     "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Menudo_%28Philippines%29_02.jpg/960px-Menudo_%28Philippines%29_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "nilagang baka":
