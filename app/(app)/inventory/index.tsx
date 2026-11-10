@@ -22,7 +22,7 @@ import {
   warrantyText,
   type InventoryItem,
 } from "@/lib/inventory";
-import { usePhotoUrls } from "@/lib/photos";
+import { listPath, usePhotoUrls } from "@/lib/photos";
 
 const ALL = "all";
 
@@ -44,7 +44,12 @@ function ItemRow({
       onPress={() => router.push({ pathname: "/inventory/item/[id]", params: { id: item.id } })}
       className={`min-h-touch flex-row items-center gap-3 py-3 active:bg-surface-muted ${last ? "" : "border-b-2 border-border"}`}
     >
-      <ItemPhoto uri={photoUri} label={item.name} className="h-input w-input rounded-md" />
+      <ItemPhoto
+        uri={photoUri}
+        cacheKey={listPath(item.photo_path)}
+        label={item.name}
+        className="h-input w-input rounded-md"
+      />
       <View className="min-w-0 flex-1 gap-1">
         <Text numberOfLines={1} className="font-semibold text-row-title text-ink">
           {item.name}
@@ -80,7 +85,7 @@ export default function InventoryScreen() {
       (inPlace === null || (item.location_id !== null && inPlace.has(item.location_id))) &&
       matchesSearch(item, item.location_id ? pathById.get(item.location_id) : undefined, query),
   );
-  const photos = usePhotoUrls(visible.map((i) => i.photo_path));
+  const photos = usePhotoUrls(visible.map((i) => listPath(i.photo_path)));
 
   const error = items.error ?? locations.error;
   const total = items.data?.length ?? 0;
@@ -213,7 +218,7 @@ export default function InventoryScreen() {
                 key={item.id}
                 item={item}
                 path={item.location_id ? pathById.get(item.location_id) : undefined}
-                photoUri={item.photo_path ? photos.data?.[item.photo_path] : undefined}
+                photoUri={item.photo_path ? photos.data?.[listPath(item.photo_path)] : undefined}
                 last={index === visible.length - 1}
               />
             ))}

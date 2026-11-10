@@ -35,6 +35,11 @@ Do not put these items here:
 
 ## Unreleased
 
+### Changed
+
+- **Photos:** New photos save as WebP, about half the size, and Inventory lists load a small copy. A photo you have seen once opens from the phone without a new download. Older photos stay as they are.
+- **Ulam:** Three dish photos load a smaller copy from Wikimedia.
+
 ## [v1.4.1](docs/releases/v1.4.1.md) - 2026-11-10
 
 ### Changed

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { compressPhoto, currentUserId, type LocalPhoto } from "@/lib/photos";
+import { compressPhoto, currentUserId, imageMime, type LocalPhoto } from "@/lib/photos";
 import { supabase } from "@/lib/supabase";
 import { useVaultStore } from "@/lib/vault";
 import { decryptBytesToBase64, encryptBytes } from "@/lib/vault-crypto";
@@ -51,7 +51,7 @@ export function useDecryptedPhoto(path: string | null) {
       const bytes = new Uint8Array(await (await fetch(data.signedUrl)).arrayBuffer());
       const base64 = await decryptBytesToBase64(key!, bytes);
       if (base64 === null) throw new Error("This photo was encrypted with a different vault key.");
-      return `data:image/jpeg;base64,${base64}`;
+      return `data:${imageMime(base64)};base64,${base64}`;
     },
   });
 }

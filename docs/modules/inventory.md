@@ -29,8 +29,13 @@
 `uploadPhoto(folder, baseName, photo)`:
 
 1. It resizes the longest side to 1280 px or less.
-2. It saves a JPEG at quality 0.7.
-3. It uploads to `<user_id>/<folder>/<baseName>-<time>.jpg`. A new name each time stops a cached URL from showing the old photo.
+2. It saves a WebP at quality 0.7, about 100 KB.
+3. It uploads to `<user_id>/<folder>/<baseName>-<time>.webp`. A new name each time stops a cached photo from showing for a new one.
+4. For `inventory`, it also saves a list copy at 320 px as `<baseName>-<time>.320.webp`. If that upload fails, it removes the first file and fails the save.
+
+`listPath(path)` gives the list copy of a `.webp` path. A photo saved before v1.5.0 is a `.jpg` with no list copy, so the list shows the full photo. `removePhoto` removes the photo and its list copy.
+
+Each private photo uses `expo-image` with `cachePolicy="disk"` and its storage path as the `cacheKey`. A new signed URL for the same file then reads it from the disk cache instead of downloading it again.
 
 `useSaveItem` saves the row first. Then it uploads the new photo, updates `photo_path` and removes the old file. If the update fails, it removes the new file. File removal is best effort.
 

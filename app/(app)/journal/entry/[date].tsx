@@ -45,7 +45,8 @@ function EntryPhoto({ path, day }: { path: string; day: string }) {
     <View className="h-photo bg-surface-muted">
       {uri ? (
         <Image
-          source={{ uri }}
+          source={{ uri, cacheKey: path }}
+          cachePolicy="disk"
           contentFit="cover"
           accessibilityLabel={`Photo from ${day}`}
           style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
