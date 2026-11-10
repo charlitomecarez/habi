@@ -40,6 +40,10 @@ Do not put these items here:
 - **Settings:** A Speed check row shows how fast your last 50 requests were, with the typical time, the slowest request and a Fast, Slow or Very slow word. The times stay on the phone.
 - **CI:** Each PR checks the web bundle against a size budget and runs Lighthouse on the web app.
 
+### Changed
+
+- **Vehicle:** Add vehicle starts with a Model field. The Honda ADV 160 is picked for you, and Another model says why it is not ready yet.
+
 ### Fixed
 
 - **Sheets:** Save teams, Save modules and Save settings stay in view at the bottom of their sheets, above the navigation bar, so you no longer scroll past every row to find them.
