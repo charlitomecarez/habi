@@ -43,6 +43,7 @@ Do not put these items here:
 
 ### Changed
 
+- **Server:** The database moved to Singapore, closer to the Philippines, so each request is faster. Install the v1.5.0 APK: older APKs stop working when the old server pauses.
 - **Photos:** New photos save as WebP, about half the size, and Inventory lists load a small copy. A photo you have seen once opens from the phone without a new download. Older photos stay as they are.
 - **Ulam:** Three dish photos load a smaller copy from Wikimedia.
 - **Vehicle:** Add vehicle starts with a Model field. The Honda ADV 160 is picked for you, and Another model says why it is not ready yet.
