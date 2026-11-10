@@ -8,7 +8,7 @@ android
 
 ## Users
 
-Charli is the admin and the primary user. Charli is a rider in the Philippines (Asia/Manila) with a motorbike and a Galaxy A56. Charli uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
+The owner is the admin and the primary user. The owner rides a motorbike and uses an Android phone. The owner uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
 
 ## Product Purpose
 

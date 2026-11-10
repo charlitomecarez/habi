@@ -35,9 +35,13 @@ Do not put these items here:
 
 ## Unreleased
 
+## [v1.4.1](docs/releases/v1.4.1.md) - 2026-11-10
+
 ### Changed
 
 - **Name:** The app is now called Habi, Tagalog for "weave". The package and the link scheme stay the same, so the new APK installs over the old one.
+- **Backup:** The daily encrypted database backup runs in a separate private repo, so its run logs and files stay private.
+- **Docs:** The docs use general terms instead of personal details.
 
 ## [v1.4.0](docs/releases/v1.4.0.md) - 2026-11-10
 

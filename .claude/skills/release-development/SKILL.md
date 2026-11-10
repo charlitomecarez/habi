@@ -1,6 +1,6 @@
 ---
 name: release-development
-description: Use when Charli confirms a Habi handoff and asks to start coding, or to continue a milestone, a release branch or a release PR
+description: Use when the owner confirms a Habi handoff and asks to start coding, or to continue a milestone, a release branch or a release PR
 ---
 
 # Release development
@@ -21,22 +21,22 @@ This skill is step 4 of `docs/release-workflow.md`. Read that page first. It win
    For a UI change, use `ui-check`.
 4. Update the docs in the same change. Add each change to `Unreleased` in `CHANGELOG.md`.
 5. Run `npm run typecheck`, `npm run lint` and `npm test`, one at a time.
-6. Check each "Done when" item. Report any item that only Charli can check.
-7. Commit and open a PR into the release branch when Charli asks.
+6. Check each "Done when" item. Report any item that only the owner can check.
+7. Commit and open a PR into the release branch when the owner asks.
 
-If the work must change the confirmed design, ask Charli first. Then add a revision to the design artifact.
+If the work must change the confirmed design, ask the owner first. Then add a revision to the design artifact.
 
-Use the `rules-reviewer`, `migration-reviewer`, `docs-checker` and `ui-reviewer` agents when Charli asks for a review.
+Use the `rules-reviewer`, `migration-reviewer`, `docs-checker` and `ui-reviewer` agents when the owner asks for a review.
 
 ## After the last milestone
 
 1. Set the version in `app.json`, `package.json` and `package-lock.json`. Use the commit subject `chore(release): set version <version>`.
 2. Open the release PR into `main`. Do not merge it.
-3. Give Charli a list of phone tests for the Galaxy A56.
-4. Tell Charli when a new Build from GitHub in expo.dev is necessary.
+3. Give the owner a list of phone tests.
+4. Tell the owner when a new Build from GitHub in expo.dev is necessary.
 
 Never run `npx expo run:android`, `eas build` or a local Android build. Stop each dev server when you finish.
 
 ## Gate
 
-Stay in this step until Charli confirms that development is done. Passing checks do not end this step. Do not start Farewell until Charli asks for it.
+Stay in this step until the owner confirms that development is done. Passing checks do not end this step. Do not start Farewell until the owner asks for it.

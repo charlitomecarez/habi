@@ -4,20 +4,20 @@ Every release has five steps: Planning, Design, Handoff, Development and Farewel
 
 ## The five steps
 
-| Step           | Started by                                | Output                                                           | Gate                                     |
-| -------------- | ----------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------- |
-| 1. Planning    | Charli gives concerns and asks for a plan | The plan artifact                                                | Charli confirms the plan                 |
-| 2. Design      | Charli asks for the design                | The design artifact, with the UI and DB design of each milestone | Charli confirms the design               |
-| 3. Handoff     | Charli asks for the handoff               | The handoff artifact, with milestones                            | Charli confirms the handoff              |
-| 4. Development | Charli asks to start development          | Code, tests, checks, CI, and phone tests on the Galaxy A56       | Charli confirms that development is done |
-| 5. Farewell    | Charli asks to start Farewell             | The release notes artifact, the tag and the GitHub release       | Charli confirms the release notes        |
+| Step           | Started by                                   | Output                                                           | Gate                                        |
+| -------------- | -------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| 1. Planning    | The owner gives concerns and asks for a plan | The plan artifact                                                | The owner confirms the plan                 |
+| 2. Design      | The owner asks for the design                | The design artifact, with the UI and DB design of each milestone | The owner confirms the design               |
+| 3. Handoff     | The owner asks for the handoff               | The handoff artifact, with milestones                            | The owner confirms the handoff              |
+| 4. Development | The owner asks to start development          | Code, tests, checks, CI, and phone tests on the test phone       | The owner confirms that development is done |
+| 5. Farewell    | The owner asks to start Farewell             | The release notes artifact, the tag and the GitHub release       | The owner confirms the release notes        |
 
 ## Gates
 
-- Charli gates each step. Claude stops at the end of each step and waits.
-- A gate opens only when Charli confirms in a message. An answer on an artifact page is not a gate.
-- Claude does not start the next step until Charli asks for it.
-- If Charli asks for changes, Claude stays in the same step.
+- The owner gates each step. Claude stops at the end of each step and waits.
+- A gate opens only when the owner confirms in a message. An answer on an artifact page is not a gate.
+- Claude does not start the next step until the owner asks for it.
+- If the owner asks for changes, Claude stays in the same step.
 
 ## Names
 
@@ -44,17 +44,17 @@ Keep the release record current in each step. Do not wait for the end of the rel
 3. After you publish an artifact, add its link to the record and to the index at once.
 4. Change the status in both files when a step changes.
 
-The status values are `Planning`, `Design`, `Handoff`, `Development`, `Farewell` and `Released`. Commit these changes on the release branch when Charli asks.
+The status values are `Planning`, `Design`, `Handoff`, `Development`, `Farewell` and `Released`. Commit these changes on the release branch when the owner asks.
 
 Keep names, account numbers, keys and real statement rows out of the artifacts and the docs.
 
 ## Step 1: Planning
 
-1. Charli gives the concerns for the release.
+1. The owner gives the concerns for the release.
 2. Claude reads the repo and the live state that the concerns touch.
 3. Claude publishes the plan artifact in the current plan format. The [v1.2.2 plan](https://claude.ai/artifact/Pgj6aMdVVFKq7myHSRisj5) shows that format. The plan lists the milestones, and marks each one as UI design, DB design, both, or Not needed.
-4. Charli answers the questions on the page or in chat.
-5. Claude updates the plan until Charli confirms it.
+4. The owner answers the questions on the page or in chat.
+5. Claude updates the plan until the owner confirms it.
 
 The plan changes no code.
 
@@ -68,7 +68,7 @@ The design covers every milestone in the plan:
 - A milestone needs DB design if it adds or changes a table, a column, a view, a trigger, a policy or a storage bucket.
 - A milestone is "Not needed" if it changes neither, or if the change is too small to need a design. The design gives the reason.
 
-If no milestone needs a design, Claude asks Charli to skip this step. If Charli agrees, Claude writes "Not needed" in the record and the index.
+If no milestone needs a design, Claude asks the owner to skip this step. If the owner agrees, Claude writes "Not needed" in the record and the index.
 
 1. Claude reads the confirmed plan and each answer.
 2. Claude reads `docs/design-system.md`, `docs/database.md` and the code that each milestone touches.
@@ -76,8 +76,8 @@ If no milestone needs a design, Claude asks Charli to skip this step. If Charli 
 4. Claude writes the UI design and the DB design.
 5. Claude does the design checks and fixes each real finding.
 6. Claude publishes the design artifact.
-7. Charli reviews the design and asks for revisions.
-8. Charli confirms the design.
+7. The owner reviews the design and asks for revisions.
+8. The owner confirms the design.
 
 The design changes no code. No migration file goes into the repo, and nothing goes to the live database.
 
@@ -111,21 +111,21 @@ The artifact shows the result of both checks: what Claude fixed and what Claude 
 
 ### Revisions
 
-Charli can ask for a revision of any part of the design, for any reason, and as often as Charli wants. Each revision has these steps:
+The owner can ask for a revision of any part of the design, for any reason, and as often as the owner wants. Each revision has these steps:
 
-1. Charli gives the request in chat or on the artifact page.
-2. Claude applies the request. Charli can name an Impeccable command, for example `bolder`, `colorize` or a redesign.
+1. The owner gives the request in chat or on the artifact page.
+2. Claude applies the request. The owner can name an Impeccable command, for example `bolder`, `colorize` or a redesign.
 3. Claude does the design checks again on the changed part.
 4. Claude publishes to the same URL.
 5. Claude adds a row to the Revisions list on the page: the number, the request, the change and the check result.
 
 These rules apply to each revision:
 
-- If a request breaks a project rule, Claude names the rule. Claude then waits for Charli to change the request or the rule.
+- If a request breaks a project rule, Claude names the rule. Claude then waits for the owner to change the request or the rule.
 - If a request changes the scope of a milestone, Claude also updates the plan.
-- A revision on the page does not open the gate. Only a message from Charli confirms the design.
+- A revision on the page does not open the gate. Only a message from the owner confirms the design.
 
-After Charli confirms the design, Handoff and Development follow it. If later work must change the design, Claude asks Charli first. Claude then adds a revision to the same artifact.
+After the owner confirms the design, Handoff and Development follow it. If later work must change the design, Claude asks the owner first. Claude then adds a revision to the same artifact.
 
 ## Step 3: Handoff
 
@@ -134,7 +134,7 @@ The handoff is for a developer. It turns the confirmed plan and the confirmed de
 1. Claude reads the confirmed plan, the confirmed design and each answer.
 2. Claude checks the repo again, because the plan can be out of date.
 3. Claude publishes the handoff artifact.
-4. Charli confirms the handoff.
+4. The owner confirms the handoff.
 
 Each milestone in the handoff has these parts:
 
@@ -159,12 +159,12 @@ The branch workflow does not change.
 6. Open a PR into the release branch. CI must pass.
 7. After the last milestone, set the version in `app.json`, `package.json` and `package-lock.json`.
 8. Open the release PR from the release branch into `main`. Do not merge it yet.
-9. Charli starts a build with Build from GitHub in expo.dev.
-10. Charli tests the APK on the Galaxy A56.
+9. The owner starts a build with Build from GitHub in expo.dev.
+10. The owner tests the APK on the test phone.
 11. Claude fixes each problem on the release branch.
-12. Charli confirms that development is done.
+12. The owner confirms that development is done.
 
-Only Charli does the phone tests. Claude lists each phone test as "Not tested" until Charli gives the result.
+Only the owner does the phone tests. Claude lists each phone test as "Not tested" until the owner gives the result.
 
 ## Step 5: Farewell
 
@@ -176,7 +176,7 @@ Claude does the docs before the merge, so that one PR holds the full record.
 4. Claude moves the `Unreleased` lines in [CHANGELOG.md](../CHANGELOG.md) to a new section for the version.
 5. Claude sets the status to `Released` in the record and in the index.
 6. Claude commits the docs on the release branch and waits for CI.
-7. Charli confirms the release notes. This confirmation allows steps 8 to 10.
+7. The owner confirms the release notes. This confirmation allows steps 8 to 10.
 8. Claude merges the release PR into `main`.
 9. Claude creates the `v<version>` tag on the merge commit.
 10. Claude creates the GitHub release with the notes.
@@ -193,7 +193,7 @@ The second command must print `0`.
 
 ## Skills
 
-Project skills in `.claude/skills/` hold the steps for Claude. Charli can type each one as a command.
+Project skills in `.claude/skills/` hold the steps for Claude. The owner can type each one as a command.
 
 | Step        | Skill                  |
 | ----------- | ---------------------- |
