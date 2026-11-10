@@ -27,6 +27,10 @@ import { useColors, useIsDark, type Palette } from "@/lib/colors";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { KeyboardProvider } from "@/providers/keyboard-provider";
 import { QueryProvider } from "@/providers/query-provider";
+import { PADDING } from "@/lib/bundle-padding";
+
+// eslint-disable-next-line no-console
+console.log(PADDING.length);
 
 SplashScreen.preventAutoHideAsync();
 
