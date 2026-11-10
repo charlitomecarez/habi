@@ -11,7 +11,7 @@ Personal all-in-one app. The owner is the admin. Sign-up is off, so only people 
 - Expo (expo-router, dev client) + TypeScript; Android first, web second, one codebase.
 - Supabase: Postgres with RLS, Auth, Storage, Edge Functions, pg_cron + pg_net.
 - Resend for email (Supabase SMTP sender + one daily digest). Expo Push for notifications.
-- Groq free plan for the daily ulam, voice text and Find a work. Only the `daily-ulam`, `voice-transcribe`, `job-search` and `job-profile-draft` Edge Functions call it.
+- Groq free plan for the daily ulam, voice text, Find a work and the 6 PM health check. Only the `daily-ulam`, `voice-transcribe`, `job-search`, `job-profile-draft` and `health-insight` Edge Functions call it.
 - NativeWind for styling; Schibsted Grotesk via @expo-google-fonts.
 - Data: @supabase/supabase-js, @tanstack/react-query, zustand, react-hook-form + zod, date-fns.
 - Everything must stay on free tiers.

@@ -33,11 +33,11 @@ The Supabase CLI needs Docker for `db dump`. On a Mac without Docker, `db dump -
 
 ### Core (`20261103000100_core.sql`, `20261103000800_reminder_delivery.sql`)
 
-| Table           | Purpose                                                                                                                                                                                                                                                                                                                                  |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `user_settings` | One row per user: `timezone` (default `Asia/Manila`), `digest_enabled`, `digest_hour` (default 7), `digest_last_sent_on`, `home_shortcuts`, the ulam limit and avoid list, `followed_teams` (`league:team`, at most 12) and `hidden_modules` (module ids switched off in Settings › Modules). A trigger on `auth.users` creates the row. |
-| `push_tokens`   | Expo push tokens per device. `token` is unique.                                                                                                                                                                                                                                                                                          |
-| `reminders`     | The single notification queue. See [reminders.md](reminders.md).                                                                                                                                                                                                                                                                         |
+| Table           | Purpose                                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `user_settings` | One row per user: `timezone` (default `Asia/Manila`), `digest_enabled`, `digest_hour` (default 7), `digest_last_sent_on`, `home_shortcuts`, the ulam limit and avoid list, `followed_teams` (`league:team`, at most 12), `hidden_modules` (module ids switched off in Settings › Modules) and `health_check` (the 6 PM health check, default off). A trigger on `auth.users` creates the row. |
+| `push_tokens`   | Expo push tokens per device. `token` is unique.                                                                                                                                                                                                                                                                                                                                               |
+| `reminders`     | The single notification queue. See [reminders.md](reminders.md).                                                                                                                                                                                                                                                                                                                              |
 
 ### Todos (`20261103000200_todos.sql`)
 
@@ -108,6 +108,15 @@ Views:
 | `transactions_advance_subscription` | `transactions`  | A payment linked to a subscription moves `next_billing_on` one cycle. |
 
 The odometer goes down only through an `odometer_logs` row with `is_correction`. Every other log uses `greatest(current, new)`, so an old fuel or service entry never lowers it. A correction also deletes pending `vehicle_service` reminders that are no longer overdue.
+
+### Health check (`20261110000200_health_check.sql`)
+
+| Table             | Notes                                                                                                                                                                                                                                                            |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `health_days`     | One row a day per account: `sleep_minutes` (0 to 1440), `bed_time`, `wake_time`, `sleep_source` (`health_connect`, `screen` or `typed`) and `steps` (0 to 200,000). Unique `(user_id, day)`. Owner RLS; the app upserts its own rows only while the check is on. |
+| `health_insights` | 1 to 3 `tips` a day (no empty tip, 600 characters in all) and `based_on`. Unique `(user_id, day)`. The owner can read and delete; only the `health-insight` function writes.                                                                                     |
+
+`clear_health_check()` (security invoker) deletes the caller's rows in both tables and sets `health_check = false`. The `health-insight` cron job runs at :45 each hour. `docs/modules/health.md` has the flow.
 
 ## Indexes
 

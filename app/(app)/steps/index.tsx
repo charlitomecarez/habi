@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { AdviceList, HealthCheckSection, useAdvice } from "@/components/steps/HealthCheck";
 import { SleepSheet } from "@/components/steps/SleepSheet";
 import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +13,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
+import { useHealthDaysSync } from "@/lib/health-check";
 import { openHealthConnect } from "@/lib/health-connect";
 import { sleepMinutes, sleepStrand, sleepText, useSleepLog } from "@/lib/sleep";
 import { stepsAverage, useAllowSteps, useSteps } from "@/lib/steps";
@@ -31,6 +33,10 @@ export default function StepsScreen() {
   const allow = useAllowSteps();
   const sleep = useSleepLog();
   const [logging, setLogging] = useState(false);
+  const advice = useAdvice(now);
+  useHealthDaysSync();
+  const sent = advice.state.kind !== "off";
+  const where = sent ? "It also goes to your account for the health check." : "It stays on this phone.";
   const [asked, setAsked] = useState(false);
 
   const access = steps.data?.access ?? false;
@@ -43,6 +49,10 @@ export default function StepsScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader title="Steps and sleep" subtitle="Today" tone="daily" />
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+        {/* After 6 PM, the advice is the news of the evening, so it goes on top. */}
+        {advice.state.kind === "today" ? (
+          <AdviceList title="Today's advice" insight={advice.state.insight} time="6:00 PM" />
+        ) : null}
         {steps.isPending ? <Skeleton layout="home" /> : null}
 
         {!steps.isPending && !access && !asked ? (
@@ -50,7 +60,7 @@ export default function StepsScreen() {
             <Text className="font-bold text-title text-ink">See your steps on Home</Text>
             <Text className="font-sans text-body text-ink-muted">
               Habi reads your steps from Health Connect, and your sleep from when your screen is off. All of it stays on
-              this phone.
+              this phone, unless you turn on the 6 PM health check.
             </Text>
             <Button
               label="Allow steps"
@@ -117,13 +127,11 @@ export default function StepsScreen() {
                     <Text className="font-semibold text-badge text-ink-muted">From your screen</Text>
                   </View>
                   <Text className="font-sans text-caption text-ink-muted">
-                    I read when your screen was off. Tap the sleep to fix the times. It stays on this phone.
+                    I read when your screen was off. Tap the sleep to fix the times. {where}
                   </Text>
                 </>
               ) : (
-                <Text className="font-sans text-caption text-ink-muted">
-                  You set these times. It stays on this phone.
-                </Text>
+                <Text className="font-sans text-caption text-ink-muted">You set these times. {where}</Text>
               )}
             </>
           ) : (
@@ -135,6 +143,8 @@ export default function StepsScreen() {
             </>
           )}
         </View>
+
+        <HealthCheckSection state={advice.state} loading={advice.loading} />
       </ScrollView>
       <SleepSheet
         key={entry ? `${entry.bed}-${entry.wake}` : "new"}
