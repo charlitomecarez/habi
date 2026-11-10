@@ -2,6 +2,20 @@
 
 The schema is in `supabase/migrations/`. The migrations run in file-name order. Never edit an applied migration. Add a new file.
 
+## Project
+
+The live project is in Singapore (`ap-southeast-1`) from v1.5.0, close to the users in the Philippines. Supabase cannot move a project, so v1.5.0 made a new project and copied everything into it:
+
+1. `npx supabase db push --remote` ran every migration, so the migration history is the same.
+2. The cron jobs stayed off until the copy was done.
+3. A data-only dump of `auth.users`, `auth.identities` and `public` was restored with `session_replication_role = replica`, so no trigger added rows twice. The user IDs did not change, so every `user_id` and storage path still matches.
+4. Each file in `user-files` and `voice-audio` was copied with the same path and owner.
+5. Every Edge Function was deployed, and `project_url` and `reminders_cron_secret` were set in the vault. The owner set the other Edge Function secrets, the Auth providers, the redirect URLs, SMTP and the email templates in the dashboard.
+
+The row counts, the file counts and sizes, the security advisors and the generated types matched the old project before the switch. An APK points to one project, so the new project needs a new APK.
+
+The Supabase CLI needs Docker for `db dump`. On a Mac without Docker, `db dump --dry-run` prints the `pg_dump` script with a short-lived login role, and a local `pg_dump` and `psql` run it. Run `set role postgres` first.
+
 ## Security model
 
 - Every user-owned table has `user_id uuid not null default auth.uid()`.
