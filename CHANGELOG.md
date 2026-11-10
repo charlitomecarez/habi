@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Fixed
+
+- **Sheets:** Save teams, Save modules and Save settings stay in view at the bottom of their sheets, above the navigation bar, so you no longer scroll past every row to find them.
+
 ## [v1.4.1](docs/releases/v1.4.1.md) - 2026-11-10
 
 ### Changed
