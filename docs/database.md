@@ -103,7 +103,8 @@ The odometer goes down only through an `odometer_logs` row with `is_correction`.
 
 One private bucket: `user-files`. The limit is 5 MB per file. It accepts JPEG, PNG and WebP.
 
-- The path is `<user_id>/<folder>/<name>-<timestamp>.jpg`. The folders are `inventory` and `receipts`.
+- The path is `<user_id>/<folder>/<name>-<timestamp>.webp` from v1.5.0, and `.jpg` before it. The folders are `inventory`, `receipts` and `journal`, and `documents` and `health` hold encrypted `.bin` files.
+- An inventory photo has a list copy beside it, `<name>-<timestamp>.320.webp`, for the list thumbnail.
 - Policies allow access only inside the user's own `<user_id>/` folder.
 - The app reads photos with signed URLs that last one hour.
 

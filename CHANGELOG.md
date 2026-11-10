@@ -43,6 +43,8 @@ Do not put these items here:
 
 ### Changed
 
+- **Photos:** New photos save as WebP, about half the size, and Inventory lists load a small copy. A photo you have seen once opens from the phone without a new download. Older photos stay as they are.
+- **Ulam:** Three dish photos load a smaller copy from Wikimedia.
 - **Vehicle:** Add vehicle starts with a Model field. The Honda ADV 160 is picked for you, and Another model says why it is not ready yet.
 
 ### Fixed
