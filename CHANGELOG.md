@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Added
+
+- **Weather:** A World section shows the weather and local time in up to 6 places, starting with Hong Kong, Tokyo, Rome, Los Angeles and New York. Edit places adds and removes them. The places stay on the phone.
+
 ## [v1.4.1](docs/releases/v1.4.1.md) - 2026-11-10
 
 ### Changed
