@@ -35,13 +35,34 @@ Do not put these items here:
 
 ## Unreleased
 
-### Added
-
-**Vault:** A 6-digit PIN unlocks the vault on your phone. A recovery key, with a code to your email, resets a forgotten master password, and you can now change the master password. Your logins are not encrypted again. Needs the v1.4.0 APK.
-
 ### Changed
 
 - **Name:** The app is now called Habi, Tagalog for "weave". The package and the link scheme stay the same, so the new APK installs over the old one.
+
+## [v1.4.0](docs/releases/v1.4.0.md) - 2026-11-10
+
+### Added
+
+- **News:** Headlines from seven outlets, Philippines first, with images, a story page and an in-app browser.
+- **Sleep:** The app finds last night's sleep from when the screen was off. You can still fix the times. Needs the v1.4.0 APK.
+- **Screen time:** A screen lists every app, today and this week.
+- **Loading:** Screens show a skeleton in their shape while they load.
+- **Home:** Your photo, the games of the teams you follow in Sports (up to 12), and three headlines.
+- **Vault:** A 6-digit PIN unlocks the vault on your phone. A recovery key, with a code to your email, resets a forgotten master password, and you can now change the master password. Your logins are not encrypted again. Needs the v1.4.0 APK.
+- **Modules:** Settings › Modules hides the modules that you do not use. A module that the server has no key for hides by itself.
+- **Tabs:** A tap on a tab slides to it, unless reduce motion is on.
+- **Repo:** The MIT licence and a setup guide.
+
+### Changed
+
+- **Email:** The digest uses the Banig look. The sign-in emails use it after you paste the six templates in the Supabase dashboard.
+- **Find a work:** Jobs that Groq cannot rank save as "Not ranked", and get a rank on the next run. Install the v1.4.0 APK before the new search goes live.
+- **Delete:** Every delete asks in one sheet at the bottom of the screen.
+
+### Fixed
+
+- **Keyboard:** The keyboard no longer covers a text field on any screen.
+- **Sports:** NBA teams show their logos.
 
 ### Removed
 
