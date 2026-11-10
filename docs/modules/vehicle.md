@@ -10,9 +10,11 @@
 
 ## Add a vehicle
 
-`useAddVehicle` inserts a vehicle with only a nickname and an odometer reading.
+Add vehicle asks for the model first. `useVehicleModels` lists each row of `vehicle_models`, the default first, and the sheet picks the default, so the usual path is one number and one tap. A last row, "Another model", is off and says why: only the ADV 160 has a service schedule now. A new row in `vehicle_models` shows in the picker with no app change.
 
-1. `vehicles_defaults` fills make, model and `model_id` from the default model.
+`useAddVehicle` inserts the vehicle with the chosen `model_id`, make and model, a nickname and an odometer reading.
+
+1. `vehicles_defaults` fills make, model and `model_id` from the default model only when all three are empty.
 2. `vehicles_copy_templates` copies that model's templates into `vehicle_services`.
 
 `useVehicle()` returns the primary vehicle, else the oldest one. The app shows one vehicle.

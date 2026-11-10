@@ -118,16 +118,42 @@ function useInvalidateVehicle() {
 }
 
 /** Adds the first vehicle as the default model. The database copies that model's service schedule. */
+export type VehicleModel = { id: string; make: string; model: string; isDefault: boolean };
+
+/** The models with a service schedule, the default first. They change only with a migration. */
+export function useVehicleModels() {
+  return useQuery({
+    queryKey: ["vehicle-models"],
+    staleTime: 24 * 60 * 60 * 1000,
+    queryFn: async (): Promise<VehicleModel[]> => {
+      const { data, error } = await supabase
+        .from("vehicle_models")
+        .select("id, make, model, is_default")
+        .order("is_default", { ascending: false })
+        .order("make")
+        .order("model");
+      if (error) throw error;
+      return data.map((m) => ({ id: m.id, make: m.make, model: m.model, isDefault: m.is_default }));
+    },
+  });
+}
+
+export function modelLabel(m: Pick<VehicleModel, "make" | "model">): string {
+  return `${m.make} ${m.model}`;
+}
+
 export function useAddVehicle() {
   const invalidate = useInvalidateVehicle();
   return useMutation({
-    mutationFn: async ({ nickname, odometerKm }: { nickname: string | null; odometerKm: number }) => {
-      const { data: model, error: modelError } = await supabase
-        .from("vehicle_models")
-        .select("id, make, model")
-        .eq("is_default", true)
-        .single();
-      if (modelError) throw modelError;
+    mutationFn: async ({
+      model,
+      nickname,
+      odometerKm,
+    }: {
+      model: Pick<VehicleModel, "id" | "make" | "model">;
+      nickname: string | null;
+      odometerKm: number;
+    }) => {
       const { error } = await supabase.from("vehicles").insert({
         model_id: model.id,
         make: model.make,
