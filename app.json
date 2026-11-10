@@ -20,7 +20,11 @@
       },
       "predictiveBackGestureEnabled": false,
       "googleServicesFile": "./google-services.json",
-      "permissions": ["android.permission.health.READ_STEPS"]
+      "permissions": [
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.READ_SLEEP",
+        "android.permission.health.READ_WEIGHT"
+      ]
     },
     "web": {
       "bundler": "metro",

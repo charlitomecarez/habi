@@ -6,6 +6,7 @@ vi.mock("@react-native-async-storage/async-storage", () => ({ default: {} }));
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
 vi.mock("react-native", () => ({ AppState: {} }));
 vi.mock("@/lib/screen-time", () => ({ readScreenEvents: vi.fn() }));
+vi.mock("@/lib/health-connect", () => ({ readNightSleep: vi.fn() }));
 
 const now = new Date(2026, 10, 7, 8);
 

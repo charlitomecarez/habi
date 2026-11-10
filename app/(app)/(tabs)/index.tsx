@@ -295,7 +295,11 @@ export default function HomeScreen() {
               />
               <DataRow
                 title={steps.data?.access ? "Steps" : "Sleep"}
-                detail={lastNight ? `Slept ${sleepText(sleepMinutes(lastNight))}` : "No sleep found"}
+                detail={
+                  lastNight
+                    ? `Slept ${sleepText(sleepMinutes(lastNight))}${lastNight.source === "health_connect" ? " · From Samsung Health" : ""}`
+                    : "No sleep found"
+                }
                 value={steps.data?.access ? stepsToday.toLocaleString("en-PH") : undefined}
                 status={
                   steps.data?.access && stepsToday >= stepsAverage(stepWeek)

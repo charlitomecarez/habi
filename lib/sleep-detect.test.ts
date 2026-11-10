@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { darkSpans, findSleep, mergeShortChecks, nightWindow, type ScreenEvent } from "@/lib/sleep-detect";
+import {
+  darkSpans,
+  findSleep,
+  longestNightSession,
+  mergeShortChecks,
+  nightWindow,
+  type ScreenEvent,
+} from "@/lib/sleep-detect";
 
 // The night that ends on Sunday Nov 8, 2026, in the phone's own time zone.
 const day = new Date(2026, 10, 8, 9, 0);
@@ -65,5 +72,21 @@ describe("helpers", () => {
       { start: 10 * 60000 + 300, end: 10 * 60000 + 400 },
     ];
     expect(mergeShortChecks(spans)).toHaveLength(2);
+  });
+});
+
+describe("longestNightSession", () => {
+  const day = new Date(2026, 10, 11);
+  const at = (d: number, h: number, m = 0) => new Date(2026, 10, d, h, m).getTime();
+
+  it("takes the longest session that ends between midnight and noon", () => {
+    const nap = { start: at(11, 5), end: at(11, 7) };
+    const night = { start: at(10, 23, 20), end: at(11, 6, 45) };
+    expect(longestNightSession([nap, night], day)).toEqual(night);
+  });
+
+  it("skips a session that ends before midnight or after noon", () => {
+    expect(longestNightSession([{ start: at(10, 14), end: at(10, 23) }], day)).toBeNull();
+    expect(longestNightSession([{ start: at(11, 9), end: at(11, 13) }], day)).toBeNull();
   });
 });
