@@ -43,7 +43,18 @@ export function UlamSettingsSheet({ visible, onClose, limit, avoid }: Props) {
   });
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Ulam settings" subtitle="These apply from tomorrow's ulam.">
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title="Ulam settings"
+      subtitle="These apply from tomorrow's ulam."
+      footer={
+        <>
+          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+          <Button label="Save settings" loading={save.isPending} onPress={onSubmit} />
+        </>
+      }
+    >
       <View className="gap-4 px-5 pb-5 pt-3">
         <Controller
           control={control}
@@ -72,8 +83,6 @@ export function UlamSettingsSheet({ visible, onClose, limit, avoid }: Props) {
             />
           )}
         />
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
-        <Button label="Save settings" loading={save.isPending} onPress={onSubmit} />
       </View>
     </Sheet>
   );

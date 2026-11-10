@@ -48,3 +48,4 @@ modules/*/android/build/
 
 # Firebase config for Android push (kept local; upload as an EAS file variable for cloud builds)
 /google-services.json
+lighthouse/

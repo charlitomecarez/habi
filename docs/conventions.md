@@ -78,10 +78,13 @@ Do not use Docker or a local Supabase server. That rule bans these commands, bec
 | Commit message | commitlint (Conventional Commits)                                                    |
 | Pre-push       | Stops a push to `main`, then runs the type check and the tests, one at a time        |
 | Each PR        | GitHub Actions runs the type check, lint and tests, so the full lint leaves this Mac |
+| Each PR        | A second job exports the web app, checks the bundle budget and runs Lighthouse       |
 
 - `check-staged.mjs` stops `.env` files, PDF files and any `EXPO_PUBLIC_` name outside the three allowed values.
 - The `prepare` script is `husky || true`, so an install with no git folder, such as a build in expo.dev, does not fail.
 - ESLint bans `Platform.OS` and hex codes in `app/`.
+- `bundle-budget.json` holds the web JS budget: the size when it was set, plus 10%. `scripts/bundle-size.mjs` fails the PR over it. Raise it only on purpose, in its own commit.
+- Lighthouse CI (`lighthouserc.json`) fails on an accessibility score under 0.9 and warns on a performance score under 0.8. Its report is a run artifact.
 
 ## Git
 

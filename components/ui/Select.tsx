@@ -2,12 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { OptionSheet } from "@/components/ui/OptionSheet";
+import { OptionSheet, type SheetOption } from "@/components/ui/OptionSheet";
 import { useColors } from "@/lib/colors";
 
 type SelectProps<T extends string> = {
   label: string;
-  options: readonly { value: T; label: string }[];
+  options: readonly SheetOption<T>[];
   value: T | null;
   onChange: (value: T) => void;
   placeholder?: string;
