@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Changed
+
+- **Vehicle:** Add vehicle starts with a Model field. The Honda ADV 160 is picked for you, and Another model says why it is not ready yet.
+
 ## [v1.4.1](docs/releases/v1.4.1.md) - 2026-11-10
 
 ### Changed
