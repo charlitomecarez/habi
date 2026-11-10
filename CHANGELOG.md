@@ -35,9 +35,32 @@ Do not put these items here:
 
 ## Unreleased
 
+### Added
+
+- **Health:** A 6 PM health check gives you 1 to 3 tips each evening from your sleep, steps and weight trend. It is off until you turn it on in Steps and sleep. While it is on, your sleep and steps go to your account and, with no name, to Groq. Turning it off deletes them.
+- **Weather:** A World section shows the weather and local time in up to 6 places, starting with Hong Kong, Tokyo, Rome, Los Angeles and New York. Edit places adds and removes them. The places stay on the phone.
+- **Settings:** A Speed check row shows how fast your last 50 requests were, with the typical time, the slowest request and a Fast, Slow or Very slow word. The times stay on the phone.
+- **CI:** Each PR checks the web bundle against a size budget and runs Lighthouse on the web app.
+
+### Changed
+
+- **Speed:** The app keeps your last data on the phone for a week, so screens open with data at once and refresh behind it. Home loads in one request instead of about 25. Sign out clears the saved data.
+- **Server:** The database moved to Singapore, closer to the Philippines, so each request is faster. Install the v1.5.0 APK: older APKs stop working when the old server pauses.
+- **Photos:** New photos save as WebP, about half the size, and Inventory lists load a small copy. A photo you have seen once opens from the phone without a new download. Older photos stay as they are.
+- **Ulam:** Three dish photos load a smaller copy from Wikimedia.
+- **Vehicle:** Add vehicle starts with a Model field. The Honda ADV 160 is picked for you, and Another model says why it is not ready yet.
+
+### Fixed
+
+- **Sheets:** Save teams, Save modules and Save settings stay in view at the bottom of their sheets, above the navigation bar, so you no longer scroll past every row to find them.
+
+## [v1.4.1](docs/releases/v1.4.1.md) - 2026-11-10
+
 ### Changed
 
 - **Name:** The app is now called Habi, Tagalog for "weave". The package and the link scheme stay the same, so the new APK installs over the old one.
+- **Backup:** The daily encrypted database backup runs in a separate private repo, so its run logs and files stay private.
+- **Docs:** The docs use general terms instead of personal details.
 
 ## [v1.4.0](docs/releases/v1.4.0.md) - 2026-11-10
 

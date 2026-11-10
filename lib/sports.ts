@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format, isToday, parseISO } from "date-fns";
 import { Linking } from "react-native";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database";
 
@@ -53,7 +54,7 @@ export function matchStatus(m: Match): { label: string; tone: "good" | "watch" |
 export function useSports(league: LeagueId) {
   return useQuery({
     queryKey: ["sports", league],
-    staleTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       const [matches, standings, sync] = await Promise.all([
         supabase.from("sports_matches").select("*").eq("league", league).order("starts_at"),
@@ -127,17 +128,27 @@ export function useFollowedGames(follows: readonly string[]) {
   return useQuery({
     queryKey: ["sports", "followed", [...follows].sort().join(",")],
     enabled: leagues.length > 0,
-    staleTime: 10 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
     queryFn: async () => {
-      const now = Date.now();
-      const { data, error } = await supabase
-        .from("sports_matches")
-        .select("*")
-        .in("league", leagues)
-        .gte("starts_at", new Date(now - RESULT_DAYS * 24 * 60 * 60 * 1000).toISOString())
-        .lte("starts_at", new Date(now + 14 * 24 * 60 * 60 * 1000).toISOString())
-        .order("starts_at");
-      if (error) throw error;
+      const data = await fromHomeSummary(
+        // The summary reads the follows saved on the server. Use it only when they are the same leagues.
+        (s) =>
+          JSON.stringify(slice<string[]>(s, "game_leagues")) === JSON.stringify([...leagues].sort())
+            ? slice<Match[]>(s, "games")
+            : undefined,
+        async () => {
+          const now = Date.now();
+          const { data, error } = await supabase
+            .from("sports_matches")
+            .select("*")
+            .in("league", leagues)
+            .gte("starts_at", new Date(now - RESULT_DAYS * 24 * 60 * 60 * 1000).toISOString())
+            .lte("starts_at", new Date(now + 14 * 24 * 60 * 60 * 1000).toISOString())
+            .order("starts_at");
+          if (error) throw error;
+          return data;
+        },
+      );
       return latestGames(data, follows);
     },
   });

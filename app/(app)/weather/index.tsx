@@ -11,15 +11,9 @@ import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
-import { useWeather, weatherIcon } from "@/lib/weather";
-
-/** The weather as a drawn icon. The word or the numbers beside it say the same thing, so TalkBack skips it. */
-function WeatherGlyph({ code, isDay, size }: { code?: number; isDay?: boolean; size: number }) {
-  const colors = useColors();
-  const name = weatherIcon(code, isDay);
-  if (!name) return null;
-  return <Ionicons name={name} size={size} color={colors.daily} accessibilityElementsHidden />;
-}
+import { WeatherGlyph } from "@/components/weather/WeatherGlyph";
+import { WorldSection } from "@/components/weather/WorldSection";
+import { useWeather } from "@/lib/weather";
 
 const hourText = (time: string) => format(parse(time, "HH:mm", new Date()), "h a");
 
@@ -116,6 +110,7 @@ export default function WeatherScreen() {
                 />
               ))}
             </View>
+            <WorldSection />
             <Text className="font-sans text-caption text-ink-muted">
               Weather data by Open-Meteo. Updated {format(forecast.fetchedAt, "h:mm a")}.
             </Text>

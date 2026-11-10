@@ -5,14 +5,16 @@
 ## Model
 
 - `vehicle_models` and `service_templates` are shared. The Honda ADV 160 is the default model.
-- The ADV 160 intervals come from the owner's manual (migration `...0900`), then Charli's stricter maintenance checker (migration `20261106000700`). For example: engine oil every 1,500 km or 12 months. Each item has one interval, so an inspect value and a replace value become one reminder.
+- The ADV 160 intervals come from the owner's manual (migration `...0900`), then a stricter maintenance checker (migration `20261106000700`). For example: engine oil every 1,500 km or 12 months. Each item has one interval, so an inspect value and a replace value become one reminder.
 - Each vehicle gets its own copy of the schedule in `vehicle_services`. This lets one vehicle change an interval without a change to the templates.
 
 ## Add a vehicle
 
-`useAddVehicle` inserts a vehicle with only a nickname and an odometer reading.
+Add vehicle asks for the model first. `useVehicleModels` lists each row of `vehicle_models`, the default first, and the sheet picks the default, so the usual path is one number and one tap. A last row, "Another model", is off and says why: only the ADV 160 has a service schedule now. A new row in `vehicle_models` shows in the picker with no app change.
 
-1. `vehicles_defaults` fills make, model and `model_id` from the default model.
+`useAddVehicle` inserts the vehicle with the chosen `model_id`, make and model, a nickname and an odometer reading.
+
+1. `vehicles_defaults` fills make, model and `model_id` from the default model only when all three are empty.
 2. `vehicles_copy_templates` copies that model's templates into `vehicle_services`.
 
 `useVehicle()` returns the primary vehicle, else the oldest one. The app shows one vehicle.

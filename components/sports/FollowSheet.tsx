@@ -33,7 +33,23 @@ export function FollowSheet({ visible, onClose, followed, startLeague }: FollowS
   const full = picked.length >= MAX_FOLLOWED;
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Teams you follow" subtitle={`${picked.length} of 12 followed`}>
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title="Teams you follow"
+      subtitle={`${picked.length} of 12 followed`}
+      footer={
+        <>
+          {save.error ? <Notice tone="danger">Could not save your teams.</Notice> : null}
+          <Button
+            label="Save teams"
+            loading={save.isPending}
+            disabled={teams.isPending}
+            onPress={() => save.mutate({ followedTeams: picked }, { onSuccess: onClose })}
+          />
+        </>
+      }
+    >
       <View accessibilityRole="radiogroup" accessibilityLabel="League" className="flex-row flex-wrap gap-2">
         {LEAGUES.map((item) => (
           <Chip
@@ -79,12 +95,6 @@ export function FollowSheet({ visible, onClose, followed, startLeague }: FollowS
           })
         )}
       </View>
-      {save.error ? <Notice tone="danger">Could not save your teams.</Notice> : null}
-      <Button
-        label="Save teams"
-        loading={save.isPending}
-        onPress={() => save.mutate({ followedTeams: picked }, { onSuccess: onClose })}
-      />
     </Sheet>
   );
 }

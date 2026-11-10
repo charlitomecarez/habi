@@ -141,6 +141,7 @@ export function ItemForm({
           <PhotoField
             label="Photo"
             previewUri={previewUri}
+            previewCacheKey={photo === undefined ? item?.photo_path : null}
             subject={name || "this item"}
             onPick={setPhoto}
             onRemove={() => setPhoto(item?.photo_path ? null : undefined)}
@@ -252,6 +253,7 @@ export function ItemForm({
             <PhotoField
               label="Receipt (optional)"
               previewUri={receiptUri}
+              previewCacheKey={receipt === undefined ? item?.receipt_path : null}
               subject={`receipt for ${name || "this item"}`}
               layout="single"
               singleLabel="Add receipt photo"

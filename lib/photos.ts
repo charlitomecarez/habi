@@ -13,10 +13,27 @@ export type LocalPhoto = { uri: string; width: number; height: number };
 export type PhotoChange = LocalPhoto | null | undefined;
 
 const BUCKET = "user-files";
-/** Longest side after resizing. Keeps a photo around 150–300 KB, well inside free Storage. */
+/** Longest side after resizing. A WebP at this size is about 100 KB, well inside free Storage. */
 const PHOTO_MAX_PX = 1280;
+/** Longest side of the list copy, for small thumbnails in a list. */
+const LIST_MAX_PX = 320;
 const PHOTO_QUALITY = 0.7;
-/** Signed URLs for the private bucket last an hour; refetch a bit before that. */
+
+/**
+ * The small copy of a photo for a list: `<name>.webp` has `<name>.320.webp` beside it. An older
+ * JPEG has no list copy, so the list shows the full photo.
+ */
+export function listPath(path: string): string;
+export function listPath(path: string | null): string | null;
+export function listPath(path: string | null): string | null {
+  if (!path || !path.endsWith(".webp") || path.endsWith(".320.webp")) return path;
+  return `${path.slice(0, -".webp".length)}.320.webp`;
+}
+
+/** WebP files start with "RIFF" ("UklGR" in base64). Photos saved before v1.5.0 are JPEG. */
+export function imageMime(base64: string): "image/webp" | "image/jpeg" {
+  return base64.startsWith("UklGR") ? "image/webp" : "image/jpeg";
+} /** Signed URLs for the private bucket last an hour; refetch a bit before that. */
 const SIGNED_URL_SECONDS = 60 * 60;
 
 export const PHOTO_URLS_KEY = "photo-urls";
@@ -40,14 +57,14 @@ export function usePhotoUrls(paths: (string | null)[]) {
   });
 }
 
-/** Resizes a picked photo so its longest side is PHOTO_MAX_PX (never enlarging) and compresses it to JPEG. */
-export async function compressPhoto(photo: LocalPhoto): Promise<ArrayBuffer> {
+/** Resizes a picked photo so its longest side is at most `maxPx` (never enlarging) and saves it as WebP. */
+export async function compressPhoto(photo: LocalPhoto, maxPx = PHOTO_MAX_PX): Promise<ArrayBuffer> {
   const context = ImageManipulator.manipulate(photo.uri);
-  if (Math.max(photo.width, photo.height) > PHOTO_MAX_PX) {
-    context.resize(photo.width >= photo.height ? { width: PHOTO_MAX_PX } : { height: PHOTO_MAX_PX });
+  if (Math.max(photo.width, photo.height) > maxPx) {
+    context.resize(photo.width >= photo.height ? { width: maxPx } : { height: maxPx });
   }
   const image = await context.renderAsync();
-  const saved = await image.saveAsync({ compress: PHOTO_QUALITY, format: SaveFormat.JPEG });
+  const saved = await image.saveAsync({ compress: PHOTO_QUALITY, format: SaveFormat.WEBP });
   return (await fetch(saved.uri)).arrayBuffer();
 }
 
@@ -59,8 +76,8 @@ export async function currentUserId(): Promise<string> {
 }
 
 /**
- * Resizes and compresses a picked photo, then uploads it to
- * `<user_id>/<folder>/<baseName>-<time>.jpg`. Returns its storage path.
+ * Resizes a picked photo to WebP and uploads it to `<user_id>/<folder>/<baseName>-<time>.webp`.
+ * Inventory photos also get a list copy beside it (see `listPath`). Returns the storage path.
  */
 export async function uploadPhoto(
   folder: "inventory" | "receipts" | "journal",
@@ -70,15 +87,28 @@ export async function uploadPhoto(
   const userId = await currentUserId();
   const body = await compressPhoto(photo);
 
-  // A new name on every upload, so a cached signed URL never shows the old photo.
-  const path = `${userId}/${folder}/${baseName}-${Date.now()}.jpg`;
-  const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: "image/jpeg" });
+  // A new name on every upload, so a cached photo is never shown for a new one.
+  const path = `${userId}/${folder}/${baseName}-${Date.now()}.webp`;
+  const { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: "image/webp" });
   if (error) throw error;
+
+  if (folder === "inventory") {
+    const small = await compressPhoto(photo, LIST_MAX_PX);
+    const { error: listError } = await supabase.storage
+      .from(BUCKET)
+      .upload(listPath(path), small, { contentType: "image/webp" });
+    if (listError) {
+      await removePhoto(path);
+      throw listError;
+    }
+  }
   return path;
 }
 
+/** Removes a photo and its list copy, if it has one. */
 export async function removePhoto(path: string | null) {
   if (!path) return;
+  const paths = [...new Set([path, listPath(path)])];
   // Best effort: a leftover file only costs storage, so a failure here does not fail the save.
-  await supabase.storage.from(BUCKET).remove([path]);
+  await supabase.storage.from(BUCKET).remove(paths);
 }

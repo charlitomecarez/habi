@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format, getDay, startOfWeek, subDays } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables } from "@/types/database";
 
@@ -81,22 +82,33 @@ export function useHabits() {
     queryKey: HABITS_KEY,
     queryFn: async () => {
       const since = day(subDays(new Date(), HISTORY_DAYS));
-      const [habits, checks] = await Promise.all([
-        supabase
-          .from("habits")
-          .select("id, name, schedule, weekdays, times_per_week, remind_time, archived, created_at")
-          .eq("archived", false)
-          .order("created_at"),
-        supabase.from("habit_checks").select("habit_id, on_date").gte("on_date", since),
-      ]);
-      if (habits.error) throw habits.error;
-      if (checks.error) throw checks.error;
+      type Rows = { habits: Habit[]; checks: { habit_id: string; on_date: string }[] };
+      const rows = await fromHomeSummary<Rows>(
+        (s, p) => {
+          const habits = slice<Habit[]>(s, "habits");
+          const checks = slice<Rows["checks"]>(s, "habit_checks");
+          return habits && checks && p.p_habits_since === since ? { habits, checks } : undefined;
+        },
+        async () => {
+          const [habits, checks] = await Promise.all([
+            supabase
+              .from("habits")
+              .select("id, name, schedule, weekdays, times_per_week, remind_time, archived, created_at")
+              .eq("archived", false)
+              .order("created_at"),
+            supabase.from("habit_checks").select("habit_id, on_date").gte("on_date", since),
+          ]);
+          if (habits.error) throw habits.error;
+          if (checks.error) throw checks.error;
+          return { habits: habits.data as Habit[], checks: checks.data };
+        },
+      );
       const byHabit = new Map<string, Set<string>>();
-      for (const c of checks.data) {
+      for (const c of rows.checks) {
         if (!byHabit.has(c.habit_id)) byHabit.set(c.habit_id, new Set());
         byHabit.get(c.habit_id)!.add(c.on_date);
       }
-      return { habits: habits.data as Habit[], checks: byHabit };
+      return { habits: rows.habits, checks: byHabit };
     },
   });
 }

@@ -8,37 +8,18 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { usePlaceSearch } from "@/components/weather/usePlaceSearch";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { currentCoords } from "@/lib/location";
-import { searchPlaces, useSavePlace, type Place } from "@/lib/weather";
+import { useSavePlace, type Place } from "@/lib/weather";
 
 export default function ChoosePlaceScreen() {
   const colors = useColors();
   const save = useSavePlace();
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Place[] | null>(null);
-  const [searching, setSearching] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const { query, results, searching, failed, onChange } = usePlaceSearch();
   const [refused, setRefused] = useState(false);
   const [locating, setLocating] = useState(false);
-
-  async function onChange(text: string) {
-    setQuery(text);
-    setFailed(false);
-    if (text.trim().length < 2) {
-      setResults(null);
-      return;
-    }
-    setSearching(true);
-    try {
-      setResults(await searchPlaces(text.trim()));
-    } catch {
-      setFailed(true);
-    } finally {
-      setSearching(false);
-    }
-  }
 
   async function pick(place: Place) {
     await save.mutateAsync(place);

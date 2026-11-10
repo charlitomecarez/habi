@@ -277,7 +277,7 @@ npx prettier --check .
 - Run them one at a time: the development Mac has 8 GB of RAM. Vitest runs `lib/**/*.test.ts` and `supabase/functions/_shared/**/*.test.ts`.
 - After you add a route, run `npx expo customize tsconfig.json` to refresh the route types.
 - Build the APK only with Build from GitHub in expo.dev, with the `development`, `preview` or `production` profile in `eas.json`. Do not build on the Mac, and do not use `eas build`. Never attach the APK to a GitHub release.
-- A GitHub Actions job makes an encrypted database dump each day at 3:10 AM Manila time. [docs/backup.md](docs/backup.md) has the restore steps.
+- A job in a separate private repo makes an encrypted database dump each day. See [docs/backup.md](docs/backup.md).
 
 </details>
 

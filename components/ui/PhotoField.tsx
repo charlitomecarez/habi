@@ -16,6 +16,8 @@ type PhotoFieldProps = {
   label: string;
   /** What to show now: a picked photo's local URI or the saved photo's signed URL. */
   previewUri: string | null;
+  /** The storage path of the saved photo, for the disk cache. */
+  previewCacheKey?: string | null;
   /** What the photo shows, for screen readers. */
   subject: string;
   onPick: (photo: LocalPhoto) => void;
@@ -42,6 +44,7 @@ const SOURCE_OPTIONS = [
 export function PhotoField({
   label,
   previewUri,
+  previewCacheKey,
   subject,
   onPick,
   onRemove,
@@ -81,7 +84,12 @@ export function PhotoField({
       </Text>
       {previewUri ? (
         <>
-          <ItemPhoto uri={previewUri} label={subject} className="aspect-video w-full rounded-card" />
+          <ItemPhoto
+            uri={previewUri}
+            cacheKey={previewCacheKey}
+            label={subject}
+            className="aspect-video w-full rounded-card"
+          />
           <View className="flex-row gap-3">
             <View className="min-w-0 flex-1">
               <Button

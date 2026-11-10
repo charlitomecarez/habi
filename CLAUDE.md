@@ -1,6 +1,6 @@
 # Habi
 
-Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance, room inventory, money and subscriptions, password vault.
+Personal all-in-one app. The owner is the admin. Sign-up is off, so only people the admin adds can use the app, and each account has fully separate data. Only the admin decides who gets voice messages. It holds todos with reminders, vehicle maintenance, room inventory, money and subscriptions, password vault.
 
 - Display name and GitHub repo: Habi (`charlitomecarez/habi`). The expo.dev slug, package and scheme stay `my-app` / `com.charli.myapp` / `myapp`.
 - Android package: `com.charli.myapp` (app.json `android.package`; Google OAuth Android client IDs and FCM use it)
@@ -11,7 +11,7 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 - Expo (expo-router, dev client) + TypeScript; Android first, web second, one codebase.
 - Supabase: Postgres with RLS, Auth, Storage, Edge Functions, pg_cron + pg_net.
 - Resend for email (Supabase SMTP sender + one daily digest). Expo Push for notifications.
-- Groq free plan for the daily ulam, voice text and Find a work. Only the `daily-ulam`, `voice-transcribe`, `job-search` and `job-profile-draft` Edge Functions call it.
+- Groq free plan for the daily ulam, voice text, Find a work and the 6 PM health check. Only the `daily-ulam`, `voice-transcribe`, `job-search`, `job-profile-draft` and `health-insight` Edge Functions call it.
 - NativeWind for styling; Schibsted Grotesk via @expo-google-fonts.
 - Data: @supabase/supabase-js, @tanstack/react-query, zustand, react-hook-form + zod, date-fns.
 - Everything must stay on free tiers.
@@ -20,8 +20,8 @@ Personal all-in-one app for Charli (Philippines, Asia/Manila), the admin. Sign-u
 
 - `.env` (gitignored): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`. These three are safe in the app bundle; nothing else is.
 - Never put the Google client secret, Resend API key, Groq API key or Supabase service-role key in the app or the repo. They live only in the Supabase dashboard / Edge Function secrets.
-- `BACKUP_DB_URL` and `BACKUP_AGE_PUBLIC_KEY` live only in GitHub Actions secrets. See `docs/backup.md`.
-- Email sender (Supabase SMTP via Resend): noreply@email.blabbun.com.
+- The daily database backup runs in a separate private repo, not in this one. See `docs/backup.md`.
+- Supabase SMTP and the daily digest send email through Resend from a noreply address.
 
 ## Commands
 

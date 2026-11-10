@@ -33,6 +33,8 @@ export function reminderRoute(source: unknown, id: unknown): Href {
       return "/people";
     case "medicine":
       return "/health";
+    case "health":
+      return "/steps";
     case "workout":
       return "/gym";
     default:

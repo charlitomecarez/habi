@@ -8,7 +8,7 @@ android
 
 ## Users
 
-Charli is the admin and the primary user. Charli is a rider in the Philippines (Asia/Manila) with a motorbike and a Galaxy A56. Charli uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
+The owner is the admin and the primary user. The owner rides a motorbike and uses an Android phone. The owner uses the app at four moments: a morning check before leaving, quick logs during the day, an evening review at home, and a tap on a reminder. A small number of other people can use the app. Only the admin adds them, and each account has fully separate data.
 
 ## Product Purpose
 
@@ -52,7 +52,7 @@ Real content exists in the app: pesos, kilometres, service intervals, Filipino d
 2. One view of today beats a list of modules.
 3. Numbers are the content. Money, kilometres and hours lead each screen.
 4. A log takes seconds, with one hand, outside.
-5. Private by default. Personal data stays in the account, and health data stays on the phone.
+5. Private by default. Personal data stays in the account, and health data stays on the phone unless you turn on the health check.
 
 ## Accessibility & Inclusion
 

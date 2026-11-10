@@ -64,7 +64,10 @@ Sign-in methods (`app/(auth)/login.tsx`):
 
 - Each module has one file in `lib/` with its types, `useQuery` hooks, `useMutation` hooks and pure helpers.
 - Screens call these hooks. Screens do not call `supabase` directly.
-- `QueryProvider` sets `staleTime` to 30 seconds.
+- `QueryProvider` saves the query cache on the phone (AsyncStorage) for 7 days, so a screen draws its last data at once and refreshes behind it. A new app version drops the saved cache. Sign out clears it.
+- Never saved: the vault queries, decrypted photos, signed photo URLs and the job matches. `lib/query-cache.ts` has the list and the stale time of each kind: 30 seconds for todos, money, debts and reminders; 5 minutes for vehicle, inventory, health, people and settings; 30 minutes for news, sports and ulam; 24 hours for vehicle models. Others use 30 seconds.
+- `lib/cache-json.ts` saves a Map, a Set or a Date as the same type, so a restored query has the shape its screen expects.
+- Home calls `startHomeSummary()` first. Each Home query reads its rows from that one `home_summary` request with `fromHomeSummary()`, and falls back to its own request when there is no summary, it failed, or it does not fit (another month, another day, other leagues). A module screen on its own fetches as before.
 - Mutations call `invalidateQueries` in `onSettled`. The database changes related rows with triggers, so the app reloads instead of patching the cache.
 - Optimistic updates are used in two places: `useToggleTodo` and `useSaveUserSettings`.
 

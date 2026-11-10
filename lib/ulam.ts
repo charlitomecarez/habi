@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, differenceInCalendarDays, format, startOfDay, subDays } from "date-fns";
 
+import { fromHomeSummary, slice } from "@/lib/home-summary";
 import { supabase } from "@/lib/supabase";
 import { BACKUP_ULAM } from "@/lib/ulam-backup";
 import { MAX_LIMIT, OPTIONS_PER_DAY, RICE_KCAL, type Ulam } from "@/supabase/functions/_shared/ulam";
@@ -101,15 +102,19 @@ export function useUlamDays() {
   const today = startOfDay(new Date());
   return useQuery({
     queryKey: [...ULAM_KEY, dayKey(today)],
-    queryFn: async (): Promise<UlamDay[]> => {
-      const { data, error } = await supabase
-        .from("ulam_days")
-        .select("on_date, options, picked, custom, source, eaten")
-        .gte("on_date", dayKey(subDays(today, WEEK_DAYS - 1)))
-        .lt("on_date", dayKey(addDays(today, 1)));
-      if (error) throw error;
-      return data as unknown as UlamDay[];
-    },
+    queryFn: () =>
+      fromHomeSummary(
+        (s, p) => (p.p_today === dayKey(today) ? slice<UlamDay[]>(s, "ulam_days") : undefined),
+        async (): Promise<UlamDay[]> => {
+          const { data, error } = await supabase
+            .from("ulam_days")
+            .select("on_date, options, picked, custom, source, eaten")
+            .gte("on_date", dayKey(subDays(today, WEEK_DAYS - 1)))
+            .lt("on_date", dayKey(addDays(today, 1)));
+          if (error) throw error;
+          return data as unknown as UlamDay[];
+        },
+      ),
   });
 }
 

@@ -97,6 +97,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
             <PhotoField
               label="Photo"
               previewUri={preview}
+              previewCacheKey={photo === undefined ? entry?.photo_path : null}
               subject="Journal photo"
               layout="single"
               singleLabel="Add a photo"
