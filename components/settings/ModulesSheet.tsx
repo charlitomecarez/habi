@@ -26,6 +26,16 @@ export function ModulesSheet({ visible, onClose }: { visible: boolean; onClose: 
       onClose={onClose}
       title="Modules"
       subtitle="Switch off what you do not use. Your data stays."
+      footer={
+        <>
+          {save.error ? <Notice tone="danger">Could not save your modules.</Notice> : null}
+          <Button
+            label="Save modules"
+            loading={save.isPending}
+            onPress={() => save.mutate({ hiddenModules: hidden }, { onSuccess: onClose })}
+          />
+        </>
+      }
     >
       {MODULE_SECTIONS.map((section) => {
         const modules = section.modules.filter((m) => hiddenReason(m, { ...filter, hidden: [] }) !== "admin");
@@ -64,12 +74,6 @@ export function ModulesSheet({ visible, onClose }: { visible: boolean; onClose: 
           </View>
         );
       })}
-      {save.error ? <Notice tone="danger">Could not save your modules.</Notice> : null}
-      <Button
-        label="Save modules"
-        loading={save.isPending}
-        onPress={() => save.mutate({ hiddenModules: hidden }, { onSuccess: onClose })}
-      />
     </Sheet>
   );
 }

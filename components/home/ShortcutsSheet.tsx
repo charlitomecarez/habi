@@ -1,6 +1,7 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 import { Chip } from "@/components/ui/Chip";
+import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { useModuleFilter } from "@/lib/features";
 import { ALL_MODULES, hiddenReason, MAX_SHORTCUTS, toggleShortcut } from "@/lib/modules";
@@ -18,6 +19,7 @@ export function ShortcutsSheet({ visible, onClose, selected }: ShortcutsSheetPro
       onClose={onClose}
       title="Shortcuts"
       subtitle={`Pick up to ${MAX_SHORTCUTS} modules for Home.`}
+      footer={save.error ? <Notice tone="danger">Could not save your shortcuts.</Notice> : undefined}
     >
       <View className="flex-row flex-wrap gap-2 px-5 pb-5 pt-3">
         {ALL_MODULES.filter((m) => hiddenReason(m, filter) === null).map((m) => (
@@ -29,7 +31,6 @@ export function ShortcutsSheet({ visible, onClose, selected }: ShortcutsSheetPro
           />
         ))}
       </View>
-      {save.error ? <Text className="px-5 pb-4 font-sans text-caption text-danger">{save.error.message}</Text> : null}
     </Sheet>
   );
 }
