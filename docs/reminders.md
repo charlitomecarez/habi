@@ -58,7 +58,7 @@ For each `user_settings` row with `digest_enabled`:
    - overdue vehicle services;
    - active subscriptions that renew in the next 7 days.
 4. `digest.ts` (`buildDigest`) builds the subject, HTML and text. It returns null when there is nothing.
-5. It sends the email with Resend from `noreply@email.blabbun.com`.
+5. It sends the email with Resend from a noreply address (`DIGEST_FROM` in `send-reminders`).
 6. It sets `digest_last_sent_on` to today, also when the day was empty.
 
 If `RESEND_API_KEY` is not set, step 2 does nothing.

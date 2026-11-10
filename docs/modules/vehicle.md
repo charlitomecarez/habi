@@ -5,7 +5,7 @@
 ## Model
 
 - `vehicle_models` and `service_templates` are shared. The Honda ADV 160 is the default model.
-- The ADV 160 intervals come from the owner's manual (migration `...0900`), then Charli's stricter maintenance checker (migration `20261106000700`). For example: engine oil every 1,500 km or 12 months. Each item has one interval, so an inspect value and a replace value become one reminder.
+- The ADV 160 intervals come from the owner's manual (migration `...0900`), then a stricter maintenance checker (migration `20261106000700`). For example: engine oil every 1,500 km or 12 months. Each item has one interval, so an inspect value and a replace value become one reminder.
 - Each vehicle gets its own copy of the schedule in `vehicle_services`. This lets one vehicle change an interval without a change to the templates.
 
 ## Add a vehicle

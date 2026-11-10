@@ -11,4 +11,4 @@
 
 ## Phone tests
 
-- [ ] Checked on the Galaxy A56 (list what you tested, or write "Not needed")
+- [ ] Checked on the test phone (list what you tested, or write "Not needed")
