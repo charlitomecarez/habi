@@ -64,8 +64,13 @@ describe("optional modules", () => {
     for (const m of ALL_MODULES) if (m.needs) expect(Object.keys(ALL_FEATURES)).toContain(m.needs);
   });
 
-  it("keys only Sports, Find a work and Inbox; News and Weather need no key", () => {
-    expect(ALL_MODULES.filter((m) => m.needs).map((m) => m.id)).toEqual(["sports", "inbox", "work"]);
+  it("keys only Sports, Movies, Find a work and Inbox; News and Weather need no key", () => {
+    expect(ALL_MODULES.filter((m) => m.needs).map((m) => m.id)).toEqual(["sports", "movies", "inbox", "work"]);
+  });
+
+  it("hides Movies when the server has no TMDB key", () => {
+    expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false } })).not.toContain("movies");
+    expect(ids(on)).toContain("movies");
   });
 
   it("shows every module when everything is set up", () => {

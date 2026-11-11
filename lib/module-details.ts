@@ -19,6 +19,7 @@ import { useVaultEntries, useVaultStore } from "@/lib/vault";
 import { unreadCount, useInbox } from "@/lib/voice";
 import { useWeather } from "@/lib/weather";
 import { useNews } from "@/lib/news";
+import { useMovies } from "@/lib/movies";
 
 /** The count at the end of a line on More. Undefined while it is loading. */
 export function countText(count: number | undefined): string | undefined {
@@ -43,6 +44,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
   const videos = useVideos();
   const weather = useWeather();
   const news = useNews();
+  const movies = useMovies();
   const unlocked = useVaultStore((s) => s.key !== null);
   const vault = useVaultEntries();
 
@@ -59,6 +61,7 @@ export function useModuleDetails(): Record<string, string | undefined> {
     news: news.data
       ? `${[...news.data.ph, ...news.data.world].filter((n) => isToday(parseISO(n.published_at))).length} today`
       : undefined,
+    movies: movies.data ? `${movies.data.now.length} showing` : undefined,
     people: countText(people.data?.people.length),
     debts: countText(debts.data?.filter((d) => d.balance > 0).length),
     inbox: inbox.data ? `${unreadCount(inbox.data)} new` : undefined,
