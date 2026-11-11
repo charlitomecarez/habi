@@ -11,7 +11,7 @@ import { SleepWeek } from "@/components/steps/SleepWeek";
 import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -29,6 +29,7 @@ const SLEEP_STATUS = {
 } as const;
 
 export default function StepsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const now = new Date();
   const steps = useSteps();
@@ -52,8 +53,8 @@ export default function StepsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Steps and sleep" subtitle="Today" tone="daily" />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Steps and sleep" subtitle="Today" tone="daily" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {/* After 6 PM, the advice is the news of the evening, so it goes on top. */}
         {advice.state.kind === "today" ? (
           <AdviceList title="Today's advice" insight={advice.state.insight} time="6:00 PM" />

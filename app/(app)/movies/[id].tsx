@@ -5,13 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Poster } from "@/components/movies/Poster";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { MIN_VOTES, openedText, openTrailer, ratingText, runtimeText, TMDB_CREDIT, useMovie } from "@/lib/movies";
 
 /** One film: the poster, the facts, the story and the trailer. Read-only, so no primary button. */
 export default function MovieScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const movie = useMovie(Number(id));
   const film = movie.data;
@@ -20,8 +21,8 @@ export default function MovieScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title={film?.title ?? "Movies"} tone="daily" />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title={film?.title ?? "Movies"} tone="daily" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {movie.isPending ? (
           <Skeleton layout="detail" />
         ) : movie.error ? (

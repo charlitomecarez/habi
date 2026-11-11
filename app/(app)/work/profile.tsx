@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { goBack } from "@/lib/navigation";
 import { splitList, useJobs, useReadResume, useSaveProfile } from "@/lib/jobs";
 import { pickStatement } from "@/lib/statement-file";
 
 export default function WorkProfileScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { upload } = useLocalSearchParams<{ upload?: string }>();
   const profile = useJobs().data?.profile;
   const read = useReadResume();
@@ -65,11 +66,17 @@ export default function WorkProfileScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
         <ModuleHeader
+          scrollY={scrollY}
           title={fromResume ? "Check your profile" : "Work profile"}
           subtitle={fromResume ? "Draft from your resume" : undefined}
           tone="records"
         />
-        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-4" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          contentContainerClassName="gap-5 px-5 pb-6 pt-4"
+          keyboardShouldPersistTaps="handled"
+        >
           {read.isPending ? (
             <Notice tone="neutral">
               Reading your resume… I remove emails, phone numbers and links. Groq then drafts your profile. I do not

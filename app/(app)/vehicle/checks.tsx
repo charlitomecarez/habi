@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import {
   DAILY_CHECKS,
@@ -66,15 +66,17 @@ function CheckSection({
 
 /** The quick checks that a rider does by hand. Ticks stay on this phone. */
 export default function VehicleChecksScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const ticks = useVehicleChecks();
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Checks"
         backLabel="Back to Vehicle"
         subtitle={`${ticks.daily.length} of ${DAILY_CHECKS.length} today · ${ticks.weekly.length} of ${WEEKLY_CHECKS.length} this week`}
       />
-      <ScrollView contentContainerClassName="gap-6 px-5 pb-8 pt-4">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-6 px-5 pb-8 pt-4">
         <CheckSection
           title="Before riding"
           note="Clears each day."

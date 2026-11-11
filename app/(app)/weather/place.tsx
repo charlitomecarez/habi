@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { usePlaceSearch } from "@/components/weather/usePlaceSearch";
 import { goBack } from "@/lib/navigation";
@@ -15,6 +15,7 @@ import { currentCoords } from "@/lib/location";
 import { useSavePlace, type Place } from "@/lib/weather";
 
 export default function ChoosePlaceScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const save = useSavePlace();
   const { query, results, searching, failed, onChange } = usePlaceSearch();
@@ -45,8 +46,13 @@ export default function ChoosePlaceScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Choose a place" />
-      <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Choose a place" />
+      <KeyboardScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        keyboardShouldPersistTaps="handled"
+        contentContainerClassName="gap-4 px-5 pb-8 pt-4"
+      >
         <Input
           label="Search a place in the Philippines"
           value={query}

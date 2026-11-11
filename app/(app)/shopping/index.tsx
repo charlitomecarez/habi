@@ -14,7 +14,9 @@ import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { SwipeRow } from "@/components/ui/SwipeRow";
 import { useColors } from "@/lib/colors";
+import { tick } from "@/lib/haptics";
 import { amountText, formatPeso, parseBalance, useAccounts, useCategories } from "@/lib/money";
 import { useAddItem, useCheckout, useRemoveItem, useShopping, useUpdateItem, type ShoppingItem } from "@/lib/shopping";
 
@@ -32,59 +34,71 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
     if (value !== item.price) update.mutate({ id: item.id, patch: { price: value } });
   }
 
+  const setTicked = (ticked: boolean) => {
+    if (ticked) tick();
+    update.mutate({ id: item.id, patch: { ticked } });
+  };
   return (
-    <View className={`flex-row items-center gap-1 py-1 pr-1 ${last ? "" : "border-b-2 border-border"}`}>
-      <Pressable
-        accessibilityRole="checkbox"
-        accessibilityLabel={`${item.name}${item.quantity ? `, ${item.quantity}` : ""}, in the cart`}
-        accessibilityState={{ checked: item.ticked }}
-        onPress={() => update.mutate({ id: item.id, patch: { ticked: !item.ticked } })}
-        className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3 pl-4"
-      >
-        <Ionicons
-          name={item.ticked ? "checkbox" : "square-outline"}
-          size={22}
-          color={item.ticked ? colors.accent : colors.inkMuted}
+    <SwipeRow
+      actions={[
+        item.ticked
+          ? { label: "Not bought", icon: "arrow-undo-outline", tone: "primary", onPress: () => setTicked(false) }
+          : { label: "Bought", icon: "cart-outline", tone: "primary", onPress: () => setTicked(true) },
+      ]}
+    >
+      <View className={`flex-row items-center gap-1 py-1 pr-1 ${last ? "" : "border-b-2 border-border"}`}>
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityLabel={`${item.name}${item.quantity ? `, ${item.quantity}` : ""}, in the cart`}
+          accessibilityState={{ checked: item.ticked }}
+          onPress={() => setTicked(!item.ticked)}
+          className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3 pl-4"
+        >
+          <Ionicons
+            name={item.ticked ? "checkbox" : "square-outline"}
+            size={22}
+            color={item.ticked ? colors.accent : colors.inkMuted}
+          />
+          <View className="min-w-0 flex-1">
+            <Text
+              numberOfLines={1}
+              className={`font-medium text-row-title ${item.ticked ? "text-ink-muted line-through" : "text-ink"}`}
+            >
+              {item.name}
+            </Text>
+            {item.quantity ? <Text className="font-sans text-caption text-ink-muted">{item.quantity}</Text> : null}
+          </View>
+        </Pressable>
+        <TextInput
+          accessibilityLabel={`Price of ${item.name} in pesos`}
+          value={price}
+          onChangeText={setPrice}
+          onBlur={savePrice}
+          onSubmitEditing={savePrice}
+          placeholder="₱"
+          placeholderTextColor={colors.inkMuted}
+          inputMode="decimal"
+          keyboardType="decimal-pad"
+          className="h-touch w-field-sm rounded-sm border border-border-input bg-surface-card px-2 text-right font-sans text-body text-ink"
         />
-        <View className="min-w-0 flex-1">
-          <Text
-            numberOfLines={1}
-            className={`font-medium text-row-title ${item.ticked ? "text-ink-muted line-through" : "text-ink"}`}
-          >
-            {item.name}
-          </Text>
-          {item.quantity ? <Text className="font-sans text-caption text-ink-muted">{item.quantity}</Text> : null}
-        </View>
-      </Pressable>
-      <TextInput
-        accessibilityLabel={`Price of ${item.name} in pesos`}
-        value={price}
-        onChangeText={setPrice}
-        onBlur={savePrice}
-        onSubmitEditing={savePrice}
-        placeholder="₱"
-        placeholderTextColor={colors.inkMuted}
-        inputMode="decimal"
-        keyboardType="decimal-pad"
-        className="h-touch w-field-sm rounded-sm border border-border-input bg-surface-card px-2 text-right font-sans text-body text-ink"
-      />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Add ${item.name} to Inventory`}
-        onPress={() => router.push({ pathname: "/inventory/item/new", params: { name: item.name } })}
-        className="h-touch w-touch items-center justify-center"
-      >
-        <Ionicons name="cube-outline" size={20} color={colors.ink} />
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Remove ${item.name}`}
-        onPress={() => remove.mutate(item.id)}
-        className="h-touch w-touch items-center justify-center"
-      >
-        <Ionicons name="close" size={20} color={colors.inkMuted} />
-      </Pressable>
-    </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Add ${item.name} to Inventory`}
+          onPress={() => router.push({ pathname: "/inventory/item/new", params: { name: item.name } })}
+          className="h-touch w-touch items-center justify-center"
+        >
+          <Ionicons name="cube-outline" size={20} color={colors.ink} />
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Remove ${item.name}`}
+          onPress={() => remove.mutate(item.id)}
+          className="h-touch w-touch items-center justify-center"
+        >
+          <Ionicons name="close" size={20} color={colors.inkMuted} />
+        </Pressable>
+      </View>
+    </SwipeRow>
   );
 }
 

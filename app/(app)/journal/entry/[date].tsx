@@ -6,7 +6,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -58,6 +58,7 @@ function EntryPhoto({ path, day }: { path: string; day: string }) {
 
 /** One journal entry, to read. The pencil opens the form. */
 export default function JournalReadScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { date } = useLocalSearchParams<{ date: string }>();
   const colors = useColors();
   const journal = useJournal();
@@ -71,6 +72,7 @@ export default function JournalReadScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title={day}
         subtitle={mood ? `Feeling ${mood.toLowerCase()}` : undefined}
         tone="daily"
@@ -99,7 +101,7 @@ export default function JournalReadScreen() {
       ) : !entry ? (
         <Text className="p-5 font-sans text-body text-ink-muted">This entry no longer exists.</Text>
       ) : (
-        <ScrollView contentContainerClassName="pb-8">
+        <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="pb-8">
           {entry.photo_path ? <EntryPhoto path={entry.photo_path} day={day} /> : null}
           <View className="gap-5 px-5 pt-4">
             <Text selectable className="font-sans text-body text-ink">

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -26,6 +26,7 @@ import {
 
 /** Add a channel by its link or @handle, or remove one. Add channel is the one primary action. */
 export default function ChannelsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const youtube = useYouTube();
   const add = useAddChannel();
@@ -79,11 +80,17 @@ export default function ChannelsScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Your channels"
         tone="daily"
         subtitle={youtube.data ? `${channels.length} of ${MAX_CHANNELS} channels` : undefined}
       />
-      <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <KeyboardScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        keyboardShouldPersistTaps="handled"
+        contentContainerClassName="gap-4 px-5 pb-8 pt-4"
+      >
         {removed ? (
           <View className="flex-row items-center gap-3 rounded-input bg-surface-muted pl-4">
             <Text className="flex-1 font-sans text-caption text-ink" accessibilityLiveRegion="polite">

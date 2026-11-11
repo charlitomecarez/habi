@@ -50,6 +50,7 @@ Do not put these items here:
 - **Todos:** The filters are one Segmented control with a count in each choice. Swipe a todo left for Done and Delete, or swipe it far to finish it. "Todo done." gives you 5 seconds to undo.
 - **Money and Vehicle:** The amount and the odometer count to the new value after a change, and the tab headers shrink as you scroll.
 - **More:** Sections have quiet labels. Rows fade out as you search, and the end of More shows the Habi mark and the version.
+- **Modules:** Module headers shrink to a small bar as you scroll. Swipe a habit left for Done, and a shopping item for Bought. The trip day strip scrolls sideways without starting a drag back.
 
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 
