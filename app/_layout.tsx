@@ -19,10 +19,11 @@ import {
 } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppState } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { SplashHandover } from "@/components/ui/SplashHandover";
 import { ringingAlarmId } from "@/lib/alarm";
 import { useColors, useIsDark, type Palette } from "@/lib/colors";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
@@ -56,6 +57,8 @@ function RootNavigator() {
     SchibstedGrotesk_900Black,
   });
   const ready = fontsLoaded && !isLoading;
+  const [handover, setHandover] = useState(true);
+  const endHandover = useCallback(() => setHandover(false), []);
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
@@ -81,16 +84,19 @@ function RootNavigator() {
 
   const signedIn = session !== null;
   return (
-    // Login to Home crossfades, because it changes stacks.
-    <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
-      <Stack.Protected guard={signedIn} redirectTo="/login">
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
-      <Stack.Protected guard={!signedIn} redirectTo="/">
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-      <Stack.Screen name="alarm-ringing" options={{ gestureEnabled: false }} />
-    </Stack>
+    <>
+      {/* Login to Home crossfades, because it changes stacks. */}
+      <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
+        <Stack.Protected guard={signedIn} redirectTo="/login">
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
+        <Stack.Protected guard={!signedIn} redirectTo="/">
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+        <Stack.Screen name="alarm-ringing" options={{ gestureEnabled: false }} />
+      </Stack>
+      {handover ? <SplashHandover onDone={endHandover} /> : null}
+    </>
   );
 }
 

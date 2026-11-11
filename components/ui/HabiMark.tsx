@@ -20,9 +20,7 @@ export function HabiMark({ size = 48, tone = "indigo", label = true }: HabiMarkP
       width={size}
       height={size}
       viewBox="0 0 32 32"
-      accessible={label}
-      accessibilityRole={label ? "image" : undefined}
-      accessibilityLabel={label ? "Habi" : undefined}
+      {...(label ? { accessible: true, accessibilityRole: "image" as const, accessibilityLabel: "Habi" } : {})}
     >
       <Rect width={32} height={32} rx={8} fill={tile} />
       <Rect x={7} y={7} width={8} height={8} rx={2} fill={square} />
