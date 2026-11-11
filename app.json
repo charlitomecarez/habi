@@ -35,7 +35,16 @@
       "expo-router",
       "expo-status-bar",
       "expo-font",
-      "expo-splash-screen",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 96,
+          "resizeMode": "contain",
+          "backgroundColor": "#23205C",
+          "dark": { "image": "./assets/splash-icon.png", "backgroundColor": "#23205C" }
+        }
+      ],
       "@react-native-community/datetimepicker",
       "expo-notifications",
       "expo-image",

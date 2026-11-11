@@ -56,15 +56,17 @@ type WeaveFieldProps = {
   className?: string;
   /** The stitch strip at the foot of the field. */
   strip?: boolean;
+  /** The field grows to fill its parent, as on login. */
+  fill?: boolean;
   /** Extra top space, such as the status bar height when the field reaches under it. */
   paddingTop?: number;
   marginTop?: number;
 };
 
 /** An indigo field with the banig weave, for login, the splash handover and the top of Home. */
-export function WeaveField({ children, className = "", strip, paddingTop, marginTop }: WeaveFieldProps) {
+export function WeaveField({ children, className = "", strip, fill, paddingTop, marginTop }: WeaveFieldProps) {
   return (
-    <View style={{ marginTop }}>
+    <View className={fill ? "flex-1" : ""} style={{ marginTop }}>
       <View className={`overflow-hidden bg-shell ${className}`} style={{ paddingTop }}>
         <Weave />
         {children}

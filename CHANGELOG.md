@@ -44,6 +44,8 @@ Do not put these items here:
 - **Headers:** Module headers are cream, with a large title beside the module icon. Tab headers stay indigo.
 - **Sheets:** A sheet rises on a spring, and you can drag it down to close it.
 - **Lists:** Segmented choices glide, can show a count, and give a light tick. Money shows a dot under the account cards for the open card.
+- **Login:** Login is indigo with the banig weave, the Habi mark and one line about the app. Continue with Google is the main button, and the email code is the second way in.
+- **App icon:** The launcher icon, the splash and the browser icon show the Habi mark with its gold tile. After the splash, the strip stitches across and the app fades in. Install the v2.0.0 APK for the new icon and splash.
 
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 
