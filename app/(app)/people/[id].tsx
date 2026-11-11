@@ -171,11 +171,7 @@ export default function PersonScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="people">
-        <Text
-          accessibilityRole="header"
-          numberOfLines={1}
-          className="min-w-0 flex-1 font-bold text-title text-on-shell"
-        >
+        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
           {person.name}
         </Text>
         <Pressable
@@ -184,7 +180,7 @@ export default function PersonScreen() {
           onPress={() => open("rename")}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.onShell} />
+          <Ionicons name="create-outline" size={22} color={colors.ink} />
         </Pressable>
       </ModuleBar>
 

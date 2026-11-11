@@ -58,7 +58,7 @@ export default function HealthScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="daily">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+        <Text accessibilityRole="header" className="font-bold text-title text-ink">
           Health
         </Text>
       </ModuleBar>

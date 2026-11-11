@@ -83,7 +83,7 @@ export default function JournalReadScreen() {
               onPress={() => router.push({ pathname: "/journal/[date]", params: { date } })}
               className="h-touch w-touch items-center justify-center"
             >
-              <Ionicons name="create-outline" size={22} color={colors.onShell} />
+              <Ionicons name="create-outline" size={22} color={colors.ink} />
             </Pressable>
           ) : undefined
         }

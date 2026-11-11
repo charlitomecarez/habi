@@ -236,11 +236,11 @@ export default function LogServiceScreen() {
       <KeyboardAvoidingView className="flex-1">
         <ModuleBar>
           <View>
-            <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+            <Text accessibilityRole="header" className="font-bold text-title text-ink">
               Log service
             </Text>
             {vehicle.data ? (
-              <Text className="font-sans text-caption text-on-shell">
+              <Text className="font-sans text-caption text-ink-muted">
                 {vehicleName(vehicle.data)} · {vehicle.data.make} {vehicle.data.model}
               </Text>
             ) : null}

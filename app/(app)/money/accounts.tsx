@@ -18,7 +18,7 @@ export default function AccountsScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar>
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+        <Text accessibilityRole="header" className="font-bold text-title text-ink">
           Money accounts
         </Text>
       </ModuleBar>

@@ -3,6 +3,7 @@ import { View, type DimensionValue } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
+  FadeOut,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -106,11 +107,17 @@ export function Skeleton({ layout = "list", rows = 6, children }: SkeletonProps)
   const pulse = useAnimatedStyle(() => ({ opacity: opacity.get() }));
 
   return (
-    <View accessible accessibilityLabel="Loading" accessibilityState={{ busy: true }}>
+    // When the data arrives, the skeleton fades out where it was while the content fades in over it.
+    <Animated.View
+      exiting={reduced ? undefined : FadeOut.duration(motion.fade)}
+      accessible
+      accessibilityLabel="Loading"
+      accessibilityState={{ busy: true }}
+    >
       <Animated.View style={pulse} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
         {children ?? <Layout layout={layout} rows={rows} />}
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 }
 

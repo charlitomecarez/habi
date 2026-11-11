@@ -93,7 +93,7 @@ export default function InventoryScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="home">
-        <Text accessibilityRole="header" className="min-w-0 flex-1 font-bold text-title text-on-shell">
+        <Text accessibilityRole="header" className="min-w-0 flex-1 font-bold text-title text-ink">
           Inventory
         </Text>
         <Pressable
@@ -101,7 +101,7 @@ export default function InventoryScreen() {
           onPress={() => router.push("/inventory/locations")}
           className="h-touch justify-center px-3"
         >
-          <Text className="font-semibold text-label text-on-shell">Locations</Text>
+          <Text className="font-semibold text-label text-ink">Locations</Text>
         </Pressable>
         <Pressable
           accessibilityRole="button"
@@ -109,7 +109,7 @@ export default function InventoryScreen() {
           onPress={() => router.push("/inventory/scan")}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="qr-code-outline" size={22} color={colors.onShell} />
+          <Ionicons name="qr-code-outline" size={22} color={colors.ink} />
         </Pressable>
       </ModuleBar>
 

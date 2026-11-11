@@ -3,13 +3,16 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { useColors } from "@/lib/colors";
 
-type Variant = "primary" | "secondary" | "destructive" | "plain";
+/** `cream` and `ghost` are only for the indigo shell: login and the top of Home. Cream is the primary there. */
+type Variant = "primary" | "secondary" | "destructive" | "plain" | "cream" | "ghost";
 
 const containerByVariant: Record<Variant, string> = {
   primary: "bg-accent active:bg-accent-strong",
   secondary: "border border-border-input bg-surface-card active:bg-surface-muted",
   destructive: "border border-border-input bg-surface-card active:bg-danger-tint",
   plain: "active:bg-surface-muted",
+  cream: "bg-on-shell active:opacity-90",
+  ghost: "border-2 border-on-shell/45 active:bg-on-shell/10",
 };
 
 const labelByVariant: Record<Variant, string> = {
@@ -17,6 +20,17 @@ const labelByVariant: Record<Variant, string> = {
   secondary: "text-ink",
   destructive: "text-danger",
   plain: "text-accent",
+  cream: "text-shell",
+  ghost: "text-on-shell",
+};
+
+const SPINNER: Record<Variant, (c: ReturnType<typeof useColors>) => string> = {
+  primary: (c) => c.onAccent,
+  secondary: (c) => c.ink,
+  destructive: (c) => c.ink,
+  plain: (c) => c.ink,
+  cream: (c) => c.shell,
+  ghost: (c) => c.onShell,
 };
 
 type ButtonProps = {
@@ -50,7 +64,7 @@ export function Button({
       className={`${size === "button" ? "h-button rounded-card" : "h-input rounded-input"} flex-row items-center justify-center gap-3 px-5 ${containerByVariant[variant]} ${inactive ? "opacity-60" : ""}`}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "primary" ? colors.onAccent : colors.ink} />
+        <ActivityIndicator color={SPINNER[variant](colors)} />
       ) : (
         <View className="flex-row items-center gap-3">
           {icon}

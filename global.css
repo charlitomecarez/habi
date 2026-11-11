@@ -30,6 +30,9 @@
   --fab-shadow: 30 27 58;
   --shell: 35 32 92;
   --on-shell: 247 239 217;
+  --on-shell-muted: 207 200 232;
+  /* The brand gold: the mark and the stitch strip on the shell. A watch status always has its word. */
+  --gold: 245 179 1;
   --good: 11 122 85;
   --watch: 138 90 0;
   --over: 180 16 90;
@@ -75,6 +78,8 @@
     --fab-shadow: 0 0 0;
     --shell: 42 38 112;
     --on-shell: 247 239 217;
+    --on-shell-muted: 207 200 232;
+    --gold: 245 179 1;
     --good: 63 214 162;
     --watch: 245 179 1;
     --over: 255 111 168;

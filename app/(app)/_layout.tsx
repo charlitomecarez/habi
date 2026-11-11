@@ -3,6 +3,7 @@ import { Stack } from "expo-router/js-stack";
 import { useEffect, useMemo } from "react";
 import { View } from "react-native";
 
+import { SnackbarHost } from "@/components/ui/Snackbar";
 import { useWeightsFromHealthConnect } from "@/lib/health-weights";
 import { useReduceMotion } from "@/lib/motion";
 import { onPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
@@ -141,6 +142,7 @@ export default function AppLayout() {
         <Stack.Screen name="content/video/new" options={rise} />
         <Stack.Screen name="content/video/edit/[id]" options={rise} />
       </Stack>
+      <SnackbarHost />
     </View>
   );
 }
