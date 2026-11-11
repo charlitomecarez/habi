@@ -68,6 +68,10 @@ describe("optional modules", () => {
     expect(ALL_MODULES.filter((m) => m.needs).map((m) => m.id)).toEqual(["sports", "movies", "inbox", "work"]);
   });
 
+  it("shows YouTube on every server, because it needs no key", () => {
+    expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false, sports: false, ai: false } })).toContain("youtube");
+  });
+
   it("hides Movies when the server has no TMDB key", () => {
     expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false } })).not.toContain("movies");
     expect(ids(on)).toContain("movies");

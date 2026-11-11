@@ -13,6 +13,7 @@ vi.mock("@/lib/journal", () => ({ useJournal: vi.fn() }));
 vi.mock("@/lib/weather", () => ({ useWeather: vi.fn() }));
 vi.mock("@/lib/news", () => ({ useNews: vi.fn() }));
 vi.mock("@/lib/movies", () => ({ useMovies: vi.fn() }));
+vi.mock("@/lib/youtube", () => ({ useYouTube: vi.fn() }));
 
 describe("countText", () => {
   it("shows only the number", () => {

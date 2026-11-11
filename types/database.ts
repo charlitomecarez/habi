@@ -2844,6 +2844,75 @@ export type Database = {
           },
         ];
       };
+      youtube_channels: {
+        Row: {
+          channel_id: string;
+          created_at: string;
+          id: string;
+          title: string;
+          user_id: string;
+        };
+        Insert: {
+          channel_id: string;
+          created_at?: string;
+          id?: string;
+          title: string;
+          user_id?: string;
+        };
+        Update: {
+          channel_id?: string;
+          created_at?: string;
+          id?: string;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      youtube_feeds: {
+        Row: {
+          channel_id: string;
+          last_error_at: string | null;
+          last_ok_at: string | null;
+        };
+        Insert: {
+          channel_id: string;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Update: {
+          channel_id?: string;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Relationships: [];
+      };
+      youtube_videos: {
+        Row: {
+          channel_id: string;
+          duration_s: number | null;
+          published_at: string;
+          title: string;
+          updated_at: string;
+          video_id: string;
+        };
+        Insert: {
+          channel_id: string;
+          duration_s?: number | null;
+          published_at: string;
+          title: string;
+          updated_at?: string;
+          video_id: string;
+        };
+        Update: {
+          channel_id?: string;
+          duration_s?: number | null;
+          published_at?: string;
+          title?: string;
+          updated_at?: string;
+          video_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       debt_balances: {

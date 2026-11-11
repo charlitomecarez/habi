@@ -36,7 +36,7 @@ All tokens are in `tailwind.config.js`. Colour values are in `global.css` (light
 
 - **Colours:** `surface-page`, `surface-card`, `surface-muted`, `border`, `border-input`, `border-dashed`, `divider`, `ink`, `ink-muted`, `on-accent`, `accent`, `accent-strong`, `accent-tint`, `warning`, `warning-tint`, `warning-ink`, `danger`, `danger-tint`, `fab-shadow`, `scrim`.
 - **Section colours:** `daily`, `people`, `home`, `records`, each with a `-tint`. The colour on its tint passes 4.5:1 in light and dark. They are in `global.css` and `lib/colors.ts`.
-- **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes.
+- **Fixed colours:** `label-paper` (white) and `label-ink` (black). Only the printed QR label uses them, so a camera can read it in both themes. `media-label` and `on-media-label` are for a label on a photo, such as a video length; they also stay the same in both themes.
 - **Font families:** Schibsted Grotesk. `font-sans` (400), `font-medium` (500), `font-semibold` (700), `font-bold` (900).
 - **Font sizes:** `say` 30, `display` 34, `amount-input` 32, `amount` 20, `title-lg` 26, `title` 20, `heading` 16, `body` 16, `row-title` 16, `label` 14, `caption` 13, `badge` 12, `tab-label` 11.
 - **Spacing:** `1`–`6` and `8` (4 px steps), `bar` 6, `chip` 40, `touch` 48, `input` 52, `button` 56, `slot` 64, `amount` 72, `fab-clear` 112 (space under a list with a FAB), `bank-card` 176, `field-sm` 110, `tile` 112.

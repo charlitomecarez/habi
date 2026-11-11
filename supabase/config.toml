@@ -497,3 +497,11 @@ verify_jwt = false
 # Called by pg_cron with the x-cron-secret header, not a user JWT.
 [functions.movies-sync]
 verify_jwt = false
+
+# Called by a signed-in app. It saves the channel as the caller, so owner RLS applies.
+[functions.youtube-channel]
+verify_jwt = true
+
+# Called by pg_cron with the x-cron-secret header, not a user JWT.
+[functions.youtube-sync]
+verify_jwt = false

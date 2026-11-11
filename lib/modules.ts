@@ -96,6 +96,14 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         needs: "movies",
       },
       {
+        id: "youtube",
+        label: "YouTube",
+        href: "/youtube",
+        icon: { name: "play-circle-outline" },
+        tone: "daily",
+        keywords: "video channel vlog",
+      },
+      {
         id: "weather",
         label: "Weather",
         href: "/weather",
