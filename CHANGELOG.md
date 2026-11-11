@@ -37,6 +37,7 @@ Do not put these items here:
 
 ### Added
 
+- YouTube in Daily life: the new videos of the channels you follow, newest first. Add a channel by its link or @handle.
 - Movies in Daily life: the films in Philippine cinemas now and the next ones, from TMDB, with a film screen and its trailer.
 - F1 and MotoGP in Sports: the next race in PHT, the last result, the rounds and the standings. A Show on Home switch puts the next race and the winner in Home Games.
 - Unit coverage gate at 80% of lines in CI, web E2E tests with Playwright, and five Maestro phone flows. See `docs/testing.md`.
