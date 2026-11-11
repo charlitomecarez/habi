@@ -9,7 +9,8 @@
 - Section colours are for icons, tiles and module header fields. They never show status.
 - Cards are only for objects that you act on. Rows use 2 px rules and space.
 - The assistant says "I" in its sentences and empty states. Buttons and labels stay plain.
-- Motion stays short and stops when the phone's reduce-motion setting is on. Use `FadeIn` and `PressScale`.
+- Motion uses the names in `lib/motion.ts`. Screens slide, sheets rise, indicators glide. Reduce motion turns each move into a short fade. A screen never sets a duration; `lib/motion.test.ts` checks it.
+- Haptics are one light tick from `tick()` in `lib/haptics.ts`: a todo or a habit is done, a swipe action fires, a sheet snaps shut, a switch or a Segmented choice changes, a long press opens a menu.
 - A touch target is at least 48 px (`h-touch`). An icon-only button needs an `accessibilityLabel`.
 - A status always has a word (Overdue, Today, Due soon), and one colour: `good`, `watch` or `over`. These colours mean nothing else.
 - Long text wraps. Only row titles may end with "…", and numbers never do. Tab labels stop growing at 1.3 times.

@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 
+import { ease, motion } from "@/lib/motion";
 import { weaveSummary, type Strand, type WeaveRow } from "@/lib/weave";
 
-const WEAVE_MS = 300;
 const DAY_LETTERS = ["M", "T", "W", "T", "F", "S", "S"];
 
 /** Solid is good, split is watch, a dot is over. Each state has a shape, so it never relies on colour. */
@@ -33,7 +33,7 @@ function TodayStrand({ state }: { state: Strand }) {
   const reduced = useReducedMotion();
   const width = useSharedValue(reduced ? 100 : 0);
   useEffect(() => {
-    width.set(reduced ? 100 : withTiming(100, { duration: WEAVE_MS }));
+    width.set(reduced ? 100 : withTiming(100, { duration: motion.pushIn, easing: ease }));
   }, [reduced, width]);
   const animated = useAnimatedStyle(() => ({ width: `${width.get()}%` }));
   return (

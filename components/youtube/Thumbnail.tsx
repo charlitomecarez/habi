@@ -3,9 +3,8 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 
+import { motion } from "@/lib/motion";
 import { durationText, thumbUrl } from "@/lib/youtube";
-
-const FADE_MS = 150;
 
 /**
  * A video thumbnail at 16:9, with the length on it when the feed gives one. A failed image keeps the
@@ -26,7 +25,7 @@ export function Thumbnail({ videoId, seconds }: { videoId: string; seconds: numb
           source={{ uri: thumbUrl(videoId) }}
           contentFit="cover"
           cachePolicy="disk"
-          transition={reduced ? 0 : FADE_MS}
+          transition={reduced ? 0 : motion.fade}
           onError={() => setFailed(true)}
           style={{ width: "100%", height: "100%" }}
           accessible={false}

@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import { StyleSheet, View } from "react-native";
 
 import { useColors } from "@/lib/colors";
+import { motion, useReduceMotion } from "@/lib/motion";
 
 type ItemPhotoProps = {
   uri: string | null | undefined;
@@ -17,6 +18,7 @@ type ItemPhotoProps = {
 
 /** A photo inside a bordered frame, or a placeholder icon when there is none. */
 export function ItemPhoto({ uri, className, label, iconSize = 20, cacheKey }: ItemPhotoProps) {
+  const reduced = useReduceMotion();
   const colors = useColors();
   return (
     <View
@@ -30,7 +32,7 @@ export function ItemPhoto({ uri, className, label, iconSize = 20, cacheKey }: It
           cachePolicy="disk"
           style={StyleSheet.absoluteFill}
           contentFit="cover"
-          transition={150}
+          transition={reduced ? 0 : motion.fade}
         />
       ) : (
         <Ionicons name="cube-outline" size={iconSize} color={colors.inkMuted} />
