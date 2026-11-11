@@ -1,0 +1,12 @@
+appId: com.charli.myapp
+---
+# A drag down on a sheet's title closes it. A vehicle must exist.
+- launchApp
+- tapOn: "Vehicle"
+- tapOn: "Update odometer"
+- assertVisible: "Update odometer"
+- swipe:
+    from: "Update odometer"
+    direction: DOWN
+    duration: 400
+- assertNotVisible: "Save reading"
