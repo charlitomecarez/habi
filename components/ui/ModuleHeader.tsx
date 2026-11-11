@@ -1,14 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { usePathname } from "expo-router";
 import type { ReactNode } from "react";
-import { Pressable, Text, View } from "react-native";
-import Animated, {
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  type SharedValue,
-} from "react-native-reanimated";
+import { Pressable, Text, View, type NativeScrollEvent, type NativeSyntheticEvent } from "react-native";
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, type SharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { TileGlyph } from "@/components/ui/ModuleTile";
@@ -29,14 +23,15 @@ const TINT: Record<Exclude<HeaderTone, "shell">, string> = {
 };
 
 /**
- * The scroll position for a header that shrinks. Pass `onScroll` to an `Animated.ScrollView` or
- * `Animated.FlatList` with `scrollEventThrottle={16}`, and `scrollY` to the header.
+ * The scroll position for a header that shrinks. Pass `onScroll` to the screen's `ScrollView` or
+ * `FlatList` with `scrollEventThrottle={16}`, and `scrollY` to the header. A plain ScrollView keeps
+ * its NativeWind classes, which an Animated.ScrollView would lose.
  */
 export function useHeaderScroll() {
   const scrollY = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler((event) => {
-    scrollY.set(event.contentOffset.y);
-  });
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollY.set(event.nativeEvent.contentOffset.y);
+  };
   return { scrollY, onScroll };
 }
 
@@ -181,14 +176,20 @@ export function TabField({
   const insets = useSafeAreaInsets();
   const still = useSharedValue(0);
   const offset = scrollY ?? still;
-  // Title (20) over display (34): the lead scales down from its left edge.
-  const leadStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(offset.get(), [0, SHRINK_AT], [1, 20 / 34], "clamp") }],
-  }));
+  const leadHeight = useSharedValue(0);
+  // Title (20) over display (34): the lead scales down from its left edge, and its row gets shorter.
+  const leadStyle = useAnimatedStyle(() => {
+    const scale = interpolate(offset.get(), [0, SHRINK_AT], [1, 20 / 34], "clamp");
+    const full = leadHeight.get();
+    return { transform: [{ scale }], height: full === 0 ? undefined : full * scale };
+  });
   return (
     <View className="gap-1 bg-shell px-5 pb-4" style={{ marginTop: -insets.top, paddingTop: insets.top + 16 }}>
-      <Animated.View style={[{ transformOrigin: "left center" }, leadStyle]}>
+      <Animated.View style={[{ transformOrigin: "left top" }, leadStyle]}>
         <Text
+          onLayout={(event) => {
+            if (leadHeight.get() === 0) leadHeight.set(event.nativeEvent.layout.height);
+          }}
           accessibilityRole="header"
           adjustsFontSizeToFit
           minimumFontScale={0.7}

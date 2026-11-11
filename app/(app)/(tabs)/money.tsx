@@ -15,7 +15,8 @@ import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { DataRow, type RowStatus } from "@/components/ui/DataRow";
 import { Fab } from "@/components/ui/Fab";
-import { TabField } from "@/components/ui/ModuleHeader";
+import { useCountTo } from "@/components/ui/Motion";
+import { TabField, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useBudgetMonths } from "@/lib/budgets";
@@ -122,18 +123,21 @@ export default function MoneyScreen() {
   const renewing = (subscriptions.data ?? []).filter((s) => daysUntil(s.next_billing_on, now) <= RENEWAL_LIST_DAYS);
 
   const error = accounts.error ?? month.error ?? recent.error ?? subscriptions.error ?? categories.error;
+  const lead = useCountTo(hasBudget ? moneyLeft : total);
+  const { scrollY, onScroll } = useHeaderScroll();
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <TabField
-        lead={hasBudget ? `${formatPeso(moneyLeft)} left` : formatPeso(total)}
+        lead={accounts.isPending ? "—" : hasBudget ? `${formatPeso(lead)} left` : formatPeso(lead)}
+        scrollY={scrollY}
         detail={
           hasBudget
             ? `This month, from your budgets · ${formatPeso(month.data?.spent ?? 0)} spent`
             : `Total balance · ${formatPeso(month.data?.spent ?? 0)} spent this month`
         }
       />
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
         {accounts.isPending ? (
           <Skeleton />
         ) : error ? (

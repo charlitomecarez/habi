@@ -56,7 +56,7 @@ type WeaveBandProps = {
 /** The week as a mat: a row for each area of life, and a strand for each day. */
 export function WeaveBand({ rows, todayIndex, onDayPress }: WeaveBandProps) {
   return (
-    <View className="gap-1 bg-shell px-4 pb-3 pt-1">
+    <View className="gap-1 px-4 pb-3 pt-1">
       <View>
         <View className="gap-1">
           {rows.map((row) => (

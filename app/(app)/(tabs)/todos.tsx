@@ -5,13 +5,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TodoRow } from "@/components/todos/TodoRow";
 import { Button } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Chip";
+import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
-import { TabField } from "@/components/ui/ModuleHeader";
+import { TabField, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
+import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { groupTodos, isOverdue, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
+import { showSnackbar } from "@/lib/snackbar";
+import { groupTodos, isOverdue, useDeleteTodo, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
 
 type Filter = "all" | "today" | "upcoming" | "done";
 
@@ -29,7 +31,15 @@ const EMPTY_TEXT: Record<Filter, string> = {
   done: "No todos finished in the last 30 days.",
 };
 
-function TodoList({ todos, onToggle }: { todos: Todo[]; onToggle: (todo: Todo) => void }) {
+function TodoList({
+  todos,
+  onToggle,
+  onDelete,
+}: {
+  todos: Todo[];
+  onToggle: (todo: Todo) => void;
+  onDelete: (todo: Todo) => void;
+}) {
   return (
     <View>
       {todos.map((todo, index) => (
@@ -38,6 +48,7 @@ function TodoList({ todos, onToggle }: { todos: Todo[]; onToggle: (todo: Todo) =
           todo={todo}
           last={index === todos.length - 1}
           onToggle={() => onToggle(todo)}
+          onDelete={() => onDelete(todo)}
           onOpen={() => router.push({ pathname: "/todo/[id]", params: { id: todo.id } })}
         />
       ))}
@@ -49,6 +60,9 @@ export default function TodosScreen() {
   const [filter, setFilter] = useState<Filter>("all");
   const { data, isPending, error, refetch } = useTodos();
   const toggle = useToggleTodo();
+  const remove = useDeleteTodo();
+  const [deleting, setDeleting] = useState<Todo | null>(null);
+  const { scrollY, onScroll } = useHeaderScroll();
 
   const groups = groupTodos(data ?? []);
   const overdueCount = (data ?? []).filter((t) => isOverdue(t)).length;
@@ -61,26 +75,39 @@ export default function TodosScreen() {
     { title: "Later", todos: filter === "all" || filter === "upcoming" ? groups.upcoming : [] },
     { title: "", todos: filter === "done" ? groups.done : [] },
   ].filter((section) => section.todos.length > 0);
-  const onToggle = (todo: Todo) => toggle.mutate({ id: todo.id, done: !todo.completed_at });
+  const openCount = (data ?? []).filter((t) => !t.completed_at).length;
+  const counts: Record<Filter, number> = {
+    all: openCount,
+    today: todayCount,
+    upcoming: groups.upcoming.length,
+    done: groups.done.length,
+  };
+  const onToggle = (todo: Todo) => {
+    const done = !todo.completed_at;
+    toggle.mutate({ id: todo.id, done });
+    if (done) {
+      showSnackbar({
+        text: "Todo done.",
+        actionLabel: "Undo",
+        onAction: () => toggle.mutate({ id: todo.id, done: false }),
+      });
+    }
+  };
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <TabField
         lead={data ? `${todayCount} left today` : "Todos"}
         detail={overdueCount > 0 ? `${overdueCount} overdue` : undefined}
+        scrollY={scrollY}
       />
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
-        <View accessibilityRole="radiogroup" accessibilityLabel="Filter" className="flex-row flex-wrap gap-2">
-          {FILTERS.map((f) => (
-            <Chip
-              key={f.value}
-              label={f.label}
-              variant="filter"
-              selected={filter === f.value}
-              onPress={() => setFilter(f.value)}
-            />
-          ))}
-        </View>
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
+        <Segmented
+          label="Filter"
+          options={FILTERS.map((f) => ({ ...f, count: data ? counts[f.value] : undefined }))}
+          value={filter}
+          onChange={setFilter}
+        />
 
         {isPending ? (
           <Skeleton />
@@ -107,13 +134,25 @@ export default function TodosScreen() {
                   {section.title}
                 </Text>
               ) : null}
-              <TodoList todos={section.todos} onToggle={onToggle} />
+              <TodoList todos={section.todos} onToggle={onToggle} onDelete={setDeleting} />
             </View>
           ))
         )}
       </ScrollView>
 
       <Fab label="Add todo" onPress={() => router.push("/todo/new")} />
+      <ConfirmSheet
+        visible={deleting !== null}
+        title="Delete this todo?"
+        body={deleting ? `“${deleting.title}” is deleted. You cannot undo this.` : undefined}
+        confirmLabel="Delete todo"
+        loading={remove.isPending}
+        onClose={() => setDeleting(null)}
+        onConfirm={async () => {
+          if (deleting) await remove.mutateAsync(deleting.id);
+          setDeleting(null);
+        }}
+      />
     </SafeAreaView>
   );
 }

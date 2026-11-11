@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from "react-native";
 import Animated, {
   FadeIn as FadeInAnimation,
@@ -47,4 +47,34 @@ export function PressScale({ wrapperStyle, onPressIn, onPressOut, ...props }: Pr
       />
     </Animated.View>
   );
+}
+
+/**
+ * A number that counts to its new value when it changes on screen, such as a balance after a save.
+ * The first value shows at once. With reduce motion on, every value shows at once.
+ */
+export function useCountTo(value: number): number {
+  const reduced = useReducedMotion();
+  const [shown, setShown] = useState(value);
+  const from = useRef(value);
+
+  useEffect(() => {
+    const start = from.current;
+    from.current = value;
+    if (reduced || start === value) {
+      setShown(value);
+      return;
+    }
+    const began = Date.now();
+    let frame = requestAnimationFrame(function step() {
+      const t = Math.min(1, (Date.now() - began) / motion.count);
+      // Ease out: a quick start with a soft stop.
+      const eased = 1 - (1 - t) ** 3;
+      setShown(Math.round(start + (value - start) * eased));
+      if (t < 1) frame = requestAnimationFrame(step);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [value, reduced]);
+
+  return shown;
 }
