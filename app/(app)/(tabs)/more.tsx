@@ -2,7 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
+import Animated, { FadeIn as FadeInAnimation, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Constants from "expo-constants";
 
 import { ReportSheet } from "@/components/more/ReportSheet";
 import { SettingsSection } from "@/components/settings/SettingsSection";
@@ -10,21 +12,17 @@ import { Button } from "@/components/ui/Button";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleLine } from "@/components/ui/ModuleLine";
 import { FadeIn } from "@/components/ui/Motion";
+import { HabiMark } from "@/components/ui/HabiMark";
 import { TabField } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
+import { motion, useReduceMotion } from "@/lib/motion";
 import { useModuleDetails } from "@/lib/module-details";
 import { useModuleFilter } from "@/lib/features";
 import { searchModules, visibleSections } from "@/lib/modules";
 
-const SECTION_FIELD: Record<string, string> = {
-  daily: "bg-daily-field",
-  people: "bg-people-field",
-  home: "bg-home-field",
-  records: "bg-records-field",
-};
-
 export default function MoreScreen() {
   const colors = useColors();
+  const reduced = useReduceMotion();
   const [query, setQuery] = useState("");
   const filter = useModuleFilter();
   const sections = visibleSections(searchModules(query), filter);
@@ -65,28 +63,33 @@ export default function MoreScreen() {
           <View className="gap-4">
             {sections.map((section) => (
               <View key={section.title}>
-                <Text
-                  accessibilityRole="header"
-                  className={`px-5 py-2 font-bold text-label text-on-shell ${SECTION_FIELD[section.modules[0].tone] ?? "bg-shell"}`}
-                >
+                <Text accessibilityRole="header" className="px-5 pb-1 pt-2 font-semibold text-label text-ink-muted">
                   {section.title}
                 </Text>
                 <View className="flex-row flex-wrap px-5">
                   {section.modules.map((m) => (
-                    <ModuleLine
+                    // Rows that leave the search fade out, and rows that come back fade in.
+                    <Animated.View
                       key={m.id}
-                      label={m.label}
-                      icon={m.icon}
-                      tone={m.tone}
-                      detail={details[m.id]}
-                      onPress={() => router.push(m.href)}
-                    />
+                      style={{ width: "50%" }}
+                      entering={reduced ? undefined : FadeInAnimation.duration(motion.fade)}
+                      exiting={reduced ? undefined : FadeOut.duration(motion.fade)}
+                    >
+                      <ModuleLine
+                        fill
+                        label={m.label}
+                        icon={m.icon}
+                        tone={m.tone}
+                        detail={details[m.id]}
+                        onPress={() => router.push(m.href)}
+                      />
+                    </Animated.View>
                   ))}
                 </View>
               </View>
             ))}
             {sections.length === 0 ? (
-              <Text className="px-5 font-sans text-label text-ink-muted">No module matches “{query.trim()}”.</Text>
+              <Text className="px-5 font-sans text-label text-ink-muted">No module named “{query.trim()}”.</Text>
             ) : null}
           </View>
         </FadeIn>
@@ -100,6 +103,14 @@ export default function MoreScreen() {
 
         <View className="px-5">
           <SettingsSection />
+        </View>
+
+        <View accessible className="flex-row items-center gap-3 px-5">
+          <HabiMark size={32} label={false} />
+          <View className="min-w-0 flex-1">
+            <Text className="font-semibold text-label text-ink">Habi {Constants.expoConfig?.version}</Text>
+            <Text className="font-sans text-caption text-ink-muted">Habi is Tagalog for “weave”.</Text>
+          </View>
         </View>
       </KeyboardScrollView>
       <ReportSheet visible={reporting} onClose={() => setReporting(false)} />
