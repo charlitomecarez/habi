@@ -12,6 +12,7 @@ import { AmountInput } from "@/components/ui/AmountInput";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -75,6 +76,7 @@ export function ItemForm({
       notes: item?.notes ?? "",
     },
   });
+  const discard = useDiscardGuard(formState.isDirty, "The item is not saved.");
   const name = useWatch({ control, name: "name" });
 
   const savedUri = item?.photo_path ? (savedPhoto.data?.[item.photo_path] ?? null) : null;
@@ -109,12 +111,14 @@ export function ItemForm({
       },
       photo,
     });
+    discard.allowLeave();
     goBack();
   });
 
   async function onDelete() {
     if (!item) return;
     await remove.mutateAsync(item);
+    discard.allowLeave();
     goBack();
   }
 
@@ -291,6 +295,7 @@ export function ItemForm({
         locations={locations.data ?? []}
         onAdded={(id) => setValue("locationId", id)}
       />
+      {discard.sheet}
     </SafeAreaView>
   );
 }

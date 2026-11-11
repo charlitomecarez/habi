@@ -11,18 +11,29 @@ type ConfirmSheetProps = {
   body?: string;
   /** The destructive action, such as "Delete debt". */
   confirmLabel: string;
+  /** The safe choice. Default "Cancel". */
+  cancelLabel?: string;
   loading?: boolean;
   onConfirm: () => void;
   onClose: () => void;
 };
 
 /** A destructive choice in a bottom sheet, so every choice in the app opens the same way. Back and the scrim cancel. */
-export function ConfirmSheet({ visible, title, body, confirmLabel, loading, onConfirm, onClose }: ConfirmSheetProps) {
+export function ConfirmSheet({
+  visible,
+  title,
+  body,
+  confirmLabel,
+  cancelLabel = "Cancel",
+  loading,
+  onConfirm,
+  onClose,
+}: ConfirmSheetProps) {
   return (
     <Sheet visible={visible} onClose={onClose} title={title}>
       {body ? <Text className="font-sans text-body text-ink">{body}</Text> : null}
       <Button label={confirmLabel} variant="destructive" loading={loading} onPress={onConfirm} />
-      <Button label="Cancel" variant="secondary" onPress={onClose} />
+      <Button label={cancelLabel} variant="secondary" onPress={onClose} />
     </Sheet>
   );
 }

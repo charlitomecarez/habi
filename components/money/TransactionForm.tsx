@@ -11,6 +11,7 @@ import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -118,6 +119,7 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
     resolver: zodResolver(schema),
     defaultValues: defaults(transaction, prefill, accountOptions[0]?.value ?? ""),
   });
+  const discard = useDiscardGuard(formState.isDirty, "The transaction is not saved.");
   const values = useWatch({ control }) as FormValues;
   const kind = values.kind;
   const accountId = values.accountId;
@@ -158,12 +160,14 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
         note: v.note.trim() || null,
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
   async function onDelete() {
     if (!transaction) return;
     await remove.mutateAsync(transaction.id);
+    discard.allowLeave();
     goBack();
   }
 
@@ -363,6 +367,7 @@ export function TransactionForm({ transaction, prefill = {} }: TransactionFormPr
           />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

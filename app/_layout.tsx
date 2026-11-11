@@ -21,6 +21,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AppState } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { ringingAlarmId } from "@/lib/alarm";
 import { useColors, useIsDark, type Palette } from "@/lib/colors";
@@ -80,7 +81,8 @@ function RootNavigator() {
 
   const signedIn = session !== null;
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    // Login to Home crossfades, because it changes stacks.
+    <Stack screenOptions={{ headerShown: false, animation: "fade" }}>
       <Stack.Protected guard={signedIn} redirectTo="/login">
         <Stack.Screen name="(app)" />
       </Stack.Protected>
@@ -96,15 +98,17 @@ export default function RootLayout() {
   const dark = useIsDark();
   const colors = useColors();
   return (
-    <KeyboardProvider>
-      <ThemeProvider value={navigationTheme(dark, colors)}>
-        <AuthProvider>
-          <QueryProvider>
-            <StatusBar style="auto" />
-            <RootNavigator />
-          </QueryProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </KeyboardProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardProvider>
+        <ThemeProvider value={navigationTheme(dark, colors)}>
+          <AuthProvider>
+            <QueryProvider>
+              <StatusBar style="auto" />
+              <RootNavigator />
+            </QueryProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </KeyboardProvider>
+    </GestureHandlerRootView>
   );
 }

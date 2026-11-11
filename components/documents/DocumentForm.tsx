@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -55,6 +56,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
       note: doc?.note ?? "",
     },
   });
+  const discard = useDiscardGuard(formState.isDirty, "The document is not saved.");
   const type = useWatch({ control, name: "type" });
   const v = vehicle.data;
   const remindOptions = REMIND_OPTIONS.some((o) => o.value === getValues("remindDaysBefore"))
@@ -78,6 +80,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
         note: f.note.trim() || null,
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -198,6 +201,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
           <Button label="Save document" loading={formState.isSubmitting} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

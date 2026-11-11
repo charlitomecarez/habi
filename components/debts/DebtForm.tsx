@@ -10,6 +10,7 @@ import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -50,6 +51,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
       note: debt?.note ?? "",
     },
   });
+  const discard = useDiscardGuard(formState.isDirty, "The debt is not saved.");
 
   const typed = (useWatch({ control, name: "personName" }) ?? "").trim().toLowerCase();
   const all = people.data?.people ?? [];
@@ -68,6 +70,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
         note: v.note.trim() || null,
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -179,6 +182,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
           <Button label="Save debt" loading={formState.isSubmitting} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

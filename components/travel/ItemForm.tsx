@@ -13,6 +13,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -78,6 +79,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
       documentId: item?.document_id ?? null,
     },
   });
+  const discard = useDiscardGuard(formState.isDirty, "The plan item is not saved.");
 
   const onSubmit = handleSubmit(async (v) => {
     await save.mutateAsync({
@@ -97,6 +99,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
         document_id: v.documentId,
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -302,6 +305,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
                 loading={remove.isPending}
                 onPress={async () => {
                   await remove.mutateAsync(item.id);
+                  discard.allowLeave();
                   goBack();
                 }}
               />
@@ -319,6 +323,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
       {item && costPhp !== null ? (
         <MarkPaidSheet visible={paying} onClose={() => setPaying(false)} itemId={item.id} amount={costPhp} />
       ) : null}
+      {discard.sheet}
     </SafeAreaView>
   );
 }

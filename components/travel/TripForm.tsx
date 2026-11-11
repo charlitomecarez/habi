@@ -9,6 +9,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -54,6 +55,7 @@ export function TripForm({ trip }: { trip?: Trip }) {
       note: trip?.note ?? "",
     },
   });
+  const discard = useDiscardGuard(formState.isDirty, "The trip is not saved.");
 
   const onSubmit = handleSubmit(async (v) => {
     const id = await save.mutateAsync({
@@ -67,6 +69,7 @@ export function TripForm({ trip }: { trip?: Trip }) {
         note: v.note.trim() || null,
       },
     });
+    discard.allowLeave();
     if (trip) goBack();
     else router.replace({ pathname: "/travel/[id]", params: { id } });
   });
@@ -158,6 +161,7 @@ export function TripForm({ trip }: { trip?: Trip }) {
           <Button label="Save trip" loading={formState.isSubmitting} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }
