@@ -35,6 +35,8 @@ Do not put these items here:
 
 ## Unreleased
 
+## [v1.5.0](docs/releases/v1.5.0.md) - 2026-11-11
+
 ### Added
 
 - **Health:** A 6 PM health check gives you 1 to 3 tips each evening from your sleep, steps and weight trend. It is off until you turn it on in Steps and sleep. While it is on, your sleep and steps go to your account and, with no name, to Groq. Turning it off deletes them.
