@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import type { SheetOption } from "@/components/ui/OptionSheet";
@@ -98,7 +99,7 @@ export function AddVehicleSheet({ visible, onClose }: { visible: boolean; onClos
           />
         )}
       />
-      {addVehicle.error ? <Notice tone="danger">{addVehicle.error.message}</Notice> : null}
+      {addVehicle.error ? <ErrorNotice error={addVehicle.error} /> : null}
       <Button label="Add vehicle" loading={formState.isSubmitting} disabled={!model} onPress={onSubmit} />
     </Sheet>
   );

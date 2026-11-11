@@ -7,8 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { goBack } from "@/lib/navigation";
@@ -115,7 +115,7 @@ export default function ImportStatementScreen() {
           <Text className="text-center font-sans text-body text-ink-muted">
             Choose a GoTyme, GCash or MariBank PDF. You review each row before anything saves.
           </Text>
-          {read.error ? <Notice tone="danger">{read.error.message}</Notice> : null}
+          {read.error ? <ErrorNotice error={read.error} /> : null}
           <Button label="Choose PDF" onPress={onPick} />
         </View>
       ) : (
@@ -198,7 +198,7 @@ export default function ImportStatementScreen() {
           </ScrollView>
 
           <View className="gap-2 border-t-2 border-border px-5 pb-6 pt-3">
-            {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+            {save.error ? <ErrorNotice error={save.error} /> : null}
             <Button
               label={`Save ${ticked.length} ${ticked.length === 1 ? "transaction" : "transactions"}`}
               loading={save.isPending}

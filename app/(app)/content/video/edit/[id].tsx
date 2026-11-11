@@ -6,6 +6,7 @@ import { VideoForm } from "@/components/content/VideoForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useVideo } from "@/lib/content";
 
@@ -21,7 +22,7 @@ export default function EditVideoScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{video.error ? video.error.message : "This video was deleted."}</Notice>
+          <Notice tone="danger">{video.error ? errorText(video.error) : "This video was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

@@ -5,8 +5,8 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { moodLabel, useJournal } from "@/lib/journal";
@@ -35,7 +35,7 @@ export default function JournalScreen() {
           <Skeleton />
         ) : journal.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your journal. {journal.error.message}</Notice>
+            <ErrorNotice lead="Could not load your journal." error={journal.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => journal.refetch()} />
           </View>
         ) : (

@@ -6,13 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { tick } from "@/lib/haptics";
 import { day, isScheduled, scheduleText, streak, useHabits, useToggleCheck, weekCount, type Habit } from "@/lib/habits";
+import { showSnackbar } from "@/lib/snackbar";
 
 function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: boolean }) {
   const colors = useColors();
@@ -22,7 +24,10 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
   const s = streak(h, checks);
   const setDone = (next: boolean) => {
     if (next) tick();
-    toggle.mutate({ habitId: h.id, date: today, done: next });
+    toggle.mutate(
+      { habitId: h.id, date: today, done: next },
+      { onError: (e) => showSnackbar({ text: `Could not save. ${errorText(e)}`, tone: "error" }) },
+    );
   };
   return (
     <View className={`flex-row items-center ${last ? "" : "border-b-2 border-border"}`}>
@@ -88,7 +93,7 @@ export default function HabitsScreen() {
           <Skeleton />
         ) : habits.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your habits. {habits.error.message}</Notice>
+            <ErrorNotice lead="Could not load your habits." error={habits.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => habits.refetch()} />
           </View>
         ) : list.length === 0 ? (

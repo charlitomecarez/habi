@@ -9,10 +9,10 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { goBack } from "@/lib/navigation";
@@ -197,7 +197,7 @@ export function DocumentForm({ doc }: { doc?: DocumentRow }) {
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+          {save.error ? <ErrorNotice error={save.error} /> : null}
           <Button label="Save document" loading={formState.isSubmitting} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>

@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { copyText } from "@/lib/clipboard";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
@@ -87,7 +89,7 @@ export default function VideoScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{video.error ? video.error.message : "This video was deleted."}</Notice>
+            <Notice tone="danger">{video.error ? errorText(video.error) : "This video was deleted."}</Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -156,7 +158,7 @@ export default function VideoScreen() {
       </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
-        {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+        {failure ? <ErrorNotice error={failure} /> : null}
 
         <View className="gap-3">
           <View className="flex-row flex-wrap items-center gap-2">

@@ -2,9 +2,9 @@ import { format } from "date-fns";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { Button } from "@/components/ui/Button";
-import { Notice } from "@/components/ui/Notice";
 import { goBack } from "@/lib/navigation";
 import { useUserSettings } from "@/lib/settings";
 import { todayChoice, useSaveUlamDay, useUlamDays } from "@/lib/ulam";
@@ -38,7 +38,7 @@ export default function HowToCookScreen() {
             </View>
           ))}
         </View>
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        {save.error ? <ErrorNotice error={save.error} /> : null}
         {eaten ? null : (
           <Button
             label="I ate this"

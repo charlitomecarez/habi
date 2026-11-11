@@ -51,6 +51,8 @@ Do not put these items here:
 - **Money and Vehicle:** The amount and the odometer count to the new value after a change, and the tab headers shrink as you scroll.
 - **More:** Sections have quiet labels. Rows fade out as you search, and the end of More shows the Habi mark and the version.
 - **Modules:** Module headers shrink to a small bar as you scroll. Swipe a habit left for Done, and a shopping item for Bought. The trip day strip scrolls sideways without starting a drag back.
+- **Errors:** Error messages are plain sentences that say what happened and what to do, never the server text. A session that ended offers Sign in again. The admin also sees the error code.
+- **Login:** An email with no account gets "I could not send a code to this email. Ask the admin if you need an account." It does not say if the account exists.
 
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 

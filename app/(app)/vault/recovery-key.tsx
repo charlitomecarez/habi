@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
@@ -86,7 +87,7 @@ export default function RecoveryKeyScreen() {
           />
           <Text className="flex-1 font-semibold text-row-title text-ink">I wrote it down</Text>
         </Pressable>
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        {save.error ? <ErrorNotice error={save.error} /> : null}
         <Button
           label="Save recovery key"
           disabled={!code || !wrote}

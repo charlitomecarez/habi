@@ -7,10 +7,10 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
@@ -141,7 +141,7 @@ function MarkDoneForm({ vehicle, services }: { vehicle: Vehicle; services: Servi
       </KeyboardScrollView>
 
       <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-        {markDone.error ? <Notice tone="danger">{markDone.error.message}</Notice> : null}
+        {markDone.error ? <ErrorNotice error={markDone.error} /> : null}
         <Button label={label} loading={formState.isSubmitting} onPress={onSubmit} />
       </View>
     </>
@@ -165,7 +165,7 @@ export default function MarkDoneScreen() {
           <MarkDoneForm vehicle={vehicle.data} services={due.data} />
         ) : vehicle.error || due.error ? (
           <View className="px-5 pt-4">
-            <Notice tone="danger">Could not load the vehicle. {(vehicle.error ?? due.error)?.message}</Notice>
+            <ErrorNotice lead="Could not load the vehicle." error={vehicle.error ?? due.error} />
           </View>
         ) : (
           <Skeleton />

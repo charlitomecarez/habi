@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { MealSheet } from "@/components/ulam/MealSheet";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
@@ -13,7 +14,6 @@ import { UlamSettingsSheet } from "@/components/ulam/UlamSettingsSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
-import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { formatPeso } from "@/lib/money";
 import { useUserSettings } from "@/lib/settings";
@@ -61,8 +61,8 @@ export default function UlamScreen() {
           <UlamPhoto ulam={ulam} />
 
           <View className="gap-4 px-5 pt-4">
-            {days.error ? <Notice tone="danger">Could not load your ulam. {days.error.message}</Notice> : null}
-            {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+            {days.error ? <ErrorNotice lead="Could not load your ulam." error={days.error} /> : null}
+            {save.error ? <ErrorNotice error={save.error} /> : null}
 
             {row?.custom ? (
               <Text className="font-semibold text-row-title text-ink">You ate {row.custom.name}. Saved for today.</Text>

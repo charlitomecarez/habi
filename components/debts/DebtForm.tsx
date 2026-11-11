@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
@@ -178,7 +178,7 @@ export function DebtForm({ debt, person, direction }: { debt?: Debt; person?: st
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+          {save.error ? <ErrorNotice error={save.error} /> : null}
           <Button label="Save debt" loading={formState.isSubmitting} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>

@@ -2,6 +2,7 @@ import { format, parseISO } from "date-fns";
 import { ActivityIndicator, Text, View } from "react-native";
 
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { showWeeklyReview, useWeeklyReview } from "@/lib/weekly";
 
 /** Sunday's look back at the week: money, todos, vehicle, videos, habits and gym. */
@@ -23,7 +24,7 @@ export function WeeklyReviewCard() {
         {review.isPending ? (
           <ActivityIndicator color={colors.accent} />
         ) : review.error ? (
-          <Text className="font-sans text-caption text-danger">Could not load the week. {review.error.message}</Text>
+          <Text className="font-sans text-caption text-danger">Could not load the week. {errorText(review.error)}</Text>
         ) : (
           review.data?.sections.map((s) => (
             <View key={s.heading} className="gap-1">

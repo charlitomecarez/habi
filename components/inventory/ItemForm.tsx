@@ -13,10 +13,10 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
 import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
 import { Stepper } from "@/components/ui/Stepper";
@@ -284,7 +284,7 @@ export function ItemForm({
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+          {failure ? <ErrorNotice error={failure} /> : null}
           <Button label="Save item" loading={formState.isSubmitting} disabled={remove.isPending} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>

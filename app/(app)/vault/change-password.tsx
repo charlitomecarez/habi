@@ -4,9 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
-import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { checkMasterPassword } from "@/lib/master-password";
 import { goBack } from "@/lib/navigation";
@@ -79,7 +79,7 @@ export default function ChangeMasterPasswordScreen() {
           error={errors.confirm}
           onSubmitEditing={onSave}
         />
-        {change.error ? <Notice tone="danger">{change.error.message}</Notice> : null}
+        {change.error ? <ErrorNotice error={change.error} /> : null}
         <Button
           label="Change master password"
           loading={change.isPending}

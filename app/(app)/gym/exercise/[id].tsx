@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Notice } from "@/components/ui/Notice";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatKg, useExerciseHistory, useGym } from "@/lib/gym";
@@ -34,7 +34,7 @@ export default function ExerciseHistoryScreen() {
         {history.isPending ? (
           <Skeleton layout="detail" />
         ) : history.error ? (
-          <Notice tone="danger">Could not load the history. {history.error.message}</Notice>
+          <ErrorNotice lead="Could not load the history." error={history.error} />
         ) : bySession.length === 0 ? (
           <Text className="font-sans text-body text-ink-muted">
             No sets yet. Tick sets during a workout to build the history.

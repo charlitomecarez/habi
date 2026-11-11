@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { documentStatus, typeLabel, useDocuments } from "@/lib/documents";
@@ -29,7 +29,7 @@ export default function DocumentsScreen() {
           <Skeleton />
         ) : docs.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your documents. {docs.error.message}</Notice>
+            <ErrorNotice lead="Could not load your documents." error={docs.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => docs.refetch()} />
           </View>
         ) : (

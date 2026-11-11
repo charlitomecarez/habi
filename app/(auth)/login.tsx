@@ -12,15 +12,12 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { StitchStrip, WeaveField } from "@/components/ui/WeaveField";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { signInWithGoogle } from "@/lib/google-sign-in";
 import { motion, useReduceMotion } from "@/lib/motion";
 import { supabase } from "@/lib/supabase";
 
 type Busy = "google" | "send" | "verify" | null;
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Something went wrong. Try again.";
-}
 
 /** The headline rises line by line when login opens. */
 function Rise({ order, children }: { order: number; children: ReactNode }) {
@@ -60,7 +57,7 @@ export default function LoginScreen() {
     try {
       await action();
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorText(e));
     } finally {
       setBusy(null);
     }

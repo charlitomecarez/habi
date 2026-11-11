@@ -6,8 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Badge } from "@/components/ui/Badge";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { cycleLabel, daysUntil, formatPeso, useSubscriptions, useTransactions, type Subscription } from "@/lib/money";
@@ -57,7 +57,7 @@ export default function BillsScreen() {
           <Skeleton />
         ) : subscriptions.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your bills. {subscriptions.error.message}</Notice>
+            <ErrorNotice lead="Could not load your bills." error={subscriptions.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => subscriptions.refetch()} />
           </View>
         ) : (

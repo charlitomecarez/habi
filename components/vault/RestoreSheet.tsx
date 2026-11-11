@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
-import { Notice } from "@/components/ui/Notice";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Sheet } from "@/components/ui/Sheet";
 import { useRestoreBackup } from "@/lib/vault";
@@ -31,7 +31,7 @@ export function RestoreSheet({ backup, onClose }: { backup: VaultBackup; onClose
         <Text className="font-sans text-caption text-ink-muted">
           Nothing is written until this password opens the backup.
         </Text>
-        {restore.error ? <Notice tone="danger">{restore.error.message}</Notice> : null}
+        {restore.error ? <ErrorNotice error={restore.error} /> : null}
         <Button
           label="Restore backup"
           disabled={!password}

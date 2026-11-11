@@ -10,8 +10,10 @@ import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
@@ -60,7 +62,7 @@ export default function RecordScreen() {
       recorder.record();
       setStage("recording");
     })().catch((error: unknown) => {
-      setStartError(error instanceof Error ? error.message : "Could not start the microphone.");
+      setStartError(error instanceof Error ? errorText(error) : "Could not start the microphone.");
     });
     return () => {
       cancelled = true;
@@ -147,7 +149,7 @@ export default function RecordScreen() {
           <Notice tone="warning">Allow the microphone for Habi in your phone settings, then try again.</Notice>
         ) : null}
         {startError ? <Notice tone="danger">{startError}</Notice> : null}
-        {send.error ? <Notice tone="danger">Could not send. {send.error.message}</Notice> : null}
+        {send.error ? <ErrorNotice lead="Could not send." error={send.error} /> : null}
       </View>
 
       <View className="px-5 pb-5">

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
-import { Notice } from "@/components/ui/Notice";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { formatPeso, useAccounts } from "@/lib/money";
@@ -31,7 +31,7 @@ export function MarkPaidSheet({ visible, onClose, itemId, amount }: Props) {
           onChange={setAccountId}
         />
         <Text className="font-sans text-caption text-ink-muted">It does not change the account balance.</Text>
-        {paid.error ? <Notice tone="danger">{paid.error.message}</Notice> : null}
+        {paid.error ? <ErrorNotice error={paid.error} /> : null}
         <Button
           label="Add expense"
           disabled={!accountId}

@@ -6,6 +6,7 @@ import { PlanForm } from "@/components/gym/PlanForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useGym } from "@/lib/gym";
 
@@ -22,7 +23,7 @@ export default function EditPlanScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{gym.error ? gym.error.message : "This workout day was archived."}</Notice>
+          <Notice tone="danger">{gym.error ? errorText(gym.error) : "This workout day was archived."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

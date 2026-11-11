@@ -4,8 +4,8 @@ import { router } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -47,7 +47,7 @@ export default function FuelScreen() {
         <Text className="font-sans text-caption text-ink-muted">
           Fuel this month: {formatPeso(monthFuelCost(list))}. km per litre needs two full-tank fill-ups.
         </Text>
-        {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
+        {remove.error ? <ErrorNotice error={remove.error} /> : null}
         {logs.isPending && vehicle.data ? (
           <Skeleton />
         ) : (

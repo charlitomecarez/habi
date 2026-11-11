@@ -5,7 +5,7 @@ import { Pressable, Switch, Text, View } from "react-native";
 
 import { ExchangeRateSheet } from "@/components/money/ExchangeRateSheet";
 import { Button } from "@/components/ui/Button";
-import { Notice } from "@/components/ui/Notice";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { ProfilePhoto } from "@/components/ui/ProfilePhoto";
 import { ModulesSheet } from "@/components/settings/ModulesSheet";
@@ -164,7 +164,7 @@ export function SettingsSection() {
             last
           />
         </View>
-        {saveSettings.error ? <Notice tone="danger">{saveSettings.error.message}</Notice> : null}
+        {saveSettings.error ? <ErrorNotice error={saveSettings.error} /> : null}
       </View>
 
       <Button label="Sign out" variant="destructive" size="input" loading={signingOut} onPress={onSignOut} />

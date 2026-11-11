@@ -4,8 +4,8 @@ import { ActivityIndicator, Text, View } from "react-native";
 
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
-import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { compactAmount, dayTotals, formatPeso, toDateString, useMonthTransactions } from "@/lib/money";
 
@@ -85,7 +85,7 @@ export function SpendingCalendar({ accountName, categoryName }: SpendingCalendar
 
         {transactions.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load this month. {transactions.error.message}</Notice>
+            <ErrorNotice lead="Could not load this month." error={transactions.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => transactions.refetch()} />
           </View>
         ) : transactions.isPending ? (

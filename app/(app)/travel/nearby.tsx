@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ModuleGate } from "@/components/ui/ModuleGate";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
-import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -140,7 +140,7 @@ function NearbyScreen() {
           <Skeleton />
         ) : places.error ? (
           <View className="gap-3">
-            <Notice tone="danger">{places.error.message}</Notice>
+            <ErrorNotice error={places.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => void places.refetch()} />
           </View>
         ) : list.length === 0 ? (

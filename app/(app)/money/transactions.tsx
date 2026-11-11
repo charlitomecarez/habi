@@ -5,8 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useAccounts, useCategories, useTransactions, type Transaction } from "@/lib/money";
@@ -45,7 +45,7 @@ export default function TransactionsScreen() {
           <Skeleton />
         ) : error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load transactions. {error.message}</Notice>
+            <ErrorNotice lead="Could not load transactions." error={error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => transactions.refetch()} />
           </View>
         ) : transactions.data?.length === 0 ? (

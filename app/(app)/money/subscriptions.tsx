@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ExchangeRateSheet } from "@/components/money/ExchangeRateSheet";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Notice } from "@/components/ui/Notice";
@@ -68,7 +69,7 @@ export default function SubscriptionsScreen() {
           <Skeleton />
         ) : error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load subscriptions. {error.message}</Notice>
+            <ErrorNotice lead="Could not load subscriptions." error={error} />
             <Button
               label="Try again"
               variant="secondary"

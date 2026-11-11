@@ -5,12 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { checkMasterPassword } from "@/lib/master-password";
 import { useSecureScreen } from "@/lib/secure-screen";
 import {
@@ -53,7 +55,7 @@ export default function RecoverVaultScreen() {
     try {
       await work();
     } catch (error) {
-      setProblem(error instanceof Error ? error.message : "Something went wrong. Try again.");
+      setProblem(error instanceof Error ? errorText(error) : "Something went wrong. Try again.");
     } finally {
       setBusy(false);
     }
@@ -192,7 +194,7 @@ export default function RecoverVaultScreen() {
                 finish.mutate({ key, password }, { onSuccess: () => router.replace("/vault") });
               }}
             />
-            {finish.error ? <Notice tone="danger">{finish.error.message}</Notice> : null}
+            {finish.error ? <ErrorNotice error={finish.error} /> : null}
           </>
         ) : null}
 

@@ -4,8 +4,8 @@ import { View } from "react-native";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { parseAmount } from "@/lib/money";
 import { useSaveUlamDay } from "@/lib/ulam";
@@ -90,7 +90,7 @@ export function MealSheet({ date, onClose }: { date: string | null; onClose: () 
             />
           )}
         />
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        {save.error ? <ErrorNotice error={save.error} /> : null}
         <Button label="Save meal" loading={save.isPending} onPress={onSubmit} />
       </View>
     </Sheet>

@@ -12,6 +12,7 @@ import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { motion } from "@/lib/motion";
 import {
   ageText,
@@ -111,7 +112,7 @@ export default function ChannelsScreen() {
             autoCorrect={false}
             placeholder="@kusinalab"
             editable={!full && !add.isPending}
-            error={add.error?.message}
+            error={errorText(add.error)}
             onSubmitEditing={onAdd}
           />
           {full ? <Notice tone="neutral">You follow {MAX_CHANNELS} channels. Remove one to add another.</Notice> : null}

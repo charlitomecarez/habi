@@ -18,6 +18,7 @@
 - Use sentence case. A button names its action ("Save expense"). An optional field says "(optional)" in its label.
 - Use borders, not shadows. Only the FAB has a shadow.
 - Inputs use 16 px text (`text-body`).
+- No screen shows a Supabase message. Show an error with `ErrorNotice`, or `errorText()` for one line. `lib/error-scan.test.ts` checks it.
 - A form with more than three fields is a full screen. A form with one or two fields is a bottom sheet.
 
 ## Impeccable check
@@ -79,6 +80,7 @@ Do not use Tailwind's default numeric scale outside `1`–`8`, for example `h-28
 | `HabiMark`      | The Habi mark: four squares on a tile, the fourth in gold. Tones `indigo` and `reverse` (for the shell).                                                                                                                                                                                                                     |
 | `WeaveField`    | An indigo field with the banig weave, and an optional `StitchStrip` at its foot that weaves in once. Login and the top of Home.                                                                                                                                                                                              |
 | `Snackbar`      | One line at the bottom with one action. `showSnackbar()` in `lib/snackbar.ts`. Undo stays 5 seconds. An error stays until you act or close it.                                                                                                                                                                               |
+| `ErrorNotice`   | A danger notice with a plain sentence for any error, from `friendlyError` in `lib/errors.ts`. `lead` names what failed, `onRetry` adds Try again, `messages` gives a screen its own words for a code. The admin also sees the code.                                                                                          |
 | `DiscardGuard`  | `useDiscardGuard(dirty, body)` asks "Discard your changes?" before Back, a drag back or a drag down closes a form with changes.                                                                                                                                                                                              |
 | `FadeIn`        | A short fade for a list or section.                                                                                                                                                                                                                                                                                          |
 | `PressScale`    | A `Pressable` that shrinks a little on press.                                                                                                                                                                                                                                                                                |

@@ -6,11 +6,13 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
@@ -62,7 +64,7 @@ export default function WorkoutScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{gym.error ? gym.error.message : "This workout day was archived."}</Notice>
+            <Notice tone="danger">{gym.error ? errorText(gym.error) : "This workout day was archived."}</Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -92,7 +94,7 @@ export default function WorkoutScreen() {
       </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-2">
-        {toggle.error ? <Notice tone="danger">{toggle.error.message}</Notice> : null}
+        {toggle.error ? <ErrorNotice error={toggle.error} /> : null}
         {exercises.length === 0 ? (
           <Notice tone="warning">This workout day has no exercises yet. Add them from Workout days.</Notice>
         ) : null}

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { shareTripPdf } from "@/lib/trip-pdf";
 import { tripHtml, type Trip, type TripItem } from "@/lib/travel";
 
@@ -24,7 +25,7 @@ export function ExportSheet({ visible, onClose, trip, items }: Props) {
       await shareTripPdf(tripHtml(trip, items, { includeCosts }), trip.title);
       onClose();
     } catch (error) {
-      setProblem(error instanceof Error ? error.message : "Could not make the PDF.");
+      setProblem(error instanceof Error ? errorText(error) : "Could not make the PDF.");
     } finally {
       setBusy(false);
     }

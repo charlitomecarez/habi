@@ -5,9 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Input } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -51,7 +51,7 @@ export default function PeopleScreen() {
           <Skeleton />
         ) : people.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load people. {people.error.message}</Notice>
+            <ErrorNotice lead="Could not load people." error={people.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => people.refetch()} />
           </View>
         ) : (
@@ -120,7 +120,7 @@ export default function PeopleScreen() {
       <Sheet visible={adding} onClose={() => setAdding(false)} title="Add person">
         <Input label="Name" value={name} onChangeText={setName} placeholder="Maria" maxLength={80} />
         <Input label="Note" optional value={note} onChangeText={setNote} placeholder="Likes coffee" />
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        {save.error ? <ErrorNotice error={save.error} /> : null}
         <Button label="Add person" loading={save.isPending} onPress={addPerson} />
       </Sheet>
     </SafeAreaView>
