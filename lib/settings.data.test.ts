@@ -34,6 +34,7 @@ describe("user settings", () => {
         ulam_limit: 150,
         ulam_avoid: ["pork"],
         followed_teams: ["PL:Arsenal"],
+        followed_series: null,
         hidden_modules: ["gym"],
         health_check: null,
       },
@@ -47,8 +48,8 @@ describe("user settings", () => {
   });
 
   it("saves the whole row and shows the change at once", async () => {
-    await runMutation(useSaveUserSettings(), { digestHour: 8 });
-    expect(argsOf("upsert")[0][0]).toMatchObject({ digest_hour: 8, timezone: "Asia/Manila" });
+    await runMutation(useSaveUserSettings(), { digestHour: 8, followedSeries: ["F1"] });
+    expect(argsOf("upsert")[0][0]).toMatchObject({ digest_hour: 8, timezone: "Asia/Manila", followed_series: ["F1"] });
     expect(queryClient.setQueryData.mock.calls[0][1]).toMatchObject({ digestHour: 8 });
     respond({ error: new Error("down") });
     await expect(runMutation(useSaveUserSettings(), { digestHour: 9 })).rejects.toThrow("down");

@@ -19,3 +19,15 @@ Sports shows matches and standings for the Premier League, La Liga, Ligue 1, Bun
 - `user_settings.followed_teams` holds `league:team`, for example `PL:Arsenal`, with the team name that `sports_matches` holds. The database stops a 13th team. It does not check the format, because only the owner writes the row and the app ignores a name it does not know.
 - If a feed renames a team, its follow stops matching. The sheet shows it unticked, and you tick it again.
 - Home shows Games after Shortcuts: for each followed team, the last result from the past 3 days and the next match, at most 3 rows, soonest to now first. With no team followed, one row opens this sheet. It reads only the followed leagues, and it loads after the attention rows.
+
+## F1 and MotoGP
+
+F1 and MotoGP are two chips after NBA. They need no key, so they work on any server that has the football keys.
+
+- **Sources:** F1 comes from Jolpica (`api.jolpi.ca`). MotoGP comes from the public motogp.com results API, which has no documentation and can change with no notice.
+- **Sync:** the `motor-sync` cron calls `sports-sync` with `{"only":"motor"}` every 2 hours. The function calls the sources only at 7 AM PHT, or when a race starts in the next 72 hours or started in the last 8 hours. `{"only":"motor","force":true}` calls them at once.
+- **Failure:** a failed series writes `last_error_at` in `sports_sync` and keeps its rows. It never stops the other series or football. Sports then shows "Could not update" with the time of the last good data.
+- **Views:** Races shows the next race, the top 10 of the last race and every round. Drivers (Riders for MotoGP) and Teams show the standings. The MotoGP API has no team table, so a team's points are the sum of its riders' points.
+- **Times:** a race between midnight and 6 AM gets a second line, such as "Saturday night, at midnight".
+- **Home:** the Show on Home switch saves the series in `user_settings.followed_series`. Home Games then shows the next race in the 7 days before it, and the winner for 3 days after it. Races and matches share the 3 rows, soonest to now first.
+- **No push:** a race sends no notification.

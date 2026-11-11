@@ -16,6 +16,8 @@ export type UserSettings = {
   ulamAvoid: string[];
   /** Teams whose games show on Home, as league:team, for example PL:Arsenal. At most 12. */
   followedTeams: string[];
+  /** F1 and MotoGP series whose next race and winner show on Home. Not part of the 12-team limit. */
+  followedSeries: string[];
   /** Modules switched off in Settings › Modules, by id from lib/modules.ts. */
   hiddenModules: string[];
   /** The 6 PM health check. Off until you turn it on; while on, sleep and steps go to your account. */
@@ -31,6 +33,7 @@ const DEFAULTS: UserSettings = {
   ulamLimit: 99,
   ulamAvoid: [],
   followedTeams: [],
+  followedSeries: [],
   hiddenModules: [],
   healthCheck: false,
 };
@@ -50,6 +53,7 @@ export function useUserSettings() {
         | "ulam_limit"
         | "ulam_avoid"
         | "followed_teams"
+        | "followed_series"
         | "hidden_modules"
         | "health_check"
       >;
@@ -59,7 +63,7 @@ export function useUserSettings() {
           const { data, error } = await supabase
             .from("user_settings")
             .select(
-              "timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams, hidden_modules, health_check",
+              "timezone, digest_enabled, digest_hour, home_shortcuts, ulam_limit, ulam_avoid, followed_teams, followed_series, hidden_modules, health_check",
             )
             .maybeSingle();
           if (error) throw error;
@@ -75,6 +79,8 @@ export function useUserSettings() {
         ulamLimit: data.ulam_limit,
         ulamAvoid: data.ulam_avoid,
         followedTeams: data.followed_teams,
+        // A summary from before v1.6.0 has no followed_series.
+        followedSeries: data.followed_series ?? [],
         hiddenModules: data.hidden_modules,
         // A summary from before v1.5.0 milestone 9 has no health_check.
         healthCheck: data.health_check ?? false,
@@ -98,6 +104,7 @@ export function useSaveUserSettings() {
         ulam_limit: next.ulamLimit,
         ulam_avoid: next.ulamAvoid,
         followed_teams: next.followedTeams,
+        followed_series: next.followedSeries,
         hidden_modules: next.hiddenModules,
         health_check: next.healthCheck,
       });
