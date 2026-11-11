@@ -1100,6 +1100,185 @@ export type Database = {
         };
         Relationships: [];
       };
+      motor_races: {
+        Row: {
+          circuit: string;
+          country: string;
+          name: string;
+          round: number;
+          season: number;
+          series: string;
+          sprint_at: string | null;
+          starts_at: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          circuit: string;
+          country: string;
+          name: string;
+          round: number;
+          season: number;
+          series: string;
+          sprint_at?: string | null;
+          starts_at: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          circuit?: string;
+          country?: string;
+          name?: string;
+          round?: number;
+          season?: number;
+          series?: string;
+          sprint_at?: string | null;
+          starts_at?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      motor_results: {
+        Row: {
+          name: string;
+          points: number;
+          position: number;
+          round: number;
+          season: number;
+          series: string;
+          team: string;
+          updated_at: string;
+        };
+        Insert: {
+          name: string;
+          points?: number;
+          position: number;
+          round: number;
+          season: number;
+          series: string;
+          team: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          points?: number;
+          position?: number;
+          round?: number;
+          season?: number;
+          series?: string;
+          team?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "motor_results_series_season_round_fkey";
+            columns: ["series", "season", "round"];
+            isOneToOne: false;
+            referencedRelation: "motor_races";
+            referencedColumns: ["series", "season", "round"];
+          },
+        ];
+      };
+      motor_standings: {
+        Row: {
+          kind: string;
+          name: string;
+          points: number;
+          position: number;
+          series: string;
+          team: string | null;
+          updated_at: string;
+          wins: number;
+        };
+        Insert: {
+          kind: string;
+          name: string;
+          points: number;
+          position: number;
+          series: string;
+          team?: string | null;
+          updated_at?: string;
+          wins?: number;
+        };
+        Update: {
+          kind?: string;
+          name?: string;
+          points?: number;
+          position?: number;
+          series?: string;
+          team?: string | null;
+          updated_at?: string;
+          wins?: number;
+        };
+        Relationships: [];
+      };
+      movies: {
+        Row: {
+          genres: string[];
+          list: string;
+          overview: string;
+          position: number;
+          poster_path: string | null;
+          release_date: string | null;
+          runtime_min: number | null;
+          title: string;
+          tmdb_id: number;
+          trailer_key: string | null;
+          updated_at: string;
+          vote_average: number | null;
+          vote_count: number;
+        };
+        Insert: {
+          genres?: string[];
+          list: string;
+          overview?: string;
+          position: number;
+          poster_path?: string | null;
+          release_date?: string | null;
+          runtime_min?: number | null;
+          title: string;
+          tmdb_id: number;
+          trailer_key?: string | null;
+          updated_at?: string;
+          vote_average?: number | null;
+          vote_count?: number;
+        };
+        Update: {
+          genres?: string[];
+          list?: string;
+          overview?: string;
+          position?: number;
+          poster_path?: string | null;
+          release_date?: string | null;
+          runtime_min?: number | null;
+          title?: string;
+          tmdb_id?: number;
+          trailer_key?: string | null;
+          updated_at?: string;
+          vote_average?: number | null;
+          vote_count?: number;
+        };
+        Relationships: [];
+      };
+      movies_sync: {
+        Row: {
+          id: boolean;
+          last_error_at: string | null;
+          last_ok_at: string | null;
+        };
+        Insert: {
+          id?: boolean;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Update: {
+          id?: boolean;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Relationships: [];
+      };
       news_items: {
         Row: {
           fetched_at: string;
@@ -1265,6 +1444,27 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      places_cache: {
+        Row: {
+          category: string;
+          cell: string;
+          fetched_at: string;
+          places: Json;
+        };
+        Insert: {
+          category: string;
+          cell: string;
+          fetched_at?: string;
+          places: Json;
+        };
+        Update: {
+          category?: string;
+          cell?: string;
+          fetched_at?: string;
+          places?: Json;
+        };
+        Relationships: [];
       };
       push_tokens: {
         Row: {
@@ -2172,6 +2372,7 @@ export type Database = {
           digest_enabled: boolean;
           digest_hour: number;
           digest_last_sent_on: string | null;
+          followed_series: string[];
           followed_teams: string[];
           health_check: boolean;
           hidden_modules: string[];
@@ -2188,6 +2389,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_series?: string[];
           followed_teams?: string[];
           health_check?: boolean;
           hidden_modules?: string[];
@@ -2204,6 +2406,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_series?: string[];
           followed_teams?: string[];
           health_check?: boolean;
           hidden_modules?: string[];
@@ -2670,6 +2873,75 @@ export type Database = {
           },
         ];
       };
+      youtube_channels: {
+        Row: {
+          channel_id: string;
+          created_at: string;
+          id: string;
+          title: string;
+          user_id: string;
+        };
+        Insert: {
+          channel_id: string;
+          created_at?: string;
+          id?: string;
+          title: string;
+          user_id?: string;
+        };
+        Update: {
+          channel_id?: string;
+          created_at?: string;
+          id?: string;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      youtube_feeds: {
+        Row: {
+          channel_id: string;
+          last_error_at: string | null;
+          last_ok_at: string | null;
+        };
+        Insert: {
+          channel_id: string;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Update: {
+          channel_id?: string;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Relationships: [];
+      };
+      youtube_videos: {
+        Row: {
+          channel_id: string;
+          duration_s: number | null;
+          published_at: string;
+          title: string;
+          updated_at: string;
+          video_id: string;
+        };
+        Insert: {
+          channel_id: string;
+          duration_s?: number | null;
+          published_at: string;
+          title: string;
+          updated_at?: string;
+          video_id: string;
+        };
+        Update: {
+          channel_id?: string;
+          duration_s?: number | null;
+          published_at?: string;
+          title?: string;
+          updated_at?: string;
+          video_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       debt_balances: {
@@ -2878,6 +3150,10 @@ export type Database = {
           r: Database["public"]["Tables"]["recurring_transactions"]["Row"];
         };
         Returns: boolean;
+      };
+      replace_movies: {
+        Args: { p_list: string; p_rows: Json };
+        Returns: undefined;
       };
       save_health_weights: { Args: { p_weights: Json }; Returns: number };
       seed_money_defaults: { Args: never; Returns: undefined };

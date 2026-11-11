@@ -2,7 +2,7 @@
   "expo": {
     "name": "Habi",
     "slug": "my-app",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -68,7 +68,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Habi uses your location only when you tap Use my location, to show your weather."
+          "locationWhenInUsePermission": "Habi uses your location only when you tap Use my location, to show your weather and places near you."
         }
       ],
       "react-native-health-connect",

@@ -64,8 +64,22 @@ describe("optional modules", () => {
     for (const m of ALL_MODULES) if (m.needs) expect(Object.keys(ALL_FEATURES)).toContain(m.needs);
   });
 
-  it("keys only Sports, Find a work and Inbox; News and Weather need no key", () => {
-    expect(ALL_MODULES.filter((m) => m.needs).map((m) => m.id)).toEqual(["sports", "inbox", "work"]);
+  it("keys only Sports, Movies, Find a work and Inbox; News and Weather need no key", () => {
+    expect(ALL_MODULES.filter((m) => m.needs).map((m) => m.id)).toEqual(["sports", "movies", "inbox", "work"]);
+  });
+
+  it("shows YouTube on every server, because it needs no key", () => {
+    expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false, sports: false, ai: false } })).toContain("youtube");
+  });
+
+  it("keys Places near you inside Travel, not a module", () => {
+    expect(ALL_MODULES.some((m) => m.needs === "places")).toBe(false);
+    expect(ids({ ...on, features: { ...ALL_FEATURES, places: false } })).toContain("travel");
+  });
+
+  it("hides Movies when the server has no TMDB key", () => {
+    expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false } })).not.toContain("movies");
+    expect(ids(on)).toContain("movies");
   });
 
   it("shows every module when everything is set up", () => {

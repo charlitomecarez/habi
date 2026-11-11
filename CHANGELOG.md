@@ -35,6 +35,21 @@ Do not put these items here:
 
 ## Unreleased
 
+## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
+
+### Added
+
+- **Sports:** F1 and MotoGP chips show the next race in PHT, the last result, the rounds and the standings. A Show on Home switch puts the next race and the winner in Home Games.
+- **Movies:** A new module in Daily life shows the films in Philippine cinemas now and the next ones, from TMDB, with a film screen and its trailer.
+- **YouTube:** A new module in Daily life shows the new videos of the channels you follow, newest first. Add a channel by its link or @handle.
+- **Travel:** Places near you shows sights, food, parks and shopping within 10 km, with Open in Maps and Add to a trip. Your exact spot stays on the phone. Install the v1.6.0 APK for it.
+- **Travel:** A trip item suggests places from Photon as you type, and a tap fills Place and Map link.
+- **Repo:** CI checks that unit tests cover 80% of the lines, and runs web E2E tests with Playwright. Five Maestro flows test the phone. See `docs/testing.md`.
+
+### Changed
+
+- **Weather:** Use my location now works on the web, with the browser location.
+
 ## [v1.5.0](docs/releases/v1.5.0.md) - 2026-11-11
 
 ### Added

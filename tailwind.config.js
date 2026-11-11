@@ -55,6 +55,9 @@ module.exports = {
         // Printed labels stay black on white in both themes, so any camera can read them.
         "label-paper": "#FFFFFF",
         "label-ink": "#000000",
+        // A label on a photo, such as a video length. It sits on the image, so it stays the same in both themes.
+        "media-label": "rgb(0 0 0 / 0.8)",
+        "on-media-label": "#FFFFFF",
         // Brand logos sit on white in both themes, so dark logos (Apple, GitHub, X) still show.
         "brand-tile": "#FFFFFF",
       },
@@ -100,6 +103,10 @@ module.exports = {
         "bank-card": "176px",
         slot: "64px",
         tile: "112px",
+        // A film poster at 2:3 beside the tile width.
+        poster: "168px",
+        // A video thumbnail at 16:9 beside the tile width.
+        thumb: "63px",
         "field-sm": "110px",
       },
       borderRadius: {

@@ -17,10 +17,10 @@ export type ModuleEntry = {
 };
 
 /** Keyed parts of the server. app-features says which ones are set up. */
-export type Feature = "sports" | "ai" | "tip" | "email";
+export type Feature = "sports" | "ai" | "tip" | "email" | "movies" | "places";
 export type Features = Record<Feature, boolean>;
 /** Until the server answers, or if it cannot, every module shows. */
-export const ALL_FEATURES: Features = { sports: true, ai: true, tip: true, email: true };
+export const ALL_FEATURES: Features = { sports: true, ai: true, tip: true, email: true, movies: true, places: true };
 
 export type ModuleSection = { title: string; modules: readonly ModuleEntry[] };
 
@@ -83,8 +83,25 @@ export const MODULE_SECTIONS: readonly ModuleSection[] = [
         href: "/sports",
         icon: { name: "football-outline" },
         tone: "daily",
-        keywords: "football nba basketball standings",
+        keywords: "football nba basketball standings f1 formula motogp race",
         needs: "sports",
+      },
+      {
+        id: "movies",
+        label: "Movies",
+        href: "/movies",
+        icon: { name: "film-outline" },
+        tone: "daily",
+        keywords: "film cinema sine trailer",
+        needs: "movies",
+      },
+      {
+        id: "youtube",
+        label: "YouTube",
+        href: "/youtube",
+        icon: { name: "play-circle-outline" },
+        tone: "daily",
+        keywords: "video channel vlog",
       },
       {
         id: "weather",
