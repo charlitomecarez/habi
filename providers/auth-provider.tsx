@@ -2,6 +2,7 @@ import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 import { signOutOfGoogle } from "@/lib/google-sign-in";
+import { clearWeightSync } from "@/lib/health-weights";
 import { clearSleepLog } from "@/lib/sleep";
 import { refreshWidgets } from "@/lib/widgets";
 import { supabase } from "@/lib/supabase";
@@ -20,6 +21,7 @@ async function signOut() {
   lockVault();
   // Data on the phone must not reach the next account.
   await clearSleepLog();
+  await clearWeightSync();
   await clearVehicleChecks();
   await signOutOfGoogle();
   await supabase.auth.signOut();

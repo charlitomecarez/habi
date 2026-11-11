@@ -1,10 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { hasStepsAccess, isHealthConnectSupported, readWeekSteps, requestStepsAccess } from "@/lib/health-connect";
+import {
+  hasSleepWeightAccess,
+  hasStepsAccess,
+  isHealthConnectSupported,
+  readWeekSteps,
+  requestSleepWeightAccess,
+  requestStepsAccess,
+} from "@/lib/health-connect";
 
 const KEY = ["steps"] as const;
 
-/** Whether you allowed steps, and the last 7 days, oldest first. */
+/** Whether you allowed steps, and sleep and weight, and the last 7 days of steps, oldest first. */
 export function useSteps() {
   return useQuery({
     queryKey: KEY,
@@ -12,7 +19,8 @@ export function useSteps() {
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       const access = await hasStepsAccess();
-      return { access, week: access ? await readWeekSteps(new Date()) : [] };
+      if (!access) return { access, sleepWeight: false, week: [] };
+      return { access, sleepWeight: await hasSleepWeightAccess(), week: await readWeekSteps(new Date()) };
     },
   });
 }
@@ -22,6 +30,18 @@ export function useAllowSteps() {
   return useMutation({
     mutationFn: requestStepsAccess,
     onSettled: () => client.invalidateQueries({ queryKey: KEY }),
+  });
+}
+
+/** For a phone that allowed only steps in v1.4.0. */
+export function useAllowSleepWeight() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: requestSleepWeightAccess,
+    onSettled: () => {
+      void client.invalidateQueries({ queryKey: KEY });
+      void client.invalidateQueries({ queryKey: ["sleep"] });
+    },
   });
 }
 

@@ -136,9 +136,14 @@ export default function HealthScreen() {
                         key={w.id}
                         className={`min-h-touch flex-row items-center gap-3 py-1 ${i === list.length - 1 ? "" : "border-b-2 border-border"}`}
                       >
-                        <Text className="min-w-0 flex-1 font-sans text-body text-ink">
-                          {format(parseISO(w.on_date), "EEE, MMM d")}
-                        </Text>
+                        <View className="min-w-0 flex-1">
+                          <Text className="font-sans text-body text-ink">
+                            {format(parseISO(w.on_date), "EEE, MMM d")}
+                          </Text>
+                          <Text className="font-sans text-caption text-ink-muted">
+                            {w.source === "health_connect" ? "From Samsung Health" : "Typed"}
+                          </Text>
+                        </View>
                         <Text className="font-semibold text-row-title text-ink">{kg(w.weight_kg)}</Text>
                         <Pressable
                           accessibilityRole="button"
