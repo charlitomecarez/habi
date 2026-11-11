@@ -11,6 +11,9 @@ export default async function globalSetup() {
   const client = createClient(url, anonKey, { auth: { persistSession: false } });
   const { data, error } = await client.auth.signInWithPassword({ email, password });
   if (error || !data.session) throw error ?? new Error("The E2E account did not sign in.");
+  // The app seeds on SIGNED_IN, which a stored session never fires. A second call adds nothing.
+  const seed = await client.rpc("seed_money_defaults");
+  if (seed.error) throw seed.error;
 
   const ref = new URL(url).hostname.split(".")[0];
   const state = {

@@ -21,6 +21,8 @@ test("adds a todo", async ({ page }) => {
   await page.goto("/todo/new");
   await page.getByLabel("Title", { exact: true }).fill(title);
   await page.getByRole("button", { name: "Add todo" }).click();
+  // The form closes after the save. Leaving earlier cancels the save.
+  await expect(page.getByRole("heading", { name: "New todo" })).toHaveCount(0);
   await page.goto("/todos");
   await expect(page.getByText(title)).toBeVisible();
 });
@@ -31,6 +33,7 @@ test("adds an expense", async ({ page }) => {
   await page.getByLabel("Amount in ₱").fill("1");
   await page.getByLabel("Where / note").fill(merchant);
   await page.getByRole("button", { name: "Save expense" }).click();
+  await expect(page.getByRole("heading", { name: "Add expense" })).toHaveCount(0);
   await page.goto("/money/transactions");
   await expect(page.getByText(merchant)).toBeVisible();
 });
