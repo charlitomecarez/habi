@@ -72,6 +72,11 @@ describe("optional modules", () => {
     expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false, sports: false, ai: false } })).toContain("youtube");
   });
 
+  it("keys Places near you inside Travel, not a module", () => {
+    expect(ALL_MODULES.some((m) => m.needs === "places")).toBe(false);
+    expect(ids({ ...on, features: { ...ALL_FEATURES, places: false } })).toContain("travel");
+  });
+
   it("hides Movies when the server has no TMDB key", () => {
     expect(ids({ ...on, features: { ...ALL_FEATURES, movies: false } })).not.toContain("movies");
     expect(ids(on)).toContain("movies");

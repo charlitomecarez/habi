@@ -8,6 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { MarkPaidSheet } from "@/components/travel/MarkPaidSheet";
+import { usePlaceSuggestions } from "@/components/travel/usePlaceSuggestions";
+import { DataRow } from "@/components/ui/DataRow";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
@@ -59,7 +61,8 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
   const rates = useExchangeRates();
   const [paying, setPaying] = useState(false);
   const startDay = item?.day ?? day;
-  const { control, handleSubmit, formState } = useForm<FormValues>({
+  const places = usePlaceSuggestions();
+  const { control, handleSubmit, formState, setValue } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       kind: item?.kind ?? "go",
@@ -173,7 +176,37 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
           <Controller
             control={control}
             name="place"
-            render={({ field }) => <Input label="Place" optional value={field.value} onChangeText={field.onChange} />}
+            render={({ field }) => (
+              <View className="gap-1">
+                <Input
+                  label="Place"
+                  optional
+                  value={field.value}
+                  onChangeText={(text) => {
+                    field.onChange(text);
+                    places.onType(text);
+                  }}
+                  onBlur={() => setTimeout(places.clear, 200)}
+                />
+                {places.suggestions.length > 0 ? (
+                  <View accessibilityLabel="Place suggestions" className="rounded-input border-2 border-border px-3">
+                    {places.suggestions.map((p, index, list) => (
+                      <DataRow
+                        key={`${p.name}-${p.mapUrl}`}
+                        title={p.name}
+                        detail={p.detail || undefined}
+                        onPress={() => {
+                          setValue("place", p.name, { shouldDirty: true });
+                          setValue("mapUrl", p.mapUrl, { shouldDirty: true, shouldValidate: true });
+                          places.clear();
+                        }}
+                        last={index === list.length - 1}
+                      />
+                    ))}
+                  </View>
+                ) : null}
+              </View>
+            )}
           />
           <Controller
             control={control}

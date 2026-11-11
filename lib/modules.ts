@@ -17,10 +17,10 @@ export type ModuleEntry = {
 };
 
 /** Keyed parts of the server. app-features says which ones are set up. */
-export type Feature = "sports" | "ai" | "tip" | "email" | "movies";
+export type Feature = "sports" | "ai" | "tip" | "email" | "movies" | "places";
 export type Features = Record<Feature, boolean>;
 /** Until the server answers, or if it cannot, every module shows. */
-export const ALL_FEATURES: Features = { sports: true, ai: true, tip: true, email: true, movies: true };
+export const ALL_FEATURES: Features = { sports: true, ai: true, tip: true, email: true, movies: true, places: true };
 
 export type ModuleSection = { title: string; modules: readonly ModuleEntry[] };
 

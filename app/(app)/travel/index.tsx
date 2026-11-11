@@ -8,11 +8,13 @@ import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useFeatures } from "@/lib/features";
 import { tripDatesText, tripLength, useTrips } from "@/lib/travel";
 
 export default function TravelScreen() {
   const trips = useTrips();
   const list = trips.data ?? [];
+  const places = useFeatures().places;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -23,6 +25,15 @@ export default function TravelScreen() {
       </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
+        {places ? (
+          <DataRow
+            title="Places near you"
+            detail="Sights, food and parks within 10 km"
+            onPress={() => router.push("/travel/nearby")}
+            chevron
+            last
+          />
+        ) : null}
         {trips.error ? <Notice tone="danger">Could not load your trips. {trips.error.message}</Notice> : null}
         {trips.isPending ? (
           <Skeleton />
