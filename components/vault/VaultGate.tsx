@@ -4,11 +4,13 @@ import { useState, type ReactNode } from "react";
 import { Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { RestoreSheet } from "@/components/vault/RestoreSheet";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { checkMasterPassword } from "@/lib/master-password";
 import { suggestPassphrase } from "@/lib/password";
 import { pickBackupFile } from "@/lib/vault-backup";
@@ -77,7 +79,7 @@ export function SetUpVault() {
       if (parsed) setBackup(parsed);
       else setBackupProblem("That file is not a Habi vault backup.");
     } catch (error) {
-      setBackupProblem(error instanceof Error ? error.message : "Could not read that file.");
+      setBackupProblem(error instanceof Error ? errorText(error) : "Could not read that file.");
     }
   }
 
@@ -136,7 +138,7 @@ export function SetUpVault() {
             Nobody can reset this password for you. Make a recovery key on the next screen: it is the only other way in.
             Keep both on paper in a safe place.
           </Notice>
-          {setUp.error ? <Notice tone="danger">{setUp.error.message}</Notice> : null}
+          {setUp.error ? <ErrorNotice error={setUp.error} /> : null}
           {backupProblem ? <Notice tone="danger">{backupProblem}</Notice> : null}
         </>
       }
@@ -208,7 +210,7 @@ export function UnlockVault({ settings }: { settings: VaultSettingsRow }) {
               onSubmitEditing={onUnlock}
             />
           )}
-          {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+          {failure ? <ErrorNotice error={failure} /> : null}
         </>
       }
       actions={

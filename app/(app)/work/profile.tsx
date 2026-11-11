@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -85,7 +86,7 @@ export default function WorkProfileScreen() {
           ) : null}
           {read.error ? (
             <View className="gap-3">
-              <Notice tone="danger">{read.error.message}</Notice>
+              <ErrorNotice error={read.error} />
               <Button label="Choose another file" variant="secondary" onPress={() => void pickResume()} />
             </View>
           ) : null}

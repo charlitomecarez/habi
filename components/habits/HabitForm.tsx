@@ -12,6 +12,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Stepper } from "@/components/ui/Stepper";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { WEEKDAYS } from "@/lib/calendar";
 import { useColors } from "@/lib/colors";
@@ -100,7 +101,7 @@ export function HabitForm({ habit }: { habit?: Habit }) {
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
+          {error || save.error ? <Notice tone="danger">{error ?? errorText(save.error)}</Notice> : null}
           <Button label="Save habit" loading={save.isPending} onPress={onSave} />
         </View>
       </KeyboardAvoidingView>

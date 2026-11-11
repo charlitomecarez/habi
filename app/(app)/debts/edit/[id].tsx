@@ -6,6 +6,7 @@ import { DebtForm } from "@/components/debts/DebtForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useDebt } from "@/lib/debts";
 
@@ -21,7 +22,7 @@ export default function EditDebtScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{debt.error ? debt.error.message : "This debt was deleted."}</Notice>
+          <Notice tone="danger">{debt.error ? errorText(debt.error) : "This debt was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

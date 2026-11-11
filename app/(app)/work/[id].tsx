@@ -5,6 +5,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
@@ -86,7 +87,7 @@ function JobBody({ job }: { job: JobMatch }) {
         </>
       )}
 
-      {draft.error ? <Notice tone="danger">{draft.error.message}</Notice> : null}
+      {draft.error ? <ErrorNotice error={draft.error} /> : null}
       {openFailed ? <Notice tone="danger">Could not open this link.</Notice> : null}
 
       {letter ? (

@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -16,9 +17,11 @@ import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { SwipeRow } from "@/components/ui/SwipeRow";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { tick } from "@/lib/haptics";
 import { amountText, formatPeso, parseBalance, useAccounts, useCategories } from "@/lib/money";
 import { useAddItem, useCheckout, useRemoveItem, useShopping, useUpdateItem, type ShoppingItem } from "@/lib/shopping";
+import { showSnackbar } from "@/lib/snackbar";
 
 const NONE = "none";
 
@@ -36,7 +39,10 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
 
   const setTicked = (ticked: boolean) => {
     if (ticked) tick();
-    update.mutate({ id: item.id, patch: { ticked } });
+    update.mutate(
+      { id: item.id, patch: { ticked } },
+      { onError: (e) => showSnackbar({ text: `Could not save. ${errorText(e)}`, tone: "error" }) },
+    );
   };
   return (
     <SwipeRow
@@ -172,7 +178,7 @@ export default function ShoppingScreen() {
 
         <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
           {done ? <Notice tone="warning">{done}</Notice> : null}
-          {shopping.error || add.error ? <Notice tone="danger">{(shopping.error ?? add.error)!.message}</Notice> : null}
+          {shopping.error || add.error ? <ErrorNotice error={(shopping.error ?? add.error)!} /> : null}
 
           <View className="gap-3">
             <View className="flex-row gap-3">
@@ -261,7 +267,7 @@ export default function ShoppingScreen() {
         />
         <Select label="Category" options={categoryOptions} value={categoryId} onChange={setCategoryId} />
         <Input label="Store" optional value={store} onChangeText={setStore} placeholder="SM Supermarket" />
-        {checkout.error ? <Notice tone="danger">{checkout.error.message}</Notice> : null}
+        {checkout.error ? <ErrorNotice error={checkout.error} /> : null}
         <Button label="Save expense" loading={checkout.isPending} onPress={saveCheckout} />
       </Sheet>
     </SafeAreaView>

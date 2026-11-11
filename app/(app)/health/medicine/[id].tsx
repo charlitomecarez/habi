@@ -6,6 +6,7 @@ import { MedicineForm } from "@/components/health/MedicineForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useHealth } from "@/lib/health";
 
@@ -22,7 +23,7 @@ export default function EditMedicineScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{health.error ? health.error.message : "This medicine was deleted."}</Notice>
+          <Notice tone="danger">{health.error ? errorText(health.error) : "This medicine was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

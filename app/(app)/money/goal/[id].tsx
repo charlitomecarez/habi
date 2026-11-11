@@ -15,6 +15,7 @@ import { Segmented } from "@/components/ui/Segmented";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useAddContribution, useDeleteContribution, useGoals } from "@/lib/goals";
@@ -49,7 +50,7 @@ export default function GoalScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{goals.error ? goals.error.message : "This goal was deleted."}</Notice>
+            <Notice tone="danger">{goals.error ? errorText(goals.error) : "This goal was deleted."}</Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -158,7 +159,7 @@ export default function GoalScreen() {
         />
         <DateTimeField label="Date" mode="date" value={on} onChange={setOn} />
         <Input label="Note" optional value={note} onChangeText={setNote} />
-        {error || add.error ? <Notice tone="danger">{error ?? add.error?.message}</Notice> : null}
+        {error || add.error ? <Notice tone="danger">{error ?? errorText(add.error)}</Notice> : null}
         <Button label={direction === "in" ? "Save" : "Save withdrawal"} loading={add.isPending} onPress={onSave} />
       </Sheet>
     </SafeAreaView>

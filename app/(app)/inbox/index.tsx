@@ -6,9 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { ModuleGate } from "@/components/ui/ModuleGate";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -94,8 +94,8 @@ function InboxScreen() {
       </ModuleBar>
 
       <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
-        {error ? <Notice tone="danger">Could not load your messages. {error.message}</Notice> : null}
-        {retry.error ? <Notice tone="danger">{retry.error.message}</Notice> : null}
+        {error ? <ErrorNotice lead="Could not load your messages." error={error} /> : null}
+        {retry.error ? <ErrorNotice error={retry.error} /> : null}
 
         <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 

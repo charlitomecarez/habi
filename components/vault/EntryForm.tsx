@@ -8,10 +8,10 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
@@ -216,7 +216,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+          {failure ? <ErrorNotice error={failure} /> : null}
           <View className="flex-row items-center justify-center gap-2">
             <Ionicons name="lock-closed-outline" size={14} color={colors.inkMuted} />
             <Text className="font-sans text-badge text-ink-muted">Encrypted on this phone before it&apos;s saved</Text>

@@ -6,6 +6,7 @@ import { DocumentForm } from "@/components/documents/DocumentForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useDocument } from "@/lib/documents";
 
@@ -21,7 +22,7 @@ export default function EditDocumentScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{doc.error ? doc.error.message : "This document was deleted."}</Notice>
+          <Notice tone="danger">{doc.error ? errorText(doc.error) : "This document was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

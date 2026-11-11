@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { useAddLocation, type LocationWithPath } from "@/lib/inventory";
@@ -59,7 +59,7 @@ function AddLocationFields({ onClose, locations, defaultParentId, onAdded }: Fie
         error={nameError}
       />
       <Select label="Inside" options={options} value={parent} onChange={setParent} />
-      {add.error ? <Notice tone="danger">{add.error.message}</Notice> : null}
+      {add.error ? <ErrorNotice error={add.error} /> : null}
       <Button label="Save location" loading={add.isPending} onPress={onSave} />
     </>
   );

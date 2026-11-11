@@ -8,10 +8,10 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Select } from "@/components/ui/Select";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
@@ -219,7 +219,7 @@ function LogServiceForm({
       </KeyboardScrollView>
 
       <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-        {logService.error ? <Notice tone="danger">{logService.error.message}</Notice> : null}
+        {logService.error ? <ErrorNotice error={logService.error} /> : null}
         <Button label="Save service" loading={formState.isSubmitting} onPress={onSubmit} />
       </View>
     </>
@@ -251,7 +251,7 @@ export default function LogServiceScreen() {
           <LogServiceForm vehicle={vehicle.data} services={due.data} serviceId={serviceId} />
         ) : vehicle.error || due.error ? (
           <View className="px-5 pt-4">
-            <Notice tone="danger">Could not load the vehicle. {(vehicle.error ?? due.error)?.message}</Notice>
+            <ErrorNotice lead="Could not load the vehicle." error={vehicle.error ?? due.error} />
           </View>
         ) : (
           <Skeleton />

@@ -7,10 +7,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
@@ -47,7 +49,9 @@ export default function HabitScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{habits.error ? habits.error.message : "This habit was archived or deleted."}</Notice>
+            <Notice tone="danger">
+              {habits.error ? errorText(habits.error) : "This habit was archived or deleted."}
+            </Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -77,7 +81,7 @@ export default function HabitScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {(toggle.error ?? archive.error ?? remove.error) ? (
-          <Notice tone="danger">{(toggle.error ?? archive.error ?? remove.error)!.message}</Notice>
+          <ErrorNotice error={(toggle.error ?? archive.error ?? remove.error)!} />
         ) : null}
 
         <View className="flex-row gap-3">

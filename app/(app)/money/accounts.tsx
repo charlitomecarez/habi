@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
 import { BrandIcon } from "@/components/ui/BrandIcon";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatMoney, useAccounts, type Account } from "@/lib/money";
@@ -27,7 +27,7 @@ export default function AccountsScreen() {
         {accounts.isPending ? (
           <Skeleton />
         ) : accounts.error ? (
-          <Notice tone="danger">Could not load your accounts. {accounts.error.message}</Notice>
+          <ErrorNotice lead="Could not load your accounts." error={accounts.error} />
         ) : (
           <View>
             {list.map((a, index) => (

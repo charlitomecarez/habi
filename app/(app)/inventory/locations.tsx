@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AddLocationSheet } from "@/components/inventory/AddLocationSheet";
 import { QrCode } from "@/components/inventory/QrCode";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
@@ -56,7 +57,7 @@ export default function LocationsScreen() {
         {locations.isPending ? (
           <Skeleton />
         ) : locations.error ? (
-          <Notice tone="danger">Could not load locations. {locations.error.message}</Notice>
+          <ErrorNotice lead="Could not load locations." error={locations.error} />
         ) : list.length === 0 ? (
           <View className="items-center gap-3 py-6">
             <Ionicons name="home-outline" size={32} color={colors.accent} />
@@ -136,7 +137,7 @@ export default function LocationsScreen() {
             <Notice tone="warning">
               Deleting keeps its items and the places inside it; they move to &quot;No location&quot;.
             </Notice>
-            {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
+            {remove.error ? <ErrorNotice error={remove.error} /> : null}
             <Button
               label="Delete location"
               variant="destructive"

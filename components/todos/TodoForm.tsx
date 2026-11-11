@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Segmented } from "@/components/ui/Segmented";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useDeleteTodo, useSaveTodo, type Todo } from "@/lib/todos";
@@ -168,7 +169,7 @@ export function TodoForm({ todo }: { todo?: Todo }) {
                 <Text className="font-semibold text-label text-ink">Repeat</Text>
                 <Segmented label="Repeat" options={REPEAT_OPTIONS} value={field.value} onChange={field.onChange} />
                 {fieldState.error ? (
-                  <Text className="font-sans text-caption text-danger">{fieldState.error.message}</Text>
+                  <Text className="font-sans text-caption text-danger">{fieldState.error?.message}</Text>
                 ) : null}
               </View>
             )}
@@ -213,7 +214,7 @@ export function TodoForm({ todo }: { todo?: Todo }) {
               accessibilityRole="alert"
               className="rounded-md bg-danger-tint p-3 font-sans text-caption text-danger"
             >
-              {failure.message}
+              {errorText(failure)}
             </Text>
           ) : null}
           <Button

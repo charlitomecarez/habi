@@ -10,8 +10,8 @@ import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { LineChart } from "@/components/ui/LineChart";
-import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -68,7 +68,7 @@ export default function HealthScreen() {
           <Skeleton />
         ) : health.error || !data ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your health records. {health.error?.message}</Notice>
+            <ErrorNotice lead="Could not load your health records." error={health.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => health.refetch()} />
           </View>
         ) : (
@@ -213,7 +213,7 @@ export default function HealthScreen() {
           error={weightError ?? undefined}
         />
         <DateTimeField label="Date" mode="date" value={weighedOn} onChange={setWeighedOn} />
-        {logWeight.error ? <Notice tone="danger">{logWeight.error.message}</Notice> : null}
+        {logWeight.error ? <ErrorNotice error={logWeight.error} /> : null}
         <Button label="Save weight" loading={logWeight.isPending} onPress={saveWeight} />
       </Sheet>
     </SafeAreaView>

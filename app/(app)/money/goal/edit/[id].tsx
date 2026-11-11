@@ -6,6 +6,7 @@ import { GoalForm } from "@/components/money/GoalForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useGoals } from "@/lib/goals";
 
@@ -22,7 +23,7 @@ export default function EditGoalScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{goals.error ? goals.error.message : "This goal was deleted."}</Notice>
+          <Notice tone="danger">{goals.error ? errorText(goals.error) : "This goal was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

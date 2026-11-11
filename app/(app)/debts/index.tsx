@@ -5,8 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -64,7 +64,7 @@ export default function DebtsScreen() {
           <Skeleton />
         ) : debts.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your debts. {debts.error.message}</Notice>
+            <ErrorNotice lead="Could not load your debts." error={debts.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => debts.refetch()} />
           </View>
         ) : (

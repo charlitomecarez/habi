@@ -6,6 +6,7 @@ import { TripForm } from "@/components/travel/TripForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useTrip } from "@/lib/travel";
 
@@ -21,7 +22,7 @@ export default function EditTripScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{trip.error ? trip.error.message : "This trip was deleted."}</Notice>
+          <Notice tone="danger">{trip.error ? errorText(trip.error) : "This trip was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

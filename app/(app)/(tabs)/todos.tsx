@@ -12,6 +12,7 @@ import { TabField, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { showSnackbar } from "@/lib/snackbar";
 import { groupTodos, isOverdue, useDeleteTodo, useTodos, useToggleTodo, type Todo } from "@/lib/todos";
 
@@ -84,7 +85,10 @@ export default function TodosScreen() {
   };
   const onToggle = (todo: Todo) => {
     const done = !todo.completed_at;
-    toggle.mutate({ id: todo.id, done });
+    toggle.mutate(
+      { id: todo.id, done },
+      { onError: (e) => showSnackbar({ text: `Could not save. ${errorText(e)}`, tone: "error" }) },
+    );
     if (done) {
       showSnackbar({
         text: "Todo done.",
@@ -149,8 +153,14 @@ export default function TodosScreen() {
         loading={remove.isPending}
         onClose={() => setDeleting(null)}
         onConfirm={async () => {
-          if (deleting) await remove.mutateAsync(deleting.id);
+          const todo = deleting;
           setDeleting(null);
+          if (!todo) return;
+          try {
+            await remove.mutateAsync(todo.id);
+          } catch (e) {
+            showSnackbar({ text: `Could not delete. ${errorText(e)}`, tone: "error" });
+          }
         }}
       />
     </SafeAreaView>

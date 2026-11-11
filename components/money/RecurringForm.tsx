@@ -239,7 +239,7 @@ export function RecurringForm({ rule }: { rule?: Recurring }) {
                     ))}
                   </View>
                   {fieldState.error ? (
-                    <Text className="font-sans text-caption text-danger">{fieldState.error.message}</Text>
+                    <Text className="font-sans text-caption text-danger">{fieldState.error?.message}</Text>
                   ) : null}
                 </View>
               )}

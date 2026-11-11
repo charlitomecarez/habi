@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
@@ -131,7 +132,7 @@ function UnlockedVault() {
         <Skeleton />
       ) : error ? (
         <View className="gap-3">
-          <Notice tone="danger">Could not load the vault. {error.message}</Notice>
+          <ErrorNotice lead="Could not load the vault." error={error} />
           <Button label="Try again" variant="secondary" size="input" onPress={() => refetch()} />
         </View>
       ) : entries.length === 0 ? (
@@ -242,7 +243,7 @@ function UnlockedVault() {
           />
         </>
       ) : null}
-      {setBiometric.error ? <Notice tone="danger">{setBiometric.error.message}</Notice> : null}
+      {setBiometric.error ? <ErrorNotice error={setBiometric.error} /> : null}
 
       <View>
         <Text accessibilityRole="header" className="py-2 font-semibold text-heading text-ink">
@@ -278,7 +279,7 @@ function UnlockedVault() {
         The file stays encrypted and opens only with your master password. It does not hold encrypted photos, and it is
         a copy from now.
       </Text>
-      {exportBackup.error ? <Notice tone="danger">{exportBackup.error.message}</Notice> : null}
+      {exportBackup.error ? <ErrorNotice error={exportBackup.error} /> : null}
     </KeyboardScrollView>
   );
 }
@@ -300,7 +301,7 @@ export default function VaultScreen() {
         <Skeleton />
       ) : settings.error ? (
         <View className="gap-3 px-5">
-          <Notice tone="danger">Could not load the vault. {settings.error.message}</Notice>
+          <ErrorNotice lead="Could not load the vault." error={settings.error} />
           <Button label="Try again" variant="secondary" size="input" onPress={() => settings.refetch()} />
         </View>
       ) : !settings.data ? (

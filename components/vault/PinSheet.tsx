@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Text } from "react-native";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Sheet } from "@/components/ui/Sheet";
@@ -54,7 +55,7 @@ export function PinSheet({ on, onClose }: { on: boolean; onClose: () => void }) 
         is needed. It never leaves this phone.
       </Text>
       {problem ? <Notice tone="danger">{problem}</Notice> : null}
-      {setPin.error ? <Notice tone="danger">{setPin.error.message}</Notice> : null}
+      {setPin.error ? <ErrorNotice error={setPin.error} /> : null}
       <Button label="Save PIN" loading={setPin.isPending} disabled={pin.length < 6} onPress={onSave} />
       {on ? (
         <Button

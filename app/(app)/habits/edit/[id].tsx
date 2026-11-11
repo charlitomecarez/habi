@@ -6,6 +6,7 @@ import { HabitForm } from "@/components/habits/HabitForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useHabits } from "@/lib/habits";
 
@@ -22,7 +23,7 @@ export default function EditHabitScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{habits.error ? habits.error.message : "This habit was deleted."}</Notice>
+          <Notice tone="danger">{habits.error ? errorText(habits.error) : "This habit was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

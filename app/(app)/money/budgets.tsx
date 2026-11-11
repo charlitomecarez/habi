@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BudgetRow } from "@/components/money/BudgetRow";
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
@@ -12,6 +13,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useBudgetMonths, useBudgets, useDeleteBudget, useSaveBudget, type Budget } from "@/lib/budgets";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { errorText } from "@/lib/errors";
 import { amountText, parseAmount, useCategories } from "@/lib/money";
 
 export default function BudgetsScreen() {
@@ -59,7 +61,7 @@ export default function BudgetsScreen() {
         {budgets.isPending ? (
           <Skeleton />
         ) : budgets.error ? (
-          <Notice tone="danger">Could not load your budgets. {budgets.error.message}</Notice>
+          <ErrorNotice lead="Could not load your budgets." error={budgets.error} />
         ) : (
           <View>
             {(months ?? []).length === 0 ? (
@@ -105,7 +107,7 @@ export default function BudgetsScreen() {
           inputMode="decimal"
           keyboardType="decimal-pad"
         />
-        {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
+        {error || save.error ? <Notice tone="danger">{error ?? errorText(save.error)}</Notice> : null}
         <Button label="Save budget" loading={save.isPending} onPress={onSave} />
         {editing && editing !== "new" ? (
           <Button

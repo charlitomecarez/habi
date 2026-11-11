@@ -10,9 +10,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ExportSheet } from "@/components/travel/ExportSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useExchangeRates } from "@/lib/money";
@@ -102,7 +104,7 @@ export default function TripScreen() {
           <Skeleton layout="detail" />
         ) : (
           <View className="px-5">
-            <Notice tone="danger">{trip.error ? trip.error.message : "This trip was deleted."}</Notice>
+            <Notice tone="danger">{trip.error ? errorText(trip.error) : "This trip was deleted."}</Notice>
           </View>
         )}
       </SafeAreaView>
@@ -128,7 +130,7 @@ export default function TripScreen() {
             .filter(Boolean)
             .join(" · ")}
         </Text>
-        {items.error ? <Notice tone="danger">{items.error.message}</Notice> : null}
+        {items.error ? <ErrorNotice error={items.error} /> : null}
 
         <View className="gap-2">
           <View className="flex-row justify-between gap-3">
@@ -188,7 +190,7 @@ export default function TripScreen() {
             })
           }
         />
-        {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
+        {remove.error ? <ErrorNotice error={remove.error} /> : null}
         <Button
           label="Delete trip"
           variant="destructive"

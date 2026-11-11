@@ -8,9 +8,9 @@ import { ItemPhoto } from "@/components/inventory/ItemPhoto";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -190,7 +190,7 @@ export default function InventoryScreen() {
           <Skeleton />
         ) : error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your inventory. {error.message}</Notice>
+            <ErrorNotice lead="Could not load your inventory." error={error} />
             <Button
               label="Try again"
               variant="secondary"

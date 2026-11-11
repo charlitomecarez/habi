@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ModuleGate } from "@/components/ui/ModuleGate";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
@@ -109,7 +110,7 @@ function FindWorkScreen() {
         ) : (
           <>
             {notice ? <Notice tone={notice.tone}>{notice.text}</Notice> : null}
-            {refresh.error ? <Notice tone="danger">{refresh.error.message}</Notice> : null}
+            {refresh.error ? <ErrorNotice error={refresh.error} /> : null}
             <View accessibilityRole="radiogroup" accessibilityLabel="Filter" className="flex-row flex-wrap gap-2">
               {JOB_FILTERS.map((item) => (
                 <Chip

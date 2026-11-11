@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useFeatures } from "@/lib/features";
@@ -34,7 +34,7 @@ export default function TravelScreen() {
             last
           />
         ) : null}
-        {trips.error ? <Notice tone="danger">Could not load your trips. {trips.error.message}</Notice> : null}
+        {trips.error ? <ErrorNotice lead="Could not load your trips." error={trips.error} /> : null}
         {trips.isPending ? (
           <Skeleton />
         ) : list.length === 0 ? (

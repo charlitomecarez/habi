@@ -8,10 +8,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
 import { ModuleBar } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { documentStatus, typeLabel, useDeleteDocument, useDocument, useSetDocumentPhotos } from "@/lib/documents";
@@ -46,7 +48,7 @@ export default function DocumentScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{doc.error ? doc.error.message : "This document was deleted."}</Notice>
+            <Notice tone="danger">{doc.error ? errorText(doc.error) : "This document was deleted."}</Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -74,7 +76,7 @@ export default function DocumentScreen() {
 
       <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         <Badge label={status.text} tone={status.tone} />
-        {setPhotos.error ? <Notice tone="danger">{setPhotos.error.message}</Notice> : null}
+        {setPhotos.error ? <ErrorNotice error={setPhotos.error} /> : null}
 
         <View>
           <Detail label="Type" value={typeLabel(d.type)} />

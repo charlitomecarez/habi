@@ -56,6 +56,7 @@ Personal all-in-one app. The owner is the admin. Sign-up is off, so only people 
 - The assistant says "I" in its sentences and empty states. Buttons and labels stay plain.
 - Sentence case; buttons name the action ("Save expense"). Optional fields say "(optional)".
 - Borders, not shadows (only the FAB has a shadow). Inputs use 16px text.
+- Errors never show the Supabase text. Use `ErrorNotice` or `errorText()` from `lib/errors.ts`.
 - Full-screen form for more than three fields; bottom sheet for one or two.
 - Every UI change consults Impeccable through the `ui-check` skill. `docs/design-system.md` has the steps.
 
