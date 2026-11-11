@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -61,6 +62,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
     resolver: zodResolver(schema),
     defaultValues: entry?.data ?? EMPTY,
   });
+  const discard = useDiscardGuard(formState.isDirty, "The login is not saved.");
 
   // Typing counts as activity, so the vault does not lock while you fill in the form.
   const typed = useWatch({ control });
@@ -77,6 +79,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
         notes: values.notes.trim(),
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -87,6 +90,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
   async function onDelete() {
     if (!entry) return;
     await remove.mutateAsync(entry.id);
+    discard.allowLeave();
     goBack();
   }
 
@@ -220,6 +224,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
           <Button label="Save login" loading={formState.isSubmitting} disabled={remove.isPending} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

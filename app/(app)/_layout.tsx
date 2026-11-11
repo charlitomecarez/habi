@@ -1,12 +1,15 @@
-import { router, Stack } from "expo-router";
-import { useEffect } from "react";
+import { router } from "expo-router";
+import { Stack } from "expo-router/js-stack";
+import { useEffect, useMemo } from "react";
 import { View } from "react-native";
 
 import { useWeightsFromHealthConnect } from "@/lib/health-weights";
+import { useReduceMotion } from "@/lib/motion";
 import { onPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
 import { reminderRoute } from "@/lib/reminder-route";
 import { useSleepFromPhone } from "@/lib/sleep";
 import { noteVaultActivity } from "@/lib/vault";
+import { pushOptions, riseOptions } from "@/lib/transitions";
 import { refreshWidgets } from "@/lib/widgets";
 
 const onSleepSaved = () => void refreshWidgets();
@@ -24,6 +27,11 @@ export default function AppLayout() {
 
   useEffect(() => onPushOpened((source, id) => router.push(reminderRoute(source, id))), []);
 
+  // Screens slide in from the right and drag back. Full-screen forms rise from the bottom.
+  const reduced = useReduceMotion();
+  const push = useMemo(() => pushOptions(reduced), [reduced]);
+  const rise = useMemo(() => riseOptions(reduced), [reduced]);
+
   return (
     // Sees every touch without taking it, for the vault's idle lock.
     <View
@@ -33,16 +41,16 @@ export default function AppLayout() {
         return false;
       }}
     >
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={push}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="alarms/index" />
         <Stack.Screen name="alarms/label" />
         <Stack.Screen name="travel/index" />
         <Stack.Screen name="travel/[id]" />
-        <Stack.Screen name="travel/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="travel/edit/[id]" options={{ presentation: "modal" }} />
-        <Stack.Screen name="travel/item/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="travel/item/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="travel/new" options={rise} />
+        <Stack.Screen name="travel/edit/[id]" options={rise} />
+        <Stack.Screen name="travel/item/new" options={rise} />
+        <Stack.Screen name="travel/item/[id]" options={rise} />
         <Stack.Screen name="sports/index" />
         <Stack.Screen name="work/index" />
         <Stack.Screen name="work/profile" />
@@ -63,18 +71,18 @@ export default function AppLayout() {
         <Stack.Screen name="ulam/index" />
         <Stack.Screen name="ulam/cook" />
         <Stack.Screen name="ulam/week" />
-        <Stack.Screen name="todo/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="todo/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="todo/new" options={rise} />
+        <Stack.Screen name="todo/[id]" options={rise} />
         <Stack.Screen name="vehicle/log-service" />
         <Stack.Screen name="vehicle/mark-done" />
         <Stack.Screen name="vehicle/checks" />
         <Stack.Screen name="vehicle/fuel/index" />
-        <Stack.Screen name="vehicle/fuel/new" options={{ presentation: "modal" }} />
+        <Stack.Screen name="vehicle/fuel/new" options={rise} />
         <Stack.Screen name="inventory/index" />
         <Stack.Screen name="inventory/locations" />
-        <Stack.Screen name="inventory/item/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="inventory/item/[id]" options={{ presentation: "modal" }} />
-        <Stack.Screen name="inventory/scan" options={{ presentation: "modal" }} />
+        <Stack.Screen name="inventory/item/new" options={rise} />
+        <Stack.Screen name="inventory/item/[id]" options={rise} />
+        <Stack.Screen name="inventory/scan" options={rise} />
         <Stack.Screen name="money/accounts" />
         <Stack.Screen name="money/transactions" />
         <Stack.Screen name="money/subscriptions" />
@@ -82,56 +90,56 @@ export default function AppLayout() {
         <Stack.Screen name="money/import" />
         <Stack.Screen name="money/budgets" />
         <Stack.Screen name="money/goal/[id]" />
-        <Stack.Screen name="money/goal/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/goal/edit/[id]" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/bill/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/transaction/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/transaction/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="money/goal/new" options={rise} />
+        <Stack.Screen name="money/goal/edit/[id]" options={rise} />
+        <Stack.Screen name="money/bill/new" options={rise} />
+        <Stack.Screen name="money/transaction/new" options={rise} />
+        <Stack.Screen name="money/transaction/[id]" options={rise} />
         <Stack.Screen name="money/recurring/index" />
         <Stack.Screen name="money/recurring/[id]" />
-        <Stack.Screen name="money/recurring/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/recurring/edit" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/subscription/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="money/subscription/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="money/recurring/new" options={rise} />
+        <Stack.Screen name="money/recurring/edit" options={rise} />
+        <Stack.Screen name="money/subscription/new" options={rise} />
+        <Stack.Screen name="money/subscription/[id]" options={rise} />
         <Stack.Screen name="vault/index" />
-        <Stack.Screen name="vault/entry/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="vault/entry/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="vault/entry/new" options={rise} />
+        <Stack.Screen name="vault/entry/[id]" options={rise} />
         <Stack.Screen name="habits/index" />
         <Stack.Screen name="habits/[id]" />
-        <Stack.Screen name="habits/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="habits/edit/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="habits/new" options={rise} />
+        <Stack.Screen name="habits/edit/[id]" options={rise} />
         <Stack.Screen name="gym/index" />
         <Stack.Screen name="gym/session/[planId]" />
         <Stack.Screen name="gym/exercise/[id]" />
-        <Stack.Screen name="gym/plan/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="gym/plan/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="gym/plan/new" options={rise} />
+        <Stack.Screen name="gym/plan/[id]" options={rise} />
         <Stack.Screen name="shopping/index" />
         <Stack.Screen name="journal/index" />
         <Stack.Screen name="journal/entry/[date]" />
-        <Stack.Screen name="journal/[date]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="journal/[date]" options={rise} />
         <Stack.Screen name="health/index" />
         <Stack.Screen name="health/visit/[id]" />
-        <Stack.Screen name="health/visit/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="health/visit/edit/[id]" options={{ presentation: "modal" }} />
-        <Stack.Screen name="health/medicine/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="health/medicine/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="health/visit/new" options={rise} />
+        <Stack.Screen name="health/visit/edit/[id]" options={rise} />
+        <Stack.Screen name="health/medicine/new" options={rise} />
+        <Stack.Screen name="health/medicine/[id]" options={rise} />
         <Stack.Screen name="people/index" />
         <Stack.Screen name="people/[id]" />
         <Stack.Screen name="inbox/index" />
         <Stack.Screen name="inbox/access" />
-        <Stack.Screen name="inbox/record" options={{ presentation: "modal" }} />
+        <Stack.Screen name="inbox/record" options={rise} />
         <Stack.Screen name="debts/index" />
         <Stack.Screen name="debts/[id]" />
-        <Stack.Screen name="debts/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="debts/edit/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="debts/new" options={rise} />
+        <Stack.Screen name="debts/edit/[id]" options={rise} />
         <Stack.Screen name="documents/index" />
         <Stack.Screen name="documents/[id]" />
-        <Stack.Screen name="documents/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="documents/edit/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="documents/new" options={rise} />
+        <Stack.Screen name="documents/edit/[id]" options={rise} />
         <Stack.Screen name="content/index" />
         <Stack.Screen name="content/video/[id]" />
-        <Stack.Screen name="content/video/new" options={{ presentation: "modal" }} />
-        <Stack.Screen name="content/video/edit/[id]" options={{ presentation: "modal" }} />
+        <Stack.Screen name="content/video/new" options={rise} />
+        <Stack.Screen name="content/video/edit/[id]" options={rise} />
       </Stack>
     </View>
   );

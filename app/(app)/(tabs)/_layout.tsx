@@ -1,14 +1,18 @@
 import { Tabs } from "expo-router";
-import { useReducedMotion } from "react-native-reanimated";
 
 import { TabBar } from "@/components/ui/TabBar";
+import { motion, useReduceMotion } from "@/lib/motion";
 
 export default function AppTabsLayout() {
-  // The tab navigator's built-in slide when you tap a tab. None with reduce motion on.
-  const reduced = useReducedMotion();
+  // The new tab fades in, with no sideways move, so tabs never feel like a stack. None with reduce motion on.
+  const reduced = useReduceMotion();
   return (
     <Tabs
-      screenOptions={{ headerShown: false, animation: reduced ? "none" : "shift" }}
+      screenOptions={{
+        headerShown: false,
+        animation: reduced ? "none" : "fade",
+        transitionSpec: { animation: "timing", config: { duration: motion.fade } },
+      }}
       tabBar={(props) => <TabBar {...props} />}
     >
       <Tabs.Screen name="index" options={{ title: "Home" }} />

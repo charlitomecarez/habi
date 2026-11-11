@@ -10,6 +10,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -124,6 +125,7 @@ export function SubscriptionForm({
     resolver: zodResolver(schema),
     defaultValues: defaults(subscription, kind),
   });
+  const discard = useDiscardGuard(formState.isDirty, "The bill is not saved.");
   const currency = useWatch({ control, name: "currency" });
   const amount = parseAmount(useWatch({ control, name: "amount" }) ?? "");
   const autoAdd = useWatch({ control, name: "autoAdd" });
@@ -176,12 +178,14 @@ export function SubscriptionForm({
         autoAdd: values.autoAdd === "on",
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
   async function onDelete() {
     if (!subscription) return;
     await remove.mutateAsync(subscription.id);
+    discard.allowLeave();
     goBack();
   }
 
@@ -389,6 +393,7 @@ export function SubscriptionForm({
           />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

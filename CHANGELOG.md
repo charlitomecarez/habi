@@ -38,6 +38,9 @@ Do not put these items here:
 ### Changed
 
 - **App:** Every move uses one set of timings and one easing. Images fade in at the same speed everywhere.
+- **App:** A new screen slides in from the right, and the screen under it moves a little and dims. Drag right from anywhere on the screen to go back. Full-screen forms rise from the bottom, and a drag down from the top closes them.
+- **App:** A form with unsaved changes asks "Discard your changes?" before Back, a drag back or a drag down closes it.
+- **Tabs:** The cream pill glides to the open tab, and the new tab fades in. Login to Home crossfades.
 
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 

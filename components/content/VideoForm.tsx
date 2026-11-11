@@ -10,6 +10,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -65,6 +66,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
     resolver: zodResolver(schema),
     defaultValues: defaults(video),
   });
+  const discard = useDiscardGuard(formState.isDirty, "The video is not saved.");
 
   const onSubmit = handleSubmit(async (values) => {
     const input = {
@@ -78,6 +80,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
       notes: values.notes.trim(),
     };
     const id = await save.mutateAsync({ id: video?.id, input: video ? input : { ...input, stage } });
+    discard.allowLeave();
     if (video) goBack();
     else router.replace({ pathname: "/content/video/[id]", params: { id } });
   });
@@ -229,6 +232,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
           />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }
