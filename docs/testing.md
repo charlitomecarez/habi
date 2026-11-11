@@ -47,7 +47,7 @@ To run them on this Mac, which needs about 1 GB of free memory:
 
 ## Phone smoke tests
 
-The five Maestro flows open Home, add and delete a todo, add and delete an expense, open the vault, and search More. Each flow starts signed in.
+The seven Maestro flows open Home, add and delete a todo, add and delete an expense, open the vault, search More, swipe back from Weather, and drag the odometer sheet closed. Each flow starts signed in. The sheet flow needs a vehicle.
 
 1. Install the Maestro CLI on the computer.
 2. Connect the test phone with USB debugging on, and install the APK from expo.dev.
