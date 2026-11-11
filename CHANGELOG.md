@@ -40,6 +40,8 @@ Do not put these items here:
 - **Health:** A 6 PM health check gives you 1 to 3 tips each evening from your sleep, steps and weight trend. It is off until you turn it on in Steps and sleep. While it is on, your sleep and steps go to your account and, with no name, to Groq. Turning it off deletes them.
 - **Weather:** A World section shows the weather and local time in up to 6 places, starting with Hong Kong, Tokyo, Rome, Los Angeles and New York. Edit places adds and removes them. The places stay on the phone.
 - **Settings:** A Speed check row shows how fast your last 50 requests were, with the typical time, the slowest request and a Fast, Slow or Very slow word. The times stay on the phone.
+- **Sleep:** Steps and sleep shows This week and Last week: a bar for each night, a sleep score from 0 to 100 with Rested, Fair or Poor, and your usual bedtime. Tap a night to fix its times.
+- **Health Connect:** The app reads last night's sleep and your weight from Samsung Health through Health Connect. Sleep stays on the phone. A weight saves to your account and says "From Samsung Health". A weight that you type on the same day wins, and a weight that you delete does not come back. Needs the v1.5.0 APK, and a tap on Allow sleep and weight if you allowed only steps before.
 - **CI:** Each PR checks the web bundle against a size budget and runs Lighthouse on the web app.
 
 ### Changed

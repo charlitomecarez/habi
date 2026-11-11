@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { screenMayWrite, sleepMinutes, sleepRow, sleepStrand, sleepText, trimLog } from "@/lib/sleep";
+import { phoneMayWrite, sleepMinutes, sleepRow, sleepStrand, sleepText, trimLog } from "@/lib/sleep";
 
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: {} }));
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
 vi.mock("react-native", () => ({ AppState: {} }));
 vi.mock("@/lib/screen-time", () => ({ readScreenEvents: vi.fn() }));
+vi.mock("@/lib/health-connect", () => ({ readNightSleep: vi.fn() }));
 
 describe("sleepMinutes", () => {
   it("crosses midnight", () => {
@@ -47,15 +48,16 @@ describe("trimLog", () => {
   });
 });
 
-describe("screenMayWrite", () => {
+describe("phoneMayWrite", () => {
   it("never writes over a typed sleep", () => {
-    expect(screenMayWrite({ bed: "23:00", wake: "06:00", source: "typed" })).toBe(false);
+    expect(phoneMayWrite({ bed: "23:00", wake: "06:00", source: "typed" })).toBe(false);
     // v1.3.0 saved typed entries with no source.
-    expect(screenMayWrite({ bed: "23:00", wake: "06:00" })).toBe(false);
+    expect(phoneMayWrite({ bed: "23:00", wake: "06:00" })).toBe(false);
   });
 
   it("writes a new night, or grows its own entry", () => {
-    expect(screenMayWrite(undefined)).toBe(true);
-    expect(screenMayWrite({ bed: "23:00", wake: "04:00", source: "screen" })).toBe(true);
+    expect(phoneMayWrite(undefined)).toBe(true);
+    expect(phoneMayWrite({ bed: "23:00", wake: "04:00", source: "screen" })).toBe(true);
+    expect(phoneMayWrite({ bed: "23:00", wake: "06:00", source: "health_connect" })).toBe(true);
   });
 });

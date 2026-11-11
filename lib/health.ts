@@ -10,7 +10,7 @@ export type DoseStatus = Enums<"dose_status">;
 export type Medicine = Omit<Tables<"medicines">, "user_id" | "updated_at">;
 export type Dose = Omit<Tables<"medicine_doses">, "user_id" | "created_at">;
 export type Visit = Omit<Tables<"health_visits">, "user_id" | "updated_at">;
-export type WeightLog = Pick<Tables<"weight_logs">, "id" | "on_date" | "weight_kg">;
+export type WeightLog = Pick<Tables<"weight_logs">, "id" | "on_date" | "weight_kg" | "source">;
 
 const HEALTH_KEY = ["health"] as const;
 
@@ -53,7 +53,7 @@ async function fetchHealth() {
       .from("health_visits")
       .select("id, visited_on, doctor, reason, notes, photo_paths, created_at")
       .order("visited_on", { ascending: false }),
-    supabase.from("weight_logs").select("id, on_date, weight_kg").order("on_date"),
+    supabase.from("weight_logs").select("id, on_date, weight_kg, source").order("on_date"),
   ]);
   for (const r of [medicines, doses, visits, weights]) if (r.error) throw r.error;
   return {
@@ -196,14 +196,14 @@ export function useDeleteVisit() {
   });
 }
 
-/** Logs today's weight; a second log on the same day replaces it. */
+/** Logs today's weight; a second log on the same day replaces it, also a weight from Health Connect. */
 export function useLogWeight() {
   const invalidate = useInvalidate();
   return useMutation({
     mutationFn: async ({ kg, on }: { kg: number; on: Date }) => {
       const { error } = await supabase
         .from("weight_logs")
-        .upsert({ on_date: toDateString(on), weight_kg: kg }, { onConflict: "user_id,on_date" });
+        .upsert({ on_date: toDateString(on), weight_kg: kg, source: "typed" }, { onConflict: "user_id,on_date" });
       if (error) throw error;
     },
     onSettled: invalidate,

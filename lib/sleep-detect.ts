@@ -60,3 +60,12 @@ export function findSleep(events: readonly ScreenEvent[], day: Date, now = Date.
   );
   return longest && longest.end - longest.start >= MIN_SLEEP_MS ? longest : null;
 }
+
+/** The longest Health Connect sleep session that ends between midnight and noon of `day`, or null. */
+export function longestNightSession(sessions: readonly Span[], day: Date): Span | null {
+  const midnight = set(day, { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }).getTime();
+  const noon = nightWindow(day).end;
+  return sessions
+    .filter((s) => s.end > s.start && s.end >= midnight && s.end <= noon)
+    .reduce<Span | null>((best, s) => (!best || s.end - s.start > best.end - best.start ? s : best), null);
+}

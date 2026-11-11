@@ -116,6 +116,8 @@ The odometer goes down only through an `odometer_logs` row with `is_correction`.
 | `health_days`     | One row a day per account: `sleep_minutes` (0 to 1440), `bed_time`, `wake_time`, `sleep_source` (`health_connect`, `screen` or `typed`) and `steps` (0 to 200,000). Unique `(user_id, day)`. Owner RLS; the app upserts its own rows only while the check is on. |
 | `health_insights` | 1 to 3 `tips` a day (no empty tip, 600 characters in all) and `based_on`. Unique `(user_id, day)`. The owner can read and delete; only the `health-insight` function writes.                                                                                     |
 
+`weight_logs.source` (`20261111000100_weight_source.sql`) is `typed` (the default) or `health_connect`. `save_health_weights(p_weights jsonb)` (security invoker) saves one Health Connect weight a day, and updates only a row that Health Connect wrote, so a typed weight wins. It returns the count of changed rows.
+
 `clear_health_check()` (security invoker) deletes the caller's rows in both tables and sets `health_check = false`. The `health-insight` cron job runs at :45 each hour. `docs/modules/health.md` has the flow.
 
 ## Indexes
@@ -124,7 +126,7 @@ Every foreign key has an index (migration `20261110000100`), so a delete of a pa
 
 ## RPC
 
-`home_summary(...)` returns every read on Home in one `jsonb`: a key for each module's rows (`todos`, `vehicle`, `services_due`, `subscriptions`, `medicines`, `doses`, `visits`, `weights`, `debts`, `debt_balances`, `people`, `person_dates`, `gift_ideas`, `month_transactions`, `settings`, `budgets`, `budget_spending`, `habits`, `habit_checks`, `ulam_days`, `admin`, `has_voice_access`, `voice_contacts`, `inbox`, `tip`, `news`, `game_leagues`, `games`). Each key holds the same columns and order as the module's own query. The phone sends its own dates (today, the month, the dose and history windows), because they are local to the phone. It is `security invoker`, so RLS of the caller applies, and only `authenticated` can call it. `lib/home-summary.ts` explains how the app uses it.
+`home_summary(...)` returns every read on Home in one `jsonb`: a key for each module's rows (`todos`, `vehicle`, `services_due`, `subscriptions`, `medicines`, `doses`, `visits`, `weights`, `debts`, `debt_balances`, `people`, `person_dates`, `gift_ideas`, `month_transactions`, `settings`, `budgets`, `budget_spending`, `habits`, `habit_checks`, `ulam_days`, `admin`, `has_voice_access`, `voice_contacts`, `inbox`, `tip`, `news`, `game_leagues`, `games`). Each key holds the same columns and order as the module's own query. From `20261111000100`, `weights` also holds `source`. The phone sends its own dates (today, the month, the dose and history windows), because they are local to the phone. It is `security invoker`, so RLS of the caller applies, and only `authenticated` can call it. `lib/home-summary.ts` explains how the app uses it.
 
 `seed_money_defaults()` adds four accounts (Cash on hand, GCash, MariBank, GoTyme) and 13 categories when the user has none. The app calls it after each sign-in. A second call does nothing.
 

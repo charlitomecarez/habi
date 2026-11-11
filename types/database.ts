@@ -2482,6 +2482,7 @@ export type Database = {
           created_at: string;
           id: string;
           on_date: string;
+          source: string;
           user_id: string;
           weight_kg: number;
         };
@@ -2489,6 +2490,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           on_date?: string;
+          source?: string;
           user_id?: string;
           weight_kg: number;
         };
@@ -2496,6 +2498,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           on_date?: string;
+          source?: string;
           user_id?: string;
           weight_kg?: number;
         };
@@ -2876,6 +2879,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      save_health_weights: { Args: { p_weights: Json }; Returns: number };
       seed_money_defaults: { Args: never; Returns: undefined };
       set_voice_access: {
         Args: { p_on: boolean; p_user_id: string };

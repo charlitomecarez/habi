@@ -4,21 +4,23 @@ import { format, subDays } from "date-fns";
 import { useEffect } from "react";
 import { AppState } from "react-native";
 
+import { readNightSleep } from "@/lib/health-connect";
 import { readScreenEvents } from "@/lib/screen-time";
-import { findSleep, nightWindow } from "@/lib/sleep-detect";
+import { findSleep, nightWindow, type Span } from "@/lib/sleep-detect";
 import { weekDays } from "@/lib/week";
 import type { Strand, WeaveRow } from "@/lib/weave";
 
-// Sleep comes from when the screen was off (Android), or you type it. It stays on this phone.
+// Sleep comes from Health Connect or from when the screen was off (Android), or you type it. It stays on
+// this phone.
 
 const SLEEP_KEY = "sleep-log";
 const KEEP_DAYS = 30;
 
 /**
  * Times as HH:mm, keyed by the day you woke up. `source` says where it came from. An entry with no
- * source was typed in v1.3.0. The screen never writes over a typed entry.
+ * source was typed in v1.3.0. The phone never writes over a typed entry.
  */
-export type SleepEntry = { bed: string; wake: string; source?: "screen" | "typed" };
+export type SleepEntry = { bed: string; wake: string; source?: "health_connect" | "screen" | "typed" };
 export type SleepLog = Record<string, SleepEntry>;
 
 const minutesOf = (time: string) => {
@@ -83,14 +85,16 @@ export function useSaveSleep() {
   });
 }
 
-/** True when the screen may write this day's entry: there is none, or the screen wrote it. */
-export const screenMayWrite = (entry: SleepEntry | undefined) => !entry || entry.source === "screen";
+/** True when the phone may write this day's entry: there is none, or the phone wrote it. */
+export const phoneMayWrite = (entry: SleepEntry | undefined) =>
+  !entry || entry.source === "screen" || entry.source === "health_connect";
 
 /**
- * Reads last night's sleep from the screen when the app opens or comes back to the front. Before
- * noon the night is still open, so the entry can grow. A typed entry stays as you typed it.
+ * Reads last night's sleep when the app opens or comes back to the front: Health Connect first, then
+ * the screen. Before noon the night is still open, so the entry can grow. A Health Connect night is
+ * not replaced by the screen. A typed entry stays as you typed it.
  */
-export function useSleepFromScreen(onSaved?: () => void) {
+export function useSleepFromPhone(onSaved?: () => void) {
   const client = useQueryClient();
   useEffect(() => {
     let running = false;
@@ -101,16 +105,13 @@ export function useSleepFromScreen(onSaved?: () => void) {
         const now = new Date();
         const key = format(now, "yyyy-MM-dd");
         const log = await readLog();
-        if (!screenMayWrite(log[key])) return;
-        const window = nightWindow(now);
-        const events = await readScreenEvents(window.start, Math.min(window.end, now.getTime()));
-        if (!events) return;
-        const sleep = findSleep(events, now, now.getTime());
-        if (!sleep) return;
+        if (!phoneMayWrite(log[key])) return;
+        const found = await readPhoneSleep(now, log[key]);
+        if (!found) return;
         const entry: SleepEntry = {
-          bed: format(sleep.start, "HH:mm"),
-          wake: format(sleep.end, "HH:mm"),
-          source: "screen",
+          bed: format(found.span.start, "HH:mm"),
+          wake: format(found.span.end, "HH:mm"),
+          source: found.source,
         };
         const old = log[key];
         if (old && old.bed === entry.bed && old.wake === entry.wake) return;
@@ -129,6 +130,19 @@ export function useSleepFromScreen(onSaved?: () => void) {
     });
     return () => sub.remove();
   }, [client, onSaved]);
+}
+
+async function readPhoneSleep(
+  now: Date,
+  old: SleepEntry | undefined,
+): Promise<{ span: Span; source: "health_connect" | "screen" } | null> {
+  const session = await readNightSleep(now).catch(() => null);
+  if (session) return { span: session, source: "health_connect" };
+  if (old?.source === "health_connect") return null;
+  const window = nightWindow(now);
+  const events = await readScreenEvents(window.start, Math.min(window.end, now.getTime()));
+  const sleep = events ? findSleep(events, now, now.getTime()) : null;
+  return sleep ? { span: sleep, source: "screen" } : null;
 }
 
 /** Sign-out clears this, so that the next account sees none of it. */

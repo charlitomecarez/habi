@@ -7,16 +7,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AdviceList, HealthCheckSection, useAdvice } from "@/components/steps/HealthCheck";
 import { SleepSheet } from "@/components/steps/SleepSheet";
+import { SleepWeek } from "@/components/steps/SleepWeek";
 import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useHealthDaysSync } from "@/lib/health-check";
 import { openHealthConnect } from "@/lib/health-connect";
-import { sleepMinutes, sleepStrand, sleepText, useSleepLog } from "@/lib/sleep";
-import { stepsAverage, useAllowSteps, useSteps } from "@/lib/steps";
+import { sleepMinutes, sleepStrand, sleepText, useSleepLog, type SleepEntry } from "@/lib/sleep";
+import { stepsAverage, useAllowSleepWeight, useAllowSteps, useSteps } from "@/lib/steps";
 
 // The sleep strand: 7 hours or more is good, 6 to 7 is short, under 6 is too short.
 const SLEEP_STATUS = {
@@ -31,8 +33,10 @@ export default function StepsScreen() {
   const now = new Date();
   const steps = useSteps();
   const allow = useAllowSteps();
+  const allowMore = useAllowSleepWeight();
   const sleep = useSleepLog();
-  const [logging, setLogging] = useState(false);
+  // The night that the sheet edits: today by default, or a night from the week.
+  const [editing, setEditing] = useState<{ day: Date; entry?: SleepEntry } | null>(null);
   const advice = useAdvice(now);
   useHealthDaysSync();
   const sent = advice.state.kind !== "off";
@@ -44,6 +48,7 @@ export default function StepsScreen() {
   const today = week[week.length - 1] ?? 0;
   const entry = sleep.data?.[format(now, "yyyy-MM-dd")];
   const minutes = entry ? sleepMinutes(entry) : 0;
+  const editToday = () => setEditing({ day: now, entry });
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
@@ -59,8 +64,8 @@ export default function StepsScreen() {
           <View className="gap-3">
             <Text className="font-bold text-title text-ink">See your steps on Home</Text>
             <Text className="font-sans text-body text-ink-muted">
-              Habi reads your steps from Health Connect, and your sleep from when your screen is off. All of it stays on
-              this phone, unless you turn on the 6 PM health check.
+              Habi reads your steps, sleep and weight from Health Connect. Steps and sleep stay on this phone, unless
+              you turn on the 6 PM health check. Your weight saves to your account, like a weight you type.
             </Text>
             <Button
               label="Allow steps"
@@ -105,6 +110,21 @@ export default function StepsScreen() {
           </View>
         ) : null}
 
+        {access && steps.data && !steps.data.sleepWeight ? (
+          <View className="gap-3">
+            <Notice tone="neutral">
+              I can read your sleep and weight from Samsung Health too. Your sleep stays on this phone. Your weight
+              saves to your account, like a weight you type.
+            </Notice>
+            <Button
+              label="Allow sleep and weight"
+              variant="secondary"
+              loading={allowMore.isPending}
+              onPress={() => allowMore.mutate()}
+            />
+          </View>
+        ) : null}
+
         <View className="gap-3">
           <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
             Last night
@@ -116,11 +136,21 @@ export default function StepsScreen() {
                 detail={`${entry.bed} to ${entry.wake}`}
                 value={sleepText(minutes)}
                 status={SLEEP_STATUS[sleepStrand(minutes)]}
-                onPress={() => setLogging(true)}
+                onPress={editToday}
                 chevron
                 last
               />
-              {entry.source === "screen" ? (
+              {entry.source === "health_connect" ? (
+                <>
+                  <View className="flex-row items-center gap-1">
+                    <Ionicons name="heart-outline" size={14} color={colors.inkMuted} />
+                    <Text className="font-semibold text-badge text-ink-muted">From Samsung Health</Text>
+                  </View>
+                  <Text className="font-sans text-caption text-ink-muted">
+                    I read this night from Health Connect. Tap the sleep to fix the times. {where}
+                  </Text>
+                </>
+              ) : entry.source === "screen" ? (
                 <>
                   <View className="flex-row items-center gap-1">
                     <Ionicons name="phone-portrait-outline" size={14} color={colors.inkMuted} />
@@ -139,18 +169,26 @@ export default function StepsScreen() {
               <Text className="font-sans text-body text-ink">
                 I found no sleep last night. Your screen was on for most of the night, or off for under 3 hours.
               </Text>
-              <Button label="Add sleep" variant="secondary" size="input" onPress={() => setLogging(true)} />
+              <Button label="Add sleep" variant="secondary" size="input" onPress={editToday} />
             </>
           )}
         </View>
 
+        <SleepWeek
+          log={sleep.data}
+          loading={sleep.isPending}
+          now={now}
+          onEdit={(day, e) => setEditing({ day, entry: e })}
+        />
+
         <HealthCheckSection state={advice.state} loading={advice.loading} />
       </ScrollView>
       <SleepSheet
-        key={entry ? `${entry.bed}-${entry.wake}` : "new"}
-        visible={logging}
-        entry={entry}
-        onClose={() => setLogging(false)}
+        key={editing ? `${editing.day.toDateString()}-${editing.entry?.bed}-${editing.entry?.wake}` : "closed"}
+        visible={editing !== null}
+        day={editing?.day}
+        entry={editing?.entry}
+        onClose={() => setEditing(null)}
       />
     </SafeAreaView>
   );

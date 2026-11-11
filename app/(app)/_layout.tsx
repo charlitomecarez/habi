@@ -2,17 +2,19 @@ import { router, Stack } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 
+import { useWeightsFromHealthConnect } from "@/lib/health-weights";
 import { onPushOpened, registerForPushNotifications } from "@/lib/push-notifications";
 import { reminderRoute } from "@/lib/reminder-route";
-import { useSleepFromScreen } from "@/lib/sleep";
+import { useSleepFromPhone } from "@/lib/sleep";
 import { noteVaultActivity } from "@/lib/vault";
 import { refreshWidgets } from "@/lib/widgets";
 
 const onSleepSaved = () => void refreshWidgets();
 
 export default function AppLayout() {
-  // Last night's sleep from when the screen was off. Android only; it stays on this phone.
-  useSleepFromScreen(onSleepSaved);
+  // Last night's sleep from Health Connect or the screen, and new Health Connect weights. Android only.
+  useSleepFromPhone(onSleepSaved);
+  useWeightsFromHealthConnect();
 
   useEffect(() => {
     registerForPushNotifications().catch((error: unknown) => {
