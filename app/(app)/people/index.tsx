@@ -41,7 +41,7 @@ export default function PeopleScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="people">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+        <Text accessibilityRole="header" className="font-bold text-title text-ink">
           People and dates
         </Text>
       </ModuleBar>

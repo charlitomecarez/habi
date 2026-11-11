@@ -45,10 +45,10 @@ export default function LocationsScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="home">
         <View>
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+          <Text accessibilityRole="header" className="font-bold text-title text-ink">
             Locations
           </Text>
-          <Text className="font-sans text-caption text-on-shell">Rooms, and the shelves and boxes inside them.</Text>
+          <Text className="font-sans text-caption text-ink-muted">Rooms, and the shelves and boxes inside them.</Text>
         </View>
       </ModuleBar>
 

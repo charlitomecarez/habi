@@ -58,7 +58,7 @@ export default function SubscriptionsScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar backLabel="Back to Money">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+        <Text accessibilityRole="header" className="font-bold text-title text-ink">
           Subscriptions
         </Text>
       </ModuleBar>

@@ -76,7 +76,7 @@ export default function TripScreen() {
 
   const header = (title: string) => (
     <ModuleBar tone="home">
-      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-on-shell">
+      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-ink">
         {title}
       </Text>
       {trip.data ? (
@@ -86,7 +86,7 @@ export default function TripScreen() {
           onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
           className="h-touch w-touch items-center justify-center"
         >
-          <Ionicons name="create-outline" size={22} color={colors.onShell} />
+          <Ionicons name="create-outline" size={22} color={colors.ink} />
         </Pressable>
       ) : null}
     </ModuleBar>

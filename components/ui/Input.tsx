@@ -6,25 +6,32 @@ type InputProps = Omit<TextInputProps, "className" | "style"> & {
   label: string;
   optional?: boolean;
   error?: string;
+  /** "shell" is for a field on the indigo shell, such as the login email. */
+  tone?: "page" | "shell";
 };
 
-export function Input({ label, optional = false, error, multiline, ...props }: InputProps) {
+export function Input({ label, optional = false, error, multiline, tone = "page", ...props }: InputProps) {
+  const shell = tone === "shell";
   const colors = useColors();
   return (
     <View className="gap-2">
-      <Text className="font-semibold text-label text-ink">
+      <Text className={`font-semibold text-label ${shell ? "text-on-shell" : "text-ink"}`}>
         {label}
-        {optional ? <Text className="font-sans text-ink-muted"> (optional)</Text> : null}
+        {optional ? (
+          <Text className={`font-sans ${shell ? "text-on-shell-muted" : "text-ink-muted"}`}> (optional)</Text>
+        ) : null}
       </Text>
       <TextInput
         accessibilityLabel={label}
-        placeholderTextColor={colors.inkMuted}
+        placeholderTextColor={shell ? colors.onShellMuted : colors.inkMuted}
         multiline={multiline}
         textAlignVertical={multiline ? "top" : "center"}
-        className={`rounded-input border bg-surface-card px-4 font-sans text-body text-ink ${multiline ? "min-h-amount py-3" : "h-input"} ${error ? "border-danger" : "border-border-input"}`}
+        className={`rounded-input px-4 font-sans text-body ${shell ? "border-2 bg-on-shell/10 text-on-shell" : "border bg-surface-card text-ink"} ${multiline ? "min-h-amount py-3" : "h-input"} ${error ? (shell ? "border-over-fill" : "border-danger") : shell ? "border-on-shell/45" : "border-border-input"}`}
         {...props}
       />
-      {error ? <Text className="font-sans text-caption text-danger">{error}</Text> : null}
+      {error ? (
+        <Text className={`font-sans text-caption ${shell ? "text-on-shell" : "text-danger"}`}>{error}</Text>
+      ) : null}
     </View>
   );
 }

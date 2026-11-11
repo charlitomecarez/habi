@@ -46,11 +46,12 @@ Personal all-in-one app. The owner is the admin. Sign-up is off, so only people 
 ## Design system
 
 - Use token classes only (see `tailwind.config.js`). No hex codes or bare px values in screens.
-- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ModuleHeader, DataRow, BarChart, WeaveBand, Sheet, ModuleLine, EmptyState, Skeleton, FadeIn, PressScale.
+- Build screens from shared components in `components/ui/`: Button, Input, AmountInput, Select, Segmented, Chip, Badge, Notice, Fab, TabBar, ModuleHeader, DataRow, BarChart, WeaveBand, Sheet, ModuleLine, EmptyState, Skeleton, FadeIn, PressScale, HabiMark, WeaveField, Snackbar.
+- Motion uses the names in `lib/motion.ts`; a screen never sets a duration. Haptics go through `lib/haptics.ts`.
 - At most one primary action per screen. Read-only screens have none. Indigo marks the shell and the primary action. The open tab is a cream pill on indigo.
-- Section colours (`daily`, `people`, `home`, `records`) are for icons, tiles and module header fields, never for status.
+- Section colours (`daily`, `people`, `home`, `records`) are for icons, tiles and the module icon in a header, never for status.
 - Minimum touch target 48px; icon-only buttons need an accessibility label.
-- Status always includes a word (Overdue, Today, Due soon), plus one colour: good (emerald), watch (saffron) or over (magenta). These colours never mean anything else.
+- Status always includes a word (Overdue, Today, Due soon), plus one colour: good (emerald), watch (saffron) or over (magenta). These colours never mean anything else. Gold on the shell is the brand (the mark and the stitch strip); a watch status always has its word.
 - Cards are only for objects that you act on. Rows use 2 px rules and space.
 - The assistant says "I" in its sentences and empty states. Buttons and labels stay plain.
 - Sentence case; buttons name the action ("Save expense"). Optional fields say "(optional)".

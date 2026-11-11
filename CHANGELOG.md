@@ -41,6 +41,9 @@ Do not put these items here:
 - **App:** A new screen slides in from the right, and the screen under it moves a little and dims. Drag right from anywhere on the screen to go back. Full-screen forms rise from the bottom, and a drag down from the top closes them.
 - **App:** A form with unsaved changes asks "Discard your changes?" before Back, a drag back or a drag down closes it.
 - **Tabs:** The cream pill glides to the open tab, and the new tab fades in. Login to Home crossfades.
+- **Headers:** Module headers are cream, with a large title beside the module icon. Tab headers stay indigo.
+- **Sheets:** A sheet rises on a spring, and you can drag it down to close it.
+- **Lists:** Segmented choices glide, can show a count, and give a light tick. Money shows a dot under the account cards for the open card.
 
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 

@@ -78,9 +78,9 @@ function FindWorkScreen() {
               className="h-touch w-touch items-center justify-center"
             >
               {refresh.isPending ? (
-                <ActivityIndicator color={colors.onShell} />
+                <ActivityIndicator color={colors.ink} />
               ) : (
-                <Ionicons name="refresh" size={22} color={colors.onShell} />
+                <Ionicons name="refresh" size={22} color={colors.ink} />
               )}
             </Pressable>
           ) : undefined

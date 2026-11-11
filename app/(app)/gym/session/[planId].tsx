@@ -82,10 +82,10 @@ export default function WorkoutScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="daily">
         <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-on-shell">
+          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-ink">
             {plan.name}
           </Text>
-          <Text className="font-sans text-caption text-on-shell">
+          <Text className="font-sans text-caption text-ink-muted">
             {format(new Date(), "EEEE, MMM d")} · {done} of {total} sets
           </Text>
         </View>

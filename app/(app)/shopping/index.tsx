@@ -151,7 +151,7 @@ export default function ShoppingScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
         <ModuleBar tone="home">
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+          <Text accessibilityRole="header" className="font-bold text-title text-ink">
             Shopping list
           </Text>
         </ModuleBar>

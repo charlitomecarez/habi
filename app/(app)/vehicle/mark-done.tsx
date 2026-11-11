@@ -156,7 +156,7 @@ export default function MarkDoneScreen() {
     <SafeAreaView className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
         <ModuleBar>
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+          <Text accessibilityRole="header" className="font-bold text-title text-ink">
             Mark services done
           </Text>
         </ModuleBar>

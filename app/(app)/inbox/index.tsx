@@ -72,11 +72,11 @@ function InboxScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleBar tone="people">
         <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
+          <Text accessibilityRole="header" className="font-bold text-title text-ink">
             Inbox
           </Text>
           {unread > 0 ? (
-            <Text className="font-sans text-label text-on-shell">
+            <Text className="font-sans text-label text-ink-muted">
               {unread} new {unread === 1 ? "message" : "messages"}
             </Text>
           ) : null}
@@ -88,7 +88,7 @@ function InboxScreen() {
             onPress={() => router.push("/inbox/access")}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="people-outline" size={22} color={colors.onShell} />
+            <Ionicons name="people-outline" size={22} color={colors.ink} />
           </Pressable>
         ) : null}
       </ModuleBar>

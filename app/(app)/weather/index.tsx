@@ -39,7 +39,7 @@ export default function WeatherScreen() {
             onPress={choose}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="search" size={22} color={colors.onShell} />
+            <Ionicons name="search" size={22} color={colors.ink} />
           </Pressable>
         }
       />

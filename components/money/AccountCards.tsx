@@ -1,4 +1,7 @@
-import { ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { useState } from "react";
+import { Text, useWindowDimensions, View } from "react-native";
+// The gesture handler's ScrollView takes part in the drag back, so a swipe here moves the cards, not the screen.
+import { ScrollView } from "react-native-gesture-handler";
 
 import { PressScale } from "@/components/ui/Motion";
 import { formatMoney, type Account } from "@/lib/money";
@@ -34,43 +37,61 @@ type AccountCardsProps = {
 export function AccountCards({ accounts, onPress }: AccountCardsProps) {
   const { width } = useWindowDimensions();
   const cardWidth = Math.round(width * CARD_SHARE);
+  const [open, setOpen] = useState(0);
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      decelerationRate="fast"
-      snapToInterval={cardWidth + CARD_GAP}
-      snapToAlignment="start"
-      className="-mx-5"
-      contentContainerClassName="gap-3 px-5"
-    >
-      {accounts.map((account, index) => (
-        <PressScale
-          key={account.id}
-          accessibilityRole="button"
-          accessibilityLabel={`${account.name}, ${formatMoney(account.balance, account.currency)}. Edit`}
-          onPress={() => onPress(account)}
-          wrapperStyle={{ width: cardWidth }}
-          className="h-bank-card justify-between overflow-hidden rounded-hero bg-shell"
-        >
-          <View className="gap-1 px-5 pt-4">
-            <Text numberOfLines={1} className="font-semibold text-row-title text-on-shell">
-              {account.name}
-            </Text>
-            <Text className="font-sans text-caption text-on-shell">{KIND_LABEL[account.kind] ?? "Account"}</Text>
-          </View>
-          <Text
-            adjustsFontSizeToFit
-            minimumFontScale={0.7}
-            numberOfLines={1}
-            className="px-5 font-bold text-display text-on-shell"
+    <View className="gap-3">
+      <ScrollView
+        onMomentumScrollEnd={(event) => setOpen(Math.round(event.nativeEvent.contentOffset.x / (cardWidth + CARD_GAP)))}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        decelerationRate="fast"
+        snapToInterval={cardWidth + CARD_GAP}
+        snapToAlignment="start"
+        className="-mx-5"
+        contentContainerClassName="gap-3 px-5"
+      >
+        {accounts.map((account, index) => (
+          <PressScale
+            key={account.id}
+            accessibilityRole="button"
+            accessibilityLabel={`${account.name}, ${formatMoney(account.balance, account.currency)}. Edit`}
+            onPress={() => onPress(account)}
+            wrapperStyle={{ width: cardWidth }}
+            className="h-bank-card justify-between overflow-hidden rounded-hero bg-shell"
           >
-            {formatMoney(account.balance, account.currency)}
-          </Text>
-          <WovenEdge seed={index} />
-        </PressScale>
-      ))}
-    </ScrollView>
+            <View className="gap-1 px-5 pt-4">
+              <Text numberOfLines={1} className="font-semibold text-row-title text-on-shell">
+                {account.name}
+              </Text>
+              <Text className="font-sans text-caption text-on-shell">{KIND_LABEL[account.kind] ?? "Account"}</Text>
+            </View>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={1}
+              className="px-5 font-bold text-display text-on-shell"
+            >
+              {formatMoney(account.balance, account.currency)}
+            </Text>
+            <WovenEdge seed={index} />
+          </PressScale>
+        ))}
+      </ScrollView>
+      {accounts.length > 1 ? (
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          className="flex-row justify-center gap-1"
+        >
+          {accounts.map((account, index) => (
+            <View
+              key={account.id}
+              className={`h-1.5 rounded-pill ${index === open ? "w-5 bg-accent" : "w-1.5 bg-border-input"}`}
+            />
+          ))}
+        </View>
+      ) : null}
+    </View>
   );
 }

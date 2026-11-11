@@ -31,6 +31,8 @@ module.exports = {
         "fab-shadow": "rgb(var(--fab-shadow) / <alpha-value>)",
         shell: "rgb(var(--shell) / <alpha-value>)",
         "on-shell": "rgb(var(--on-shell) / <alpha-value>)",
+        "on-shell-muted": "rgb(var(--on-shell-muted) / <alpha-value>)",
+        gold: "rgb(var(--gold) / <alpha-value>)",
         good: "rgb(var(--good) / <alpha-value>)",
         watch: "rgb(var(--watch) / <alpha-value>)",
         over: "rgb(var(--over) / <alpha-value>)",
@@ -99,6 +101,8 @@ module.exports = {
         amount: "72px",
         bar: "6px",
         strand: "15px",
+        // The height of the stitch strip on login and Home.
+        stitch: "12px",
         "fab-clear": "112px",
         "bank-card": "176px",
         slot: "64px",

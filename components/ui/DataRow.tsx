@@ -1,11 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
-import type { ReactNode } from "react";
-import { Pressable, Text, useWindowDimensions, View } from "react-native";
+import type { ComponentProps, ReactNode } from "react";
+import { Pressable, Text, useWindowDimensions, View, type AccessibilityActionEvent } from "react-native";
 
+import { SwipeRow } from "@/components/ui/SwipeRow";
 import { useColors } from "@/lib/colors";
 
 /** From this text size, a row stacks its number under the title. */
 const STACK_SCALE = 1.3;
+
+export type RowAction = {
+  label: string;
+  icon: ComponentProps<typeof Ionicons>["name"];
+  /** "primary" is indigo, as Done. "destructive" is magenta, as Delete, and must ask in a ConfirmSheet. */
+  tone: "primary" | "destructive";
+  onPress: () => void;
+};
 
 export type RowStatus = { label: string; tone: "good" | "watch" | "over" | "muted" };
 
@@ -31,6 +40,8 @@ type DataRowProps = {
   chevron?: boolean;
   /** A small part after the title, such as a news image. It stays beside the title at every text size. */
   trailing?: ReactNode;
+  /** One to three actions behind a left swipe. The first one also fires on a long swipe. */
+  actions?: readonly RowAction[];
 };
 
 /** Title and detail on the left, number and status word on the right. The number moves under the title when text is large. */
@@ -45,6 +56,7 @@ export function DataRow({
   leading,
   chevron,
   trailing,
+  actions,
 }: DataRowProps) {
   const colors = useColors();
   // Large text moves the number under the title. A long title alone never does.
@@ -81,15 +93,33 @@ export function DataRow({
       ) : null}
     </View>
   );
-  if (!onPress) return body;
-  return (
+  const a11yActions = actions?.length
+    ? {
+        accessibilityActions: actions.map((a) => ({ name: a.label, label: a.label })),
+        onAccessibilityAction: (event: AccessibilityActionEvent) =>
+          actions.find((a) => a.label === event.nativeEvent.actionName)?.onPress(),
+      }
+    : {};
+  const label = [title, detail, value, status?.label].filter(Boolean).join(", ");
+  const row = !onPress ? (
+    actions?.length ? (
+      <View accessible accessibilityLabel={label} {...a11yActions}>
+        {body}
+      </View>
+    ) : (
+      body
+    )
+  ) : (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={[title, detail, value, status?.label].filter(Boolean).join(", ")}
+      accessibilityLabel={label}
+      {...a11yActions}
       onPress={onPress}
       className="min-h-touch active:bg-surface-muted"
     >
       {body}
     </Pressable>
   );
+  if (!actions?.length) return row;
+  return <SwipeRow actions={actions}>{row}</SwipeRow>;
 }
