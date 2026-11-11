@@ -2,7 +2,7 @@
 // module. It answers yes or no only, and never returns a key. Called by a signed-in app.
 //
 // Secrets read (presence only): FOOTBALL_DATA_KEY, BALLDONTLIE_KEY, GROQ_API_KEY, GEMINI_API_KEY,
-// RESEND_API_KEY, TMDB_KEY.
+// RESEND_API_KEY, TMDB_KEY, GEOAPIFY_KEY.
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -21,6 +21,7 @@ Deno.serve((req) => {
       tip: has("GEMINI_API_KEY"),
       email: has("RESEND_API_KEY"),
       movies: has("TMDB_KEY"),
+      places: has("GEOAPIFY_KEY"),
     },
     { headers: { ...CORS, "Cache-Control": "private, max-age=3600" } },
   );

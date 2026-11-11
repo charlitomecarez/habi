@@ -1437,6 +1437,27 @@ export type Database = {
           },
         ];
       };
+      places_cache: {
+        Row: {
+          category: string;
+          cell: string;
+          fetched_at: string;
+          places: Json;
+        };
+        Insert: {
+          category: string;
+          cell: string;
+          fetched_at?: string;
+          places: Json;
+        };
+        Update: {
+          category?: string;
+          cell?: string;
+          fetched_at?: string;
+          places?: Json;
+        };
+        Relationships: [];
+      };
       push_tokens: {
         Row: {
           created_at: string;

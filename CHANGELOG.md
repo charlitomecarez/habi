@@ -37,6 +37,8 @@ Do not put these items here:
 
 ### Added
 
+- Places near you in Travel: sights, food, parks and shopping within 10 km, with Open in Maps and Add to a trip. Your exact spot stays on the phone.
+- Place suggestions in a trip item, from Photon.
 - YouTube in Daily life: the new videos of the channels you follow, newest first. Add a channel by its link or @handle.
 - Movies in Daily life: the films in Philippine cinemas now and the next ones, from TMDB, with a film screen and its trailer.
 - F1 and MotoGP in Sports: the next race in PHT, the last result, the rounds and the standings. A Show on Home switch puts the next race and the winner in Home Games.

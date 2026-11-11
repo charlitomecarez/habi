@@ -68,7 +68,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Habi uses your location only when you tap Use my location, to show your weather."
+          "locationWhenInUsePermission": "Habi uses your location only when you tap Use my location, to show your weather and places near you."
         }
       ],
       "react-native-health-connect",
