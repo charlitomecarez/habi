@@ -76,7 +76,7 @@ Each copy brings its own Firebase project. `google-services.json` is gitignored 
 1. Set the secrets you have. Each one is optional except `CRON_SECRET`, which must equal `reminders_cron_secret` from step 2.5:
 
    ```sh
-   npx supabase secrets set CRON_SECRET=<same random string> RESEND_API_KEY=<key> GROQ_API_KEY=<key> GEMINI_API_KEY=<key> FOOTBALL_DATA_KEY=<key> BALLDONTLIE_KEY=<key>
+   npx supabase secrets set CRON_SECRET=<same random string> RESEND_API_KEY=<key> GROQ_API_KEY=<key> GEMINI_API_KEY=<key> FOOTBALL_DATA_KEY=<key> BALLDONTLIE_KEY=<key> TMDB_KEY=<key> GEOAPIFY_KEY=<key>
    ```
 
    Statement import also reads `GOTYME_KEY` and `GCASH_KEY`, the passwords of your own bank PDFs. Leave them out if you do not import statements.

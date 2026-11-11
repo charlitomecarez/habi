@@ -100,6 +100,8 @@ module.exports = {
         "bank-card": "176px",
         slot: "64px",
         tile: "112px",
+        // A film poster at 2:3 beside the tile width.
+        poster: "168px",
         "field-sm": "110px",
       },
       borderRadius: {

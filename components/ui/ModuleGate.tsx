@@ -11,6 +11,7 @@ const NEEDS_TEXT = {
   ai: "The server has no Groq key. The setup guide in CONTRIBUTING.md says how to add it.",
   tip: "The server has no Gemini key.",
   email: "The server has no Resend key.",
+  movies: "The server has no TMDB key. The setup guide in CONTRIBUTING.md says how to add it.",
 } as const;
 
 /**

@@ -1205,6 +1205,72 @@ export type Database = {
         };
         Relationships: [];
       };
+      movies: {
+        Row: {
+          genres: string[];
+          list: string;
+          overview: string;
+          position: number;
+          poster_path: string | null;
+          release_date: string | null;
+          runtime_min: number | null;
+          title: string;
+          tmdb_id: number;
+          trailer_key: string | null;
+          updated_at: string;
+          vote_average: number | null;
+          vote_count: number;
+        };
+        Insert: {
+          genres?: string[];
+          list: string;
+          overview?: string;
+          position: number;
+          poster_path?: string | null;
+          release_date?: string | null;
+          runtime_min?: number | null;
+          title: string;
+          tmdb_id: number;
+          trailer_key?: string | null;
+          updated_at?: string;
+          vote_average?: number | null;
+          vote_count?: number;
+        };
+        Update: {
+          genres?: string[];
+          list?: string;
+          overview?: string;
+          position?: number;
+          poster_path?: string | null;
+          release_date?: string | null;
+          runtime_min?: number | null;
+          title?: string;
+          tmdb_id?: number;
+          trailer_key?: string | null;
+          updated_at?: string;
+          vote_average?: number | null;
+          vote_count?: number;
+        };
+        Relationships: [];
+      };
+      movies_sync: {
+        Row: {
+          id: boolean;
+          last_error_at: string | null;
+          last_ok_at: string | null;
+        };
+        Insert: {
+          id?: boolean;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Update: {
+          id?: boolean;
+          last_error_at?: string | null;
+          last_ok_at?: string | null;
+        };
+        Relationships: [];
+      };
       news_items: {
         Row: {
           fetched_at: string;
