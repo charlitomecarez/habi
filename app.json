@@ -2,7 +2,7 @@
   "expo": {
     "name": "Habi",
     "slug": "my-app",
-    "version": "1.6.0",
+    "version": "2.0.0",
     "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
