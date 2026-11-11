@@ -67,7 +67,8 @@ jobs:
           if-no-files-found: ignore
 
   e2e:
-    runs-on: ubuntu-latest
+    # Playwright 1.56 has no Chromium build for Ubuntu 26.04, which ubuntu-latest now gives.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       HUSKY: 0
