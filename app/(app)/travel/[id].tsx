@@ -3,6 +3,8 @@ import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, type ComponentProps } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+// The gesture handler's ScrollView takes part in the drag back, so a sideways swipe here scrolls the day strip.
+import { ScrollView as SideScroll } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ExportSheet } from "@/components/travel/ExportSheet";
@@ -154,7 +156,7 @@ export default function TripScreen() {
           ) : null}
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
+        <SideScroll horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
           {days.map((d) => (
             <Chip
               key={d.day}
@@ -164,7 +166,7 @@ export default function TripScreen() {
             />
           ))}
           <Chip label={`Ideas (${ideas.length})`} selected={current === IDEAS} onPress={() => setSelected(IDEAS)} />
-        </ScrollView>
+        </SideScroll>
 
         <View className="gap-2">
           {shown.length === 0 ? (

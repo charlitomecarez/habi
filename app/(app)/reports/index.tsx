@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useReports, type Report } from "@/lib/feedback";
@@ -30,6 +30,7 @@ function detail(r: Report): string {
 }
 
 export default function ReportsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const reports = useReports();
   const [filter, setFilter] = useState<Filter>("new");
   const all = reports.data ?? [];
@@ -38,8 +39,8 @@ export default function ReportsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Reports" subtitle={`${fresh} new`} />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Reports" subtitle={`${fresh} new`} />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {reports.isPending ? (
           <Skeleton />
         ) : reports.error ? (

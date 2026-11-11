@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -22,6 +22,7 @@ const HOUR_ICON = 24;
 const DAY_ICON = 28;
 
 export default function WeatherScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const weather = useWeather();
   const { place, forecast, stale } = weather.data ?? { place: null, forecast: null, stale: false };
@@ -30,6 +31,7 @@ export default function WeatherScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Weather"
         subtitle={place ? `${place.name}, ${place.region}` : undefined}
         action={
@@ -43,7 +45,7 @@ export default function WeatherScreen() {
           </Pressable>
         }
       />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {weather.isPending ? (
           <Skeleton layout="home" />
         ) : !place ? (
