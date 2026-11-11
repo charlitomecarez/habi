@@ -1,0 +1,13 @@
+# Adds a todo from the Todos tab, then deletes it.
+appId: com.charli.myapp
+---
+- launchApp
+- tapOn: "Todos"
+- tapOn: "Add todo"
+- tapOn: "Title"
+- inputText: "Maestro todo"
+- tapOn: "Add todo"
+- assertVisible: "Maestro todo"
+- tapOn: "Maestro todo"
+- tapOn: "Delete todo"
+- assertNotVisible: "Maestro todo"

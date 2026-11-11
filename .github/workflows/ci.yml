@@ -25,7 +25,8 @@ jobs:
         run: npx expo customize tsconfig.json
       - run: npm run typecheck
       - run: npm run lint
-      - run: npm test
+      # The coverage gate: 80% of lines in lib/ and the shared Edge Function code. vitest.config.ts sets it.
+      - run: npm run test:coverage
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -63,4 +64,44 @@ jobs:
         with:
           name: lighthouse
           path: lighthouse
+          if-no-files-found: ignore
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: 0
+      # The E2E account is a normal account that the admin adds. Its email and password live only here.
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.E2E_SUPABASE_ANON_KEY }}
+      EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: ci-placeholder
+    steps:
+      - name: Skip without the E2E account
+        if: env.E2E_EMAIL == ''
+        run: echo "::notice::E2E skipped. Add E2E_EMAIL, E2E_PASSWORD, E2E_SUPABASE_URL and E2E_SUPABASE_ANON_KEY secrets."
+      - uses: actions/checkout@v4
+        if: env.E2E_EMAIL != ''
+      - uses: actions/setup-node@v4
+        if: env.E2E_EMAIL != ''
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: env.E2E_EMAIL != ''
+        run: npm ci
+      - name: Export the web app
+        if: env.E2E_EMAIL != ''
+        run: npx expo export --platform web
+      - name: Install Chromium
+        if: env.E2E_EMAIL != ''
+        run: npx playwright install --with-deps chromium
+      - name: E2E tests
+        if: env.E2E_EMAIL != ''
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright
+          path: test-results
           if-no-files-found: ignore
