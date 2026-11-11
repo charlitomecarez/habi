@@ -1170,7 +1170,15 @@ export type Database = {
           team?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "motor_results_series_season_round_fkey";
+            columns: ["series", "season", "round"];
+            isOneToOne: false;
+            referencedRelation: "motor_races";
+            referencedColumns: ["series", "season", "round"];
+          },
+        ];
       };
       motor_standings: {
         Row: {
@@ -3142,6 +3150,10 @@ export type Database = {
           r: Database["public"]["Tables"]["recurring_transactions"]["Row"];
         };
         Returns: boolean;
+      };
+      replace_movies: {
+        Args: { p_list: string; p_rows: Json };
+        Returns: undefined;
       };
       save_health_weights: { Args: { p_weights: Json }; Returns: number };
       seed_money_defaults: { Args: never; Returns: undefined };
