@@ -1100,6 +1100,111 @@ export type Database = {
         };
         Relationships: [];
       };
+      motor_races: {
+        Row: {
+          circuit: string;
+          country: string;
+          name: string;
+          round: number;
+          season: number;
+          series: string;
+          sprint_at: string | null;
+          starts_at: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          circuit: string;
+          country: string;
+          name: string;
+          round: number;
+          season: number;
+          series: string;
+          sprint_at?: string | null;
+          starts_at: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          circuit?: string;
+          country?: string;
+          name?: string;
+          round?: number;
+          season?: number;
+          series?: string;
+          sprint_at?: string | null;
+          starts_at?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      motor_results: {
+        Row: {
+          name: string;
+          points: number;
+          position: number;
+          round: number;
+          season: number;
+          series: string;
+          team: string;
+          updated_at: string;
+        };
+        Insert: {
+          name: string;
+          points?: number;
+          position: number;
+          round: number;
+          season: number;
+          series: string;
+          team: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          points?: number;
+          position?: number;
+          round?: number;
+          season?: number;
+          series?: string;
+          team?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      motor_standings: {
+        Row: {
+          kind: string;
+          name: string;
+          points: number;
+          position: number;
+          series: string;
+          team: string | null;
+          updated_at: string;
+          wins: number;
+        };
+        Insert: {
+          kind: string;
+          name: string;
+          points: number;
+          position: number;
+          series: string;
+          team?: string | null;
+          updated_at?: string;
+          wins?: number;
+        };
+        Update: {
+          kind?: string;
+          name?: string;
+          points?: number;
+          position?: number;
+          series?: string;
+          team?: string | null;
+          updated_at?: string;
+          wins?: number;
+        };
+        Relationships: [];
+      };
       news_items: {
         Row: {
           fetched_at: string;
@@ -2172,6 +2277,7 @@ export type Database = {
           digest_enabled: boolean;
           digest_hour: number;
           digest_last_sent_on: string | null;
+          followed_series: string[];
           followed_teams: string[];
           health_check: boolean;
           hidden_modules: string[];
@@ -2188,6 +2294,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_series?: string[];
           followed_teams?: string[];
           health_check?: boolean;
           hidden_modules?: string[];
@@ -2204,6 +2311,7 @@ export type Database = {
           digest_enabled?: boolean;
           digest_hour?: number;
           digest_last_sent_on?: string | null;
+          followed_series?: string[];
           followed_teams?: string[];
           health_check?: boolean;
           hidden_modules?: string[];

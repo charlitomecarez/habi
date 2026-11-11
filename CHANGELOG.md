@@ -37,6 +37,7 @@ Do not put these items here:
 
 ### Added
 
+- F1 and MotoGP in Sports: the next race in PHT, the last result, the rounds and the standings. A Show on Home switch puts the next race and the winner in Home Games.
 - Unit coverage gate at 80% of lines in CI, web E2E tests with Playwright, and five Maestro phone flows. See `docs/testing.md`.
 
 ## [v1.5.0](docs/releases/v1.5.0.md) - 2026-11-11
