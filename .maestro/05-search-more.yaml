@@ -1,0 +1,9 @@
+# Searches More for a module and opens it.
+appId: com.charli.myapp
+---
+- launchApp
+- tapOn: "More"
+- tapOn: "Search modules"
+- inputText: "Weather"
+- tapOn: "Weather"
+- assertVisible: "Weather"

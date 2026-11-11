@@ -1,0 +1,6 @@
+# Opens the app signed in, and shows Home with the tab bar.
+appId: com.charli.myapp
+---
+- launchApp
+- assertVisible: "Home"
+- assertVisible: "More"

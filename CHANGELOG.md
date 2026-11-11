@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Added
+
+- Unit coverage gate at 80% of lines in CI, web E2E tests with Playwright, and five Maestro phone flows. See `docs/testing.md`.
+
 ## [v1.5.0](docs/releases/v1.5.0.md) - 2026-11-11
 
 ### Added

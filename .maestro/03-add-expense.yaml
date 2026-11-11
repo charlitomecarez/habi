@@ -1,0 +1,15 @@
+# Adds a ₱1 expense from the Money tab, then deletes it.
+appId: com.charli.myapp
+---
+- launchApp
+- tapOn: "Money"
+- tapOn: "Add expense"
+- tapOn: "Amount in ₱"
+- inputText: "1"
+- tapOn: "Where / note"
+- inputText: "Maestro expense"
+- hideKeyboard
+- tapOn: "Save expense"
+- assertVisible: "Maestro expense"
+- tapOn: "Maestro expense"
+- tapOn: "Delete expense"

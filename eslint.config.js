@@ -13,6 +13,11 @@ module.exports = defineConfig([
     rules: { "import/no-unresolved": "off" },
   },
   {
+    // Unit tests call data hooks as plain functions, through the fakes in lib/test/.
+    files: ["**/*.test.ts"],
+    rules: { "react-hooks/rules-of-hooks": "off" },
+  },
+  {
     // Screens: Android-only code lives behind name.ts + name.web.ts, and colours come from tokens.
     files: ["app/**/*.{ts,tsx}"],
     rules: {

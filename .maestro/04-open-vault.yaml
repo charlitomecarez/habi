@@ -1,0 +1,7 @@
+# Opens the vault from More. It shows the lock screen or the set-up screen, never an entry.
+appId: com.charli.myapp
+---
+- launchApp
+- tapOn: "More"
+- tapOn: "Vault"
+- assertVisible: "Vault is locked|Set up your vault"
