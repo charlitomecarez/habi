@@ -12,9 +12,8 @@ import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { usePlaceSearch } from "@/components/weather/usePlaceSearch";
 import { useColors } from "@/lib/colors";
+import { motion } from "@/lib/motion";
 import { addWorldPlace, MAX_WORLD, placeKey, readWorldPlaces, useSaveWorldPlaces, type Place } from "@/lib/weather";
-
-const UNDO_MS = 8000;
 
 type Removed = { place: Place; index: number };
 
@@ -49,7 +48,7 @@ export default function WorldPlacesScreen() {
     if (!places) return;
     if (undoTimer.current) clearTimeout(undoTimer.current);
     setRemoved({ place: places[index], index });
-    undoTimer.current = setTimeout(() => setRemoved(null), UNDO_MS);
+    undoTimer.current = setTimeout(() => setRemoved(null), motion.undo);
     commit(places.filter((_, i) => i !== index));
   }
 

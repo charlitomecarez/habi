@@ -10,8 +10,9 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { motion } from "@/lib/motion";
+
 // One slow pulse: opacity 1 to 0.5 and back, 1.1 seconds each way. Still with reduce motion on.
-const PULSE_MS = 1100;
 const LOW = 0.5;
 
 type Surface = "page" | "card";
@@ -99,7 +100,7 @@ export function Skeleton({ layout = "list", rows = 6, children }: SkeletonProps)
   const opacity = useSharedValue(1);
   useEffect(() => {
     if (reduced) return;
-    opacity.set(withRepeat(withTiming(LOW, { duration: PULSE_MS, easing: Easing.inOut(Easing.quad) }), -1, true));
+    opacity.set(withRepeat(withTiming(LOW, { duration: motion.pulse, easing: Easing.inOut(Easing.quad) }), -1, true));
     return () => cancelAnimation(opacity);
   }, [opacity, reduced]);
   const pulse = useAnimatedStyle(() => ({ opacity: opacity.get() }));

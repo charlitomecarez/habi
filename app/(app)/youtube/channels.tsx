@@ -12,6 +12,7 @@ import { ModuleHeader } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
+import { motion } from "@/lib/motion";
 import {
   ageText,
   feedFailed,
@@ -22,8 +23,6 @@ import {
   useYouTube,
   type Channel,
 } from "@/lib/youtube";
-
-const UNDO_MS = 8000;
 
 /** Add a channel by its link or @handle, or remove one. Add channel is the one primary action. */
 export default function ChannelsScreen() {
@@ -58,7 +57,7 @@ export default function ChannelsScreen() {
   function onRemove(channel: Channel) {
     if (undoTimer.current) clearTimeout(undoTimer.current);
     setRemoved(channel);
-    undoTimer.current = setTimeout(() => setRemoved(null), UNDO_MS);
+    undoTimer.current = setTimeout(() => setRemoved(null), motion.undo);
     remove.mutate(channel.id);
   }
 

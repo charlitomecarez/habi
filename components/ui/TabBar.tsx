@@ -6,10 +6,9 @@ import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTimin
 
 import { PressScale } from "@/components/ui/Motion";
 import { useColors } from "@/lib/colors";
+import { glideTiming } from "@/lib/motion";
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
-
-const PILL_MS = 160;
 
 /** The motorbike has no filled form, so it uses the same glyph in both states. */
 const ICONS: Record<
@@ -35,7 +34,7 @@ function Pill({ focused }: { focused: boolean }) {
   const reduced = useReducedMotion();
   const opacity = useSharedValue(focused ? 1 : 0);
   useEffect(() => {
-    opacity.set(reduced ? (focused ? 1 : 0) : withTiming(focused ? 1 : 0, { duration: PILL_MS }));
+    opacity.set(reduced ? (focused ? 1 : 0) : withTiming(focused ? 1 : 0, glideTiming));
   }, [focused, opacity, reduced]);
   const animated = useAnimatedStyle(() => ({ opacity: opacity.get() }));
 

@@ -35,6 +35,10 @@ Do not put these items here:
 
 ## Unreleased
 
+### Changed
+
+- **App:** Every move uses one set of timings and one easing. Images fade in at the same speed everywhere.
+
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 
 ### Added

@@ -3,9 +3,8 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 
+import { motion } from "@/lib/motion";
 import { posterUrl } from "@/lib/movies";
-
-const FADE_MS = 150;
 
 /**
  * A film poster at 2:3. A missing or failed poster shows the muted box with the first letter, so the
@@ -26,7 +25,7 @@ export function Poster({ path, title, large = false }: { path: string | null; ti
           source={{ uri }}
           contentFit="cover"
           cachePolicy="disk"
-          transition={reduced ? 0 : FADE_MS}
+          transition={reduced ? 0 : motion.fade}
           onError={() => setFailed(true)}
           style={{ width: "100%", height: "100%" }}
           accessible={false}
