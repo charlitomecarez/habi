@@ -1,3 +1,75 @@
+diff --git a/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.d.ts b/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.d.ts
+index e90f4e1..0ee29bb 100644
+--- a/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.d.ts
++++ b/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.d.ts
+@@ -6,8 +6,8 @@ export declare const gestureActivationCriteria: ({ direction, gestureDirection,
+     gestureResponseDistance?: number;
+     layout: Layout;
+ }) => {
+-    maxDeltaX: number;
+-    minOffsetY: number;
++    failOffsetX: [number, number];
++    activeOffsetY: number;
+     hitSlop: {
+         bottom: number;
+         top?: undefined;
+@@ -15,11 +15,11 @@ export declare const gestureActivationCriteria: ({ direction, gestureDirection,
+         left?: undefined;
+     };
+     enableTrackpadTwoFingerGesture: boolean;
+-    minOffsetX?: undefined;
+-    maxDeltaY?: undefined;
++    activeOffsetX?: undefined;
++    failOffsetY?: undefined;
+ } | {
+-    maxDeltaX: number;
+-    minOffsetY: number;
++    failOffsetX: [number, number];
++    activeOffsetY: number;
+     hitSlop: {
+         top: number;
+         bottom?: undefined;
+@@ -27,11 +27,11 @@ export declare const gestureActivationCriteria: ({ direction, gestureDirection,
+         left?: undefined;
+     };
+     enableTrackpadTwoFingerGesture: boolean;
+-    minOffsetX?: undefined;
+-    maxDeltaY?: undefined;
++    activeOffsetX?: undefined;
++    failOffsetY?: undefined;
+ } | {
+-    minOffsetX: number;
+-    maxDeltaY: number;
++    activeOffsetX: number;
++    failOffsetY: [number, number];
+     hitSlop: {
+         right: number;
+         bottom?: undefined;
+@@ -39,11 +39,11 @@ export declare const gestureActivationCriteria: ({ direction, gestureDirection,
+         left?: undefined;
+     };
+     enableTrackpadTwoFingerGesture: boolean;
+-    maxDeltaX?: undefined;
+-    minOffsetY?: undefined;
++    failOffsetX?: undefined;
++    activeOffsetY?: undefined;
+ } | {
+-    minOffsetX: number;
+-    maxDeltaY: number;
++    activeOffsetX: number;
++    failOffsetY: [number, number];
+     hitSlop: {
+         left: number;
+         bottom?: undefined;
+@@ -51,6 +51,6 @@ export declare const gestureActivationCriteria: ({ direction, gestureDirection,
+         right?: undefined;
+     };
+     enableTrackpadTwoFingerGesture: boolean;
+-    maxDeltaX?: undefined;
+-    minOffsetY?: undefined;
++    failOffsetX?: undefined;
++    activeOffsetY?: undefined;
+ };
 diff --git a/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js b/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js
 index 8d49cca..880e4a8 100644
 --- a/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js
