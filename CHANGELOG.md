@@ -35,11 +35,17 @@ Do not put these items here:
 
 ## Unreleased
 
+## [v2.0.1](docs/releases/v2.0.1.md) - 2026-11-12
+
 ### Added
 
 - **Home:** A Places near you section shows the 3 nearest sights, with a row to all places. Home never asks for location. Without it, only the row shows.
 - **Travel:** Places near you shows a photo beside a place when OpenStreetMap or Wikimedia has one. With location already allowed, the list opens at once.
 - **Money:** The Money tab has three choices: Today, This month and This year. This year shows the spending and income of the year, a bar for each month and the top categories.
+
+### Changed
+
+- **Travel:** The place button says "Add to trip".
 
 ### Fixed
 
@@ -50,9 +56,9 @@ Do not put these items here:
 - **Screen time:** The status compares your day with a 3-hour guide: Within guide, Above guide, or High from 5 hours. The screen says where the guide comes from, and your 7-day average stays under it. Before, the status compared your day only with your own average.
 - **Repo:** The E2E tests for a new todo and a new expense pass again.
 
-### Changed
+## [v2.0.0](docs/releases/v2.0.0.md) - 2026-11-12
 
-- **Travel:** The place button says "Add to trip".
+### Changed
 
 - **App:** Every move uses one set of timings and one easing. Images fade in at the same speed everywhere.
 - **App:** A new screen slides in from the right, and the screen under it moves a little and dims. Drag right from anywhere on the screen to go back. Full-screen forms rise from the bottom, and a drag down from the top closes them.
