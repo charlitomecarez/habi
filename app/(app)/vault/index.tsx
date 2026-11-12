@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -43,7 +43,7 @@ function matches(entry: VaultEntry, query: string): boolean {
   return [entry.data.title, entry.data.username, entry.data.url].some((v) => v.toLowerCase().includes(q));
 }
 
-function UnlockedVault() {
+function UnlockedVault({ onScroll }: { onScroll: ReturnType<typeof useHeaderScroll>["onScroll"] }) {
   const colors = useColors();
   const lock = useVaultStore((s) => s.lock);
   const unlockedWith = useVaultStore((s) => s.unlockedWith);
@@ -67,7 +67,12 @@ function UnlockedVault() {
   const visible = entries.filter((e) => matches(e, query));
 
   return (
-    <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3" keyboardShouldPersistTaps="handled">
+    <KeyboardScrollView
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+      contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3"
+      keyboardShouldPersistTaps="handled"
+    >
       <View className="flex-row items-start justify-between gap-3">
         <View className="flex-1 gap-1">
           <View className="flex-row items-center gap-1">
@@ -292,10 +297,11 @@ export default function VaultScreen() {
   const key = useVaultStore((s) => s.key);
   const settings = useVaultSettings();
   useSecureScreen("vault");
+  const { scrollY, onScroll } = useHeaderScroll();
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Vault" tone="records" />
+      <ModuleHeader scrollY={scrollY} title="Vault" tone="records" />
 
       {settings.isPending ? (
         <Skeleton />
@@ -307,7 +313,7 @@ export default function VaultScreen() {
       ) : !settings.data ? (
         <SetUpVault />
       ) : key ? (
-        <UnlockedVault />
+        <UnlockedVault onScroll={onScroll} />
       ) : (
         <UnlockVault settings={settings.data} />
       )}

@@ -8,7 +8,7 @@ import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Button } from "@/components/ui/Button";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { cycleLabel, daysUntil, formatPeso, useSubscriptions, useTransactions, type Subscription } from "@/lib/money";
 
@@ -23,6 +23,7 @@ function dueStatus(s: Subscription) {
 }
 
 export default function BillsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const subscriptions = useSubscriptions();
   const history = useTransactions("history");
   const bills = (subscriptions.data ?? []).filter((s) => s.kind === "bill");
@@ -42,13 +43,9 @@ export default function BillsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Bills
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Bills" />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <Text className="font-sans text-caption text-ink-muted">
           Bills whose amount changes, like Meralco, water and internet. You get a reminder before each due date and type
           the amount when you pay.

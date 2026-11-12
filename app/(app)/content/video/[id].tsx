@@ -19,7 +19,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { copyText } from "@/lib/clipboard";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 import { useAddVideoTask, useDeleteVideo, useSaveVideo, useVideo, useVideoTasks, type Post } from "@/lib/content";
 import {
@@ -57,6 +57,7 @@ function Detail({ label, value }: { label: string; value: string }) {
 }
 
 export default function VideoScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const video = useVideo(id);
@@ -143,21 +144,23 @@ export default function VideoScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="records">
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
-          {v.title}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit video"
-          onPress={() => router.push({ pathname: "/content/video/edit/[id]", params: { id: v.id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={v.title}
+        tone="records"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit video"
+            onPress={() => router.push({ pathname: "/content/video/edit/[id]", params: { id: v.id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <ErrorNotice error={failure} /> : null}
 
         <View className="gap-3">

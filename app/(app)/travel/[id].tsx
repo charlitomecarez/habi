@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -69,6 +69,7 @@ function ItemRow({ item }: { item: TripItem }) {
 }
 
 export default function TripScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const trip = useTrip(id);
@@ -79,21 +80,23 @@ export default function TripScreen() {
   const [exporting, setExporting] = useState(false);
 
   const header = (title: string) => (
-    <ModuleBar tone="home">
-      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-ink">
-        {title}
-      </Text>
-      {trip.data ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit trip"
-          onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      ) : null}
-    </ModuleBar>
+    <ModuleHeader
+      scrollY={scrollY}
+      title={title}
+      tone="home"
+      action={
+        trip.data ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit trip"
+            onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        ) : null
+      }
+    />
   );
 
   if (!trip.data) {
@@ -124,7 +127,7 @@ export default function TripScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       {header(data.title)}
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-1">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-1">
         <Text className="font-sans text-label text-ink-muted">
           {[data.destination, tripDatesText(data), `${length} ${length === 1 ? "day" : "days"}`]
             .filter(Boolean)

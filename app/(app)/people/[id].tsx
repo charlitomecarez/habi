@@ -16,7 +16,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -58,6 +58,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export default function PersonScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const people = usePeople();
@@ -172,21 +173,23 @@ export default function PersonScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="people">
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
-          {person.name}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit name and note"
-          onPress={() => open("rename")}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={person.name}
+        tone="people"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit name and note"
+            onPress={() => open("rename")}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <ErrorNotice error={failure} /> : null}
         {person.note ? <Text className="font-sans text-body text-ink">{person.note}</Text> : null}
 

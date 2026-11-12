@@ -11,7 +11,7 @@ import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
@@ -42,6 +42,7 @@ function costText(s: Subscription): string {
 }
 
 export default function SubscriptionsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const [editingRate, setEditingRate] = useState(false);
   const subscriptions = useSubscriptions();
@@ -58,13 +59,9 @@ export default function SubscriptionsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar backLabel="Back to Money">
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Subscriptions
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Subscriptions" backLabel="Back to Money" />
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {subscriptions.isPending ? (
           <Skeleton />
         ) : error ? (

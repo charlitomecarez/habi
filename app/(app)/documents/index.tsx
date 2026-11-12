@@ -6,25 +6,22 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { documentStatus, typeLabel, useDocuments } from "@/lib/documents";
 
 const STATUS_TONE = { danger: "over", warning: "watch", neutral: "muted", good: "good" } as const;
 
 export default function DocumentsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const docs = useDocuments();
   const list = docs.data ?? [];
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="records">
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Documents
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Documents" tone="records" />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {docs.isPending ? (
           <Skeleton />
         ) : docs.error ? (

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Segmented } from "@/components/ui/Segmented";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useSaveVideo, useVideos, type Video } from "@/lib/content";
@@ -297,18 +297,19 @@ function Ideas({ videos }: { videos: Video[] }) {
 }
 
 export default function ContentPlannerScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const [view, setView] = useState<PlannerView>("next");
   const videos = useVideos();
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="records">
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Content planner
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Content planner" tone="records" />
 
-      <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <KeyboardScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2"
+      >
         <Segmented label="View" options={VIEWS} value={view} onChange={setView} />
         {videos.isPending ? (
           <Skeleton />

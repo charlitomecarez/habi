@@ -7,11 +7,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { moodLabel, useJournal } from "@/lib/journal";
 
 export default function JournalScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const journal = useJournal();
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
@@ -24,13 +25,9 @@ export default function JournalScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Journal
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Journal" tone="daily" />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {journal.isPending ? (
           <Skeleton />
         ) : journal.error ? (

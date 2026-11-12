@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -36,6 +36,7 @@ function hideEmail(email: string): string {
  * key opens the vault, and you choose a new master password. The email code alone opens nothing.
  */
 export default function RecoverVaultScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   useSecureScreen("vault-recover");
   const settings = useVaultSettings();
   const finish = useFinishRecovery();
@@ -66,7 +67,7 @@ export default function RecoverVaultScreen() {
   if (settings.isPending) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Forgot master password" tone="records" />
+        <ModuleHeader scrollY={scrollY} title="Forgot master password" tone="records" />
         <Skeleton layout="detail" />
       </SafeAreaView>
     );
@@ -75,7 +76,7 @@ export default function RecoverVaultScreen() {
   if (!settings.data?.recovery_wrap) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Forgot master password" tone="records" />
+        <ModuleHeader scrollY={scrollY} title="Forgot master password" tone="records" />
         <EmptyState
           drawing="box"
           title="This vault has no recovery key"
@@ -89,8 +90,13 @@ export default function RecoverVaultScreen() {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Forgot master password" subtitle={`Step ${stepNumber} of 3`} tone="records" />
-      <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader
+        scrollY={scrollY}
+        title="Forgot master password"
+        subtitle={`Step ${stepNumber} of 3`}
+        tone="records"
+      />
+      <KeyboardScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {step === "email" ? (
           <>
             <Text className="font-sans text-body text-ink">

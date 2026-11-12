@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { checkMasterPassword } from "@/lib/master-password";
 import { goBack } from "@/lib/navigation";
@@ -15,6 +15,7 @@ import { useChangeMasterPassword, useVaultSettings } from "@/lib/vault";
 
 /** Three fields, so a full screen. The same vault key gets a new lock; nothing else changes. */
 export default function ChangeMasterPasswordScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   useSecureScreen("vault-change-password");
   const settings = useVaultSettings();
   const change = useChangeMasterPassword();
@@ -38,7 +39,7 @@ export default function ChangeMasterPasswordScreen() {
   if (settings.data === null) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Change master password" tone="records" />
+        <ModuleHeader scrollY={scrollY} title="Change master password" tone="records" />
         <EmptyState drawing="box" title="No vault yet" body="Set up the vault first." />
       </SafeAreaView>
     );
@@ -46,8 +47,8 @@ export default function ChangeMasterPasswordScreen() {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Change master password" tone="records" />
-      <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Change master password" tone="records" />
+      <KeyboardScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <Text className="font-sans text-body text-ink-muted">
           Your logins, photos, fingerprint, PIN and recovery key keep working.
         </Text>

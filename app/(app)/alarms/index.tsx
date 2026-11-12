@@ -22,7 +22,7 @@ import {
   type AlarmSetup,
 } from "@/lib/alarm";
 import { alarmTimeText, daysText, isUserAlarm, nextAlarmText } from "@/lib/alarm-rules";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { useColors } from "@/lib/colors";
 
 function SetupRow({ title, ready, onPress }: { title: string; ready: boolean; onPress: () => void }) {
@@ -45,6 +45,7 @@ const listAlarms = () =>
     .sort((a, b) => a.hour * 60 + a.minute - (b.hour * 60 + b.minute));
 
 export default function AlarmsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const [alarms, setAlarms] = useState<Alarm[]>(listAlarms);
   const [setup, setSetup] = useState<AlarmSetup | null>(() => alarmSetup());
@@ -66,11 +67,7 @@ export default function AlarmsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Alarms
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Alarms" tone="daily" />
 
       {!isAlarmSupported ? (
         <View className="px-5 pt-3">
@@ -78,7 +75,11 @@ export default function AlarmsScreen() {
         </View>
       ) : (
         <>
-          <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
+          <ScrollView
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3"
+          >
             {next ? <Text className="font-sans text-label text-ink-muted">{next}</Text> : null}
 
             {alarms.length === 0 ? (

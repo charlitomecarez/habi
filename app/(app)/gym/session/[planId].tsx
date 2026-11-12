@@ -10,7 +10,7 @@ import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -44,6 +44,7 @@ function LastTime({ exerciseId, sessionId }: { exerciseId: string; sessionId: st
 }
 
 export default function WorkoutScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { planId } = useLocalSearchParams<{ planId: string }>();
   const colors = useColors();
   const gym = useGym();
@@ -82,18 +83,14 @@ export default function WorkoutScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" numberOfLines={1} className="font-bold text-title text-ink">
-            {plan.name}
-          </Text>
-          <Text className="font-sans text-caption text-ink-muted">
-            {format(new Date(), "EEEE, MMM d")} · {done} of {total} sets
-          </Text>
-        </View>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={plan.name}
+        tone="daily"
+        subtitle={`${format(new Date(), "EEEE, MMM d")} · ${done} of ${total} sets`}
+      />
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-2">
         {toggle.error ? <ErrorNotice error={toggle.error} /> : null}
         {exercises.length === 0 ? (
           <Notice tone="warning">This workout day has no exercises yet. Add them from Workout days.</Notice>

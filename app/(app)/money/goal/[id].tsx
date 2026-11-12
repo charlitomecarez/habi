@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -27,6 +27,7 @@ const DIRECTION = [
 ] as const;
 
 export default function GoalScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const goals = useGoals();
@@ -76,20 +77,21 @@ export default function GoalScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar>
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
-          {g.name}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit goal"
-          onPress={() => router.push({ pathname: "/money/goal/edit/[id]", params: { id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ModuleHeader
+        scrollY={scrollY}
+        title={g.name}
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit goal"
+            onPress={() => router.push({ pathname: "/money/goal/edit/[id]", params: { id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         <View>
           <GoalCard g={g} last />
         </View>

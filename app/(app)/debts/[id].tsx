@@ -13,7 +13,7 @@ import { DateTimeField } from "@/components/ui/DateTimeField";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -22,6 +22,7 @@ import { debtStatus, useDebt, useDebtPayments, useDeleteDebt, useDeletePayment, 
 import { amountText, formatPeso, parseAmount } from "@/lib/money";
 
 export default function DebtScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const debt = useDebt(id);
@@ -76,21 +77,23 @@ export default function DebtScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="people">
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
-          {d.person_name}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit debt"
-          onPress={() => router.push({ pathname: "/debts/edit/[id]", params: { id: d.id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={d.person_name}
+        tone="people"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit debt"
+            onPress={() => router.push({ pathname: "/debts/edit/[id]", params: { id: d.id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {failure ? <ErrorNotice error={failure} /> : null}
 
         <View className="gap-1">

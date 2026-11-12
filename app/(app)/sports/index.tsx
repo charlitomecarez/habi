@@ -12,7 +12,7 @@ import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleGate } from "@/components/ui/ModuleGate";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -74,6 +74,7 @@ function StandingsTable({ rows, nba }: { rows: Standing[]; nba: boolean }) {
 }
 
 function SportsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const params = useLocalSearchParams<{ follow?: string }>();
   const [league, setLeague] = useState<LeagueId>("PL");
   // F1 or MotoGP when one of their chips is on; football and the NBA keep their own last league.
@@ -99,8 +100,13 @@ function SportsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Sports" tone="daily" subtitle={updated ? `Updated ${updated}` : undefined} />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader
+        scrollY={scrollY}
+        title="Sports"
+        tone="daily"
+        subtitle={updated ? `Updated ${updated}` : undefined}
+      />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <View accessibilityRole="radiogroup" accessibilityLabel="League" className="flex-row flex-wrap gap-2">
           {[...LEAGUES, ...SERIES].map((item) => (
             <Chip

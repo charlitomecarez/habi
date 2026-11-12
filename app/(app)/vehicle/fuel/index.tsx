@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { economy, monthFuelCost, useDeleteFuel, useFuelLogs } from "@/lib/fuel";
@@ -14,6 +14,7 @@ import { formatPeso } from "@/lib/money";
 import { formatKm, useVehicle } from "@/lib/vehicles";
 
 export default function FuelScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const vehicle = useVehicle();
   const logs = useFuelLogs(vehicle.data?.id);
@@ -26,12 +27,8 @@ export default function FuelScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar>
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          Fuel
-        </Text>
-      </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ModuleHeader scrollY={scrollY} title="Fuel" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <View className="flex-row gap-3">
           <View className="flex-1 gap-1">
             <Text className="font-sans text-caption text-ink-muted">Last</Text>

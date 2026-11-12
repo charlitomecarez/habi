@@ -49,8 +49,8 @@ Do not put these items here:
 - **Home:** The top of Home sits on the banig weave, and a gold and cream strip stitches across once when you arrive. The amount is in gold.
 - **Todos:** The filters are one Segmented control with a count in each choice. Swipe a todo left for Done and Delete, or swipe it far to finish it. "Todo done." gives you 5 seconds to undo.
 - **Money and Vehicle:** The amount and the odometer count to the new value after a change, and the tab headers shrink as you scroll.
-- **More:** Sections have quiet labels. Rows fade out as you search, and the end of More shows the Habi mark and the version.
-- **Modules:** Module headers shrink to a small bar as you scroll. Swipe a habit left for Done, and a shopping item for Bought. The trip day strip scrolls sideways without starting a drag back.
+- **More:** The modules are one list, with each icon on its section tint and the count under the name. Sections have quiet labels. Rows fade out as you search, and the end of More shows the Habi mark and the version.
+- **Modules:** Every module list and detail screen has the large cream title with the module icon, and it shrinks to a small bar as you scroll. Forms keep the title in the bar. The Ulam settings button is visible again on the cream header. Swipe a habit left for Done, and a shopping item for Bought. The trip day strip scrolls sideways without starting a drag back.
 - **Errors:** Error messages are plain sentences that say what happened and what to do, never the server text. A session that ended offers Sign in again. The admin also sees the error code.
 - **Login:** An email with no account gets "I could not send a code to this email. Ask the admin if you need an account." It does not say if the account exists.
 

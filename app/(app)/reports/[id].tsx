@@ -5,12 +5,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useMarkReportRead, useReports } from "@/lib/feedback";
 
 export default function ReportScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const reports = useReports();
   const markRead = useMarkReportRead();
@@ -19,7 +20,7 @@ export default function ReportScreen() {
   if (!report) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Report" />
+        <ModuleHeader scrollY={scrollY} title="Report" />
         <View className="flex-1 items-center justify-center px-5">
           {reports.isPending ? (
             <View className="w-full flex-1 self-stretch pt-4">
@@ -37,10 +38,11 @@ export default function ReportScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title={report.kind === "idea" ? "Idea" : "Bug report"}
         subtitle={isToday(date) ? `Today, ${format(date, "h:mm a")}` : format(date, "MMM d, h:mm a")}
       />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <Text selectable className="font-sans text-body text-ink">
           {report.message}
         </Text>

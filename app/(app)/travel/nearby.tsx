@@ -9,7 +9,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ModuleGate } from "@/components/ui/ModuleGate";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -33,6 +33,7 @@ type Saved = { tripId: string; title: string };
 
 /** Sights, food, parks and shopping within 10 km. Your exact spot stays on the phone. */
 function NearbyScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const [coords, setCoords] = useState<Coords | null>(null);
   const [asking, setAsking] = useState(false);
   const [refused, setRefused] = useState(false);
@@ -86,8 +87,8 @@ function NearbyScreen() {
   if (!coords) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Places near you" tone="home" />
-        <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+        <ModuleHeader scrollY={scrollY} title="Places near you" tone="home" />
+        <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
           <EmptyState
             drawing="box"
             title="I can list sights, food and parks near you"
@@ -109,8 +110,8 @@ function NearbyScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Places near you" subtitle="Within 10 km" tone="home" />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Places near you" subtitle="Within 10 km" tone="home" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <View accessibilityRole="radiogroup" accessibilityLabel="Kind of place" className="flex-row flex-wrap gap-2">
           {CATEGORIES.map((c) => (
             <Chip

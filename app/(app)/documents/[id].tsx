@@ -11,7 +11,7 @@ import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -31,6 +31,7 @@ function Detail({ label, value, last = false }: { label: string; value: string; 
 }
 
 export default function DocumentScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const doc = useDocument(id);
@@ -60,21 +61,23 @@ export default function DocumentScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="records">
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
-          {d.name}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit document"
-          onPress={() => router.push({ pathname: "/documents/edit/[id]", params: { id: d.id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={d.name}
+        tone="records"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit document"
+            onPress={() => router.push({ pathname: "/documents/edit/[id]", params: { id: d.id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         <Badge label={status.text} tone={status.tone} />
         {setPhotos.error ? <ErrorNotice error={setPhotos.error} /> : null}
 

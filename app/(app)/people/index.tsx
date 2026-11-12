@@ -9,13 +9,14 @@ import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Input } from "@/components/ui/Input";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { dateLabel, occurrenceText, usePeople, useSavePerson } from "@/lib/people";
 
 const UPCOMING_DAYS = 60;
 
 export default function PeopleScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const people = usePeople();
   const save = useSavePerson();
   const [adding, setAdding] = useState(false);
@@ -40,13 +41,9 @@ export default function PeopleScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="people">
-        <Text accessibilityRole="header" className="font-bold text-title text-ink">
-          People and dates
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="People and dates" tone="people" />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {people.isPending ? (
           <Skeleton />
         ) : people.error ? (

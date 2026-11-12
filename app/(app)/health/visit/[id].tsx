@@ -10,7 +10,7 @@ import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
 import { SecurePhotos } from "@/components/ui/SecurePhotos";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
@@ -19,6 +19,7 @@ import { useDeleteVisit, useHealth, useSetVisitPhotos } from "@/lib/health";
 import { removeEncryptedPhotos, uploadEncryptedPhoto } from "@/lib/secure-photos";
 
 export default function VisitScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const health = useHealth();
@@ -46,20 +47,22 @@ export default function VisitScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text accessibilityRole="header" numberOfLines={1} className="min-w-0 flex-1 font-bold text-title text-ink">
-          {v.doctor || v.reason || "Visit"}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit visit"
-          onPress={() => router.push({ pathname: "/health/visit/edit/[id]", params: { id: v.id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.ink} />
-        </Pressable>
-      </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ModuleHeader
+        scrollY={scrollY}
+        title={v.doctor || v.reason || "Visit"}
+        tone="daily"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit visit"
+            onPress={() => router.push({ pathname: "/health/visit/edit/[id]", params: { id: v.id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         <View className="gap-2">
           <Text className="font-medium text-caption text-ink-muted">
             {format(parseISO(v.visited_on), "EEEE, MMMM d, yyyy")}
