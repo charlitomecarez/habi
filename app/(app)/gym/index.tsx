@@ -6,16 +6,17 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { isGymDay, today, trainedOrMissed, useGym } from "@/lib/gym";
 import { scheduleText, timeLabel } from "@/lib/habits";
 
 export default function GymScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const gym = useGym();
   const now = new Date();
@@ -28,18 +29,14 @@ export default function GymScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Gym
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Gym" tone="daily" />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {gym.isPending ? (
           <Skeleton />
         ) : gym.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your workouts. {gym.error.message}</Notice>
+            <ErrorNotice lead="Could not load your workouts." error={gym.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => gym.refetch()} />
           </View>
         ) : plans.length === 0 ? (

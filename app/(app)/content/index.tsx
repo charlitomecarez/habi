@@ -8,13 +8,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { nextActionText, publishStatus, VideoCard } from "@/components/content/VideoCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useSaveVideo, useVideos, type Video } from "@/lib/content";
@@ -109,7 +109,7 @@ function NextUp({ videos }: { videos: Video[] }) {
             onSubmitEditing={addIdea}
           />
           <Button label="Save idea" variant="secondary" size="input" loading={save.isPending} onPress={addIdea} />
-          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+          {save.error ? <ErrorNotice error={save.error} /> : null}
         </View>
       </Section>
 
@@ -131,7 +131,7 @@ function Board({ videos }: { videos: Video[] }) {
   const save = useSaveVideo();
   return (
     <>
-      {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+      {save.error ? <ErrorNotice error={save.error} /> : null}
       {STAGES.map((s) => {
         const list = videos.filter((v) => v.stage === s.id).sort((a, b) => urgency(a) - urgency(b));
         return (
@@ -245,7 +245,7 @@ function Ideas({ videos }: { videos: Video[] }) {
     .sort((a, b) => b.priority - a.priority || b.created_at.localeCompare(a.created_at));
   return (
     <ListCard>
-      {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+      {save.error ? <ErrorNotice error={save.error} /> : null}
       {ideas.length === 0 ? (
         <Empty text="No ideas yet. Use Quick idea in Next up, or Add idea below." />
       ) : (
@@ -297,24 +297,25 @@ function Ideas({ videos }: { videos: Video[] }) {
 }
 
 export default function ContentPlannerScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const [view, setView] = useState<PlannerView>("next");
   const videos = useVideos();
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="records">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Content planner
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Content planner" tone="records" />
 
-      <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <KeyboardScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2"
+      >
         <Segmented label="View" options={VIEWS} value={view} onChange={setView} />
         {videos.isPending ? (
           <Skeleton />
         ) : videos.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your videos. {videos.error.message}</Notice>
+            <ErrorNotice lead="Could not load your videos." error={videos.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => videos.refetch()} />
           </View>
         ) : view === "next" ? (

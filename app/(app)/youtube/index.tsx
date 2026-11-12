@@ -8,7 +8,7 @@ import { Thumbnail } from "@/components/youtube/Thumbnail";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -17,6 +17,7 @@ import { ageText, ALL_CHANNELS, groupVideos, openVideo, useYouTube } from "@/lib
 
 /** One list of videos from your channels, newest first. A tap opens the video in the YouTube app. */
 export default function YouTubeScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const youtube = useYouTube();
   const [channel, setChannel] = useState<string>(ALL_CHANNELS);
@@ -43,6 +44,7 @@ export default function YouTubeScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="YouTube"
         tone="daily"
         subtitle={
@@ -52,6 +54,8 @@ export default function YouTubeScreen() {
         }
       />
       <ScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         contentContainerClassName="gap-4 px-5 pb-8 pt-4"
         refreshControl={
           <RefreshControl

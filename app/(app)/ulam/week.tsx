@@ -2,14 +2,16 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MealSheet } from "@/components/ulam/MealSheet";
+import { useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { Badge } from "@/components/ui/Badge";
-import { Notice } from "@/components/ui/Notice";
 import { formatPeso } from "@/lib/money";
 import { useUlamDays, weekRows, weekSummary } from "@/lib/ulam";
 
 export default function UlamWeekScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const days = useUlamDays();
   const [adding, setAdding] = useState<string | null>(null);
   const rows = weekRows(days.data ?? []);
@@ -17,9 +19,9 @@ export default function UlamWeekScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <UlamHeader title="Last 7 days" />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
-        {days.error ? <Notice tone="danger">Could not load your ulam. {days.error.message}</Notice> : null}
+      <UlamHeader scrollY={scrollY} title="Last 7 days" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-3">
+        {days.error ? <ErrorNotice lead="Could not load your ulam." error={days.error} /> : null}
         <View className="gap-1">
           <View className="flex-row justify-between gap-3">
             <Text className="font-semibold text-heading text-ink">{formatPeso(summary.spent)} spent</Text>

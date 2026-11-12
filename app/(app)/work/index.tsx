@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ModuleGate } from "@/components/ui/ModuleGate";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -31,6 +32,7 @@ function detail(job: JobMatch): string {
 }
 
 function FindWorkScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const access = useVoiceAccess();
   const jobs = useJobs();
@@ -55,7 +57,7 @@ function FindWorkScreen() {
   if (access.data && !access.data.isAdmin) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Find a work" tone="records" />
+        <ModuleHeader scrollY={scrollY} title="Find a work" tone="records" />
         <EmptyState drawing="box" title="Find a work is for the admin." />
       </SafeAreaView>
     );
@@ -64,6 +66,7 @@ function FindWorkScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Find a work"
         subtitle={updated}
         tone="records"
@@ -78,15 +81,15 @@ function FindWorkScreen() {
               className="h-touch w-touch items-center justify-center"
             >
               {refresh.isPending ? (
-                <ActivityIndicator color={colors.onShell} />
+                <ActivityIndicator color={colors.ink} />
               ) : (
-                <Ionicons name="refresh" size={22} color={colors.onShell} />
+                <Ionicons name="refresh" size={22} color={colors.ink} />
               )}
             </Pressable>
           ) : undefined
         }
       />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {jobs.isPending ? (
           <Skeleton />
         ) : jobs.error ? (
@@ -109,7 +112,7 @@ function FindWorkScreen() {
         ) : (
           <>
             {notice ? <Notice tone={notice.tone}>{notice.text}</Notice> : null}
-            {refresh.error ? <Notice tone="danger">{refresh.error.message}</Notice> : null}
+            {refresh.error ? <ErrorNotice error={refresh.error} /> : null}
             <View accessibilityRole="radiogroup" accessibilityLabel="Filter" className="flex-row flex-wrap gap-2">
               {JOB_FILTERS.map((item) => (
                 <Chip

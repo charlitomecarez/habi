@@ -5,16 +5,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BudgetRow } from "@/components/money/BudgetRow";
 import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useBudgetMonths, useBudgets, useDeleteBudget, useSaveBudget, type Budget } from "@/lib/budgets";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
+import { errorText } from "@/lib/errors";
 import { amountText, parseAmount, useCategories } from "@/lib/money";
 
 export default function BudgetsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const budgets = useBudgets();
   const months = useBudgetMonths();
   const categories = useCategories();
@@ -46,12 +49,8 @@ export default function BudgetsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar>
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Budgets
-        </Text>
-      </ModuleBar>
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ModuleHeader scrollY={scrollY} title="Budgets" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         <Text className="font-sans text-caption text-ink-muted">
           Money you don&apos;t spend carries over to next month. Going over does not take from next month. You get a
           notification at 80% and at 100%.
@@ -59,7 +58,7 @@ export default function BudgetsScreen() {
         {budgets.isPending ? (
           <Skeleton />
         ) : budgets.error ? (
-          <Notice tone="danger">Could not load your budgets. {budgets.error.message}</Notice>
+          <ErrorNotice lead="Could not load your budgets." error={budgets.error} />
         ) : (
           <View>
             {(months ?? []).length === 0 ? (
@@ -105,7 +104,7 @@ export default function BudgetsScreen() {
           inputMode="decimal"
           keyboardType="decimal-pad"
         />
-        {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
+        {error || save.error ? <Notice tone="danger">{error ?? errorText(save.error)}</Notice> : null}
         <Button label="Save budget" loading={save.isPending} onPress={onSave} />
         {editing && editing !== "new" ? (
           <Button

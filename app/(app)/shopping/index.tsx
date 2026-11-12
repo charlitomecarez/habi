@@ -6,17 +6,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { SwipeRow } from "@/components/ui/SwipeRow";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
+import { tick } from "@/lib/haptics";
 import { amountText, formatPeso, parseBalance, useAccounts, useCategories } from "@/lib/money";
 import { useAddItem, useCheckout, useRemoveItem, useShopping, useUpdateItem, type ShoppingItem } from "@/lib/shopping";
+import { showSnackbar } from "@/lib/snackbar";
 
 const NONE = "none";
 
@@ -32,63 +37,79 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
     if (value !== item.price) update.mutate({ id: item.id, patch: { price: value } });
   }
 
+  const setTicked = (ticked: boolean) => {
+    if (ticked) tick();
+    update.mutate(
+      { id: item.id, patch: { ticked } },
+      { onError: (e) => showSnackbar({ text: `Could not save. ${errorText(e)}`, tone: "error" }) },
+    );
+  };
   return (
-    <View className={`flex-row items-center gap-1 py-1 pr-1 ${last ? "" : "border-b-2 border-border"}`}>
-      <Pressable
-        accessibilityRole="checkbox"
-        accessibilityLabel={`${item.name}${item.quantity ? `, ${item.quantity}` : ""}, in the cart`}
-        accessibilityState={{ checked: item.ticked }}
-        onPress={() => update.mutate({ id: item.id, patch: { ticked: !item.ticked } })}
-        className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3 pl-4"
-      >
-        <Ionicons
-          name={item.ticked ? "checkbox" : "square-outline"}
-          size={22}
-          color={item.ticked ? colors.accent : colors.inkMuted}
+    <SwipeRow
+      actions={[
+        item.ticked
+          ? { label: "Not bought", icon: "arrow-undo-outline", tone: "primary", onPress: () => setTicked(false) }
+          : { label: "Bought", icon: "cart-outline", tone: "primary", onPress: () => setTicked(true) },
+      ]}
+    >
+      <View className={`flex-row items-center gap-1 py-1 pr-1 ${last ? "" : "border-b-2 border-border"}`}>
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityLabel={`${item.name}${item.quantity ? `, ${item.quantity}` : ""}, in the cart`}
+          accessibilityState={{ checked: item.ticked }}
+          onPress={() => setTicked(!item.ticked)}
+          className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3"
+        >
+          <Ionicons
+            name={item.ticked ? "checkbox" : "square-outline"}
+            size={22}
+            color={item.ticked ? colors.accent : colors.inkMuted}
+          />
+          <View className="min-w-0 flex-1">
+            <Text
+              numberOfLines={1}
+              className={`font-medium text-row-title ${item.ticked ? "text-ink-muted line-through" : "text-ink"}`}
+            >
+              {item.name}
+            </Text>
+            {item.quantity ? <Text className="font-sans text-caption text-ink-muted">{item.quantity}</Text> : null}
+          </View>
+        </Pressable>
+        <TextInput
+          accessibilityLabel={`Price of ${item.name} in pesos`}
+          value={price}
+          onChangeText={setPrice}
+          onBlur={savePrice}
+          onSubmitEditing={savePrice}
+          placeholder="₱"
+          placeholderTextColor={colors.inkMuted}
+          inputMode="decimal"
+          keyboardType="decimal-pad"
+          className="h-touch w-field-sm rounded-sm border border-border-input bg-surface-card px-2 text-right font-sans text-body text-ink"
         />
-        <View className="min-w-0 flex-1">
-          <Text
-            numberOfLines={1}
-            className={`font-medium text-row-title ${item.ticked ? "text-ink-muted line-through" : "text-ink"}`}
-          >
-            {item.name}
-          </Text>
-          {item.quantity ? <Text className="font-sans text-caption text-ink-muted">{item.quantity}</Text> : null}
-        </View>
-      </Pressable>
-      <TextInput
-        accessibilityLabel={`Price of ${item.name} in pesos`}
-        value={price}
-        onChangeText={setPrice}
-        onBlur={savePrice}
-        onSubmitEditing={savePrice}
-        placeholder="₱"
-        placeholderTextColor={colors.inkMuted}
-        inputMode="decimal"
-        keyboardType="decimal-pad"
-        className="h-touch w-field-sm rounded-sm border border-border-input bg-surface-card px-2 text-right font-sans text-body text-ink"
-      />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Add ${item.name} to Inventory`}
-        onPress={() => router.push({ pathname: "/inventory/item/new", params: { name: item.name } })}
-        className="h-touch w-touch items-center justify-center"
-      >
-        <Ionicons name="cube-outline" size={20} color={colors.ink} />
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Remove ${item.name}`}
-        onPress={() => remove.mutate(item.id)}
-        className="h-touch w-touch items-center justify-center"
-      >
-        <Ionicons name="close" size={20} color={colors.inkMuted} />
-      </Pressable>
-    </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Add ${item.name} to Inventory`}
+          onPress={() => router.push({ pathname: "/inventory/item/new", params: { name: item.name } })}
+          className="h-touch w-touch items-center justify-center"
+        >
+          <Ionicons name="cube-outline" size={20} color={colors.ink} />
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Remove ${item.name}`}
+          onPress={() => remove.mutate(item.id)}
+          className="h-touch w-touch items-center justify-center"
+        >
+          <Ionicons name="close" size={20} color={colors.inkMuted} />
+        </Pressable>
+      </View>
+    </SwipeRow>
   );
 }
 
 export default function ShoppingScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const shopping = useShopping();
   const add = useAddItem();
   const checkout = useCheckout();
@@ -150,15 +171,16 @@ export default function ShoppingScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
-        <ModuleBar tone="home">
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-            Shopping list
-          </Text>
-        </ModuleBar>
+        <ModuleHeader scrollY={scrollY} title="Shopping list" tone="home" />
 
-        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          contentContainerClassName="gap-5 px-5 pb-6 pt-2"
+          keyboardShouldPersistTaps="handled"
+        >
           {done ? <Notice tone="warning">{done}</Notice> : null}
-          {shopping.error || add.error ? <Notice tone="danger">{(shopping.error ?? add.error)!.message}</Notice> : null}
+          {shopping.error || add.error ? <ErrorNotice error={(shopping.error ?? add.error)!} /> : null}
 
           <View className="gap-3">
             <View className="flex-row gap-3">
@@ -247,7 +269,7 @@ export default function ShoppingScreen() {
         />
         <Select label="Category" options={categoryOptions} value={categoryId} onChange={setCategoryId} />
         <Input label="Store" optional value={store} onChangeText={setStore} placeholder="SM Supermarket" />
-        {checkout.error ? <Notice tone="danger">{checkout.error.message}</Notice> : null}
+        {checkout.error ? <ErrorNotice error={checkout.error} /> : null}
         <Button label="Save expense" loading={checkout.isPending} onPress={saveCheckout} />
       </Sheet>
     </SafeAreaView>

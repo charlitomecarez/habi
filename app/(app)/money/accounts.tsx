@@ -4,30 +4,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AccountSheet } from "@/components/money/AccountSheet";
 import { BrandIcon } from "@/components/ui/BrandIcon";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatMoney, useAccounts, type Account } from "@/lib/money";
 
 export default function AccountsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const accounts = useAccounts();
   const [editing, setEditing] = useState<Account | "new" | null>(null);
   const list = accounts.data ?? [];
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar>
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Money accounts
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Money accounts" />
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {accounts.isPending ? (
           <Skeleton />
         ) : accounts.error ? (
-          <Notice tone="danger">Could not load your accounts. {accounts.error.message}</Notice>
+          <ErrorNotice lead="Could not load your accounts." error={accounts.error} />
         ) : (
           <View>
             {list.map((a, index) => (

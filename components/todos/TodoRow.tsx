@@ -2,8 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { differenceInCalendarDays, format, isToday, isTomorrow } from "date-fns";
 import { Pressable, View } from "react-native";
 
-import { DataRow, type RowStatus } from "@/components/ui/DataRow";
+import { DataRow, type RowAction, type RowStatus } from "@/components/ui/DataRow";
 import { useColors } from "@/lib/colors";
+import { tick } from "@/lib/haptics";
 import { isOverdue, todoDate, type Todo } from "@/lib/todos";
 
 const REPEAT_LABEL = { daily: "Daily", weekly: "Weekly", monthly: "Monthly" } as const;
@@ -58,12 +59,24 @@ type TodoRowProps = {
   todo: Todo;
   onToggle: () => void;
   onOpen: () => void;
+  /** Adds Delete behind a left swipe. The caller asks first in a ConfirmSheet. */
+  onDelete?: () => void;
   last?: boolean;
 };
 
-export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) {
+export function TodoRow({ todo, onToggle, onOpen, onDelete, last = false }: TodoRowProps) {
   const colors = useColors();
   const done = todo.completed_at !== null;
+  const toggle = () => {
+    if (!done) tick();
+    onToggle();
+  };
+  const actions: RowAction[] = [
+    done
+      ? { label: "Not done", icon: "arrow-undo-outline", tone: "primary", onPress: onToggle }
+      : { label: "Done", icon: "checkmark", tone: "primary", onPress: onToggle },
+    ...(onDelete ? [{ label: "Delete", icon: "trash-outline", tone: "destructive", onPress: onDelete } as const] : []),
+  ];
 
   return (
     <View className={`flex-row items-center ${last ? "" : "border-b-2 border-border"}`}>
@@ -71,7 +84,7 @@ export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) 
         accessibilityRole="checkbox"
         accessibilityState={{ checked: done }}
         accessibilityLabel={done ? `Mark ${todo.title} as not done` : `Mark ${todo.title} as done`}
-        onPress={onToggle}
+        onPress={toggle}
         className="-ml-3 h-touch w-touch items-center justify-center"
       >
         <Ionicons
@@ -88,6 +101,7 @@ export function TodoRow({ todo, onToggle, onOpen, last = false }: TodoRowProps) 
           status={statusOf(todo)}
           onPress={onOpen}
           done={done}
+          actions={actions}
           last
         />
       </View>

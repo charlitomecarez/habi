@@ -3,17 +3,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { QrCode } from "@/components/inventory/QrCode";
 import { STOP_LABEL } from "@/lib/alarm-rules";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 
 export default function StopLabelScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Stop label
-        </Text>
-      </ModuleBar>
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
+      <ModuleHeader scrollY={scrollY} title="Stop label" tone="daily" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-3">
         <View className="overflow-hidden">
           <QrCode value={STOP_LABEL} label="QR code that stops the alarm" />
         </View>

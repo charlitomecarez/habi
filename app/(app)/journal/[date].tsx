@@ -7,10 +7,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
@@ -120,7 +120,7 @@ function EntryEditor({ date, entry }: { date: string; entry: JournalEntry | unde
         }
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {(save.error ?? remove.error) ? <Notice tone="danger">{(save.error ?? remove.error)!.message}</Notice> : null}
+          {(save.error ?? remove.error) ? <ErrorNotice error={(save.error ?? remove.error)!} /> : null}
           <Button label="Save entry" loading={save.isPending} onPress={onSave} />
         </View>
       </KeyboardAvoidingView>

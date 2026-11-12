@@ -8,10 +8,10 @@ import { ItemPhoto } from "@/components/inventory/ItemPhoto";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
@@ -64,6 +64,7 @@ function ItemRow({
 }
 
 export default function InventoryScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const params = useLocalSearchParams<{ location?: string }>();
   const [query, setQuery] = useState("");
@@ -92,28 +93,37 @@ export default function InventoryScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="home">
-        <Text accessibilityRole="header" className="min-w-0 flex-1 font-bold text-title text-on-shell">
-          Inventory
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push("/inventory/locations")}
-          className="h-touch justify-center px-3"
-        >
-          <Text className="font-semibold text-label text-on-shell">Locations</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Scan a box label"
-          onPress={() => router.push("/inventory/scan")}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="qr-code-outline" size={22} color={colors.onShell} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title="Inventory"
+        tone="home"
+        action={
+          <>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push("/inventory/locations")}
+              className="h-touch justify-center px-3"
+            >
+              <Text className="font-semibold text-label text-ink">Locations</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Scan a box label"
+              onPress={() => router.push("/inventory/scan")}
+              className="h-touch w-touch items-center justify-center"
+            >
+              <Ionicons name="qr-code-outline" size={22} color={colors.ink} />
+            </Pressable>
+          </>
+        }
+      />
 
-      <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2" keyboardShouldPersistTaps="handled">
+      <KeyboardScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2"
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
           <Ionicons name="search" size={18} color={colors.inkMuted} />
           <TextInput
@@ -190,7 +200,7 @@ export default function InventoryScreen() {
           <Skeleton />
         ) : error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your inventory. {error.message}</Notice>
+            <ErrorNotice lead="Could not load your inventory." error={error} />
             <Button
               label="Try again"
               variant="secondary"

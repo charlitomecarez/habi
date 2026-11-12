@@ -7,19 +7,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { motion } from "@/lib/motion";
 import { readFullStory, siteName, useStory } from "@/lib/news";
 import { timeAgo } from "@/lib/news-time";
-
-const FADE_MS = 150;
 
 /**
  * One story: what the feed gives (image, headline, outlet, time, short summary). The full article
  * opens in an in-app browser, so the app never copies the article body.
  */
 export default function StoryScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const story = useStory(id);
   const reduced = useReducedMotion();
@@ -28,11 +28,12 @@ export default function StoryScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title={item?.source ?? "News"}
         subtitle={item ? timeAgo(parseISO(item.published_at)) : undefined}
         tone="daily"
       />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         {story.isPending ? (
           <Skeleton layout="detail" />
         ) : story.error ? (
@@ -58,7 +59,7 @@ export default function StoryScreen() {
                   source={{ uri: item.image_url }}
                   contentFit="cover"
                   cachePolicy="disk"
-                  transition={reduced ? 0 : FADE_MS}
+                  transition={reduced ? 0 : motion.fade}
                   style={{ width: "100%", height: "100%" }}
                   accessible={false}
                 />

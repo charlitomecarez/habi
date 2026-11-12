@@ -1,16 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MessageCard } from "@/components/inbox/MessageCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { ModuleGate } from "@/components/ui/ModuleGate";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import {
@@ -40,6 +40,7 @@ function sentBadge(message: VoiceMessage) {
 }
 
 function InboxScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const access = useVoiceAccess();
   const inbox = useInbox();
@@ -70,32 +71,28 @@ function InboxScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="people">
-        <View className="min-w-0 flex-1">
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-            Inbox
-          </Text>
-          {unread > 0 ? (
-            <Text className="font-sans text-label text-on-shell">
-              {unread} new {unread === 1 ? "message" : "messages"}
-            </Text>
-          ) : null}
-        </View>
-        {isAdmin ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Voice access"
-            onPress={() => router.push("/inbox/access")}
-            className="h-touch w-touch items-center justify-center"
-          >
-            <Ionicons name="people-outline" size={22} color={colors.onShell} />
-          </Pressable>
-        ) : null}
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title="Inbox"
+        tone="people"
+        subtitle={unread > 0 ? `${unread} new ${unread === 1 ? "message" : "messages"}` : undefined}
+        action={
+          isAdmin ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Voice access"
+              onPress={() => router.push("/inbox/access")}
+              className="h-touch w-touch items-center justify-center"
+            >
+              <Ionicons name="people-outline" size={22} color={colors.ink} />
+            </Pressable>
+          ) : null
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
-        {error ? <Notice tone="danger">Could not load your messages. {error.message}</Notice> : null}
-        {retry.error ? <Notice tone="danger">{retry.error.message}</Notice> : null}
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
+        {error ? <ErrorNotice lead="Could not load your messages." error={error} /> : null}
+        {retry.error ? <ErrorNotice error={retry.error} /> : null}
 
         <Segmented label="Messages" options={TABS} value={tab} onChange={setTab} />
 

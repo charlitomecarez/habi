@@ -10,13 +10,15 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { debtStatus, useDebts } from "@/lib/debts";
@@ -56,6 +58,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export default function PersonScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const people = usePeople();
@@ -92,7 +95,7 @@ export default function PersonScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{people.error ? people.error.message : "This person was deleted."}</Notice>
+            <Notice tone="danger">{people.error ? errorText(people.error) : "This person was deleted."}</Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -170,26 +173,24 @@ export default function PersonScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="people">
-        <Text
-          accessibilityRole="header"
-          numberOfLines={1}
-          className="min-w-0 flex-1 font-bold text-title text-on-shell"
-        >
-          {person.name}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit name and note"
-          onPress={() => open("rename")}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.onShell} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={person.name}
+        tone="people"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit name and note"
+            onPress={() => open("rename")}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
-        {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+        {failure ? <ErrorNotice error={failure} /> : null}
         {person.note ? <Text className="font-sans text-body text-ink">{person.note}</Text> : null}
 
         <Section title="Dates">
@@ -357,7 +358,7 @@ export default function PersonScreen() {
           keyboardType="decimal-pad"
         />
         <Select label="From account" options={accountOptions} value={accountId} onChange={setAccountId} />
-        {formError || buyGift.error ? <Notice tone="danger">{formError ?? buyGift.error?.message}</Notice> : null}
+        {formError || buyGift.error ? <Notice tone="danger">{formError ?? errorText(buyGift.error)}</Notice> : null}
         <Button
           label="Save expense"
           loading={buyGift.isPending}

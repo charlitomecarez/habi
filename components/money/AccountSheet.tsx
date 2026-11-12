@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { amountText, parseBalance, useSaveAccount, type Account } from "@/lib/money";
 
@@ -59,7 +59,12 @@ function AccountFields({ onClose, account }: FieldsProps) {
         keyboardType="decimal-pad"
         error={errors.opening}
       />
-      {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+      {save.error ? (
+        <ErrorNotice
+          error={save.error}
+          messages={{ "23505": "You already have an account with this name. Change the name, then save again." }}
+        />
+      ) : null}
       <Button label={account ? "Save account" : "Add account"} loading={save.isPending} onPress={onSave} />
     </>
   );

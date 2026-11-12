@@ -13,10 +13,11 @@ import { DataRow } from "@/components/ui/DataRow";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
@@ -78,6 +79,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
       documentId: item?.document_id ?? null,
     },
   });
+  const discard = useDiscardGuard(formState.isDirty, "The plan item is not saved.");
 
   const onSubmit = handleSubmit(async (v) => {
     await save.mutateAsync({
@@ -97,6 +99,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
         document_id: v.documentId,
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -302,6 +305,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
                 loading={remove.isPending}
                 onPress={async () => {
                   await remove.mutateAsync(item.id);
+                  discard.allowLeave();
                   goBack();
                 }}
               />
@@ -310,8 +314,8 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
-          {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
+          {save.error ? <ErrorNotice error={save.error} /> : null}
+          {remove.error ? <ErrorNotice error={remove.error} /> : null}
           <Button label="Save to plan" loading={formState.isSubmitting} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>
@@ -319,6 +323,7 @@ export function ItemForm({ tripId, item, day }: ItemFormProps) {
       {item && costPhp !== null ? (
         <MarkPaidSheet visible={paying} onClose={() => setPaying(false)} itemId={item.id} amount={costPhp} />
       ) : null}
+      {discard.sheet}
     </SafeAreaView>
   );
 }

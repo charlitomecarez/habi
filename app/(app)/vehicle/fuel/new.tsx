@@ -12,6 +12,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { useLogFuel } from "@/lib/fuel";
@@ -139,7 +140,7 @@ export default function LogFuelScreen() {
           />
         </KeyboardScrollView>
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {error || log.error ? <Notice tone="danger">{error ?? log.error?.message}</Notice> : null}
+          {error || log.error ? <Notice tone="danger">{error ?? errorText(log.error)}</Notice> : null}
           <Button label="Save fill-up" loading={log.isPending} onPress={onSave} />
         </View>
       </KeyboardAvoidingView>

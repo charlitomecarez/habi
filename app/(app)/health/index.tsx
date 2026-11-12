@@ -10,10 +10,10 @@ import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
 import { DashedButton } from "@/components/ui/DashedButton";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { LineChart } from "@/components/ui/LineChart";
-import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { isActive, timeText, todaysDoses, useDeleteWeight, useHealth, useLogWeight } from "@/lib/health";
@@ -32,6 +32,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export default function HealthScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const health = useHealth();
   const logWeight = useLogWeight();
@@ -57,18 +58,14 @@ export default function HealthScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Health
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Health" tone="daily" />
 
-      <ScrollView contentContainerClassName="gap-6 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-6 px-5 pb-8 pt-2">
         {health.isPending ? (
           <Skeleton />
         ) : health.error || !data ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your health records. {health.error?.message}</Notice>
+            <ErrorNotice lead="Could not load your health records." error={health.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => health.refetch()} />
           </View>
         ) : (
@@ -213,7 +210,7 @@ export default function HealthScreen() {
           error={weightError ?? undefined}
         />
         <DateTimeField label="Date" mode="date" value={weighedOn} onChange={setWeighedOn} />
-        {logWeight.error ? <Notice tone="danger">{logWeight.error.message}</Notice> : null}
+        {logWeight.error ? <ErrorNotice error={logWeight.error} /> : null}
         <Button label="Save weight" loading={logWeight.isPending} onPress={saveWeight} />
       </Sheet>
     </SafeAreaView>

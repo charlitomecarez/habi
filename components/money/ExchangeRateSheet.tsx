@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
-import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { useSaveExchangeRate } from "@/lib/money";
 
@@ -46,7 +46,7 @@ function ExchangeRateFields({ onClose, currency, rate }: FieldsProps) {
         autoFocus
         error={error}
       />
-      {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+      {save.error ? <ErrorNotice error={save.error} /> : null}
       <Button label="Save rate" loading={save.isPending} onPress={onSave} />
     </>
   );

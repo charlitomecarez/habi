@@ -3,13 +3,14 @@ import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatKg, useExerciseHistory, useGym } from "@/lib/gym";
 
 /** Every session you did this exercise, newest first, so you can see reps and weight go up. */
 export default function ExerciseHistoryScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const gym = useGym();
   const history = useExerciseHistory(id);
@@ -25,20 +26,12 @@ export default function ExerciseHistoryScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text
-          accessibilityRole="header"
-          numberOfLines={1}
-          className="min-w-0 flex-1 font-bold text-title text-on-shell"
-        >
-          {exercise?.name ?? "Exercise"}
-        </Text>
-      </ModuleBar>
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-8 pt-2">
+      <ModuleHeader scrollY={scrollY} title={exercise?.name ?? "Exercise"} tone="daily" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-3 px-5 pb-8 pt-2">
         {history.isPending ? (
           <Skeleton layout="detail" />
         ) : history.error ? (
-          <Notice tone="danger">Could not load the history. {history.error.message}</Notice>
+          <ErrorNotice lead="Could not load the history." error={history.error} />
         ) : bySession.length === 0 ? (
           <Text className="font-sans text-body text-ink-muted">
             No sets yet. Tick sets during a workout to build the history.

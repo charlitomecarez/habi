@@ -2,14 +2,15 @@ import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DataRow } from "@/components/ui/DataRow";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 
 /** Health Connect requires a page that says what the app reads. */
 export default function HowItWorksScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="How it works" tone="daily" />
-      <ScrollView contentContainerClassName="px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="How it works" tone="daily" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="px-5 pb-8 pt-4">
         <View>
           <DataRow
             title="What Habi reads"

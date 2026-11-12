@@ -12,6 +12,7 @@ import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { REMIND_TIMES } from "@/lib/habits";
@@ -107,7 +108,7 @@ export function MedicineForm({ medicine }: { medicine?: Medicine }) {
           ) : null}
         </KeyboardScrollView>
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {error || save.error ? <Notice tone="danger">{error ?? save.error?.message}</Notice> : null}
+          {error || save.error ? <Notice tone="danger">{error ?? errorText(save.error)}</Notice> : null}
           <Button label="Save medicine" loading={save.isPending} onPress={onSave} />
         </View>
       </KeyboardAvoidingView>

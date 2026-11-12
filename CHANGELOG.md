@@ -35,6 +35,25 @@ Do not put these items here:
 
 ## Unreleased
 
+### Changed
+
+- **App:** Every move uses one set of timings and one easing. Images fade in at the same speed everywhere.
+- **App:** A new screen slides in from the right, and the screen under it moves a little and dims. Drag right from anywhere on the screen to go back. Full-screen forms rise from the bottom, and a drag down from the top closes them.
+- **App:** A form with unsaved changes asks "Discard your changes?" before Back, a drag back or a drag down closes it.
+- **Tabs:** The cream pill glides to the open tab, and the new tab fades in. Login to Home crossfades.
+- **Headers:** Module headers are cream, with a large title beside the module icon. Tab headers stay indigo.
+- **Sheets:** A sheet rises on a spring, and you can drag it down to close it.
+- **Lists:** Segmented choices glide, can show a count, and give a light tick. Money shows a dot under the account cards for the open card.
+- **Login:** Login is indigo with the banig weave, the Habi mark and one line about the app. Continue with Google is the main button, and the email code is the second way in.
+- **App icon:** The launcher icon, the splash and the browser icon show the Habi mark with its gold tile. After the splash, the strip stitches across and the app fades in. Install the v2.0.0 APK for the new icon and splash.
+- **Home:** The top of Home sits on the banig weave, and a gold and cream strip stitches across once when you arrive. The amount is in gold.
+- **Todos:** The filters are one Segmented control with a count in each choice. Swipe a todo left for Done and Delete, or swipe it far to finish it. "Todo done." gives you 5 seconds to undo.
+- **Money and Vehicle:** The amount and the odometer count to the new value after a change, and the tab headers shrink as you scroll.
+- **More:** The modules are one list, with each icon on its section tint and the count under the name. Sections have quiet labels. Rows fade out as you search, and the end of More shows the Habi mark and the version.
+- **Modules:** Every module list and detail screen has the large cream title with the module icon, and it shrinks to a small bar as you scroll. Forms keep the title in the bar. The Ulam settings button is visible again on the cream header. Swipe a habit left for Done, and a shopping item for Bought. The trip day strip scrolls sideways without starting a drag back.
+- **Errors:** Error messages are plain sentences that say what happened and what to do, never the server text. A session that ended offers Sign in again. The admin also sees the error code.
+- **Login:** An email with no account gets "I could not send a code to this email. Ask the admin if you need an account." It does not say if the account exists.
+
 ## [v1.6.0](docs/releases/v1.6.0.md) - 2026-11-11
 
 ### Added

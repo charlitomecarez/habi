@@ -5,9 +5,10 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -29,7 +30,7 @@ const STATUSES = [
   { value: "hidden", label: "Hidden" },
 ] as const;
 
-function JobBody({ job }: { job: JobMatch }) {
+function JobBody({ job, onScroll }: { job: JobMatch; onScroll: ReturnType<typeof useHeaderScroll>["onScroll"] }) {
   const draft = useDraftLetter();
   const update = useUpdateJob();
   const [edited, setEdited] = useState<string | null>(null);
@@ -51,7 +52,12 @@ function JobBody({ job }: { job: JobMatch }) {
   }
 
   return (
-    <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+    <KeyboardScrollView
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+      keyboardShouldPersistTaps="handled"
+      contentContainerClassName="gap-4 px-5 pb-8 pt-4"
+    >
       {job.score === null ? (
         <View className="gap-2">
           <View className="flex-row items-center justify-between gap-3">
@@ -86,7 +92,7 @@ function JobBody({ job }: { job: JobMatch }) {
         </>
       )}
 
-      {draft.error ? <Notice tone="danger">{draft.error.message}</Notice> : null}
+      {draft.error ? <ErrorNotice error={draft.error} /> : null}
       {openFailed ? <Notice tone="danger">Could not open this link.</Notice> : null}
 
       {letter ? (
@@ -127,16 +133,18 @@ export default function JobScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const jobs = useJobs();
   const job = jobs.data?.matches.find((j) => j.id === id);
+  const { scrollY, onScroll } = useHeaderScroll();
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title={job?.title ?? "Job"}
         subtitle={job ? [job.company, job.location].filter(Boolean).join(" · ") : undefined}
         tone="records"
       />
       {job ? (
-        <JobBody job={job} />
+        <JobBody job={job} onScroll={onScroll} />
       ) : jobs.isPending ? (
         <Skeleton layout="detail" />
       ) : (

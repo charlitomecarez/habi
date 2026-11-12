@@ -21,6 +21,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { WeaveBand } from "@/components/ui/WeaveBand";
+import { WeaveField } from "@/components/ui/WeaveField";
 import { useBudgetMonths } from "@/lib/budgets";
 import { useColors } from "@/lib/colors";
 import { useDebts } from "@/lib/debts";
@@ -189,8 +190,8 @@ export default function HomeScreen() {
         contentContainerClassName="gap-6 pb-8"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.accent} />}
       >
-        <View>
-          <View className="gap-1 bg-shell px-5 pb-2" style={{ paddingTop: insets.top + 8 }}>
+        <WeaveField strip paddingTop={insets.top + 8}>
+          <View className="gap-1 px-5 pb-2">
             <View className="flex-row items-center gap-3">
               <Pressable
                 accessibilityRole="button"
@@ -225,7 +226,7 @@ export default function HomeScreen() {
               {showAmount ? (
                 <>
                   {" "}
-                  <Text className="text-watch-fill">{formatPeso(hasBudget ? moneyLeft : spentToday)}</Text>
+                  <Text className="text-gold">{formatPeso(hasBudget ? moneyLeft : spentToday)}</Text>
                   {hasBudget ? " left this month." : " spent today."}
                 </>
               ) : null}
@@ -241,7 +242,7 @@ export default function HomeScreen() {
             ) : null}
           </View>
           <WeaveBand rows={rows} todayIndex={todayIndex(now)} onDayPress={setOpenDay} />
-        </View>
+        </WeaveField>
 
         <View className="gap-6 px-5">
           {error ? (

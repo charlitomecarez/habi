@@ -7,7 +7,7 @@ import { AppRow } from "@/components/screen-time/AppRow";
 import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -53,6 +53,7 @@ function Failed({ onRetry }: { onRetry: () => void }) {
 
 /** Every app used today or this week. Read-only, so it has no primary action. The data stays on the phone. */
 export default function ScreenTimeScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const access = useUsageAccess();
   const [range, setRange] = useState<Range>("today");
   const [today] = useState(() => new Date());
@@ -69,7 +70,7 @@ export default function ScreenTimeScreen() {
   if (!access) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Screen time" tone="daily" />
+        <ModuleHeader scrollY={scrollY} title="Screen time" tone="daily" />
         <View className="flex-1 justify-center gap-4 px-5">
           <EmptyState
             drawing="box"
@@ -86,8 +87,8 @@ export default function ScreenTimeScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Screen time" subtitle={subtitle} tone="daily" />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Screen time" subtitle={subtitle} tone="daily" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <Segmented label="Range" options={RANGES} value={range} onChange={setRange} />
         {current.isPending ? (
           <Skeleton layout="home" />

@@ -6,12 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
+import { tick } from "@/lib/haptics";
 import { day, isScheduled, scheduleText, streak, useHabits, useToggleCheck, weekCount, type Habit } from "@/lib/habits";
+import { showSnackbar } from "@/lib/snackbar";
 
 function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: boolean }) {
   const colors = useColors();
@@ -19,13 +22,20 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
   const today = day(new Date());
   const done = checks.has(today);
   const s = streak(h, checks);
+  const setDone = (next: boolean) => {
+    if (next) tick();
+    toggle.mutate(
+      { habitId: h.id, date: today, done: next },
+      { onError: (e) => showSnackbar({ text: `Could not save. ${errorText(e)}`, tone: "error" }) },
+    );
+  };
   return (
     <View className={`flex-row items-center ${last ? "" : "border-b-2 border-border"}`}>
       <Pressable
         accessibilityRole="checkbox"
         accessibilityLabel={`${h.name}, done today`}
         accessibilityState={{ checked: done }}
-        onPress={() => toggle.mutate({ habitId: h.id, date: today, done: !done })}
+        onPress={() => setDone(!done)}
         className="-ml-3 h-touch w-touch items-center justify-center"
       >
         <Ionicons
@@ -41,6 +51,11 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
           value={h.schedule === "times_per_week" ? `${weekCount(checks, new Date())} / ${h.times_per_week}` : undefined}
           status={done ? { label: "Done", tone: "good" } : { label: "Today", tone: "muted" }}
           onPress={() => router.push({ pathname: "/habits/[id]", params: { id: h.id } })}
+          actions={[
+            done
+              ? { label: "Not done", icon: "arrow-undo-outline", tone: "primary", onPress: () => setDone(false) }
+              : { label: "Done", icon: "checkmark", tone: "primary", onPress: () => setDone(true) },
+          ]}
           last
         />
       </View>
@@ -49,6 +64,7 @@ function HabitRow({ h, checks, last }: { h: Habit; checks: Set<string>; last: bo
 }
 
 export default function HabitsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const habits = useHabits();
   const now = new Date();
   const list = habits.data?.habits ?? [];
@@ -66,17 +82,18 @@ export default function HabitsScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Habits"
         tone="daily"
         subtitle={list.length > 0 ? `${doneToday} of ${dueToday.length} done today` : undefined}
       />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
         {habits.isPending ? (
           <Skeleton />
         ) : habits.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your habits. {habits.error.message}</Notice>
+            <ErrorNotice lead="Could not load your habits." error={habits.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => habits.refetch()} />
           </View>
         ) : list.length === 0 ? (

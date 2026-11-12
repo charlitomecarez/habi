@@ -7,7 +7,7 @@ import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatPeso, useAccounts } from "@/lib/money";
 import { monthlyAmount, nextDate, nextText, scheduleText, useRecurring, type Recurring } from "@/lib/recurring";
@@ -32,6 +32,7 @@ function RecurringRow({ rule, accountName, last }: { rule: Recurring; accountNam
 }
 
 export default function RecurringScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const rules = useRecurring();
   const accounts = useAccounts();
   const list = rules.data ?? [];
@@ -43,12 +44,13 @@ export default function RecurringScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Recurring"
         backLabel="Back to Money"
         subtitle={list.length > 0 ? `${running.length} running · ${formatPeso(monthly)} a month` : undefined}
       />
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-fab-clear pt-3">
         {rules.isPending ? (
           <Skeleton />
         ) : rules.error ? (

@@ -7,10 +7,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
@@ -61,6 +62,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
     resolver: zodResolver(schema),
     defaultValues: entry?.data ?? EMPTY,
   });
+  const discard = useDiscardGuard(formState.isDirty, "The login is not saved.");
 
   // Typing counts as activity, so the vault does not lock while you fill in the form.
   const typed = useWatch({ control });
@@ -77,6 +79,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
         notes: values.notes.trim(),
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -87,6 +90,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
   async function onDelete() {
     if (!entry) return;
     await remove.mutateAsync(entry.id);
+    discard.allowLeave();
     goBack();
   }
 
@@ -212,7 +216,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+          {failure ? <ErrorNotice error={failure} /> : null}
           <View className="flex-row items-center justify-center gap-2">
             <Ionicons name="lock-closed-outline" size={14} color={colors.inkMuted} />
             <Text className="font-sans text-badge text-ink-muted">Encrypted on this phone before it&apos;s saved</Text>
@@ -220,6 +224,7 @@ export function EntryForm({ entry }: { entry?: VaultEntry }) {
           <Button label="Save login" loading={formState.isSubmitting} disabled={remove.isPending} onPress={onSubmit} />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

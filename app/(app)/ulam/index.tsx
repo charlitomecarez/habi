@@ -5,21 +5,23 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { MealSheet } from "@/components/ulam/MealSheet";
+import { useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { UlamPhoto } from "@/components/ulam/UlamPhoto";
 import { UlamSettingsSheet } from "@/components/ulam/UlamSettingsSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DataRow } from "@/components/ui/DataRow";
-import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { formatPeso } from "@/lib/money";
 import { useUserSettings } from "@/lib/settings";
 import { RICE_KCAL, todayChoice, useSaveUlamDay, useUlamDays } from "@/lib/ulam";
 
 export default function UlamScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
@@ -40,6 +42,7 @@ export default function UlamScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <UlamHeader
+        scrollY={scrollY}
         title="Ulam"
         subtitle={`Under ${formatPeso(limit)}`}
         action={
@@ -49,7 +52,7 @@ export default function UlamScreen() {
             onPress={() => setEditing(true)}
             className="h-touch w-touch items-center justify-center"
           >
-            <Ionicons name="options-outline" size={22} color={colors.onShell} />
+            <Ionicons name="options-outline" size={22} color={colors.ink} />
           </Pressable>
         }
       />
@@ -57,12 +60,12 @@ export default function UlamScreen() {
       {days.isPending ? (
         <Skeleton layout="detail" />
       ) : (
-        <ScrollView contentContainerClassName="pb-8">
+        <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="pb-8">
           <UlamPhoto ulam={ulam} />
 
           <View className="gap-4 px-5 pt-4">
-            {days.error ? <Notice tone="danger">Could not load your ulam. {days.error.message}</Notice> : null}
-            {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+            {days.error ? <ErrorNotice lead="Could not load your ulam." error={days.error} /> : null}
+            {save.error ? <ErrorNotice error={save.error} /> : null}
 
             {row?.custom ? (
               <Text className="font-semibold text-row-title text-ink">You ate {row.custom.name}. Saved for today.</Text>

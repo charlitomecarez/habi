@@ -5,8 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -20,6 +21,7 @@ import { formatRecoveryCode } from "@/lib/vault-crypto";
  * button, so the key never sits on the clipboard.
  */
 export default function RecoveryKeyScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   useSecureScreen("vault-recovery-key");
   const colors = useColors();
   const unlocked = useVaultStore((s) => s.key !== null);
@@ -43,7 +45,7 @@ export default function RecoveryKeyScreen() {
   if (!unlocked) {
     return (
       <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-        <ModuleHeader title="Recovery key" tone="records" />
+        <ModuleHeader scrollY={scrollY} title="Recovery key" tone="records" />
         <EmptyState drawing="box" title="The vault is locked" body="Unlock it, then make a recovery key." />
       </SafeAreaView>
     );
@@ -51,8 +53,8 @@ export default function RecoveryKeyScreen() {
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="Recovery key" tone="records" />
-      <KeyboardScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader scrollY={scrollY} title="Recovery key" tone="records" />
+      <KeyboardScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-4">
         <Text className="font-sans text-body text-ink">
           Write this down and keep it on paper, away from your phone. It opens your vault if you forget the master
           password. I show it once.
@@ -86,7 +88,7 @@ export default function RecoveryKeyScreen() {
           />
           <Text className="flex-1 font-semibold text-row-title text-ink">I wrote it down</Text>
         </Pressable>
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        {save.error ? <ErrorNotice error={save.error} /> : null}
         <Button
           label="Save recovery key"
           disabled={!code || !wrote}

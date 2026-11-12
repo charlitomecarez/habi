@@ -2,14 +2,16 @@ import { format } from "date-fns";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
+import { useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { UlamHeader } from "@/components/ulam/UlamHeader";
 import { Button } from "@/components/ui/Button";
-import { Notice } from "@/components/ui/Notice";
 import { goBack } from "@/lib/navigation";
 import { useUserSettings } from "@/lib/settings";
 import { todayChoice, useSaveUlamDay, useUlamDays } from "@/lib/ulam";
 
 export default function HowToCookScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
   const days = useUlamDays();
@@ -22,8 +24,8 @@ export default function HowToCookScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <UlamHeader title="How to cook" />
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
+      <UlamHeader scrollY={scrollY} title="How to cook" />
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-3">
         <Text className="font-sans text-label text-ink-muted">
           {ulam.name} · {ulam.cookMinutes} min
         </Text>
@@ -38,7 +40,7 @@ export default function HowToCookScreen() {
             </View>
           ))}
         </View>
-        {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+        {save.error ? <ErrorNotice error={save.error} /> : null}
         {eaten ? null : (
           <Button
             label="I ate this"

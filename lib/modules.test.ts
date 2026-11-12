@@ -6,6 +6,7 @@ import {
   hiddenReason,
   MAX_SHORTCUTS,
   MODULE_SECTIONS,
+  moduleForPath,
   searchModules,
   shortcutModules,
   toggleHidden,
@@ -112,5 +113,17 @@ describe("optional modules", () => {
     expect(hiddenReason(sports, { ...on, hidden: ["sports"] })).toBe("hidden");
     expect(toggleHidden(["sports"], "sports")).toEqual([]);
     expect(toggleHidden([], "gym")).toEqual(["gym"]);
+  });
+});
+
+describe("moduleForPath", () => {
+  it("finds the module of a nested route", () => {
+    expect(moduleForPath("/habits/3")?.id).toBe("habits");
+    expect(moduleForPath("/habits")?.id).toBe("habits");
+  });
+
+  it("finds no module for a tab or a near name", () => {
+    expect(moduleForPath("/")).toBeUndefined();
+    expect(moduleForPath("/habitsx")).toBeUndefined();
   });
 });

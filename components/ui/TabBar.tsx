@@ -1,15 +1,14 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { useEffect, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 import { Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 
 import { PressScale } from "@/components/ui/Motion";
 import { useColors } from "@/lib/colors";
+import { glideTiming } from "@/lib/motion";
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
-
-const PILL_MS = 160;
 
 /** The motorbike has no filled form, so it uses the same glyph in both states. */
 const ICONS: Record<
@@ -31,25 +30,35 @@ function TabIcon({ route, focused }: { route: string; focused: boolean }) {
   return <Ionicons name={focused ? icon.open : icon.closed} size={22} color={color} />;
 }
 
-function Pill({ focused }: { focused: boolean }) {
+/** One cream pill that glides to the open tab. With reduce motion on, it moves at once. */
+function GlidePill({ index, tabWidth }: { index: number; tabWidth: number }) {
   const reduced = useReducedMotion();
-  const opacity = useSharedValue(focused ? 1 : 0);
+  const x = useSharedValue(index * tabWidth);
   useEffect(() => {
-    opacity.set(reduced ? (focused ? 1 : 0) : withTiming(focused ? 1 : 0, { duration: PILL_MS }));
-  }, [focused, opacity, reduced]);
-  const animated = useAnimatedStyle(() => ({ opacity: opacity.get() }));
+    x.set(reduced ? index * tabWidth : withTiming(index * tabWidth, glideTiming));
+  }, [index, tabWidth, x, reduced]);
+  const animated = useAnimatedStyle(() => ({ transform: [{ translateX: x.get() }] }));
 
+  if (tabWidth === 0) return null;
   return (
-    <Animated.View style={[{ position: "absolute" }, animated]}>
-      <View className="h-8 w-slot rounded-pill bg-on-shell" />
+    <Animated.View pointerEvents="none" style={[{ position: "absolute", left: 0, width: tabWidth }, animated]}>
+      <View className="h-8 w-slot self-center rounded-pill bg-on-shell" />
     </Animated.View>
   );
 }
 
 /** The app's tab bar: indigo, and the open tab has a filled icon on a cream pill. */
 export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: TabBarProps) {
+  const [tabWidth, setTabWidth] = useState(0);
   return (
-    <View className="flex-row bg-shell pt-2" style={{ paddingBottom: insets.bottom + 8 }}>
+    <View
+      className="flex-row bg-shell pt-2"
+      style={{ paddingBottom: insets.bottom + 8 }}
+      onLayout={(event) => setTabWidth(event.nativeEvent.layout.width / state.routes.length)}
+    >
+      <View pointerEvents="none" className="absolute left-0 right-0 top-2">
+        <GlidePill index={state.index} tabWidth={tabWidth} />
+      </View>
       {state.routes.map((route, index) => {
         const focused = state.index === index;
         const title = descriptors[route.key].options.title ?? route.name;
@@ -69,7 +78,6 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: T
             className="min-h-touch items-center gap-1"
           >
             <View className="h-8 items-center justify-center">
-              <Pill focused={focused} />
               <TabIcon route={route.name} focused={focused} />
             </View>
             <Text

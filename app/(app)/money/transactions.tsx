@@ -5,9 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useAccounts, useCategories, useTransactions, type Transaction } from "@/lib/money";
 
@@ -24,6 +24,7 @@ function byMonth(transactions: Transaction[]): { month: string; rows: Transactio
 }
 
 export default function TransactionsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const transactions = useTransactions("history");
   const accounts = useAccounts();
   const categories = useCategories();
@@ -34,18 +35,14 @@ export default function TransactionsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar>
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Transactions
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Transactions" />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-2">
         {transactions.isPending ? (
           <Skeleton />
         ) : error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load transactions. {error.message}</Notice>
+            <ErrorNotice lead="Could not load transactions." error={error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => transactions.refetch()} />
           </View>
         ) : transactions.data?.length === 0 ? (

@@ -5,10 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { DIRECTION_OPTIONS, debtStatus, useDebts, type Debt, type DebtDirection } from "@/lib/debts";
 import { formatPeso } from "@/lib/money";
@@ -39,6 +39,7 @@ function DebtRow({ d, last }: { d: Debt; last: boolean }) {
 }
 
 export default function DebtsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const [direction, setDirection] = useState<DebtDirection>("owed_to_me");
   const debts = useDebts();
   const all = debts.data ?? [];
@@ -50,19 +51,20 @@ export default function DebtsScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Debts"
         tone="people"
         subtitle={`They owe you ${formatPeso(total("owed_to_me"))} · You owe ${formatPeso(total("i_owe"))}`}
       />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-3">
         <Segmented label="Show" options={DIRECTION_OPTIONS} value={direction} onChange={setDirection} />
 
         {debts.isPending ? (
           <Skeleton />
         ) : debts.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load your debts. {debts.error.message}</Notice>
+            <ErrorNotice lead="Could not load your debts." error={debts.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => debts.refetch()} />
           </View>
         ) : (

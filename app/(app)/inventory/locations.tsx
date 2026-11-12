@@ -6,10 +6,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AddLocationSheet } from "@/components/inventory/AddLocationSheet";
 import { QrCode } from "@/components/inventory/QrCode";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useDeleteLocation, useItems, useLocations, type LocationWithPath } from "@/lib/inventory";
@@ -20,6 +21,7 @@ function countLabel(n: number): string {
 }
 
 export default function LocationsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const locations = useLocations();
   const items = useItems();
@@ -43,20 +45,18 @@ export default function LocationsScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="home">
-        <View>
-          <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-            Locations
-          </Text>
-          <Text className="font-sans text-caption text-on-shell">Rooms, and the shelves and boxes inside them.</Text>
-        </View>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title="Locations"
+        tone="home"
+        subtitle="Rooms, and the shelves and boxes inside them."
+      />
 
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-fab-clear pt-2">
         {locations.isPending ? (
           <Skeleton />
         ) : locations.error ? (
-          <Notice tone="danger">Could not load locations. {locations.error.message}</Notice>
+          <ErrorNotice lead="Could not load locations." error={locations.error} />
         ) : list.length === 0 ? (
           <View className="items-center gap-3 py-6">
             <Ionicons name="home-outline" size={32} color={colors.accent} />
@@ -136,7 +136,7 @@ export default function LocationsScreen() {
             <Notice tone="warning">
               Deleting keeps its items and the places inside it; they move to &quot;No location&quot;.
             </Notice>
-            {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
+            {remove.error ? <ErrorNotice error={remove.error} /> : null}
             <Button
               label="Delete location"
               variant="destructive"

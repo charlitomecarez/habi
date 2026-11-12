@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { goBack } from "@/lib/navigation";
 import { formatPeso, useAccounts } from "@/lib/money";
@@ -23,6 +23,7 @@ import {
 } from "@/lib/recurring";
 
 export default function RecurringRuleScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const rules = useRecurring();
   const accounts = useAccounts();
@@ -47,6 +48,7 @@ export default function RecurringRuleScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title={rule?.name ?? "Recurring"}
         backLabel="Back to Recurring"
         subtitle={rule ? `${scheduleText(rule)} · ${formatPeso(rule.amount)}` : undefined}
@@ -63,7 +65,7 @@ export default function RecurringRuleScreen() {
           )}
         </View>
       ) : (
-        <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-3">
+        <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-3">
           <View>
             <DataRow
               title={rule.is_paused ? "Paused" : "Next"}

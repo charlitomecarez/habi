@@ -9,6 +9,7 @@ import { BarChart } from "@/components/ui/BarChart";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import { isScreenTimeSupported, openUsageSettings, useScreenTime, useUsageAccess } from "@/lib/screen-time";
 import { duration } from "@/lib/screen-time-list";
 
@@ -81,7 +82,7 @@ export function ScreenTimeCard() {
               <ActivityIndicator color={colors.accent} />
             ) : usage.error ? (
               <Text className="font-sans text-caption text-danger">
-                Could not read screen time. {usage.error.message}
+                Could not read screen time. {errorText(usage.error)}
               </Text>
             ) : usage.data ? (
               <>

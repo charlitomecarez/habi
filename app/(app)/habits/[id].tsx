@@ -7,10 +7,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
 import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import {
@@ -27,6 +29,7 @@ import {
 } from "@/lib/habits";
 
 export default function HabitScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const habits = useHabits();
@@ -47,7 +50,9 @@ export default function HabitScreen() {
           </View>
         ) : (
           <View className="w-full gap-3">
-            <Notice tone="danger">{habits.error ? habits.error.message : "This habit was archived or deleted."}</Notice>
+            <Notice tone="danger">
+              {habits.error ? errorText(habits.error) : "This habit was archived or deleted."}
+            </Notice>
             <Button label="Back" variant="secondary" size="input" onPress={goBack} />
           </View>
         )}
@@ -61,27 +66,25 @@ export default function HabitScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="daily">
-        <Text
-          accessibilityRole="header"
-          numberOfLines={1}
-          className="min-w-0 flex-1 font-bold text-title text-on-shell"
-        >
-          {h.name}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit habit"
-          onPress={() => router.push({ pathname: "/habits/edit/[id]", params: { id: h.id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.onShell} />
-        </Pressable>
-      </ModuleBar>
+      <ModuleHeader
+        scrollY={scrollY}
+        title={h.name}
+        tone="daily"
+        action={
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit habit"
+            onPress={() => router.push({ pathname: "/habits/edit/[id]", params: { id: h.id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        }
+      />
 
-      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-2">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-2">
         {(toggle.error ?? archive.error ?? remove.error) ? (
-          <Notice tone="danger">{(toggle.error ?? archive.error ?? remove.error)!.message}</Notice>
+          <ErrorNotice error={(toggle.error ?? archive.error ?? remove.error)!} />
         ) : null}
 
         <View className="flex-row gap-3">

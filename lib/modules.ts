@@ -269,3 +269,11 @@ export function visibleSections(sections: readonly ModuleSection[], f: ModuleFil
 export function toggleHidden(hidden: readonly string[], id: string): string[] {
   return hidden.includes(id) ? hidden.filter((x) => x !== id) : [...hidden, id];
 }
+
+/** The module that a route belongs to, such as Habits for "/habits/3". Tabs and settings have none. */
+export function moduleForPath(pathname: string): ModuleEntry | undefined {
+  return ALL_MODULES.find((m) => {
+    const href = typeof m.href === "string" ? m.href : null;
+    return href !== null && (pathname === href || pathname.startsWith(`${href}/`));
+  });
+}

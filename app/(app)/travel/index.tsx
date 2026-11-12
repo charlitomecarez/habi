@@ -1,30 +1,27 @@
 import { router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Fab } from "@/components/ui/Fab";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useFeatures } from "@/lib/features";
 import { tripDatesText, tripLength, useTrips } from "@/lib/travel";
 
 export default function TravelScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const trips = useTrips();
   const list = trips.data ?? [];
   const places = useFeatures().places;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="home">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Travel
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Travel" tone="home" />
 
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-3 px-5 pb-fab-clear pt-3">
         {places ? (
           <DataRow
             title="Places near you"
@@ -34,7 +31,7 @@ export default function TravelScreen() {
             last
           />
         ) : null}
-        {trips.error ? <Notice tone="danger">Could not load your trips. {trips.error.message}</Notice> : null}
+        {trips.error ? <ErrorNotice lead="Could not load your trips." error={trips.error} /> : null}
         {trips.isPending ? (
           <Skeleton />
         ) : list.length === 0 ? (

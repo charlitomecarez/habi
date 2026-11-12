@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ModuleGate } from "@/components/ui/ModuleGate";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -47,6 +47,7 @@ function FilmRow({ movie, value, last }: { movie: Movie; value: string | null; l
 
 /** Films in Philippine cinemas. Read-only: a film opens its detail screen. */
 function MoviesScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const movies = useMovies();
   const [list, setList] = useState<MovieListId>("now");
@@ -59,11 +60,14 @@ function MoviesScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="Movies"
         tone="daily"
         subtitle={`In Philippine cinemas${sync?.last_ok_at ? ` · Updated ${syncTime(sync.last_ok_at)}` : ""}`}
       />
       <ScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         contentContainerClassName="gap-4 px-5 pb-8 pt-4"
         refreshControl={
           <RefreshControl

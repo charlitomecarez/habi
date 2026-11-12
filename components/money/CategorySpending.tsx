@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
-import { Notice } from "@/components/ui/Notice";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useMonthSummary } from "@/lib/money";
 
@@ -53,7 +53,7 @@ export function CategorySpending({ categoryName }: { categoryName: (id: string |
 
         {summary.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load this month. {summary.error.message}</Notice>
+            <ErrorNotice lead="Could not load this month." error={summary.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => summary.refetch()} />
           </View>
         ) : summary.isPending ? (

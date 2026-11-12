@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { PhotoField } from "@/components/ui/PhotoField";
 import { useColors } from "@/lib/colors";
+import { errorText } from "@/lib/errors";
 import type { LocalPhoto } from "@/lib/photos";
 import { useDecryptedPhoto } from "@/lib/secure-photos";
 import { useSecureScreen } from "@/lib/secure-screen";
@@ -32,7 +33,7 @@ function SecureThumb({ path, subject, onRemove }: { path: string; subject: strin
           accessibilityLabel={subject}
         />
       ) : photo.error ? (
-        <Text className="p-2 font-sans text-badge text-danger">{photo.error.message}</Text>
+        <Text className="p-2 font-sans text-badge text-danger">{errorText(photo.error)}</Text>
       ) : (
         <ActivityIndicator color={colors.accent} className="flex-1" />
       )}

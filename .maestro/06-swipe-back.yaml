@@ -1,0 +1,11 @@
+appId: com.charli.myapp
+---
+# A right swipe anywhere on a pushed screen goes back.
+- launchApp
+- tapOn: "More"
+- tapOn: "Weather"
+- swipe:
+    start: 10%, 50%
+    end: 90%, 50%
+    duration: 400
+- assertVisible: "Search modules"

@@ -3,14 +3,15 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
 import { useSetVoiceAccess, useVoiceAccounts } from "@/lib/voice";
 
 /** The admin ticks who gets voice messages. The database refuses anyone else. */
 export default function VoiceAccessScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const accounts = useVoiceAccounts();
   const setAccess = useSetVoiceAccess();
@@ -18,18 +19,14 @@ export default function VoiceAccessScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleBar tone="people">
-        <Text accessibilityRole="header" className="font-bold text-title text-on-shell">
-          Voice access
-        </Text>
-      </ModuleBar>
+      <ModuleHeader scrollY={scrollY} title="Voice access" tone="people" />
 
-      <ScrollView contentContainerClassName="gap-3 px-5 pb-8 pt-3">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-3 px-5 pb-8 pt-3">
         <Text className="font-sans text-label text-ink-muted">
           A ticked account can send you voice messages, and you can send to it. It also gets a fresh daily ulam.
         </Text>
-        {accounts.error ? <Notice tone="danger">{accounts.error.message}</Notice> : null}
-        {setAccess.error ? <Notice tone="danger">{setAccess.error.message}</Notice> : null}
+        {accounts.error ? <ErrorNotice error={accounts.error} /> : null}
+        {setAccess.error ? <ErrorNotice error={setAccess.error} /> : null}
         {accounts.isPending ? (
           <Skeleton />
         ) : !accounts.error && list.length === 0 ? (

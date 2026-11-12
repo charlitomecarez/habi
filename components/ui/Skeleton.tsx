@@ -3,6 +3,7 @@ import { View, type DimensionValue } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
+  FadeOut,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -10,8 +11,9 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { motion } from "@/lib/motion";
+
 // One slow pulse: opacity 1 to 0.5 and back, 1.1 seconds each way. Still with reduce motion on.
-const PULSE_MS = 1100;
 const LOW = 0.5;
 
 type Surface = "page" | "card";
@@ -99,17 +101,23 @@ export function Skeleton({ layout = "list", rows = 6, children }: SkeletonProps)
   const opacity = useSharedValue(1);
   useEffect(() => {
     if (reduced) return;
-    opacity.set(withRepeat(withTiming(LOW, { duration: PULSE_MS, easing: Easing.inOut(Easing.quad) }), -1, true));
+    opacity.set(withRepeat(withTiming(LOW, { duration: motion.pulse, easing: Easing.inOut(Easing.quad) }), -1, true));
     return () => cancelAnimation(opacity);
   }, [opacity, reduced]);
   const pulse = useAnimatedStyle(() => ({ opacity: opacity.get() }));
 
   return (
-    <View accessible accessibilityLabel="Loading" accessibilityState={{ busy: true }}>
+    // When the data arrives, the skeleton fades out where it was while the content fades in over it.
+    <Animated.View
+      exiting={reduced ? undefined : FadeOut.duration(motion.fade)}
+      accessible
+      accessibilityLabel="Loading"
+      accessibilityState={{ busy: true }}
+    >
       <Animated.View style={pulse} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
         {children ?? <Layout layout={layout} rows={rows} />}
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 }
 

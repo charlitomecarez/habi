@@ -7,19 +7,19 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { Input } from "@/components/ui/Input";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { usePlaceSearch } from "@/components/weather/usePlaceSearch";
 import { useColors } from "@/lib/colors";
+import { motion } from "@/lib/motion";
 import { addWorldPlace, MAX_WORLD, placeKey, readWorldPlaces, useSaveWorldPlaces, type Place } from "@/lib/weather";
-
-const UNDO_MS = 8000;
 
 type Removed = { place: Place; index: number };
 
 /** Add and remove world places. Each change saves at once, so there is no save button. */
 export default function WorldPlacesScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const save = useSaveWorldPlaces();
   const search = usePlaceSearch({ world: true });
@@ -49,7 +49,7 @@ export default function WorldPlacesScreen() {
     if (!places) return;
     if (undoTimer.current) clearTimeout(undoTimer.current);
     setRemoved({ place: places[index], index });
-    undoTimer.current = setTimeout(() => setRemoved(null), UNDO_MS);
+    undoTimer.current = setTimeout(() => setRemoved(null), motion.undo);
     commit(places.filter((_, i) => i !== index));
   }
 
@@ -66,8 +66,17 @@ export default function WorldPlacesScreen() {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
-      <ModuleHeader title="World places" subtitle={places ? `${places.length} of ${MAX_WORLD} places` : undefined} />
-      <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 px-5 pb-8 pt-4">
+      <ModuleHeader
+        scrollY={scrollY}
+        title="World places"
+        subtitle={places ? `${places.length} of ${MAX_WORLD} places` : undefined}
+      />
+      <KeyboardScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        keyboardShouldPersistTaps="handled"
+        contentContainerClassName="gap-4 px-5 pb-8 pt-4"
+      >
         {removed ? (
           <View className="flex-row items-center gap-3 rounded-input bg-surface-muted pl-4">
             <Text className="flex-1 font-sans text-caption text-ink" accessibilityLiveRegion="polite">

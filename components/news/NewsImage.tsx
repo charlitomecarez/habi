@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { View } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 
-const FADE_MS = 150;
+import { motion } from "@/lib/motion";
 
 /**
  * A story's image in a 64 px square. While it loads, and if it fails, the square stays muted, so the
@@ -20,7 +20,7 @@ export function NewsImage({ uri }: { uri: string }) {
         source={{ uri }}
         contentFit="cover"
         cachePolicy="disk"
-        transition={reduced ? 0 : FADE_MS}
+        transition={reduced ? 0 : motion.fade}
         style={{ width: "100%", height: "100%" }}
         accessible={false}
       />

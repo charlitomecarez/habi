@@ -4,8 +4,8 @@ import { ActivityIndicator, Text, View } from "react-native";
 
 import { TransactionRow } from "@/components/money/TransactionRow";
 import { Button } from "@/components/ui/Button";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { MonthCalendar } from "@/components/ui/MonthCalendar";
-import { Notice } from "@/components/ui/Notice";
 import { useColors } from "@/lib/colors";
 import { compactAmount, dayTotals, formatPeso, toDateString, useMonthTransactions } from "@/lib/money";
 
@@ -85,14 +85,14 @@ export function SpendingCalendar({ accountName, categoryName }: SpendingCalendar
 
         {transactions.error ? (
           <View className="gap-3">
-            <Notice tone="danger">Could not load this month. {transactions.error.message}</Notice>
+            <ErrorNotice lead="Could not load this month." error={transactions.error} />
             <Button label="Try again" variant="secondary" size="input" onPress={() => transactions.refetch()} />
           </View>
         ) : transactions.isPending ? (
           <ActivityIndicator color={colors.accent} className="py-4" />
         ) : selected ? (
           <View className="gap-2">
-            <View className="flex-row items-baseline justify-between gap-3 px-1">
+            <View className="flex-row items-baseline justify-between gap-3">
               <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
                 {format(parseISO(selected), "EEEE, MMM d")}
               </Text>
@@ -108,9 +108,9 @@ export function SpendingCalendar({ accountName, categoryName }: SpendingCalendar
               ) : null}
             </View>
             {dayRows.length === 0 ? (
-              <Text className="px-1 font-sans text-caption text-ink-muted">Nothing logged on this day.</Text>
+              <Text className="font-sans text-caption text-ink-muted">Nothing logged on this day.</Text>
             ) : (
-              <View className="overflow-hidden rounded-input border border-border">
+              <View>
                 {dayRows.map((t, index) => (
                   <TransactionRow
                     key={t.id}
@@ -124,9 +124,7 @@ export function SpendingCalendar({ accountName, categoryName }: SpendingCalendar
             )}
           </View>
         ) : (
-          <Text className="px-1 font-sans text-caption text-ink-muted">
-            Tap a day to see what you spent and earned.
-          </Text>
+          <Text className="font-sans text-caption text-ink-muted">Tap a day to see what you spent and earned.</Text>
         )}
       </View>
     </View>

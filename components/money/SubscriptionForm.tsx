@@ -10,10 +10,11 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Select } from "@/components/ui/Select";
 import { goBack } from "@/lib/navigation";
@@ -124,6 +125,7 @@ export function SubscriptionForm({
     resolver: zodResolver(schema),
     defaultValues: defaults(subscription, kind),
   });
+  const discard = useDiscardGuard(formState.isDirty, "The bill is not saved.");
   const currency = useWatch({ control, name: "currency" });
   const amount = parseAmount(useWatch({ control, name: "amount" }) ?? "");
   const autoAdd = useWatch({ control, name: "autoAdd" });
@@ -176,12 +178,14 @@ export function SubscriptionForm({
         autoAdd: values.autoAdd === "on",
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
   async function onDelete() {
     if (!subscription) return;
     await remove.mutateAsync(subscription.id);
+    discard.allowLeave();
     goBack();
   }
 
@@ -380,7 +384,7 @@ export function SubscriptionForm({
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {failure ? <Notice tone="danger">{failure.message}</Notice> : null}
+          {failure ? <ErrorNotice error={failure} /> : null}
           <Button
             label={isBill ? "Save bill" : "Save subscription"}
             loading={formState.isSubmitting}
@@ -389,6 +393,7 @@ export function SubscriptionForm({
           />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

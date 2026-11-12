@@ -36,7 +36,7 @@ export function OptionSheet<T extends string>({
   const colors = useColors();
   return (
     <Sheet visible={visible} onClose={onClose} title={title} subtitle={subtitle}>
-      <View accessibilityRole="radiogroup" className="overflow-hidden rounded-card border border-border">
+      <View accessibilityRole="radiogroup">
         {options.map((option, index) => {
           const isSelected = option.value === value;
           const off = option.disabled === true;

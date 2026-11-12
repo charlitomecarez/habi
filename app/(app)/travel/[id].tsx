@@ -3,14 +3,18 @@ import { format, parseISO } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, type ComponentProps } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+// The gesture handler's ScrollView takes part in the drag back, so a sideways swipe here scrolls the day strip.
+import { ScrollView as SideScroll } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ExportSheet } from "@/components/travel/ExportSheet";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Notice } from "@/components/ui/Notice";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
 import { formatPeso, useExchangeRates } from "@/lib/money";
@@ -65,6 +69,7 @@ function ItemRow({ item }: { item: TripItem }) {
 }
 
 export default function TripScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const trip = useTrip(id);
@@ -75,21 +80,23 @@ export default function TripScreen() {
   const [exporting, setExporting] = useState(false);
 
   const header = (title: string) => (
-    <ModuleBar tone="home">
-      <Text accessibilityRole="header" numberOfLines={1} className="flex-1 font-bold text-title text-on-shell">
-        {title}
-      </Text>
-      {trip.data ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit trip"
-          onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
-          className="h-touch w-touch items-center justify-center"
-        >
-          <Ionicons name="create-outline" size={22} color={colors.onShell} />
-        </Pressable>
-      ) : null}
-    </ModuleBar>
+    <ModuleHeader
+      scrollY={scrollY}
+      title={title}
+      tone="home"
+      action={
+        trip.data ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit trip"
+            onPress={() => router.push({ pathname: "/travel/edit/[id]", params: { id } })}
+            className="h-touch w-touch items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={22} color={colors.ink} />
+          </Pressable>
+        ) : null
+      }
+    />
   );
 
   if (!trip.data) {
@@ -100,7 +107,7 @@ export default function TripScreen() {
           <Skeleton layout="detail" />
         ) : (
           <View className="px-5">
-            <Notice tone="danger">{trip.error ? trip.error.message : "This trip was deleted."}</Notice>
+            <Notice tone="danger">{trip.error ? errorText(trip.error) : "This trip was deleted."}</Notice>
           </View>
         )}
       </SafeAreaView>
@@ -120,13 +127,13 @@ export default function TripScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       {header(data.title)}
-      <ScrollView contentContainerClassName="gap-4 px-5 pb-8 pt-1">
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-4 px-5 pb-8 pt-1">
         <Text className="font-sans text-label text-ink-muted">
           {[data.destination, tripDatesText(data), `${length} ${length === 1 ? "day" : "days"}`]
             .filter(Boolean)
             .join(" · ")}
         </Text>
-        {items.error ? <Notice tone="danger">{items.error.message}</Notice> : null}
+        {items.error ? <ErrorNotice error={items.error} /> : null}
 
         <View className="gap-2">
           <View className="flex-row justify-between gap-3">
@@ -154,7 +161,7 @@ export default function TripScreen() {
           ) : null}
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
+        <SideScroll horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
           {days.map((d) => (
             <Chip
               key={d.day}
@@ -164,7 +171,7 @@ export default function TripScreen() {
             />
           ))}
           <Chip label={`Ideas (${ideas.length})`} selected={current === IDEAS} onPress={() => setSelected(IDEAS)} />
-        </ScrollView>
+        </SideScroll>
 
         <View className="gap-2">
           {shown.length === 0 ? (
@@ -186,7 +193,7 @@ export default function TripScreen() {
             })
           }
         />
-        {remove.error ? <Notice tone="danger">{remove.error.message}</Notice> : null}
+        {remove.error ? <ErrorNotice error={remove.error} /> : null}
         <Button
           label="Delete trip"
           variant="destructive"

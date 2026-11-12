@@ -6,6 +6,7 @@ import { ItemForm } from "@/components/travel/ItemForm";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { errorText } from "@/lib/errors";
 import { goBack } from "@/lib/navigation";
 import { useTripItems } from "@/lib/travel";
 
@@ -22,7 +23,7 @@ export default function EditTripItemScreen() {
         </View>
       ) : (
         <View className="w-full gap-3">
-          <Notice tone="danger">{items.error ? items.error.message : "This item was deleted."}</Notice>
+          <Notice tone="danger">{items.error ? errorText(items.error) : "This item was deleted."}</Notice>
           <Button label="Back" variant="secondary" size="input" onPress={goBack} />
         </View>
       )}

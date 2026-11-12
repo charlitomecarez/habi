@@ -8,7 +8,7 @@ import { NewsImage } from "@/components/news/NewsImage";
 import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ModuleHeader } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useColors } from "@/lib/colors";
@@ -29,6 +29,7 @@ function Story({ item, last, now }: { item: NewsItem; last: boolean; now: Date }
 
 /** Headlines from public feeds, Philippines first. Read-only: a story opens its story page. */
 export default function NewsScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const colors = useColors();
   const news = useNews();
   const [now] = useState(() => new Date());
@@ -38,11 +39,14 @@ export default function NewsScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <ModuleHeader
+        scrollY={scrollY}
         title="News"
         subtitle={data?.lastSync ? `Updated ${format(parseISO(data.lastSync), "h:mm a")}` : undefined}
         tone="daily"
       />
       <ScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         contentContainerClassName="gap-4 px-5 pb-8 pt-4"
         refreshControl={
           <RefreshControl

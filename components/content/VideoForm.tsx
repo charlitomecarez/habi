@@ -10,10 +10,11 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
+import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
-import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { goBack } from "@/lib/navigation";
 import { useColors } from "@/lib/colors";
@@ -65,6 +66,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
     resolver: zodResolver(schema),
     defaultValues: defaults(video),
   });
+  const discard = useDiscardGuard(formState.isDirty, "The video is not saved.");
 
   const onSubmit = handleSubmit(async (values) => {
     const input = {
@@ -78,6 +80,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
       notes: values.notes.trim(),
     };
     const id = await save.mutateAsync({ id: video?.id, input: video ? input : { ...input, stage } });
+    discard.allowLeave();
     if (video) goBack();
     else router.replace({ pathname: "/content/video/[id]", params: { id } });
   });
@@ -221,7 +224,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
         </KeyboardScrollView>
 
         <View className="gap-3 border-t-2 border-border px-5 pb-6 pt-3">
-          {save.error ? <Notice tone="danger">{save.error.message}</Notice> : null}
+          {save.error ? <ErrorNotice error={save.error} /> : null}
           <Button
             label={video ? "Save video" : stage === "idea" ? "Save idea" : "Add video"}
             loading={formState.isSubmitting}
@@ -229,6 +232,7 @@ export function VideoForm({ video, stage = "script" }: { video?: Video; stage?: 
           />
         </View>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }

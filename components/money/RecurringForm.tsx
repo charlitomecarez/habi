@@ -10,6 +10,7 @@ import { AmountInput } from "@/components/ui/AmountInput";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { DateTimeField } from "@/components/ui/DateTimeField";
+import { useDiscardGuard } from "@/components/ui/DiscardGuard";
 import { Input } from "@/components/ui/Input";
 import { KeyboardAvoidingView } from "@/components/ui/KeyboardAvoidingView";
 import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
@@ -83,6 +84,7 @@ export function RecurringForm({ rule }: { rule?: Recurring }) {
     resolver: zodResolver(schema),
     defaultValues: defaults(rule),
   });
+  const discard = useDiscardGuard(formState.isDirty, "The recurring entry is not saved.");
   const kind = useWatch({ control, name: "kind" });
   const schedule = useWatch({ control, name: "schedule" });
 
@@ -112,6 +114,7 @@ export function RecurringForm({ rule }: { rule?: Recurring }) {
         ends_on: v.endsOn ? toDateString(v.endsOn) : null,
       },
     });
+    discard.allowLeave();
     goBack();
   });
 
@@ -236,7 +239,7 @@ export function RecurringForm({ rule }: { rule?: Recurring }) {
                     ))}
                   </View>
                   {fieldState.error ? (
-                    <Text className="font-sans text-caption text-danger">{fieldState.error.message}</Text>
+                    <Text className="font-sans text-caption text-danger">{fieldState.error?.message}</Text>
                   ) : null}
                 </View>
               )}
@@ -290,6 +293,7 @@ export function RecurringForm({ rule }: { rule?: Recurring }) {
           <Button label={`Save recurring ${noun}`} loading={formState.isSubmitting} onPress={onSubmit} />
         </KeyboardScrollView>
       </KeyboardAvoidingView>
+      {discard.sheet}
     </SafeAreaView>
   );
 }
