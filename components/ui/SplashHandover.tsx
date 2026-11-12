@@ -45,15 +45,15 @@ export function SplashHandover({ onDone }: { onDone: () => void }) {
     <Animated.View
       exiting={FadeOut.duration(motion.fade)}
       pointerEvents="none"
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
       style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
     >
-      <WeaveField fill className="flex-1 items-center justify-center">
-        <Animated.View style={markStyle}>
-          <HabiMark size={MARK_SIZE} tone="reverse" label={false} />
-        </Animated.View>
-      </WeaveField>
+      <View className="flex-1" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <WeaveField fill className="flex-1 items-center justify-center">
+          <Animated.View style={markStyle}>
+            <HabiMark size={MARK_SIZE} tone="reverse" label={false} />
+          </Animated.View>
+        </WeaveField>
+      </View>
       <View className="absolute bottom-0 left-0 right-0">
         <StitchStrip />
       </View>

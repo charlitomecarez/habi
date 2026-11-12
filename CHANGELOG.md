@@ -35,6 +35,16 @@ Do not put these items here:
 
 ## Unreleased
 
+### Fixed
+
+- **Navigation:** Module screens scroll up and down again. The drag back starts only on a sideways swipe. A patch to expo-router gives gesture handler 3 the direction limits that it reads.
+- **Web:** Module screens scroll on the web again. The stack card keeps the window height, so the screen's list scrolls and not the page.
+- **Web:** The console no longer shows React warnings about `accessibilityElementsHidden` and `importantForAccessibility`. Five components move these props to a plain view, and TalkBack still skips the same parts.
+- **Design:** Titles and numbers use Schibsted Grotesk on Android again. The APK registers each font as a font family, so a bold weight no longer falls back to the system font.
+- **Home:** On Android, the banig weave fills the whole top field, and the stitch strip weaves in across the full width. Each weave takes its size from its layout, not from "100%".
+- **Lists:** A row with swipe actions no longer shows a thin magenta frame on Android. The actions behind the row show only while you swipe.
+- **Home:** The link under the sentence keeps the capitals of a title such as "Content Planning". Only a title with one capital, such as "Engine oil", starts in lower case.
+
 ## [v2.0.1](docs/releases/v2.0.1.md) - 2026-11-12
 
 ### Added
