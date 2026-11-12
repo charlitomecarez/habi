@@ -1,0 +1,48 @@
+diff --git a/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js b/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js
+index 8d49cca..880e4a8 100644
+--- a/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js
++++ b/node_modules/expo-router/build/react-navigation/stack/utils/gestureActivationCriteria.js
+@@ -18,8 +18,8 @@ const gestureActivationCriteria = ({ direction, gestureDirection, gestureRespons
+     const distance = gestureResponseDistance !== undefined ? gestureResponseDistance : gestureDirection === 'vertical' || gestureDirection === 'vertical-inverted' ? GESTURE_RESPONSE_DISTANCE_VERTICAL : GESTURE_RESPONSE_DISTANCE_HORIZONTAL;
+     if (gestureDirection === 'vertical') {
+         return {
+-            maxDeltaX: 15,
+-            minOffsetY: 5,
++            activeOffsetY: 5,
++            failOffsetX: [-15, 15],
+             hitSlop: {
+                 bottom: -layout.height + distance
+             },
+@@ -27,8 +27,8 @@ const gestureActivationCriteria = ({ direction, gestureDirection, gestureRespons
+         };
+     } else if (gestureDirection === 'vertical-inverted') {
+         return {
+-            maxDeltaX: 15,
+-            minOffsetY: -5,
++            activeOffsetY: -5,
++            failOffsetX: [-15, 15],
+             hitSlop: {
+                 top: -layout.height + distance
+             },
+@@ -39,8 +39,8 @@ const gestureActivationCriteria = ({ direction, gestureDirection, gestureRespons
+         const invertedMultiplier = (0, _getInvertedMultiplier.getInvertedMultiplier)(gestureDirection, direction === 'rtl');
+         if (invertedMultiplier === 1) {
+             return {
+-                minOffsetX: 5,
+-                maxDeltaY: 20,
++                activeOffsetX: 5,
++                failOffsetY: [-20, 20],
+                 hitSlop: {
+                     right: hitSlop
+                 },
+@@ -48,8 +48,8 @@ const gestureActivationCriteria = ({ direction, gestureDirection, gestureRespons
+             };
+         } else {
+             return {
+-                minOffsetX: -5,
+-                maxDeltaY: 20,
++                activeOffsetX: -5,
++                failOffsetY: [-20, 20],
+                 hitSlop: {
+                     left: hitSlop
+                 },
