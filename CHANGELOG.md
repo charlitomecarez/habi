@@ -38,6 +38,7 @@ Do not put these items here:
 ### Fixed
 
 - **Navigation:** Module screens scroll up and down again. The drag back starts only on a sideways swipe. A patch to expo-router gives gesture handler 3 the direction limits that it reads.
+- **Web:** Module screens scroll on the web again. The stack card keeps the window height, so the screen's list scrolls and not the page.
 - **Design:** Titles and numbers use Schibsted Grotesk on Android again. The APK registers each font as a font family, so a bold weight no longer falls back to the system font.
 - **Home:** On Android, the banig weave fills the whole top field, and the stitch strip weaves in across the full width. Each weave takes its size from its layout, not from "100%".
 - **Lists:** A row with swipe actions no longer shows a thin magenta frame on Android. The actions behind the row show only while you swipe.
