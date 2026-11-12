@@ -11,15 +11,11 @@ import { DataRow } from "@/components/ui/DataRow";
 import { useColors } from "@/lib/colors";
 import { errorText } from "@/lib/errors";
 import { isScreenTimeSupported, openUsageSettings, useScreenTime, useUsageAccess } from "@/lib/screen-time";
-import { duration } from "@/lib/screen-time-list";
+import { duration, GUIDE_MS, guideText, usageStatus } from "@/lib/screen-time-list";
 
 const TOP_APPS = 3;
 
-/** "40 min under average", against the 7-day average. */
-function compareText(todayMs: number, averageMs: number): string {
-  const gap = duration(Math.abs(todayMs - averageMs));
-  return todayMs <= averageMs ? `${gap} under average` : `${gap} over average`;
-}
+const STATUS_TEXT = { good: "text-good", watch: "text-watch", over: "text-over" } as const;
 
 /** Today's screen time and top apps, on Android only. The data never leaves the phone. */
 export function ScreenTimeCard() {
@@ -86,16 +82,15 @@ export function ScreenTimeCard() {
               </Text>
             ) : usage.data ? (
               <>
-                <Text
-                  className={`font-semibold text-caption ${usage.data.day.totalMs <= usage.data.weekMs / 7 ? "text-good" : "text-over"}`}
-                >
-                  {compareText(usage.data.day.totalMs, usage.data.weekMs / 7)}
+                <Text className={`font-semibold text-caption ${STATUS_TEXT[usageStatus(usage.data.day.totalMs).tone]}`}>
+                  {usageStatus(usage.data.day.totalMs).label} · {guideText(usage.data.day.totalMs)}
                 </Text>
                 <BarChart
                   label={`Screen time for the last 7 days. Average ${duration(usage.data.weekMs / 7)} a day.`}
                   values={usage.data.dailyMs}
                   labels={Array.from({ length: 7 }, (_, i) => format(subDays(day, 6 - i), "EEEEE"))}
                   highlight={6}
+                  goal={GUIDE_MS}
                 />
                 <Text className="font-sans text-caption text-ink-muted">
                   Average {duration(usage.data.weekMs / 7)} a day

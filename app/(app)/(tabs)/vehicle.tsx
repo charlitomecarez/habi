@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { DataRow } from "@/components/ui/DataRow";
 import { useCountTo } from "@/components/ui/Motion";
 import { Notice } from "@/components/ui/Notice";
-import { TabField, useHeaderScroll } from "@/components/ui/ModuleHeader";
+import { TabField } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { AddVehicleSheet } from "@/components/vehicle/AddVehicleSheet";
 import { UpdateOdometerSheet } from "@/components/vehicle/UpdateOdometerSheet";
@@ -95,7 +95,6 @@ export default function VehicleScreen() {
 
   const error = vehicle.error ?? due.error;
   const odometer = useCountTo(vehicle.data?.current_odometer_km ?? 0);
-  const { scrollY, onScroll } = useHeaderScroll();
 
   if (vehicle.isPending) {
     return (
@@ -134,10 +133,9 @@ export default function VehicleScreen() {
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <TabField
         lead={`${formatKm(odometer)} km`}
-        scrollY={scrollY}
         detail={`${vehicleName(v)} · Updated ${isToday(parseISO(updatedAt)) ? "today" : format(parseISO(updatedAt), "MMM d")}`}
       />
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-8 pt-4">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-8 pt-4">
         {error ? <Notice tone="danger">Could not load services. Check your connection.</Notice> : null}
         {noIntervals ? (
           <Notice tone="warning">

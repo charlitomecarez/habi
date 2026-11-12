@@ -32,11 +32,35 @@ export const GEOAPIFY_CATEGORIES: Record<PlaceCategory, string> = {
   shopping: "commercial.shopping_mall,commercial.marketplace,commercial.department_store",
 };
 
-export type NearbyPlace = { name: string; kind: string; latitude: number; longitude: number };
+/** `image` is a photo URL when OpenStreetMap or Wikimedia has one. Most places have none. */
+export type NearbyPlace = { name: string; kind: string; latitude: number; longitude: number; image?: string };
 
 export type GeoapifyFeature = {
-  properties: { name?: string; lat?: number; lon?: number; categories?: string[] };
+  properties: {
+    name?: string;
+    lat?: number;
+    lon?: number;
+    categories?: string[];
+    wiki_and_media?: { image?: string; wikimedia_commons?: string };
+    datasource?: { raw?: { image?: string; wikimedia_commons?: string } };
+  };
 };
+
+/** The width of a Wikimedia Commons thumbnail. A row shows the photo at 64 px. */
+const THUMB_WIDTH = 256;
+
+/**
+ * A photo for the place: an https image tag, or a Wikimedia Commons file as a small thumbnail.
+ * Undefined when the place has neither.
+ */
+export function placeImage(p: GeoapifyFeature["properties"]): string | undefined {
+  const image = p.wiki_and_media?.image ?? p.datasource?.raw?.image;
+  if (image?.startsWith("https://")) return image;
+  const commons = p.wiki_and_media?.wikimedia_commons ?? p.datasource?.raw?.wikimedia_commons;
+  const file = commons?.match(/^File:(.+)$/)?.[1];
+  if (!file) return undefined;
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file.replace(/ /g, "_"))}?width=${THUMB_WIDTH}`;
+}
 
 const WORDS: Record<string, string> = {
   shopping_mall: "Mall",
@@ -61,12 +85,16 @@ export function parseGeoapify(features: readonly GeoapifyFeature[], category: Pl
   return features
     .filter((f) => f.properties.name && typeof f.properties.lat === "number" && typeof f.properties.lon === "number")
     .slice(0, MAX_PLACES)
-    .map((f) => ({
-      name: f.properties.name!,
-      kind: kindWord(f.properties.categories ?? [], category),
-      latitude: f.properties.lat!,
-      longitude: f.properties.lon!,
-    }));
+    .map((f) => {
+      const image = placeImage(f.properties);
+      return {
+        name: f.properties.name!,
+        kind: kindWord(f.properties.categories ?? [], category),
+        latitude: f.properties.lat!,
+        longitude: f.properties.lon!,
+        ...(image ? { image } : {}),
+      };
+    });
 }
 
 /** The distance in km between two points, on a sphere. */

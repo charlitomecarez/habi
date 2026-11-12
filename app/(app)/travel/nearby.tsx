@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,11 +9,12 @@ import { DataRow } from "@/components/ui/DataRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorNotice } from "@/components/ui/ErrorNotice";
 import { ModuleGate } from "@/components/ui/ModuleGate";
+import { NewsImage } from "@/components/news/NewsImage";
 import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { OptionSheet } from "@/components/ui/OptionSheet";
 import { Sheet } from "@/components/ui/Sheet";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { currentCoords, openLocationSettings } from "@/lib/location";
+import { currentCoords, knownCoords, openLocationSettings } from "@/lib/location";
 import { toDateString } from "@/lib/money";
 import {
   CATEGORIES,
@@ -44,6 +45,15 @@ function NearbyScreen() {
   const places = useNearbyPlaces(coords, category);
   const trips = useTrips();
   const saveIdea = useSaveIdea();
+  // With location already allowed, the list opens at once, as from Home.
+  useEffect(() => {
+    knownCoords()
+      .then((found) => {
+        if (found) setCoords((current) => current ?? found);
+      })
+      .catch(() => undefined);
+  }, []);
+
   const list = coords && places.data ? withDistance(places.data, coords).slice(0, 20) : [];
 
   const [today] = useState(() => toDateString(new Date()));
@@ -158,6 +168,7 @@ function NearbyScreen() {
                 title={p.name}
                 detail={p.kind}
                 value={distanceText(p.km)}
+                trailing={p.image ? <NewsImage uri={p.image} /> : null}
                 onPress={() => setPicked(p)}
                 last={i === list.length - 1}
               />
@@ -177,7 +188,7 @@ function NearbyScreen() {
       >
         <View className="gap-3">
           <Button label="Open in Maps" variant="secondary" onPress={() => picked && void openInMaps(picked)} />
-          <Button label="Add to a trip" variant="secondary" onPress={() => setChoosingTrip(true)} />
+          <Button label="Add to trip" variant="secondary" onPress={() => setChoosingTrip(true)} />
         </View>
       </Sheet>
 

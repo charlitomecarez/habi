@@ -10,5 +10,13 @@ export async function currentCoords(): Promise<{ latitude: number; longitude: nu
   });
 }
 
+/** The browser's location only when the site may already use it. It never asks. Null otherwise. */
+export async function knownCoords(): Promise<{ latitude: number; longitude: number } | null> {
+  if (typeof navigator === "undefined" || !navigator.permissions) return null;
+  const permission = await navigator.permissions.query({ name: "geolocation" }).catch(() => null);
+  if (permission?.state !== "granted") return null;
+  return currentCoords();
+}
+
 /** A browser has no settings page to open. Its own location prompt comes back on the next tap. */
 export async function openLocationSettings(): Promise<void> {}

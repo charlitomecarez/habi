@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { InboxCard } from "@/components/home/InboxCard";
 import { LatestGames } from "@/components/home/LatestGames";
 import { LatestNews } from "@/components/home/LatestNews";
+import { NearbyPlaces } from "@/components/home/NearbyPlaces";
 import { ScreenTimeCard } from "@/components/home/ScreenTimeCard";
 import { ShortcutsSheet } from "@/components/home/ShortcutsSheet";
 import { useAdvice } from "@/components/steps/HealthCheck";
@@ -354,6 +355,8 @@ export default function HomeScreen() {
               </View>
             )}
           </View>
+
+          <NearbyPlaces ready={!loading} />
 
           <LatestGames ready={!loading} />
           <LatestNews ready={!loading} />

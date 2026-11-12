@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmSheet } from "@/components/ui/ConfirmSheet";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Fab } from "@/components/ui/Fab";
-import { TabField, useHeaderScroll } from "@/components/ui/ModuleHeader";
+import { TabField } from "@/components/ui/ModuleHeader";
 import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -63,7 +63,6 @@ export default function TodosScreen() {
   const toggle = useToggleTodo();
   const remove = useDeleteTodo();
   const [deleting, setDeleting] = useState<Todo | null>(null);
-  const { scrollY, onScroll } = useHeaderScroll();
 
   const groups = groupTodos(data ?? []);
   const overdueCount = (data ?? []).filter((t) => isOverdue(t)).length;
@@ -103,9 +102,8 @@ export default function TodosScreen() {
       <TabField
         lead={data ? `${todayCount} left today` : "Todos"}
         detail={overdueCount > 0 ? `${overdueCount} overdue` : undefined}
-        scrollY={scrollY}
       />
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
+      <ScrollView contentContainerClassName="gap-5 px-5 pb-fab-clear pt-4">
         <Segmented
           label="Filter"
           options={FILTERS.map((f) => ({ ...f, count: data ? counts[f.value] : undefined }))}
