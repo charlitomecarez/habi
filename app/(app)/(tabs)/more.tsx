@@ -36,6 +36,7 @@ export default function MoreScreen() {
       <KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-5 pb-8 pt-4">
         <View className="px-5">
           <View className="h-input flex-row items-center gap-3 rounded-input border border-border-input bg-surface-card px-4">
+            <Ionicons name="search" size={18} color={colors.inkMuted} />
             <TextInput
               accessibilityLabel="Search modules"
               value={query}
@@ -66,17 +67,16 @@ export default function MoreScreen() {
                 <Text accessibilityRole="header" className="px-5 pb-1 pt-2 font-semibold text-label text-ink-muted">
                   {section.title}
                 </Text>
-                <View className="flex-row flex-wrap px-5">
+                <View className="px-5">
                   {section.modules.map((m) => (
                     // Rows that leave the search fade out, and rows that come back fade in.
                     <Animated.View
                       key={m.id}
-                      style={{ width: "50%" }}
                       entering={reduced ? undefined : FadeInAnimation.duration(motion.fade)}
                       exiting={reduced ? undefined : FadeOut.duration(motion.fade)}
                     >
                       <ModuleLine
-                        fill
+                        list
                         label={m.label}
                         icon={m.icon}
                         tone={m.tone}

@@ -13,7 +13,7 @@ import { KeyboardScrollView } from "@/components/ui/KeyboardScrollView";
 import { Notice } from "@/components/ui/Notice";
 import { Select } from "@/components/ui/Select";
 import { Sheet } from "@/components/ui/Sheet";
-import { ModuleBar } from "@/components/ui/ModuleHeader";
+import { ModuleHeader, useHeaderScroll } from "@/components/ui/ModuleHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { SwipeRow } from "@/components/ui/SwipeRow";
 import { useColors } from "@/lib/colors";
@@ -58,7 +58,7 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
           accessibilityLabel={`${item.name}${item.quantity ? `, ${item.quantity}` : ""}, in the cart`}
           accessibilityState={{ checked: item.ticked }}
           onPress={() => setTicked(!item.ticked)}
-          className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3 pl-4"
+          className="min-h-touch min-w-0 flex-1 flex-row items-center gap-3"
         >
           <Ionicons
             name={item.ticked ? "checkbox" : "square-outline"}
@@ -109,6 +109,7 @@ function ItemRow({ item, last }: { item: ShoppingItem; last: boolean }) {
 }
 
 export default function ShoppingScreen() {
+  const { scrollY, onScroll } = useHeaderScroll();
   const shopping = useShopping();
   const add = useAddItem();
   const checkout = useCheckout();
@@ -170,13 +171,14 @@ export default function ShoppingScreen() {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface-page">
       <KeyboardAvoidingView className="flex-1">
-        <ModuleBar tone="home">
-          <Text accessibilityRole="header" className="font-bold text-title text-ink">
-            Shopping list
-          </Text>
-        </ModuleBar>
+        <ModuleHeader scrollY={scrollY} title="Shopping list" tone="home" />
 
-        <KeyboardScrollView contentContainerClassName="gap-5 px-5 pb-6 pt-2" keyboardShouldPersistTaps="handled">
+        <KeyboardScrollView
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          contentContainerClassName="gap-5 px-5 pb-6 pt-2"
+          keyboardShouldPersistTaps="handled"
+        >
           {done ? <Notice tone="warning">{done}</Notice> : null}
           {shopping.error || add.error ? <ErrorNotice error={(shopping.error ?? add.error)!} /> : null}
 
