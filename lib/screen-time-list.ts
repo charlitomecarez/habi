@@ -43,3 +43,28 @@ export function sumApps(days: readonly (readonly UsageRow[])[]): UsageRow[] {
     }
   return [...byApp.values()];
 }
+
+/**
+ * The daily guide for phone use: 3 hours. Health sources give adults 2 to 3 hours of personal screen
+ * time a day. There is no official limit for adults.
+ */
+export const GUIDE_MS = 3 * 60 * 60 * 1000;
+/** From 5 hours a day, an OECD analysis links personal screen use with worse well-being. */
+export const HIGH_MS = 5 * 60 * 60 * 1000;
+
+export type UsageStatus = { label: "Within guide" | "Above guide" | "High"; tone: "good" | "watch" | "over" };
+
+/** The status word for one day of phone use. */
+export function usageStatus(ms: number): UsageStatus {
+  if (ms <= GUIDE_MS) return { label: "Within guide", tone: "good" };
+  if (ms < HIGH_MS) return { label: "Above guide", tone: "watch" };
+  return { label: "High", tone: "over" };
+}
+
+/** "1 h 20 min left of the 3 h guide", or "40 min over the 3 h guide". */
+export function guideText(ms: number): string {
+  const guide = duration(GUIDE_MS);
+  return ms <= GUIDE_MS
+    ? `${duration(GUIDE_MS - ms)} left of the ${guide} guide`
+    : `${duration(ms - GUIDE_MS)} over the ${guide} guide`;
+}

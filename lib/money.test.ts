@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { suggestExpenseNames } from "@/lib/money";
+import { suggestExpenseNames, yearTotals } from "@/lib/money";
 
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
 
@@ -43,5 +43,25 @@ describe("suggestExpenseNames", () => {
 
   it("counts names in any case as one name, and keeps to the limit", () => {
     expect(suggestExpenseNames(history, { ...options, limit: 1 })).toEqual(["Sample Jeep"]);
+  });
+});
+
+describe("yearTotals", () => {
+  it("adds expenses and income per month and per category, and skips transfers", () => {
+    const year = yearTotals([
+      { kind: "expense", amount: 100, category_id: FOOD, occurred_on: "2026-01-05" },
+      { kind: "expense", amount: 50, category_id: TRANSPORT, occurred_on: "2026-01-20" },
+      { kind: "expense", amount: 200, category_id: FOOD, occurred_on: "2026-11-02" },
+      { kind: "income", amount: 1000, category_id: null, occurred_on: "2026-11-15" },
+      { kind: "transfer", amount: 999, category_id: null, occurred_on: "2026-11-16" },
+    ]);
+    expect(year.spent).toBe(350);
+    expect(year.income).toBe(1000);
+    expect(year.byMonth[0]).toEqual({ spent: 150, income: 0 });
+    expect(year.byMonth[10]).toEqual({ spent: 200, income: 1000 });
+    expect(year.byCategory).toEqual([
+      { categoryId: FOOD, total: 300 },
+      { categoryId: TRANSPORT, total: 50 },
+    ]);
   });
 });

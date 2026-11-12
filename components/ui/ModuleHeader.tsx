@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { usePathname } from "expo-router";
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { Pressable, Text, View, type NativeScrollEvent, type NativeSyntheticEvent } from "react-native";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, type SharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -14,6 +14,8 @@ export type HeaderTone = "shell" | "daily" | "people" | "home" | "records";
 
 /** The header is small after this much scroll. */
 const SHRINK_AT = 48;
+/** The tallest large title with a subtitle, plus SHRINK_AT. A list must scroll this far to shrink the header. */
+const SHRINK_ROOM = 200;
 
 const TINT: Record<Exclude<HeaderTone, "shell">, string> = {
   daily: "bg-daily-tint",
@@ -29,8 +31,13 @@ const TINT: Record<Exclude<HeaderTone, "shell">, string> = {
  */
 export function useHeaderScroll() {
   const scrollY = useSharedValue(0);
+  const room = useRef(0);
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollY.set(event.nativeEvent.contentOffset.y);
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+    // The scroll room is exact only while the header is large. A smaller header makes the list taller.
+    if (scrollY.get() <= 0) room.current = contentSize.height - layoutMeasurement.height;
+    // In a short list, the smaller header would leave nothing to scroll, and the list would jump back to the top.
+    scrollY.set(room.current >= SHRINK_ROOM ? contentOffset.y : 0);
   };
   return { scrollY, onScroll };
 }
@@ -158,47 +165,20 @@ export function ModuleBar({
   );
 }
 
-/**
- * The indigo field of a tab: the number that matters, then one line. It reaches under the status
- * bar. With `scrollY`, the number shrinks from display to title size as you scroll.
- */
-export function TabField({
-  lead,
-  detail,
-  children,
-  scrollY,
-}: {
-  lead: string;
-  detail?: string;
-  children?: ReactNode;
-  scrollY?: SharedValue<number>;
-}) {
+/** The indigo field of a tab: the number that matters, then one line. It reaches under the status bar. */
+export function TabField({ lead, detail, children }: { lead: string; detail?: string; children?: ReactNode }) {
   const insets = useSafeAreaInsets();
-  const still = useSharedValue(0);
-  const offset = scrollY ?? still;
-  const leadHeight = useSharedValue(0);
-  // Title (20) over display (34): the lead scales down from its left edge, and its row gets shorter.
-  const leadStyle = useAnimatedStyle(() => {
-    const scale = interpolate(offset.get(), [0, SHRINK_AT], [1, 20 / 34], "clamp");
-    const full = leadHeight.get();
-    return { transform: [{ scale }], height: full === 0 ? undefined : full * scale };
-  });
   return (
     <View className="gap-1 bg-shell px-5 pb-4" style={{ marginTop: -insets.top, paddingTop: insets.top + 16 }}>
-      <Animated.View style={[{ transformOrigin: "left top" }, leadStyle]}>
-        <Text
-          onLayout={(event) => {
-            if (leadHeight.get() === 0) leadHeight.set(event.nativeEvent.layout.height);
-          }}
-          accessibilityRole="header"
-          adjustsFontSizeToFit
-          minimumFontScale={0.7}
-          numberOfLines={1}
-          className="font-bold text-display text-on-shell"
-        >
-          {lead}
-        </Text>
-      </Animated.View>
+      <Text
+        accessibilityRole="header"
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        numberOfLines={1}
+        className="font-bold text-display text-on-shell"
+      >
+        {lead}
+      </Text>
       {detail ? <Text className="font-sans text-label text-on-shell-muted">{detail}</Text> : null}
       {children}
     </View>

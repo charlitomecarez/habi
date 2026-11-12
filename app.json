@@ -2,7 +2,7 @@
   "expo": {
     "name": "Habi",
     "slug": "my-app",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -34,7 +34,17 @@
     "plugins": [
       "expo-router",
       "expo-status-bar",
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./node_modules/@expo-google-fonts/schibsted-grotesk/400Regular/SchibstedGrotesk_400Regular.ttf",
+            "./node_modules/@expo-google-fonts/schibsted-grotesk/500Medium/SchibstedGrotesk_500Medium.ttf",
+            "./node_modules/@expo-google-fonts/schibsted-grotesk/700Bold/SchibstedGrotesk_700Bold.ttf",
+            "./node_modules/@expo-google-fonts/schibsted-grotesk/900Black/SchibstedGrotesk_900Black.ttf"
+          ]
+        }
+      ],
       [
         "expo-splash-screen",
         {

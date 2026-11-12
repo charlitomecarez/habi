@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cellCenter, CELL, distanceKm, kindWord, parseGeoapify, toCell } from "./places.ts";
+import { cellCenter, CELL, distanceKm, kindWord, parseGeoapify, placeImage, toCell } from "./places.ts";
 
 describe("areas", () => {
   it("rounds a spot to the nearest 0.05", () => {
@@ -36,5 +36,17 @@ describe("Geoapify", () => {
     expect(parseGeoapify(features, "parks")).toEqual([
       { name: "Quezon Memorial Circle", kind: "Park", latitude: 14.65, longitude: 121.05 },
     ]);
+  });
+
+  it("takes a photo from an https image tag or a Wikimedia Commons file", () => {
+    expect(placeImage({ datasource: { raw: { image: "https://example.org/a.jpg" } } })).toBe(
+      "https://example.org/a.jpg",
+    );
+    expect(placeImage({ datasource: { raw: { image: "http://example.org/a.jpg" } } })).toBeUndefined();
+    expect(placeImage({ wiki_and_media: { wikimedia_commons: "File:Sample Park.jpg" } })).toBe(
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sample_Park.jpg?width=256",
+    );
+    expect(placeImage({ wiki_and_media: { wikimedia_commons: "Category:Parks" } })).toBeUndefined();
+    expect(placeImage({})).toBeUndefined();
   });
 });

@@ -9,6 +9,16 @@ export async function currentCoords(): Promise<{ latitude: number; longitude: nu
   return { latitude: position.coords.latitude, longitude: position.coords.longitude };
 }
 
+/** Your spot only when location is already allowed. It never asks. Null otherwise. */
+export async function knownCoords(): Promise<{ latitude: number; longitude: number } | null> {
+  const { status } = await Location.getForegroundPermissionsAsync();
+  if (status !== "granted") return null;
+  const position =
+    (await Location.getLastKnownPositionAsync({ maxAge: 30 * 60 * 1000 })) ??
+    (await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }));
+  return { latitude: position.coords.latitude, longitude: position.coords.longitude };
+}
+
 /** Opens Habi's page in Android settings, where you can allow location again. */
 export async function openLocationSettings(): Promise<void> {
   await Linking.openSettings();

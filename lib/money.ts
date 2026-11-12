@@ -83,6 +83,7 @@ const RATES_KEY = [...MONEY_KEY, "rates"] as const;
 const transactionsKey = (limit: number) => [...MONEY_KEY, "transactions", limit] as const;
 const monthKey = (month: string) => [...MONEY_KEY, "month", month] as const;
 const monthTransactionsKey = (month: string) => [...MONEY_KEY, "month-transactions", month] as const;
+const yearKey = (year: number) => [...MONEY_KEY, "year", year] as const;
 
 const namesKey = [...MONEY_KEY, "expense-names"] as const;
 
@@ -295,6 +296,60 @@ export function useMonthTransactions(month: Date) {
       ),
     // Keep the last month on screen while the next one loads, so the calendar does not flash.
     placeholderData: keepPreviousData,
+  });
+}
+
+export type YearSummary = {
+  spent: number;
+  income: number;
+  /** Spending and income for each month, January first. */
+  byMonth: DayTotals[];
+  /** Expense total per category id, largest first. */
+  byCategory: { categoryId: string | null; total: number }[];
+};
+
+/** Totals for one year, from its expense and income rows. Transfers do not count. */
+export function yearTotals(
+  rows: readonly Pick<Transaction, "kind" | "amount" | "category_id" | "occurred_on">[],
+): YearSummary {
+  const byMonth = Array.from({ length: 12 }, () => ({ spent: 0, income: 0 }));
+  const totals = new Map<string | null, number>();
+  let spent = 0;
+  let income = 0;
+  for (const t of rows) {
+    if (t.kind === "transfer") continue;
+    const month = byMonth[Number(t.occurred_on.slice(5, 7)) - 1];
+    if (t.kind === "income") {
+      income += t.amount;
+      month.income += t.amount;
+    } else {
+      spent += t.amount;
+      month.spent += t.amount;
+      totals.set(t.category_id, (totals.get(t.category_id) ?? 0) + t.amount);
+    }
+  }
+  const byCategory = [...totals]
+    .map(([categoryId, total]) => ({ categoryId, total }))
+    .sort((a, b) => b.total - a.total);
+  return { spent, income, byMonth, byCategory };
+}
+
+/** Spending and income in the calendar year of `now`. */
+export function useYearSummary(now: Date, enabled = true) {
+  const year = now.getFullYear();
+  return useQuery({
+    queryKey: yearKey(year),
+    enabled,
+    queryFn: async (): Promise<YearSummary> => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("kind, amount, category_id, occurred_on")
+        .in("kind", ["expense", "income"])
+        .gte("occurred_on", `${year}-01-01`)
+        .lt("occurred_on", `${year + 1}-01-01`);
+      if (error) throw error;
+      return yearTotals(data);
+    },
   });
 }
 

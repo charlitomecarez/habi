@@ -12,9 +12,10 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { openUsageSettings, useScreenTime, useUsageAccess, useWeekUsage } from "@/lib/screen-time";
-import { appList, duration, type UsageRow } from "@/lib/screen-time-list";
+import { appList, duration, GUIDE_MS, guideText, usageStatus, type UsageRow } from "@/lib/screen-time-list";
 
 type Range = "today" | "week";
+const STATUS_TEXT = { good: "text-good", watch: "text-watch", over: "text-over" } as const;
 const RANGES: readonly { value: Range; label: string }[] = [
   { value: "today", label: "Today" },
   { value: "week", label: "This week" },
@@ -38,6 +39,26 @@ function AppList({ apps }: { apps: readonly UsageRow[] }) {
           <Text className="font-sans text-label text-ink-muted">{duration(folded.totalMs)}</Text>
         </View>
       ) : null}
+    </View>
+  );
+}
+
+/** Where the guide comes from, so the status word is not a guess. */
+function GuideNote() {
+  return (
+    <View className="gap-2 pt-2">
+      <Text accessibilityRole="header" className="font-semibold text-heading text-ink">
+        How I judge your day
+      </Text>
+      <Text className="font-sans text-caption text-ink-muted">
+        I compare your day with a guide of 3 hours. Health sources give adults 2 to 3 hours of personal screen time a
+        day, but there is no official limit. An OECD analysis links more than 5 hours a day with worse well-being, so I
+        mark 5 hours as High.
+      </Text>
+      <Text className="font-sans text-caption text-ink-muted">
+        For context, people in the Philippines use the internet on a phone for about 5 h 21 min a day (Digital 2025
+        report). Work apps and maps count here too, so a work day can go over the guide.
+      </Text>
     </View>
   );
 }
@@ -105,11 +126,11 @@ export default function ScreenTimeScreen() {
             <>
               <View className="gap-1">
                 <Text className="font-bold text-display text-ink">{duration(day.data.day.totalMs)}</Text>
-                <Text
-                  className={`font-semibold text-caption ${day.data.day.totalMs <= day.data.weekMs / 7 ? "text-good" : "text-over"}`}
-                >
-                  {duration(Math.abs(day.data.day.totalMs - day.data.weekMs / 7))}{" "}
-                  {day.data.day.totalMs <= day.data.weekMs / 7 ? "under average" : "over average"}
+                <Text className={`font-semibold text-caption ${STATUS_TEXT[usageStatus(day.data.day.totalMs).tone]}`}>
+                  {usageStatus(day.data.day.totalMs).label} · {guideText(day.data.day.totalMs)}
+                </Text>
+                <Text className="font-sans text-caption text-ink-muted">
+                  Your 7-day average is {duration(day.data.weekMs / 7)} a day
                 </Text>
               </View>
               <BarChart
@@ -117,6 +138,7 @@ export default function ScreenTimeScreen() {
                 values={day.data.dailyMs}
                 labels={Array.from({ length: 7 }, (_, i) => format(subDays(today, 6 - i), "EEEEE"))}
                 highlight={6}
+                goal={GUIDE_MS}
               />
               <AppList apps={day.data.day.apps} />
             </>
@@ -125,13 +147,17 @@ export default function ScreenTimeScreen() {
           <>
             <View className="gap-1">
               <Text className="font-bold text-display text-ink">{duration(week.data.totalMs)}</Text>
-              <Text className="font-sans text-caption text-ink-muted">
-                Average {duration(week.data.totalMs / week.data.days)} a day
+              <Text
+                className={`font-semibold text-caption ${STATUS_TEXT[usageStatus(week.data.totalMs / week.data.days).tone]}`}
+              >
+                {usageStatus(week.data.totalMs / week.data.days).label} · Average{" "}
+                {duration(week.data.totalMs / week.data.days)} a day
               </Text>
             </View>
             <AppList apps={week.data.apps} />
           </>
         ) : null}
+        <GuideNote />
       </ScrollView>
     </SafeAreaView>
   );

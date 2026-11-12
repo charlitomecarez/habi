@@ -35,6 +35,29 @@ Do not put these items here:
 
 ## Unreleased
 
+## [v2.0.1](docs/releases/v2.0.1.md) - 2026-11-12
+
+### Added
+
+- **Home:** A Places near you section shows the 3 nearest sights, with a row to all places. Home never asks for location. Without it, only the row shows.
+- **Travel:** Places near you shows a photo beside a place when OpenStreetMap or Wikimedia has one. With location already allowed, the list opens at once.
+- **Money:** The Money tab has three choices: Today, This month and This year. This year shows the spending and income of the year, a bar for each month and the top categories.
+
+### Changed
+
+- **Travel:** The place button says "Add to trip".
+
+### Fixed
+
+- **App:** Back works again after a save, and after Discard changes. Before, a form with changes could not close, and Back did nothing.
+- **Headers:** A short list keeps the large module header, so it no longer jumps back to the top when you scroll.
+- **Tabs:** The Money, Todos and Vehicle numbers stay full size as you scroll.
+- **Buttons:** The app font is now inside the APK, so button labels are not cut off, such as "Add to a" and the gap after "Add" on the add button. Install the v2.0.1 APK for this fix.
+- **Screen time:** The status compares your day with a 3-hour guide: Within guide, Above guide, or High from 5 hours. The screen says where the guide comes from, and your 7-day average stays under it. Before, the status compared your day only with your own average.
+- **Repo:** The E2E tests for a new todo and a new expense pass again.
+
+## [v2.0.0](docs/releases/v2.0.0.md) - 2026-11-12
+
 ### Changed
 
 - **App:** Every move uses one set of timings and one easing. Images fade in at the same speed everywhere.
