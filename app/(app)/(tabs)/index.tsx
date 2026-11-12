@@ -52,9 +52,12 @@ const ATTENTION_LIMIT = 5;
 const STATUS_TONE = { Overdue: "over", Today: "over", "Due soon": "watch" } as const;
 const STRAND_TONE = { good: "good", watch: "watch", over: "over", empty: "muted" } as const;
 
-/** "Engine oil" reads as "engine oil" inside a sentence. "LTO renewal" keeps its capitals. */
+/**
+ * "Engine oil" reads as "engine oil" inside a sentence. "LTO renewal", "Content Planning" and
+ * "Call Maria" keep their capitals, because a capital after the first letter can be a name.
+ */
 function inSentence(title: string): string {
-  return /^[A-Z][a-z]/.test(title) ? title.charAt(0).toLowerCase() + title.slice(1) : title;
+  return /^[A-Z][^A-Z]*$/.test(title) ? title.charAt(0).toLowerCase() + title.slice(1) : title;
 }
 
 function SectionTitle({ children }: { children: string }) {

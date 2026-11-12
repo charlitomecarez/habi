@@ -59,11 +59,15 @@ export function SwipeRow({ actions, children }: { actions: readonly RowAction[];
     });
 
   const rowStyle = useAnimatedStyle(() => ({ transform: [{ translateX: x.get() }] }));
+  // A closed row hides its actions. On Android, their edges show around the row as a thin frame.
+  const actionsStyle = useAnimatedStyle(() => ({ opacity: x.get() < 0 ? 1 : 0 }));
   const close = () => x.set(withSpring(0, sheetSpring));
 
   return (
     <View onLayout={(event) => width.set(event.nativeEvent.layout.width)}>
-      <View className="absolute bottom-0 right-0 top-0 flex-row">
+      <Animated.View
+        style={[{ position: "absolute", top: 0, right: 0, bottom: 0, flexDirection: "row" }, actionsStyle]}
+      >
         {actions.map((action) => (
           <Pressable
             key={action.label}
@@ -81,7 +85,7 @@ export function SwipeRow({ actions, children }: { actions: readonly RowAction[];
             <Text className="font-semibold text-badge text-on-accent">{action.label}</Text>
           </Pressable>
         ))}
-      </View>
+      </Animated.View>
       <GestureDetector gesture={pan}>
         <Animated.View style={rowStyle}>
           <View className="bg-surface-page">{children}</View>
