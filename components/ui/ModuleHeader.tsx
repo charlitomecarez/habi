@@ -105,14 +105,13 @@ export function ModuleHeader({
       <View className="min-h-touch flex-row items-center gap-1 px-2 pt-1">
         <BackButton label={backLabel} />
         {/* NativeWind does not style Reanimated views, so the classes go on the views inside. */}
-        <Animated.View
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          style={[{ flex: 1, minWidth: 0 }, smallStyle]}
-        >
-          <Text numberOfLines={1} className="font-bold text-heading text-ink">
-            {title}
-          </Text>
+        {/* The hiding props go on a plain View. Reanimated hands them to the web DOM, and React warns. */}
+        <Animated.View style={[{ flex: 1, minWidth: 0 }, smallStyle]}>
+          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <Text numberOfLines={1} className="font-bold text-heading text-ink">
+              {title}
+            </Text>
+          </View>
         </Animated.View>
         {action}
       </View>

@@ -114,8 +114,10 @@ export function Skeleton({ layout = "list", rows = 6, children }: SkeletonProps)
       accessibilityLabel="Loading"
       accessibilityState={{ busy: true }}
     >
-      <Animated.View style={pulse} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
-        {children ?? <Layout layout={layout} rows={rows} />}
+      <Animated.View style={pulse}>
+        <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+          {children ?? <Layout layout={layout} rows={rows} />}
+        </View>
       </Animated.View>
     </Animated.View>
   );
