@@ -10,6 +10,8 @@ _Habi_ is Tagalog for "weave". The app weaves each part of your day into one Hom
 
 **Todos, money, your vehicle's service schedule, a password vault and 18 more modules, in one Android app.**
 
+Read how it was built in the [case study](https://charliworks-portfolio.pages.dev/work/habi/).
+
 [![CI](https://img.shields.io/github/actions/workflow/status/charlitomecarez/habi/ci.yml?style=flat-square&label=CI)](https://github.com/charlitomecarez/habi/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-1.4.0-23205C?style=flat-square)](CHANGELOG.md)
 [![Expo SDK 58](https://img.shields.io/badge/Expo-SDK_58-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev)
